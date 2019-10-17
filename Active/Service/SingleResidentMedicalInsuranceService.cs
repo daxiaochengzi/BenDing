@@ -19,7 +19,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string SingleHospitalizationRegister(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new SingleHospitalizationRegisterDto();
             try
             {
@@ -75,7 +75,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string SingleHospitalizationModify(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new SingleHospitalizationModifyDto();
             try
             {
@@ -132,7 +132,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string SingleHospitalizationCancel(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new SingleHospitalizationCancelDto();
             try
             {
@@ -189,7 +189,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string SinglePrescriptionUpload(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new SinglePrescriptionUploadDto();
             try
             {
@@ -245,7 +245,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string SinglePrescriptionDelete(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new SinglePrescriptionDeleteDto();
             try
             {
@@ -301,7 +301,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string SinglePrescriptionDetailQuery(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             
             try
             {
@@ -381,7 +381,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string SingleLeaveHospitalSettlement(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new SingleLeaveHospitalSettlementDto();
             try
             {
@@ -437,7 +437,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string SingleLeaveHospitalSettlementCancel(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new SinglePreMonthSettlementCancelDto();
             try
             {
@@ -491,7 +491,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string SinglePreSettlement(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new SinglePreMonthSettlementDto();
             try
             {
@@ -545,7 +545,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string SinglePreSettlementQuery(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new SinglePreSettlementQueryDto();
             try
             {
@@ -599,7 +599,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string SingleMonthSettlement(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new SinglePreMonthSettlementDto();
             try
             {
@@ -653,7 +653,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string SingleMonthSettlementCancel(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new SinglePreMonthSettlementCancelDto();
             try
             {
@@ -707,7 +707,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string OutpatientConsultationFeeSettlement(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new OutpatientConsultationFeeSettlementDto();
             try
             {
@@ -761,7 +761,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string OutpatientConsultationFeeCancel(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new OutpatientConsultationFeeCancelDto();
             try
             {
@@ -815,7 +815,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string OutpatientConsultationFeeQuery(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new OutpatientConsultationFeeQueryDto();
             try
             {

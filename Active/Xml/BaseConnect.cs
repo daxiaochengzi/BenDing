@@ -40,7 +40,7 @@ namespace BenDingActive.Xml
 
             };
             var data = HttpHelp.HttpPost(JsonConvert.SerializeObject(sendParam),
-                "SaveMedicalInsuranceDataAll", new ApiJsonResultData());
+                "SaveMedicalInsuranceDataAll", new ApiJsonResultDatas());
 
         }
 

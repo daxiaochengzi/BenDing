@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace BenDingActive.Model.Dto
 {/// <summary>
@@ -13,9 +14,11 @@ namespace BenDingActive.Model.Dto
         /// 发生费用金额
         /// </summary>
         public string PO_FYZE { get; set; }
+
         /// <summary>
         /// 基本统筹支付
         /// </summary>
+       
         public string PO_TCZF { get; set; }
         /// <summary>
         /// 补充医疗保险支付金额

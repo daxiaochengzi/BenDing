@@ -15,15 +15,24 @@ using NFine.Domain.Entity.SystemManage;
 using NFine.Application.SystemManage;
 using NFine.Code;
 using NFine.Application;
+using NFine.Web.Model;
 
 namespace NFine.Web.Controllers
 {
     public class LoginController : Controller
     {
+        public IGrammarNewService _webServiceBasicService { get; set; }
+
+        public LoginController(IGrammarNewService iWebServiceBasicService)
+        {
+            _webServiceBasicService = iWebServiceBasicService;
+        }
+
         [HttpGet]
         public virtual ActionResult Index()
         {
             var test = string.Format("{0:E2}", 1);
+            var dd = _webServiceBasicService.TestIf();
             return View();
         }
         [HttpGet]

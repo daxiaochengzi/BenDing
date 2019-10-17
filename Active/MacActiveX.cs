@@ -101,7 +101,7 @@ namespace BenDingActive
             }
             else
             {
-                var apiJson = new ApiJsonResultData
+                var apiJson = new ApiJsonResultDatas
                 {
                     Code = false,
                     Message = "当前方法不存在!!!"

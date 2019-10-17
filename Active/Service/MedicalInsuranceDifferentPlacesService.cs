@@ -22,7 +22,7 @@ namespace BenDingActive.Service
         /// <param name="baseParam"></param>
         public string DifferentPlacesGetUserInfo(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new UserInfoDifferentDto();
             try
             {
@@ -77,7 +77,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesHospitalizationRegister(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new HospitalizationRegisterDifferentDto();
             try
             {
@@ -130,7 +130,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesHospitalizationCancel(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesHospitalizationCancelDto();
             try
             {
@@ -190,7 +190,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesHospitalizationModify(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new HospitalizationModifyDto();
             try
             {
@@ -246,7 +246,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentLeaveHospital(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentLeaveHospitalDto();
             try
             {
@@ -303,7 +303,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentLeaveHospitalReturn(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentLeaveHospitalReturnDto();
             try
             {
@@ -358,7 +358,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesPrescriptionUpload(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesPrescriptionUploadDto();
             try
             {
@@ -410,7 +410,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string DifferentPlacesPrescriptionDelete(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesPrescriptionDeleteDto();
             try
             {
@@ -456,7 +456,7 @@ namespace BenDingActive.Service
         }
         public string DifferentPlacesPrescriptionSplitLine(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesPrescriptionSplitLineDto();
             try
             {
@@ -561,7 +561,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string DifferentPlacesCostPreSettlement(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesCostPreSettlementDto();
             try
             {
@@ -610,7 +610,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string DifferentPlacesCostSettlement(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesCostSettlementDto();
             try
             {
@@ -659,7 +659,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string DifferentPlacesHospitalizedSettlementCancel(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesHospitalizedSettlementCancelDto();
             try
             {
@@ -707,7 +707,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string DifferentPlacesCostSettlementQuery(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new CostSettlementQueryDto();
             try
             {
@@ -759,7 +759,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesCardManagement(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesCardManagementDto();
             try
             {
@@ -811,7 +811,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesDoctorsAdviceUpload(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesDoctorsAdviceUploadDto();
             try
             {
@@ -861,7 +861,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesDoctorsAdviceCancel(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesDoctorsAdviceUploadDto();
             try
             {
@@ -911,7 +911,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesMedicalRecordUpload(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesMedicalRecordUploadDto();
             try
             {
@@ -961,7 +961,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesMedicalRecordQuery(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesMedicalRecordQueryDto();
             try
             {
@@ -1011,7 +1011,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesMedicalRecordDelete(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesMedicalRecordQueryDto();
             try
             {
@@ -1061,7 +1061,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesIsBackQuery(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesMedicalRecordQueryDto();
             try
             {
@@ -1111,7 +1111,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesHospitalizationExamineQuery(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesHospitalizationExamineQueryDto();
             try
             {
@@ -1161,7 +1161,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string MedicalInstitutionsMonthlySettlement(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new MedicalInstitutionsMonthlySettlementDto();
             try
             {
@@ -1211,7 +1211,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string MedicalInstitutionsMonthlySettlementCancel(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new MedicalInstitutionsMonthlySettlementCancelDto();
             try
             {
@@ -1261,7 +1261,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesSettlementPrint(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesSettlementPrintDto();
             try
             {
@@ -1311,7 +1311,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string OutpatientSimulatedSettlement(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new OutpatientSimulatedSettlementDto();
             try
             {
@@ -1361,7 +1361,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string OutpatientSettlement(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new OutpatientSimulatedSettlementDto();
             try
             {
@@ -1411,7 +1411,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string OutpatientSettlementCancel(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new OutpatientSimulatedSettlementDto();
             try
             {
@@ -1461,7 +1461,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesRushTransaction(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesRushTransactionDto();
             try
             {
@@ -1511,7 +1511,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesCardAuthenticationTransaction(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesCardAuthenticationTransactionDto();
             try
             {
@@ -1561,7 +1561,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesDepartmentInfoUpload(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesDepartmentInfoUploadDto();
             try
             {
@@ -1611,7 +1611,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string DifferentPlacesDoctorInfoUpload(string param, HisBaseParam baseParam)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new DifferentPlacesDoctorInfoUploadDto();
             try
             {

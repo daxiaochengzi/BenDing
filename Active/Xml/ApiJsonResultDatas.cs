@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace BenDingActive.Xml
 {
   
-    public class ApiJsonResultData
+    public class ApiJsonResultDatas
     {
 
         /// <summary>

@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="HIS_Interface">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TradeCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="InputParameter" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="HIS_InterfaceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="HIS_InterfaceResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="HIPMessageServer">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="action" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="message" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="HIPMessageServerResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="HIPMessageServerResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TCM_HIS_05">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="InputParameter" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TCM_HIS_05Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TCM_HIS_05Result" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TCM_HIS_06">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="InputParameter" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TCM_HIS_06Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TCM_HIS_06Result" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TCM_AE_04">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="InputParameter" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TCM_AE_04Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TCM_AE_04Result" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="string" nillable="true" type="s:string" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="HIS_InterfaceSoapIn">
+    <wsdl:part name="parameters" element="tns:HIS_Interface" />
+  </wsdl:message>
+  <wsdl:message name="HIS_InterfaceSoapOut">
+    <wsdl:part name="parameters" element="tns:HIS_InterfaceResponse" />
+  </wsdl:message>
+  <wsdl:message name="HIPMessageServerSoapIn">
+    <wsdl:part name="parameters" element="tns:HIPMessageServer" />
+  </wsdl:message>
+  <wsdl:message name="HIPMessageServerSoapOut">
+    <wsdl:part name="parameters" element="tns:HIPMessageServerResponse" />
+  </wsdl:message>
+  <wsdl:message name="TCM_HIS_05SoapIn">
+    <wsdl:part name="parameters" element="tns:TCM_HIS_05" />
+  </wsdl:message>
+  <wsdl:message name="TCM_HIS_05SoapOut">
+    <wsdl:part name="parameters" element="tns:TCM_HIS_05Response" />
+  </wsdl:message>
+  <wsdl:message name="TCM_HIS_06SoapIn">
+    <wsdl:part name="parameters" element="tns:TCM_HIS_06" />
+  </wsdl:message>
+  <wsdl:message name="TCM_HIS_06SoapOut">
+    <wsdl:part name="parameters" element="tns:TCM_HIS_06Response" />
+  </wsdl:message>
+  <wsdl:message name="TCM_AE_04SoapIn">
+    <wsdl:part name="parameters" element="tns:TCM_AE_04" />
+  </wsdl:message>
+  <wsdl:message name="TCM_AE_04SoapOut">
+    <wsdl:part name="parameters" element="tns:TCM_AE_04Response" />
+  </wsdl:message>
+  <wsdl:message name="HIS_InterfaceHttpGetIn">
+    <wsdl:part name="TradeCode" type="s:string" />
+    <wsdl:part name="InputParameter" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="HIS_InterfaceHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="HIPMessageServerHttpGetIn">
+    <wsdl:part name="action" type="s:string" />
+    <wsdl:part name="message" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="HIPMessageServerHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TCM_HIS_05HttpGetIn">
+    <wsdl:part name="InputParameter" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TCM_HIS_05HttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TCM_HIS_06HttpGetIn">
+    <wsdl:part name="InputParameter" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TCM_HIS_06HttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TCM_AE_04HttpGetIn">
+    <wsdl:part name="InputParameter" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TCM_AE_04HttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="HIS_InterfaceHttpPostIn">
+    <wsdl:part name="TradeCode" type="s:string" />
+    <wsdl:part name="InputParameter" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="HIS_InterfaceHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="HIPMessageServerHttpPostIn">
+    <wsdl:part name="action" type="s:string" />
+    <wsdl:part name="message" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="HIPMessageServerHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TCM_HIS_05HttpPostIn">
+    <wsdl:part name="InputParameter" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TCM_HIS_05HttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TCM_HIS_06HttpPostIn">
+    <wsdl:part name="InputParameter" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TCM_HIS_06HttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="TCM_AE_04HttpPostIn">
+    <wsdl:part name="InputParameter" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="TCM_AE_04HttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:portType name="WebServiceSoap">
+    <wsdl:operation name="HIS_Interface">
+      <wsdl:input message="tns:HIS_InterfaceSoapIn" />
+      <wsdl:output message="tns:HIS_InterfaceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="HIPMessageServer">
+      <wsdl:input message="tns:HIPMessageServerSoapIn" />
+      <wsdl:output message="tns:HIPMessageServerSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TCM_HIS_05">
+      <wsdl:input message="tns:TCM_HIS_05SoapIn" />
+      <wsdl:output message="tns:TCM_HIS_05SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TCM_HIS_06">
+      <wsdl:input message="tns:TCM_HIS_06SoapIn" />
+      <wsdl:output message="tns:TCM_HIS_06SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TCM_AE_04">
+      <wsdl:input message="tns:TCM_AE_04SoapIn" />
+      <wsdl:output message="tns:TCM_AE_04SoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="WebServiceHttpGet">
+    <wsdl:operation name="HIS_Interface">
+      <wsdl:input message="tns:HIS_InterfaceHttpGetIn" />
+      <wsdl:output message="tns:HIS_InterfaceHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="HIPMessageServer">
+      <wsdl:input message="tns:HIPMessageServerHttpGetIn" />
+      <wsdl:output message="tns:HIPMessageServerHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TCM_HIS_05">
+      <wsdl:input message="tns:TCM_HIS_05HttpGetIn" />
+      <wsdl:output message="tns:TCM_HIS_05HttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TCM_HIS_06">
+      <wsdl:input message="tns:TCM_HIS_06HttpGetIn" />
+      <wsdl:output message="tns:TCM_HIS_06HttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TCM_AE_04">
+      <wsdl:input message="tns:TCM_AE_04HttpGetIn" />
+      <wsdl:output message="tns:TCM_AE_04HttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="WebServiceHttpPost">
+    <wsdl:operation name="HIS_Interface">
+      <wsdl:input message="tns:HIS_InterfaceHttpPostIn" />
+      <wsdl:output message="tns:HIS_InterfaceHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="HIPMessageServer">
+      <wsdl:input message="tns:HIPMessageServerHttpPostIn" />
+      <wsdl:output message="tns:HIPMessageServerHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TCM_HIS_05">
+      <wsdl:input message="tns:TCM_HIS_05HttpPostIn" />
+      <wsdl:output message="tns:TCM_HIS_05HttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TCM_HIS_06">
+      <wsdl:input message="tns:TCM_HIS_06HttpPostIn" />
+      <wsdl:output message="tns:TCM_HIS_06HttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TCM_AE_04">
+      <wsdl:input message="tns:TCM_AE_04HttpPostIn" />
+      <wsdl:output message="tns:TCM_AE_04HttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WebServiceSoap" type="tns:WebServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="HIS_Interface">
+      <soap:operation soapAction="http://tempuri.org/HIS_Interface" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="HIPMessageServer">
+      <soap:operation soapAction="http://tempuri.org/HIPMessageServer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TCM_HIS_05">
+      <soap:operation soapAction="http://tempuri.org/TCM_HIS_05" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TCM_HIS_06">
+      <soap:operation soapAction="http://tempuri.org/TCM_HIS_06" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TCM_AE_04">
+      <soap:operation soapAction="http://tempuri.org/TCM_AE_04" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WebServiceSoap12" type="tns:WebServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="HIS_Interface">
+      <soap12:operation soapAction="http://tempuri.org/HIS_Interface" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="HIPMessageServer">
+      <soap12:operation soapAction="http://tempuri.org/HIPMessageServer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TCM_HIS_05">
+      <soap12:operation soapAction="http://tempuri.org/TCM_HIS_05" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TCM_HIS_06">
+      <soap12:operation soapAction="http://tempuri.org/TCM_HIS_06" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TCM_AE_04">
+      <soap12:operation soapAction="http://tempuri.org/TCM_AE_04" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WebServiceHttpGet" type="tns:WebServiceHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="HIS_Interface">
+      <http:operation location="/HIS_Interface" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="HIPMessageServer">
+      <http:operation location="/HIPMessageServer" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TCM_HIS_05">
+      <http:operation location="/TCM_HIS_05" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TCM_HIS_06">
+      <http:operation location="/TCM_HIS_06" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TCM_AE_04">
+      <http:operation location="/TCM_AE_04" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WebServiceHttpPost" type="tns:WebServiceHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="HIS_Interface">
+      <http:operation location="/HIS_Interface" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="HIPMessageServer">
+      <http:operation location="/HIPMessageServer" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TCM_HIS_05">
+      <http:operation location="/TCM_HIS_05" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TCM_HIS_06">
+      <http:operation location="/TCM_HIS_06" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TCM_AE_04">
+      <http:operation location="/TCM_AE_04" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WebService">
+    <wsdl:port name="WebServiceSoap" binding="tns:WebServiceSoap">
+      <soap:address location="http://47.111.29.88:11013/WebService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="WebServiceSoap12" binding="tns:WebServiceSoap12">
+      <soap12:address location="http://47.111.29.88:11013/WebService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="WebServiceHttpGet" binding="tns:WebServiceHttpGet">
+      <http:address location="http://47.111.29.88:11013/WebService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="WebServiceHttpPost" binding="tns:WebServiceHttpPost">
+      <http:address location="http://47.111.29.88:11013/WebService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

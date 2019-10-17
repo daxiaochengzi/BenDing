@@ -20,7 +20,7 @@ namespace BenDingActive.Service
        
         public string GetUserInfo(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -82,7 +82,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string HospitalizationRegister(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -132,7 +132,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string HospitalizationModify(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -183,7 +183,7 @@ namespace BenDingActive.Service
         /// <returns></returns>
         public string PrescriptionUpload(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -235,7 +235,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string PrescriptionDelete(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -284,7 +284,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string PrescriptionDetailQuery(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
 
             try
             {
@@ -340,7 +340,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string BatchConfirmation(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -389,7 +389,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string BatchUnConfirmation(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -438,7 +438,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string CostPreSettlement(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -487,7 +487,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string CostSettlement(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -499,7 +499,9 @@ namespace BenDingActive.Service
                     int result = WorkersMedicalInsurance.CallService_cxjb("CXJB010");
                     if (result == 1)
                     {
-                        data = XmlHelp.DeSerializerModels(new CostSettlementDto());
+                      
+                       
+                           data = XmlHelp.DeSerializerModels(new CostSettlementDto());
                         if (data.PO_FHZ == "1")
                         {
                             resultData.Data = JsonConvert.SerializeObject(data);
@@ -536,7 +538,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string HospitalizedSettlementCancel(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -584,7 +586,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string CostSettlementQuery(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -633,7 +635,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string ProjectDownload(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -683,7 +685,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string IdentificationSpecialDiseases(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -732,7 +734,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string IdentificationSpecialDiseasesCancel(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -781,7 +783,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string IdentificationSpecialQuery(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             try
             {
                // var paramIni = JsonConvert.DeserializeObject<IdentificationSpecialDiseasesQueryParam>(param);
@@ -829,7 +831,7 @@ namespace BenDingActive.Service
         }
         public string IdentificationSpecialHospitalQuery(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -878,7 +880,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string IdentificationSpecialChange(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -927,7 +929,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string IdentificationSpecialSettlement(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -976,7 +978,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string IdentificationSpecialReimbursement(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -1025,7 +1027,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string IdentificationSpecialCancel(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -1074,7 +1076,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string IdentificationSpecialReimbursementQuery(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             try
             {
                // var paramIni = JsonConvert.DeserializeObject<IdentificationSpecialReimbursementQueryParam>(param);
@@ -1134,7 +1136,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string IdentificationSpecialReimbursementAll(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -1183,7 +1185,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string IdentificationSpecialReimbursementAllCancel(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {
@@ -1232,7 +1234,7 @@ namespace BenDingActive.Service
         /// </summary>
         public string IdentificationSpecialDownload(string param)
         {
-            var resultData = new ApiJsonResultData { Code = true };
+            var resultData = new ApiJsonResultDatas { Code = true };
             var data = new IniDto();
             try
             {

@@ -43,7 +43,7 @@ namespace BenDingActive.Xml
 
                 if (result != null)
                 {
-                    var resultData = JsonConvert.DeserializeObject<ApiJsonResultData>(result);
+                    var resultData = JsonConvert.DeserializeObject<ApiJsonResultDatas>(result);
                     if (resultData.Code == false)
                     {
                         throw new Exception(resultData.Message);
