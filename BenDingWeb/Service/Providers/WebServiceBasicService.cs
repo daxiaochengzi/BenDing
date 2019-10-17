@@ -29,7 +29,7 @@ namespace BenDingWeb.Service.Providers
         /// <returns></returns>
         public async Task<UserInfoDto> GetVerificationCode(string tradeCode, string inputParameter)
         {
-          
+        
             var ini =new UserInfoDto();
             List<UserInfoDto> resultList;
             var data = await _webServiceBasic.HIS_InterfaceListAsync(tradeCode, inputParameter,"");

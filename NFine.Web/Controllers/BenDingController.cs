@@ -36,22 +36,24 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public async Task<ActionResult> GetUserBaseInfos()
         {
-            
-             var userBase = await GetUserBaseInfo();
-            return Json(userBase, JsonRequestBehavior.AllowGet);
-
-
-        }
-        [HttpGet]
-        public ApiJsonResultData GetUserBaseInfoss(string dd)
-        {
-            return new ApiJsonResultData().RunWithTry(y =>
+            var resultData= await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
-
-                y.Data = dd;
-
+                var userBase = await GetUserBaseInfo();
+                y.Data = userBase;
+                
             });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
         }
+        //[HttpGet]
+        //public ApiJsonResultData GetUserBaseInfoss(string dd)
+        //{
+        //    return new ApiJsonResultData().RunWithTry(y =>
+        //    {
+
+        //        y.Data = dd;
+
+        //    });
+        //}
 
 
         [NonAction]
