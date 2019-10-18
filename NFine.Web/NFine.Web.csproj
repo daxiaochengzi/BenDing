@@ -181,6 +181,7 @@
     <Compile Include="Controllers\BenDingController.cs" />
     <Compile Include="Controllers\ClientsDataController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InsuranceController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -625,6 +626,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\ReportManage\Views\Echarts\" />
+    <Folder Include="WebUI\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\ReportManage\Views\Highcharts\Sample1.cshtml" />
@@ -679,8 +681,9 @@
   <ItemGroup>
     <Content Include="Areas\SystemManage\Views\User\Info.cshtml" />
     <None Include="packages.config" />
-    <None Include="Properties\PublishProfiles\NFine.Framework.Release.pubxml" />
     <Content Include="SwaggerUI\lib\.DS_Store" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <Content Include="Views\Insurance\Card.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

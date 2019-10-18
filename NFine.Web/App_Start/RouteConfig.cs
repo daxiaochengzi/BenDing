@@ -19,6 +19,7 @@ namespace NFine.Web
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Login", action = "Index", id = UrlParameter.Optional }
             );
+            routes.MapRoute("", "ybsp/his/{controller}/{action}", new { controller = "Home"});
         }
 
      
