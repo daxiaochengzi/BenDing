@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using BenDingWeb.Models.Dto;
 using BenDingWeb.Models.Params;
@@ -54,8 +56,62 @@ namespace NFine.Web.Controllers
 
         //    });
         //}
+        public ActionResult Test()
+        {
+            return View();
+        }
+        /// <summary>
+        /// 获取三大目录
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ActionResult> GetCatalog( UiCatalogParam param)
+        {
+            var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
+            {
+                var userBase = await GetUserBaseInfo();
+                if (userBase != null)
+                {
+                    var inputInpatientInfo = new CatalogParam()
+                    {
+                        验证码 = userBase.验证码,
+                        CatalogType = param.CatalogType,
+                        机构编码 = userBase.机构编码,
+                        条数 = 500,
+                    };
 
 
+                    var inputInpatientInfoData = await _webServiceBasicService.GetCatalog(userBase, inputInpatientInfo);
+                    if (inputInpatientInfoData.Any())
+                    {
+                        y.Data = inputInpatientInfoData;
+                    }
+                }
+
+                //var data = await webService.ExecuteSp(param.Params);
+
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
+        }
+
+
+        /// <summary>
+        /// 删除三大目录
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ActionResult> DeleteCatalog( UiCatalogParam param)
+        {
+            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+            {
+                var userBase = await GetUserBaseInfo();
+                var data = await _webServiceBasicService.DeleteCatalog(userBase, Convert.ToInt16(param.CatalogType));
+                y.Data = data;
+
+
+            }));
+        }
         [NonAction]
         private async Task<UserInfoDto> GetUserBaseInfo()
         {

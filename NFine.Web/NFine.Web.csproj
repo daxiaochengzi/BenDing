@@ -684,6 +684,7 @@
     <Content Include="SwaggerUI\lib\.DS_Store" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Views\Insurance\Card.cshtml" />
+    <Content Include="Views\BenDing\Test.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

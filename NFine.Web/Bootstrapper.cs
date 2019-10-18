@@ -35,7 +35,6 @@ namespace NFine.Web
 
     public static void RegisterTypes(IUnityContainer container)
     {
-        
         container.RegisterType<IGrammarNewService, GrammarNewService>();
         container.RegisterType<IWebServiceBasic, WebServiceBasic>();
         container.RegisterType<IDataBaseHelpService, DataBaseHelpService>();

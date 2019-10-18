@@ -7,7 +7,7 @@ using System.Web.Routing;
 
 namespace NFine.Web.Controllers
 { 
-    public class InsuranceController : Controller
+    public class InsuranceController : AsyncController
     {
         //
         // GET: /Insurance/
@@ -16,6 +16,6 @@ namespace NFine.Web.Controllers
         {
             return View();
         }
-
+     
     }
 }

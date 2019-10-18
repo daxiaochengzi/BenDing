@@ -105,7 +105,7 @@ namespace BenDingWeb.Service.Providers
                        //获取唯一编码
                         var catalogDtoIdList = param.Select(c => c.目录编码).ToList();
                         var ids = ListToStr(catalogDtoIdList);
-                        string sqlstr = $"select 目录编码  from [dbo].[三大目录]  where 目录编码 in({ids})";
+                        string sqlstr = $"select directory_code  from [dbo].[hospital_three_catalogue]  where directory_code in({ids})";
                         var idListNew = await _sqlConnection.QueryAsync<string>(sqlstr);
                     //排除已有项目
                          paramNew = idListNew.Any() == true ? param.Where(c => !idListNew.Contains(c.目录编码)).ToList() 
@@ -116,10 +116,10 @@ namespace BenDingWeb.Service.Providers
                             foreach (var itmes in paramNew)
                             {
                                 string insterSql = $@"
-                                        insert into [dbo].[三大目录]([目录编码],[目录名称],[助记码],[目录类别编码],[目录类别名称],[单位],[规格],[剂型],
-                                        [生产厂家名称],[备注],[创建时间],CreateTime,UpdateTime,IsDelete,DeleteTime,CreateUserId)
+                                        insert into [dbo].[hospital_three_catalogue]([directory_code],[directory_name],[mnemonic_code],[directory_category_code],[directory_category_name],[unit],[specification],[formulation],
+                                        [manufacturer_name],[remark],CreateTime,UpdateTime,is_delete,delete_time,create_user_id,delete_user_id)
                                         values('{itmes.目录编码}','{itmes.目录名称}','{itmes.助记码}',{Convert.ToInt16(type)},'{itmes.目录类别名称}','{itmes.单位}','{itmes.规格}',
-                                        '{itmes.剂型}', '{itmes.生产厂家名称}','{itmes.备注}', '{itmes.创建时间}',GETDATE(),GETDATE(),0,null,'{userInfo.职员ID}');";
+                                        '{itmes.剂型}', '{itmes.生产厂家名称}','{itmes.备注}', '{itmes.创建时间}',GETDATE(),0,null,'{userInfo.职员ID}'null);";
                                         insterCount += insterSql;
 
                             }
@@ -149,7 +149,7 @@ namespace BenDingWeb.Service.Providers
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
                 _sqlConnection.Open();
-                string strSql = $"delete [dbo].[三大目录] where [目录类别编码]= {param}";
+                string strSql = $"delete [dbo].[hospital_three_catalogue] where [directory_code]= {param}";
                 var num = await _sqlConnection.ExecuteAsync(strSql);
                 _sqlConnection.Close();
                 return num;
@@ -166,7 +166,7 @@ namespace BenDingWeb.Service.Providers
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
                 _sqlConnection.Open();
-                string strSql = $"select MAX(创建时间) from [dbo].[三大目录] where IsDelete=0 and 目录类别编码={num} ";
+                string strSql = $"select MAX(create_time) from [dbo].[hospital_three_catalogue] where IsDelete=0 and directory_code={num} ";
                 var timeMax = await _sqlConnection.QueryFirstAsync<string>(strSql);
 
                 result = timeMax;
