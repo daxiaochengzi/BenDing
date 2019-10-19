@@ -62,6 +62,7 @@
     <Compile Include="Models\Dto\ICD10InfoDto.cs" />
     <Compile Include="Models\Dto\InformationDto.cs" />
     <Compile Include="Models\Dto\InpatientInfoDetailDto.cs" />
+    <Compile Include="Models\Dto\InpatientInfoDetaiQueryDto.cs" />
     <Compile Include="Models\Dto\InpatientInfoDto.cs" />
     <Compile Include="Models\Dto\ListCount.cs" />
     <Compile Include="Models\Dto\MedicalInsuranceDataAllDto.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="Models\Params\UI\SaveXmlDataUiParam.cs" />
     <Compile Include="Models\Params\UI\SingleResidentInfoDownloadUIParam.cs" />
     <Compile Include="Models\Params\UI\TabelIni.cs" />
+    <Compile Include="Models\Params\UI\UiICD10Param.cs" />
     <Compile Include="Models\Params\UpdateMedicalInsuranceResidentInfoParam.cs" />
     <Compile Include="Models\Params\UserInfoParam.cs" />
     <Compile Include="Models\Params\XmlData.cs" />

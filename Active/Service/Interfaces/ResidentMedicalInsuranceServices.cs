@@ -1,89 +1,132 @@
 ﻿using System;
+using System.Threading.Tasks;
 using BenDing.Service;
 using BenDingActive.Model;
 using BenDingActive.Model.Dto;
 using BenDingActive.Model.Params;
+using BenDingActive.Service.Providers;
 using BenDingActive.Xml;
 using Newtonsoft.Json;
 
-namespace BenDingActive.Service
+namespace BenDingActive.Service.Interfaces
 {/// <summary>
  /// 居民医保接口
  /// </summary>
-    public class ResidentMedicalInsuranceServiceTest
+    public class ResidentMedicalInsuranceServices: IResidentMedicalInsuranceServices
     {
-      
-        ///// <summary>
-        ///// 获取个人基础资料
-        ///// </summary>
-        ///// <param name="param"></param>
-        ///// <param name="baseParam"></param>
-        //public string GetUserInfo(string param)
-        //{
-        //    var resultData = new ApiJsonResultData {Code = true};
-        //    var data=new UserInfoDto();
-        //    //try
-        //    //{
-        //    //   var paramIni= JsonConvert.DeserializeObject<UserInfoParam>(param);  
-        //    //    var xmlStr = XmlHelp.SaveXml(paramIni);
-        //    //    if (xmlStr)
-        //    //    {
-        //    //        int result = WorkersMedicalInsurance.CallService_cxjb("CXJB001");
-        //    //        if (result == 1)
-        //    //        {
-        //    //            data = XmlHelp.DeSerializerModel(new UserInfoDto());
-        //    //            if (data.PO_FHZ == "1")
-        //    //            {
-        //    //                resultData.Data = JsonConvert.SerializeObject(data);
-        //    //            }
-        //    //            else
-        //    //            {
-        //    //               throw  new Exception(data.PO_MSG);
-        //    //            }
+
+        /// <summary>
+        /// 获取个人基础资料
+        /// </summary>
+        /// <param name="param"></param>
+
+        public async Task<UserInfoDto> GetUserInfo(ActiveUserInfoParam param)
+        {
+            return await Task.Run(async () =>
+            {
+                var data = new UserInfoDto();
+
+                var xmlStr = XmlHelp.SaveXml(param);
+                if (xmlStr)
+                {
+                    int result = WorkersMedicalInsurance.CallService_cxjb("CXJB001");
+                    if (result == 1)
+                    {
+                        data = XmlHelp.DeSerializerModel(new UserInfoDto());
+                       
+                    }
+                    else
+                    {
+                        throw new Exception("居民个人基础资料执行失败!!!");
+                    }
+
+                }
 
 
-        //    //        }
 
-        //    //    }
+                return data;
+            });
+        }
 
-        //    //}
-        //    //catch (Exception e)
-        //    //{
-        //    //    resultData.Code = false;
-        //    //    resultData.Message = e.Message;
-        //    //    Logs.LogWrite(new LogParam()
-        //    //    {
-        //    //        Msg = e.Message,
-                   
-        //    //        Params = Logs.ToJson(param),
-        //    //        ResultData = Logs.ToJson(data)
+        /// <summary>
+        /// 入院登记
+        /// </summary>
+        /// <returns></returns>
+        public async Task<HospitalizationRegisterDto> HospitalizationRegister(HospitalizationRegisterParam param)
+        {
+            return await Task.Run(async () =>
+            {
+                var data = new HospitalizationRegisterDto();
+                var xmlStr = XmlHelp.SaveXml(param);
+                if (xmlStr)
+                {
+                    int result = WorkersMedicalInsurance.CallService_cxjb("CXJB002");
+                    if (result == 1)
+                    {
+                        data = XmlHelp.DeSerializerModel(new HospitalizationRegisterDto());
 
-        //    //    });
+                    }
+                    else
+                    {
+                        throw  new  Exception("居民入院登记执行失败!!!");
+                    }
 
-        //    //}
+                }
+                return data;
 
-        //    return  JsonConvert.SerializeObject(resultData);
+            });
 
+
+        }
+        /// <summary>
+        /// 项目下载
+        /// </summary>
+        public async Task<ProjectDownloadDto> ProjectDownload(ProjectDownloadParam param)
+        {
+            return await Task.Run(async () =>
+            {
+                var data = new ProjectDownloadDto();
+                var xmlStr = XmlHelp.SaveXml(param);
+                if (xmlStr)
+                {
+                    int result = WorkersMedicalInsurance.CallService_cxjb("CXJB019");
+                    if (result == 1)
+                    {
+                        data = XmlHelp.DeSerializerModel(new ProjectDownloadDto());
+
+                    }
+
+
+                }
+                else
+                {
+                    throw new Exception("居民项目下载执行失败!!!");
+                }
+
+                return data;
+            });
+
+        }
         //}
         ///// <summary>
-        ///// 入院登记
+        ///// 住院资料修改
         ///// </summary>
         ///// <returns></returns>
-        //public string HospitalizationRegister(string param)
+        //public string HospitalizationModify(string param)
         //{
         //    var resultData = new ApiJsonResultData { Code = true };
-        //    var data = new HospitalizationRegisterDto();
+        //    var data = new HospitalizationModifyDto();
         //    try
         //    {
-        //        var paramIni = JsonConvert.DeserializeObject<HospitalizationRegisterParam>(param);
+        //        var paramIni = JsonConvert.DeserializeObject<HospitalizationModifyParam>(param);
 
         //        var xmlStr = XmlHelp.SaveXml(paramIni);
         //        if (xmlStr)
         //        {
-        //            int result = WorkersMedicalInsurance.CallService_cxjb("CXJB002");
+        //            int result = WorkersMedicalInsurance.CallService_cxjb("CXJB003");
         //            if (result == 1)
         //            {
-        //                data = XmlHelp.DeSerializerModel(new HospitalizationRegisterDto());
+        //                data = XmlHelp.DeSerializerModel(new HospitalizationModifyDto());
         //                if (data.PO_FHZ == "1")
         //                {
         //                    resultData.Data = JsonConvert.SerializeObject(data);
@@ -106,57 +149,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //            OperatorCode ="",
-        //            Params = Logs.ToJson(param),
-        //            ResultData = Logs.ToJson(data)
-
-        //        });
-
-        //    }
-        //    return JsonConvert.SerializeObject(resultData);
-        //}
-        ///// <summary>
-        ///// 住院资料修改
-        ///// </summary>
-        ///// <returns></returns>
-        //public string HospitalizationModify(string param)
-        //{   
-        //    var resultData = new ApiJsonResultData { Code = true };
-        //    var data = new HospitalizationModifyDto();
-        //    try
-        //    {
-        //        var paramIni = JsonConvert.DeserializeObject<HospitalizationModifyParam>(param);
-
-        //        var xmlStr = XmlHelp.SaveXml(paramIni);
-        //        if (xmlStr)
-        //        {
-        //            int result = WorkersMedicalInsurance.CallService_cxjb("CXJB003");
-        //            if (result == 1)
-        //            {
-        //                data = XmlHelp.DeSerializerModel(new HospitalizationModifyDto());
-        //                if (data.PO_FHZ == "1")
-        //                {
-        //                    resultData.Data = JsonConvert.SerializeObject(data);
-        //                }
-        //                else
-        //                {
-        //                    throw new Exception( data.PO_MSG);
-        //                }
-
-
-        //            }
-
-        //        }
-
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        resultData.Code = false;
-        //        resultData.Message = e.Message;
-        //        Logs.LogWrite(new LogParam()
-        //        {
-        //            Msg = e.Message,
-        //           OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -191,7 +184,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
 
@@ -207,7 +200,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -243,7 +236,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
 
@@ -259,7 +252,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -274,7 +267,7 @@ namespace BenDingActive.Service
         //public string PrescriptionDetailQuery(string param)
         //{
         //    var resultData = new ApiJsonResultData { Code = true };
-           
+
         //    try
         //    {
         //        var paramIni = JsonConvert.DeserializeObject<PrescriptionDetailQueryParam>(param);
@@ -285,10 +278,10 @@ namespace BenDingActive.Service
         //            int result = WorkersMedicalInsurance.CallService_cxjb("CXJB006");
         //            if (result == 1)
         //            {
-        //                 var validData = XmlHelp.ValidXml("CFMX");
+        //                var validData = XmlHelp.ValidXml("CFMX");
         //                if (validData.PO_FHZ == "1")
         //                {
-        //                    if (validData.IsRows )
+        //                    if (validData.IsRows)
         //                    {
         //                        var data = XmlHelp.DeSerializerModel(new PrescriptionDetailQueryRow());
         //                        resultData.Data = JsonConvert.SerializeObject(data);
@@ -299,11 +292,11 @@ namespace BenDingActive.Service
         //                        resultData.Data = JsonConvert.SerializeObject(data);
         //                    }
 
-                            
+
         //                }
         //                else
         //                {
-        //                    throw new Exception( validData.PO_MSG);
+        //                    throw new Exception(validData.PO_MSG);
         //                }
         //            }
 
@@ -317,7 +310,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //        });
 
@@ -347,7 +340,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
 
@@ -363,7 +356,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -397,7 +390,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
 
@@ -413,7 +406,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -446,7 +439,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
 
@@ -462,7 +455,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -495,7 +488,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
 
@@ -511,7 +504,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -544,7 +537,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
         //            }
@@ -559,7 +552,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -592,7 +585,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
 
@@ -608,7 +601,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -617,53 +610,7 @@ namespace BenDingActive.Service
         //    }
         //    return JsonConvert.SerializeObject(resultData);
         //}
-        ///// <summary>
-        ///// 项目下载
-        ///// </summary>
-        //public ProjectDownloadDto ProjectDownload(string param)
-        //{
-        //    var resultData = new ApiJsonResultData { Code = true };
-        //    var data = new ProjectDownloadDto();
-        //    try
-        //    {
-        //        var paramIni = JsonConvert.DeserializeObject<ProjectDownloadParam>(param);
 
-        //        var xmlStr = XmlHelp.SaveXml(paramIni);
-        //        if (xmlStr)
-        //        {
-        //            int result = WorkersMedicalInsurance.CallService_cxjb("CXJB019");
-        //            if (result == 1)
-        //            {
-        //                data = XmlHelp.DeSerializerModel(new ProjectDownloadDto());
-        //                if (data.PO_FHZ == "1")
-        //                {
-        //                    resultData.Data = JsonConvert.SerializeObject(data);
-        //                }
-        //                else
-        //                {
-        //                    throw new Exception( data.PO_MSG);
-        //                }
-
-
-        //            }
-
-        //        }
-
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        resultData.Code = false;
-        //        resultData.Message = e.Message;
-        //        Logs.LogWrite(new LogParam()
-        //        {
-        //            Msg = e.Message,
-        //         OperatorCode ="",
-        //            Params = Logs.ToJson(param),
-        //            ResultData = Logs.ToJson(data)
-
-        //        });
-
-        //    }
 
         //    return data; //JsonConvert.SerializeObject(resultData);
         //}
@@ -691,7 +638,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
 
@@ -707,7 +654,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -740,7 +687,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
 
@@ -756,7 +703,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -781,7 +728,7 @@ namespace BenDingActive.Service
         //            int result = WorkersMedicalInsurance.CallService_cxjb("MTBX003");
         //            if (result == 1)
         //            {
-                        
+
         //                var dataValid = XmlHelp.ValidXml("PO_RDXX");
         //                if (dataValid.PO_FHZ == "1")
         //                {
@@ -791,7 +738,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( dataValid.PO_MSG);
+        //                    throw new Exception(dataValid.PO_MSG);
         //                }
 
 
@@ -807,9 +754,9 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
-                   
+
 
         //        });
 
@@ -828,7 +775,7 @@ namespace BenDingActive.Service
         //        if (xmlStr)
         //        {
         //            int result = WorkersMedicalInsurance.CallService_cxjb("MTBX004");
-        //            if (result == 1) 
+        //            if (result == 1)
         //            {
         //                data = XmlHelp.DeSerializerModel(new IdentificationSpecialHospitalQueryDto());
         //                if (data.PO_FHZ == "1")
@@ -837,7 +784,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
 
@@ -853,7 +800,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -865,7 +812,7 @@ namespace BenDingActive.Service
         ///// <summary>
         ///// 特殊疾病申报变更
         ///// </summary>
-        //public string   IdentificationSpecialChange(string param)
+        //public string IdentificationSpecialChange(string param)
         //{
         //    var resultData = new ApiJsonResultData { Code = true };
         //    var data = new IdentificationSpecialChangeDto();
@@ -886,7 +833,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
 
@@ -902,7 +849,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -935,7 +882,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
 
@@ -951,7 +898,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -984,7 +931,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
 
@@ -1000,7 +947,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -1049,7 +996,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -1080,20 +1027,20 @@ namespace BenDingActive.Service
         //                {
         //                    if (dataValid.IsRows)
         //                    {
-        //                         var data = XmlHelp.DeSerializerModel(
-        //                            new IdentificationSpecialReimbursementQueryListDto());
-        //                          resultData.Data = JsonConvert.SerializeObject(data);
+        //                        var data = XmlHelp.DeSerializerModel(
+        //                           new IdentificationSpecialReimbursementQueryListDto());
+        //                        resultData.Data = JsonConvert.SerializeObject(data);
         //                    }
         //                    else
         //                    {
         //                        var data = XmlHelp.DeSerializerModel(
         //                            new IdentificationSpecialReimbursementQueryDto());
         //                        resultData.Data = JsonConvert.SerializeObject(data);
-        //                    } 
-        //                }  
+        //                    }
+        //                }
         //                else
         //                {
-        //                    throw new Exception( dataValid.PO_MSG);
+        //                    throw new Exception(dataValid.PO_MSG);
         //                }
 
 
@@ -1109,7 +1056,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
 
 
@@ -1158,7 +1105,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -1191,7 +1138,7 @@ namespace BenDingActive.Service
         //                }
         //                else
         //                {
-        //                    throw new Exception( data.PO_MSG);
+        //                    throw new Exception(data.PO_MSG);
         //                }
 
 
@@ -1207,7 +1154,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //          OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 
@@ -1256,7 +1203,7 @@ namespace BenDingActive.Service
         //        Logs.LogWrite(new LogParam()
         //        {
         //            Msg = e.Message,
-        //         OperatorCode ="",
+        //            OperatorCode = "",
         //            Params = Logs.ToJson(param),
         //            ResultData = Logs.ToJson(data)
 

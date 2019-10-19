@@ -230,7 +230,7 @@
     <Compile Include="Model\Params\Single\SinglePrescriptionUploadParam.cs" />
     <Compile Include="Model\Params\Single\SinglePreSettlementParam.cs" />
     <Compile Include="Model\Params\Single\SinglePreSettlementQueryParam.cs" />
-    <Compile Include="Model\Params\UserInfoParam.cs" />
+    <Compile Include="Model\Params\ActiveUserInfoParam.cs" />
     <Compile Include="Model\Params\Web\HospitalizationModifyWebParam.cs" />
     <Compile Include="Model\Params\Web\MedicalInsuranceDataAllWebParam.cs" />
     <Compile Include="Model\Params\Web\PrescriptionUploadWebParam.cs" />
@@ -255,8 +255,9 @@
     <Compile Include="Service\GetOSBit.cs" />
     <Compile Include="Service\MedicalInsuranceDifferentPlaces.cs" />
     <Compile Include="Service\MedicalInsuranceDifferentPlacesService.cs" />
+    <Compile Include="Service\Providers\IResidentMedicalInsuranceServices.cs" />
     <Compile Include="Service\ResidentMedicalInsuranceService.cs" />
-    <Compile Include="Service\ResidentMedicalInsuranceServiceTest.cs" />
+    <Compile Include="Service\Interfaces\ResidentMedicalInsuranceServices.cs" />
     <Compile Include="Service\ResidentMedicalInsuranceTest.cs" />
     <Compile Include="Service\SingleResidentMedicalInsuranceService.cs" />
     <Compile Include="Service\WorkersMedicalInsurance.cs" />

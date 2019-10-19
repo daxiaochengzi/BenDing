@@ -1,11 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using MedicalInsurance.Domain.Models.Enums;
 
-namespace BenDingWeb.Models.Params
-{/// <summary>
-/// 
-/// </summary>
-  public  class UiCatalogParam
+namespace BenDingWeb.Models.Params.UI
+{
+   public class UiICD10Param
     {/// <summary> 
         /// 目录类别编
         /// </summary>

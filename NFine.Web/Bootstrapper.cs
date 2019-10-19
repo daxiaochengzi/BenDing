@@ -1,4 +1,6 @@
 using System.Web.Mvc;
+using BenDingActive.Service.Interfaces;
+using BenDingActive.Service.Providers;
 using BenDingWeb.Service.Interfaces;
 using BenDingWeb.Service.Providers;
 using BenDingWeb.WebServiceBasic;
@@ -8,38 +10,40 @@ using Unity.Mvc4;
 
 namespace NFine.Web
 {
-  public static class Bootstrapper
-  {
-    public static IUnityContainer Initialise()
+    public static class Bootstrapper
     {
-      var container = BuildUnityContainer();
+        public static IUnityContainer Initialise()
+        {
+            var container = BuildUnityContainer();
 
-      DependencyResolver.SetResolver(new UnityDependencyResolver(container));
+            DependencyResolver.SetResolver(new UnityDependencyResolver(container));
 
-      return container;
-    }
+            return container;
+        }
 
-    private static IUnityContainer BuildUnityContainer()
-    {
-      var container = new UnityContainer();
+        private static IUnityContainer BuildUnityContainer()
+        {
+            var container = new UnityContainer();
 
             // register all your components with the container here
             // it is NOT necessary to register your controllers
 
             // e.g. container.RegisterType<ITestService, TestService>();  
-       
+
             RegisterTypes(container);
 
-      return container;
-    }
-
-    public static void RegisterTypes(IUnityContainer container)
-    {
-        container.RegisterType<IGrammarNewService, GrammarNewService>();
-        container.RegisterType<IWebServiceBasic, WebServiceBasic>();
-        container.RegisterType<IDataBaseHelpService, DataBaseHelpService>();
-        container.RegisterType<IDataBaseSqlServerService, DataBaseSqlServerService>();
-        container.RegisterType<IWebServiceBasicService, WebServiceBasicService>();
+            return container;
         }
-  }
+
+        public static void RegisterTypes(IUnityContainer container)
+        {
+            container.RegisterType<IGrammarNewService, GrammarNewService>();
+            container.RegisterType<IWebServiceBasic, WebServiceBasic>();
+            container.RegisterType<IDataBaseHelpService, DataBaseHelpService>();
+            container.RegisterType<IDataBaseSqlServerService, DataBaseSqlServerService>();
+            container.RegisterType<IWebServiceBasicService, WebServiceBasicService>();
+            container.RegisterType<IResidentMedicalInsuranceServices, ResidentMedicalInsuranceServices>();
+            
+        }
+    }
 }

@@ -185,7 +185,7 @@ namespace BenDingWeb.Service.Providers
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
                 _sqlConnection.Open();
-                string strSql = $"select MAX(创建时间) from [dbo].[RHisICD10] where is_delete=0 ";
+                string strSql = $"select MAX(create_time) from [dbo].[ICD10] where is_delete=0 ";
                 var timeMax = await _sqlConnection.QueryFirstAsync<string>(strSql);
 
                 result = timeMax;
@@ -200,7 +200,7 @@ namespace BenDingWeb.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task AddICD10(List<ICD10InfoDto> param)
+        public async Task AddICD10(List<ICD10InfoDto> param, UserInfoDto user)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
@@ -213,7 +213,7 @@ namespace BenDingWeb.Service.Providers
                     //获取唯一编码
                     var catalogDtoIdList = param.Select(c => c.疾病ID).ToList();
                     var ids = ListToStr(catalogDtoIdList);
-                    string sqlstr = $"select 目录编码  from [dbo].[三大目录]  where 目录编码 in({ids})";
+                    string sqlstr = $"select disease_coding  from [dbo].[ICD10]  where disease_coding in({ids})";
                     var idListNew = await _sqlConnection.QueryAsync<string>(sqlstr);
                     //排除已有项目
                     paramNew = idListNew.Any() == true ? param.Where(c => !idListNew.Contains(c.疾病ID)).ToList()
@@ -226,10 +226,10 @@ namespace BenDingWeb.Service.Providers
                         {
                         
                             string insterSql = $@"
-                                        insert into [dbo].[RHisICD10]([疾病编码],[病种名称],[助记码],[备注],[创建时间],[疾病ID],
-                                           create_time,update_time,is_delete,delete_time)
-                                        values('{itmes.疾病编码}','{itmes.病种名称}','{itmes.助记码}','{itmes.备注}','{itmes.创建时间}','{itmes.疾病ID}',
-                                          GETDATE(),GETDATE(),0,null);";
+                                        insert into [dbo].[ICD10]([disease_coding],[disease_name],[mnemonic_code],[remark],[disease_id],
+                                          Icd10_create_time, create_time,create_user_id)
+                                        values('{itmes.疾病编码}','{itmes.病种名称}','{itmes.助记码}','{itmes.备注}','{itmes.疾病ID}','{itmes.创建时间}',
+                                        GETDATE(),'{user.职员ID}');";
                           
                                 insterCount += insterSql;
                         }
@@ -265,21 +265,21 @@ namespace BenDingWeb.Service.Providers
                         var ywId = ListToStr(param.Select(c => c.业务ID).ToList());
                         var outpatientNum = ListToStr(param.Select(c => c.门诊号).ToList());
                         string strSql =
-                            $@"update [dbo].[门诊病人] set  [is_delete] =1 ,delete_time=GETDATE(),delete_user_id='{user.职员ID}' where [is_delete]=0 and [业务ID] in(" +
-                            ywId + ") and [门诊号] in(" + outpatientNum + ")";
+                            $@"update [dbo].[outpatient] set  [is_delete] =1 ,delete_time=GETDATE(),delete_user_id='{user.职员ID}' where [is_delete]=0 and [business_id] in(" +
+                            ywId + ") and [outpatient_number] in(" + outpatientNum + ")";
                         var num = await _sqlConnection.ExecuteAsync(strSql, null, transaction);
                         string insertSql = "";
                         foreach (var item in param)
                         {
-                            string str = $@"INSERT INTO [dbo].[门诊病人](
-                                [姓名],[身份证号码],[性别],[业务ID],[门诊号],[就诊日期]
-                               ,[科室],[科室编码],[诊断医生],[诊断疾病编码],[诊断疾病名称]
-                               ,[主要病情描述],[经办人] ,[就诊总费用],[备注],[接诊状态]
-                               ,[create_time],[update_time],[is_delete],[delete_time],OrgCode,CreateUserId)
+                            string str = $@"INSERT INTO [dbo].[outpatient](
+                                [patient_name],[id_card_no],[patient_sex],[business_id],[outpatient_number],[visit_date]
+                               ,[department_name],[department_id],[diagnostic_doctor],[diagnostic_disease_code],[diagnostic_disease_name]
+                               ,[disease_desc],[operator] ,[medical_treatment_total_cost],[remark],[reception_status]
+                               ,[create_time],[is_delete],[delete_time],organization_code,create_user_id)
                                VALUES('{item.姓名}','{item.身份证号码}','{item.性别}','{item.业务ID}','{item.门诊号}','{item.就诊日期}'
                                      ,'{item.科室}','{item.科室编码}','{item.诊断医生}','{item.诊断疾病编码}','{item.诊断疾病名称}'
                                      ,'{item.主要病情描述}','{item.经办人}','{item.就诊总费用}','{item.备注}','{item.接诊状态}'
-                                     ,GETDATE(),GETDATE(),0,null,'{user.机构编码}','{user.职员ID}'
+                                     ,GETDATE(),0,null,'{user.机构编码}','{user.职员ID}'
                                 );";
                             insertSql += str;
 
@@ -319,25 +319,25 @@ namespace BenDingWeb.Service.Providers
 
                         var outpatientNum = ListToStr(param.Select(c => c.门诊号).ToList());
                         string strSql =
-                            $@"update [dbo].[门诊费用] set  [is_delete] =1 ,delete_time=GETDATE(),delete_user_id='{user.职员ID}' where [is_delete]=0 
-                                and [门诊号] in(" + outpatientNum + ")";
+                            $@"update [dbo].[outpatient_fee] set  [is_delete] =1 ,delete_time=GETDATE(),delete_user_id='{user.职员ID}' where [is_delete]=0 
+                                and [outpatient_number] in(" + outpatientNum + ")";
                         var num = await _sqlConnection.ExecuteAsync(strSql, null, transaction);
                         string insertSql = "";
-                        foreach (var item in param)
+                        foreach (var item in param)   
                         {
-                            string str = $@"INSERT INTO [dbo].[门诊费用](
-                               [门诊号] ,[费用明细ID] ,[项目名称],[项目编码] ,[项目类别名称] ,[项目类别编码]
-                               ,[单位] ,[剂型] ,[规格] ,[单价],[数量],[金额] ,[用量] ,[用法] ,[用药天数]
-		                       ,[医院计价单位] ,[是否进口药品] ,[药品产地] ,[处方号]  ,[费用单据类型] ,[开单科室名称]
-			                   ,[开单科室编码] ,[开单医生姓名],[开单医生编码] ,[开单时间] ,[执行科室名称],[执行科室编码]
-                               ,[执行医生姓名] ,[执行医生编码],[执行时间] ,[处方医师] ,[经办人],[执业医师证号]
-                               ,[费用冲销ID],[机构编码],[机构名称] ,[create_time] ,[update_time],[is_delete],[delete_time],CreateUserId)
+                            string str = $@"INSERT INTO [dbo].[outpatient_fee](
+                               [outpatient_number] ,[cost_detail_id] ,[cost_item_name],[cost_item_code] ,[cost_item_category_name] ,[cost_item_category_code]
+                               ,[unit] ,[formulation] ,[specification] ,[unit_price],[quantity],[amount] ,[dosage] ,[usage] ,[medicate_days]
+		                       ,[hospital_pricing_unit] ,[is_imported_drugs] ,[drug_producing_area] ,[recipe_code],[cost_document_type] ,[bill_department]
+			                   ,[bill_department_id] ,[bill_doctor_name],[bill_doctor_id] ,[bill_time] ,[operate_department_name],[operate_department_id]
+                               ,[operate_doctor_name] ,[operate_doctor_id],[operate_time] ,[prescription_doctor] ,[operator],[practice_doctor_number]
+                               ,[cost_write_off_id],[organization_code],[organization_name] ,[create_time] ,[is_delete],[delete_time],create_user_id)
                            VALUES('{item.门诊号}','{item.费用明细ID}','{item.项目名称}','{item.项目编码}','{item.项目类别名称}','{item.项目类别编码}'
                                  ,'{item.单位}','{item.剂型}','{item.规格}',{item.单价},{item.数量},{item.金额},'{item.用量}','{item.用法}','{item.用药天数}',
                                  '{item.医院计价单位}','{item.是否进口药品}','{item.药品产地}','{item.处方号}','{item.费用单据类型}','{item.开单科室名称}'
                                  ,'{item.开单科室编码}','{item.开单医生姓名}','{item.开单医生编码}','{item.开单时间}','{item.执行科室名称}','{item.执行科室编码}'
                                  ,'{item.执行医生姓名}','{item.执行医生编码}','{item.执行时间}','{item.处方医师}','{item.经办人}','{item.执业医师证号}'
-                                 ,'{item.费用冲销ID}','{item.机构编码}','{item.机构名称}',GETDATE(),GETDATE(),0,null,'{user.职员ID}'
+                                 ,'{item.费用冲销ID}','{item.机构编码}','{item.机构名称}',GETDATE(),0,null,'{user.职员ID}'
                                  );";
                             insertSql += str;
                           
@@ -367,53 +367,73 @@ namespace BenDingWeb.Service.Providers
             {
 
                 _sqlConnection.Open();
+             
                 if (param.Any())       
                 {
-                    IDbTransaction transaction = _sqlConnection.BeginTransaction();
+                    
                     try
                     {
-
-                        var outpatientNum = ListToStr(param.Select(c => c.费用明细ID).ToList());
+                       
+                        var outpatientNum = ListToStr(param.Select(c =>c.费用明细ID).ToList());
                         var paramFirst = param.FirstOrDefault();
                         string strSql =
-                            $@"update  [dbo].[住院费用] set  [is_delete] =1 ,delete_time=GETDATE(),delete_user_id='{user.职员ID}' where [is_delete]=0  and [住院号]={paramFirst.住院号}
-                                 and [费用明细ID] in({outpatientNum})";
-                        var num = await _sqlConnection.ExecuteAsync(strSql, null, transaction);
-                        string insertSql = "";
+                            $@" select [cost_detail_id],[data_sort] from [dbo].[hospitalization_fee] where [hospitalization_no]={paramFirst.住院号}
+                                 and [cost_detail_id] in({outpatientNum})";
+                        var data = await _sqlConnection.QueryAsync<InpatientInfoDetailQueryDto>(strSql);
                         int sort = 0;
-                        foreach (var item in param)
+                        List<InpatientInfoDetailDto> paramNew;
+                        if (data.Any())
+                        {    //获取最大排序号
+                            sort = data.Select(c => c.data_sort).Max();
+                            var costDetailIdList= data.Select(c => c.cost_detail_id).ToList();
+                            //排除已包含的明细id
+                            paramNew = param.Where(c=> !costDetailIdList.Contains(c.费用明细ID)).ToList();
+                        }
+                        else
+                        {
+                            paramNew = param;
+                        }
+
+                        string insertSql = "";
+                      
+                        foreach (var item in paramNew)
                         {
                             sort++;
-                            string str = $@"INSERT INTO [dbo].[住院费用](
-                               [住院号] ,[费用明细ID] ,[项目名称],[项目编码] ,[项目类别名称] ,[项目类别编码]
-                               ,[单位] ,[剂型] ,[规格] ,[单价],[数量],[金额] ,[用量] ,[用法] ,[用药天数]
-		                       ,[医院计价单位] ,[是否进口药品] ,[药品产地] ,[处方号]  ,[费用单据类型] ,[开单科室名称]
-			                   ,[开单科室编码] ,[开单医生姓名],[开单医生编码] ,[开单时间] ,[执行科室名称],[执行科室编码]
-                               ,[执行医生姓名] ,[执行医生编码],[执行时间] ,[处方医师] ,[经办人],[执业医师证号]
-                               ,[费用冲销ID],[机构编码],[机构名称] ,[create_time] ,[update_time],[is_delete],[delete_time],CreateUserId,Sort)
+                            string str = $@"INSERT INTO [dbo].[hospitalization_fee](
+                               [hospitalization_no] ,[cost_detail_id] ,[cost_item_name],[cost_item_code] ,[cost_item_category_name] ,[cost_item_category_code]
+                               ,[unit] ,[formulation] ,[specification] ,[unit_price],[quantity],[amount] ,[dosage] ,[usage] ,[medicate_days]
+		                       ,[hospital_pricing_unit] ,[is_imported_drugs] ,[drug_producing_area] ,[recipe_code]  ,[cost_document_type] ,[bill_department]
+			                   ,[bill_department_id] ,[bill_doctor_name],[bill_doctor_id] ,[bill_time] ,[operate_department_name],[operate_department_id]
+                               ,[operate_doctor_name] ,[operate_doctor_id],[operate_time] ,[prescription_doctor] ,[operator],[practice_doctor_number]
+                               ,[cost_write_off_id],[organization_code],[organization_name] ,[create_time] ,[is_delete],[delete_time],create_user_id,data_sort,upload_mark)
                            VALUES('{item.住院号}','{item.费用明细ID}','{item.项目名称}','{item.项目编码}','{item.项目类别名称}','{item.项目类别编码}'
                                  ,'{item.单位}','{item.剂型}','{item.规格}',{item.单价},{item.数量},{item.金额},'{item.用量}','{item.用法}','{item.用药天数}',
                                  '{item.医院计价单位}','{item.是否进口药品}','{item.药品产地}','{item.处方号}','{item.费用单据类型}','{item.开单科室名称}'
                                  ,'{item.开单科室编码}','{item.开单医生姓名}','{item.开单医生编码}','{item.开单时间}','{item.执行科室名称}','{item.执行科室编码}'
                                  ,'{item.执行医生姓名}','{item.执行医生编码}','{item.执行时间}','{item.处方医师}','{item.经办人}','{item.执业医师证号}'
-                                 ,'{item.费用冲销ID}','{item.机构编码}','{item.机构名称}',GETDATE(),GETDATE(),0,null,'{user.职员ID}',{sort}
+                                 ,'{item.费用冲销ID}','{item.机构编码}','{item.机构名称}',GETDATE(),0,null,'{user.职员ID}',{sort},0
                                  );";
                             insertSql += str;
                         }
-                        var nums = await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
-                        transaction.Commit();
+
+                        if (paramNew.Count > 0)
+                        {
+                            var nums = await _sqlConnection.ExecuteAsync(insertSql, null);
+                           
+                            
+                        }
+
                     }
                     catch (Exception exception)
                     {
-
-                        transaction.Rollback();
+                       
                         throw new Exception(exception.Message);
                     }
                 }
+               
 
             }
         }
-
         public async Task<int> UpdateInpatientInfoDetail(UpdateInpatientInfoDetail param)
         {
             int count = 0;
@@ -427,7 +447,6 @@ namespace BenDingWeb.Service.Providers
 
             return count;
         }
-
         /// <summary>
         /// 获取住院病人
         /// </summary>
@@ -475,10 +494,11 @@ namespace BenDingWeb.Service.Providers
                         }
                         var nums = await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
                         transaction.Commit();
+                        transaction.Dispose();
                     }
                     catch (Exception exception)
                     {
-
+                        transaction.Dispose();
                         transaction.Rollback();
                         throw new Exception(exception.Message);
                     }
@@ -486,7 +506,6 @@ namespace BenDingWeb.Service.Providers
 
             }
         }
-
         /// <summary>
         /// 住院病人查询
         /// </summary>
@@ -785,8 +804,6 @@ namespace BenDingWeb.Service.Providers
                 return result;
             }
         }
-      
-
         private string ListToStr(List<string> param)
         {
             string result = null;
@@ -794,7 +811,7 @@ namespace BenDingWeb.Service.Providers
             {
                 foreach (var item in param)
                 {
-                    result = "'" + item + "'" + ",";
+                    result += "'" + item + "'" + ",";
                 }
 
             }

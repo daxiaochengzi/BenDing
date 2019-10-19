@@ -146,7 +146,7 @@ namespace BenDingWeb.Service.Providers
                 if (resultCatalogDto.Any())
                 {
                     resultCatalogDtoList.AddRange(resultCatalogDto);
-                    await _dataBaseHelpService.AddICD10(resultCatalogDto);
+                    await _dataBaseHelpService.AddICD10(resultCatalogDto, user);
                     i = i + param.条数;
                 }
             }
@@ -219,21 +219,18 @@ namespace BenDingWeb.Service.Providers
         /// <returns></returns>
         public async Task<List<InpatientInfoDetailDto>> GetInpatientInfoDetail(UserInfoDto user,InpatientInfoDetailParam param)
         {
-            List<InpatientInfoDetailDto> result=null;
-            var paranm =new paranmsss(){身份证ID = "511523198701122345",机构编码 = user.机构编码, 验证码 = user .验证码};
-            var data = await _webServiceBasic.HIS_InterfaceListAsync("30-10", JsonConvert.SerializeObject(paranm), user.职员ID);
+            var result =new List<InpatientInfoDetailDto>();
 
-            //var init = new InpatientInfoDetailDto();
-            //var data = await _webServiceBasic.HIS_InterfaceListAsync("14", JsonConvert.SerializeObject(param), user.职员ID);
-            //result = GetResultData(init, data);
+            var init = new InpatientInfoDetailDto();
+            var data = await _webServiceBasic.HIS_InterfaceListAsync("14", JsonConvert.SerializeObject(param), user.职员ID);
+            result = GetResultData(init, data);
 
-            //if (result.Any())
-            //{
-            //    await _dataBaseHelpService.GetInpatientInfoDetailDto(user,result);
-            //    //var msg = "获取住院号【" + resultFirst.住院号 + "】，业务ID【" + param.业务ID + "】的时间段内的住院费用成功，共" + result.Count +
-            //    //          "条记录";
-            //}
-
+            if (result.Any())
+            {
+                await _dataBaseHelpService.GetInpatientInfoDetailDto(user, result);
+                //var msg = "获取住院号【" + resultFirst.住院号 + "】，业务ID【" + param.业务ID + "】的时间段内的住院费用成功，共" + result.Count +
+                //          "条记录";
+            }
             return result;
         }
 

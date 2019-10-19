@@ -20,7 +20,7 @@ namespace BenDingActive.Service
 {
     public class ResidentMedicalInsuranceTest
     {
-        private ResidentMedicalInsuranceServiceTest _resident = new ResidentMedicalInsuranceServiceTest();
+       // private ResidentMedicalInsuranceServices _resident = new ResidentMedicalInsuranceServices();
         //public ApiJsonResultData GetUserInfo()
         //{
         //    var resultData = new ApiJsonResultData();
@@ -388,7 +388,7 @@ namespace BenDingActive.Service
             //paramEntity.PI_CRBZ = "1";
             //paramEntity.PI_SFBZ = "512527196604306139";
 
-            var paramEntity = new UserInfoParam();
+            var paramEntity = new ActiveUserInfoParam();
             paramEntity.PI_CRBZ = "2";
             paramEntity.PI_SFBZ = "1000039551";
 

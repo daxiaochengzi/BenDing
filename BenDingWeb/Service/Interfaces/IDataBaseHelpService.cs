@@ -83,7 +83,7 @@ namespace BenDingWeb.Service.Interfaces
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task AddICD10(List<ICD10InfoDto> param);
+        Task AddICD10(List<ICD10InfoDto> param, UserInfoDto user);
         /// <summary>
         /// 保存住院病人信息
         /// </summary>

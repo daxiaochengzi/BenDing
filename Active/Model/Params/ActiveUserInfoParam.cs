@@ -8,7 +8,7 @@ namespace BenDingActive.Model.Params
 {/// <summary>
 /// 用户信息传参
 /// </summary>
-   public class UserInfoParam
+   public class ActiveUserInfoParam
     {/// <summary>
      /// 身份标识
      /// </summary>

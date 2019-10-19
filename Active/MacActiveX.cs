@@ -10,8 +10,9 @@ using Newtonsoft.Json;
 
 namespace BenDingActive
 {
-    [Guid("65D8E97F-D3E2-462A-B389-241D7C38C518")]
-    public class MacActiveX : ActiveXControl
+   // [Guid("65D8E97F-D3E2-462A-B389-241D7C38C518")]
+    //public class MacActiveX : ActiveXControl
+    public class MacActiveX 
     {  
         /// <summary>
         /// 居民
