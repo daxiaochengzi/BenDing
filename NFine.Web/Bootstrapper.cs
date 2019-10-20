@@ -1,9 +1,10 @@
 using System.Web.Mvc;
-using BenDingActive.Service.Interfaces;
-using BenDingActive.Service.Providers;
-using BenDingWeb.Service.Interfaces;
-using BenDingWeb.Service.Providers;
-using BenDingWeb.WebServiceBasic;
+using BenDing.Repository.Interfaces.Web;
+using BenDing.Repository.Providers.Web;
+using BenDing.Service.Interfaces;
+
+using BenDing.Service.Providers;
+
 using Microsoft.Practices.Unity;
 using NFine.Web.Model;
 using Unity.Mvc4;
@@ -37,13 +38,19 @@ namespace NFine.Web
 
         public static void RegisterTypes(IUnityContainer container)
         {
-            container.RegisterType<IGrammarNewService, GrammarNewService>();
-            container.RegisterType<IWebServiceBasic, WebServiceBasic>();
-            container.RegisterType<IDataBaseHelpService, DataBaseHelpService>();
-            container.RegisterType<IDataBaseSqlServerService, DataBaseSqlServerService>();
+            #region Service
             container.RegisterType<IWebServiceBasicService, WebServiceBasicService>();
-            container.RegisterType<IResidentMedicalInsuranceServices, ResidentMedicalInsuranceServices>();
+
+            #endregion
+            #region Repository
+            container.RegisterType<IResidentMedicalInsuranceRepository, ResidentMedicalInsuranceRepository>();
             
+            container.RegisterType<IBaseSqlServerRepository, BaseSqlServerRepository>();
+            container.RegisterType<IWebBasicRepository, WebBasicRepository>();
+            container.RegisterType<IDataBaseHelpRepository, DataBaseHelpRepository>();
+            //
+            #endregion
+
         }
     }
 }

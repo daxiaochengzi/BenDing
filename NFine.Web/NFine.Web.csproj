@@ -477,13 +477,17 @@
     <Content Include="Configs\database.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Active\BenDingActive.csproj">
-      <Project>{d589f1ff-34fd-4995-a557-ea61bf32d809}</Project>
-      <Name>BenDingActive</Name>
+    <ProjectReference Include="..\BenDing.Domain\BenDing.Domain.csproj">
+      <Project>{4941fbd9-9c5c-46ce-93b4-a41bbbf09622}</Project>
+      <Name>BenDing.Domain</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BenDingWeb\BenDingWeb.csproj">
-      <Project>{d40bd2a9-c937-4649-9889-7d36bde01909}</Project>
-      <Name>BenDingWeb</Name>
+    <ProjectReference Include="..\BenDing.Repository\BenDing.Repository.csproj">
+      <Project>{d7318877-cfd7-46fd-a506-e868e70d0a04}</Project>
+      <Name>BenDing.Repository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BenDing.Service\BenDing.Service.csproj">
+      <Project>{128f0f9e-49a4-4089-abb8-4d8422b84b27}</Project>
+      <Name>BenDing.Service</Name>
     </ProjectReference>
     <ProjectReference Include="..\NFine.Application\NFine.Application.csproj">
       <Project>{f2035ee2-b73d-4fb8-a433-cab465de6a2a}</Project>
@@ -685,6 +689,9 @@
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Views\Insurance\Card.cshtml" />
     <Content Include="Views\BenDing\Test.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

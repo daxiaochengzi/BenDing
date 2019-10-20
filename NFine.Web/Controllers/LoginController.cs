@@ -21,18 +21,18 @@ namespace NFine.Web.Controllers
 {
     public class LoginController : Controller
     {
-        public IGrammarNewService _webServiceBasicService { get; set; }
+       
 
-        public LoginController(IGrammarNewService iWebServiceBasicService)
+        public LoginController()
         {
-            _webServiceBasicService = iWebServiceBasicService;
+            
         }
 
         [HttpGet]
         public virtual ActionResult Index()
         {
             var test = string.Format("{0:E2}", 1);
-            var dd = _webServiceBasicService.TestIf();
+          
             return View();
         }
         [HttpGet]

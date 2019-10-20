@@ -4,43 +4,42 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Mvc;
-using BenDingActive.Model.Params;
-using BenDingActive.Service.Providers;
-using BenDingWeb.Models.Dto;
-using BenDingWeb.Models.Params;
-using BenDingWeb.Service.Interfaces;
-using MedicalInsurance.Domain.Models.Enums;
+using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.Web;
+using BenDing.Repository.Interfaces.Web;
+using BenDing.Service.Interfaces;
 using Newtonsoft.Json;
 using NFine.Web.Model;
 
 namespace NFine.Web.Controllers
 {
-   /// <summary>
-   /// 
-   /// </summary>
+    /// <summary>
+    /// 
+    /// </summary>
     public class BenDingController : AsyncController
     {
-        private readonly IGrammarNewService _GrammarNewService;
+
         private IWebServiceBasicService _webServiceBasicService;
-        private IDataBaseSqlServerService _dataBaseSqlServerService;
-        private IResidentMedicalInsuranceServices _residentMedicalInsurance;
-       /// <summary>
-       /// 
-       /// </summary>
-       /// <param name="iGrammarNewService"></param>
-       /// <param name="iWebServiceBasicService"></param>
-       /// <param name="iDataBaseSqlServerService"></param>
-       /// <param name="insuranceServices"></param>
-        public BenDingController(IGrammarNewService iGrammarNewService, 
+        private IBaseSqlServerRepository _dataBaseSqlServerService;
+        private IResidentMedicalInsuranceRepository _residentMedicalInsurance;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="iGrammarNewService"></param>
+        /// <param name="iWebServiceBasicService"></param>
+        /// <param name="iDataBaseSqlServerService"></param>
+        public BenDingController(IResidentMedicalInsuranceRepository insuranceRepository,
             IWebServiceBasicService iWebServiceBasicService,
-            IDataBaseSqlServerService iDataBaseSqlServerService,
-            IResidentMedicalInsuranceServices insuranceServices
+            IBaseSqlServerRepository iDataBaseSqlServerService
+
             )
         {
-            _GrammarNewService = iGrammarNewService;
+
             _webServiceBasicService = iWebServiceBasicService;
             _dataBaseSqlServerService = iDataBaseSqlServerService;
-            _residentMedicalInsurance = insuranceServices;
+            _residentMedicalInsurance = insuranceRepository;
+
         }
         #region 基层接口
         // [HttpGet]
@@ -59,12 +58,12 @@ namespace NFine.Web.Controllers
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> GetUserBaseInfos()
         {
-            var resultData= await new ApiJsonResultData().RunWithTryAsync(async y =>
-            {
-                var userBase = await GetUserBaseInfo();
-                y.Data = userBase;
-                
-            });
+            var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
+             {
+                 var userBase = await GetUserBaseInfo();
+                 y.Data = userBase;
+
+             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
         //[HttpGet]
@@ -90,7 +89,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult>GetCatalog( UiCatalogParam param)
+        public async Task<ActionResult> GetCatalog(UiCatalogParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
@@ -124,7 +123,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult>DeleteCatalog( UiCatalogParam param)
+        public async Task<ActionResult> DeleteCatalog(UiCatalogParam param)
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
@@ -140,7 +139,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult>GetIcd10(UiCatalogParam param)
+        public async Task<ActionResult> GetIcd10(UiCatalogParam param)
         {
             return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
@@ -177,7 +176,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult>GetInformation()
+        public async Task<ActionResult> GetInformation()
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
@@ -209,57 +208,57 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult>QueryMedicalInsuranceResidentInfo([FromBody] QueryMedicalInsuranceResidentInfoParam param)
+        public async Task<ActionResult> QueryMedicalInsuranceResidentInfo([FromBody] QueryMedicalInsuranceResidentInfoParam param)
         {
-            return Json( await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {
-                var data = await _dataBaseSqlServerService.QueryMedicalInsuranceResidentInfo(param);
-                y.Data = data;
+            return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+           {
+               var data = await _dataBaseSqlServerService.QueryMedicalInsuranceResidentInfo(param);
+               y.Data = data;
 
-            }));
+           }));
         }
         /// <summary>
         /// 获取住院病人
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult>GetInpatientInfo()
+        public async Task<ActionResult> GetInpatientInfo()
         {
-            return Json( await new ApiJsonResultData().RunWithTryAsync(async y =>
-            {
-                var verificationCode = await GetUserBaseInfo();
-                if (verificationCode != null)
-                {
-                    var inputInpatientInfo = new InpatientInfoParam()
-                    {
-                        验证码 = verificationCode.验证码,
-                        机构编码 = verificationCode.机构编码,
-                        身份证号码 = "512501195802085180",
-                        开始时间 = "2018-04-27 11:09:00",
-                        结束时间 = "2020-04-27 11:09:00",
-                        状态 = "0"
-                    };
-                    string inputInpatientInfoJson =
-                        JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
+            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+           {
+               var verificationCode = await GetUserBaseInfo();
+               if (verificationCode != null)
+               {
+                   var inputInpatientInfo = new InpatientInfoParam()
+                   {
+                       验证码 = verificationCode.验证码,
+                       机构编码 = verificationCode.机构编码,
+                       身份证号码 = "512501195802085180",
+                       开始时间 = "2018-04-27 11:09:00",
+                       结束时间 = "2020-04-27 11:09:00",
+                       状态 = "0"
+                   };
+                   string inputInpatientInfoJson =
+                       JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
 
-                    var inputInpatientInfoData = await _webServiceBasicService
-                        .GetInpatientInfo(verificationCode, inputInpatientInfoJson);
-                    if (inputInpatientInfoData.Any())
-                    {
-                        y.Data = inputInpatientInfoData;
-                    }
-                }
+                   var inputInpatientInfoData = await _webServiceBasicService
+                       .GetInpatientInfo(verificationCode, inputInpatientInfoJson);
+                   if (inputInpatientInfoData.Any())
+                   {
+                       y.Data = inputInpatientInfoData;
+                   }
+               }
 
 
 
-            }), JsonRequestBehavior.AllowGet);
+           }), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
         /// 获取住院病人明细费用
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult>GetInpatientInfoDetail()
+        public async Task<ActionResult> GetInpatientInfoDetail()
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
@@ -304,72 +303,72 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult>GetOutpatientPerson()
+        public async Task<ActionResult> GetOutpatientPerson()
         {
-            return Json( await new ApiJsonResultData().RunWithTryAsync(async y =>
-            {
-                var verificationCode = await GetUserBaseInfo();
-                if (verificationCode != null)
-                {
-                    var outPatient = new OutpatientParam()
-                    {
-                        验证码 = verificationCode.验证码,
-                        机构编码 = verificationCode.机构编码,
-                        身份证号码 = "511526199610225518",
-                        开始时间 = "2019-04-27 11:09:00",
-                        结束时间 = "2020-04-27 11:09:00",
+            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+           {
+               var verificationCode = await GetUserBaseInfo();
+               if (verificationCode != null)
+               {
+                   var outPatient = new OutpatientParam()
+                   {
+                       验证码 = verificationCode.验证码,
+                       机构编码 = verificationCode.机构编码,
+                       身份证号码 = "511526199610225518",
+                       开始时间 = "2019-04-27 11:09:00",
+                       结束时间 = "2020-04-27 11:09:00",
 
-                    };
-                    var inputInpatientInfoData = await _webServiceBasicService.GetOutpatientPerson(verificationCode, outPatient);
-                    if (inputInpatientInfoData.Any())
-                    {
-                        y.Data = inputInpatientInfoData;
-                    }
-                }
+                   };
+                   var inputInpatientInfoData = await _webServiceBasicService.GetOutpatientPerson(verificationCode, outPatient);
+                   if (inputInpatientInfoData.Any())
+                   {
+                       y.Data = inputInpatientInfoData;
+                   }
+               }
 
-            }), JsonRequestBehavior.AllowGet);
+           }), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
         /// 获取门诊病人明细
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult>GetOutpatientDetailPerson()
+        public async Task<ActionResult> GetOutpatientDetailPerson()
         {
-            return Json( await  new ApiJsonResultData().RunWithTryAsync(async y =>
-            {
-                var verificationCode = await GetUserBaseInfo();
-                if (verificationCode != null)
-                {
-                    var outPatient = new OutpatientParam()
-                    {
-                        验证码 = verificationCode.验证码,
-                        机构编码 = verificationCode.机构编码,
-                        身份证号码 = "511526199610225518",
-                        开始时间 = "2019-04-27 11:09:00",
-                        结束时间 = "2020-04-27 11:09:00",
+            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+          {
+              var verificationCode = await GetUserBaseInfo();
+              if (verificationCode != null)
+              {
+                  var outPatient = new OutpatientParam()
+                  {
+                      验证码 = verificationCode.验证码,
+                      机构编码 = verificationCode.机构编码,
+                      身份证号码 = "511526199610225518",
+                      开始时间 = "2019-04-27 11:09:00",
+                      结束时间 = "2020-04-27 11:09:00",
 
-                    };
-                    var inputInpatientInfoData = await _webServiceBasicService.GetOutpatientPerson(verificationCode, outPatient);
-                    if (inputInpatientInfoData.Any())
-                    {
-                        var inputInpatientInfoFirst = inputInpatientInfoData.FirstOrDefault();
-                        var outpatientDetailParam = new OutpatientDetailParam()
-                        {
-                            验证码 = verificationCode.验证码,
-                            门诊号 = inputInpatientInfoFirst.门诊号,
-                            业务ID = inputInpatientInfoFirst.业务ID
+                  };
+                  var inputInpatientInfoData = await _webServiceBasicService.GetOutpatientPerson(verificationCode, outPatient);
+                  if (inputInpatientInfoData.Any())
+                  {
+                      var inputInpatientInfoFirst = inputInpatientInfoData.FirstOrDefault();
+                      var outpatientDetailParam = new OutpatientDetailParam()
+                      {
+                          验证码 = verificationCode.验证码,
+                          门诊号 = inputInpatientInfoFirst.门诊号,
+                          业务ID = inputInpatientInfoFirst.业务ID
 
-                        };
-                        var inputInpatientInfoDatas = await _webServiceBasicService.
-                            GetOutpatientDetailPerson(verificationCode, outpatientDetailParam);
-                        y.Data = inputInpatientInfoDatas;
-                    }
-                }
+                      };
+                      var inputInpatientInfoDatas = await _webServiceBasicService.
+                          GetOutpatientDetailPerson(verificationCode, outpatientDetailParam);
+                      y.Data = inputInpatientInfoDatas;
+                  }
+              }
 
-                //var data = await webService.ExecuteSp(param.Params);
+              //var data = await webService.ExecuteSp(param.Params);
 
-            }),JsonRequestBehavior.AllowGet);
+          }), JsonRequestBehavior.AllowGet);
         }
         [System.Web.Mvc.NonAction]
         private async Task<UserInfoDto> GetUserBaseInfo()
@@ -386,16 +385,12 @@ namespace NFine.Web.Controllers
         }
         #endregion
         #region 居民医保
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
+
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetUserInfo(ActiveUserInfoParam param)
+        public async Task<ActionResult> GetUserInfo(ResidentUserInfoParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {   
+            {
 
                 var userBase = _residentMedicalInsurance.GetUserInfo(param);
                 y.Data = userBase;

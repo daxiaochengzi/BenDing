@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4941FBD9-9C5C-46CE-93B4-A41BBBF09622}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BenDing.Domain</RootNamespace>
+    <AssemblyName>BenDing.Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Dto\Resident\ResidentHospitalizationRegisterDto.cs" />
+    <Compile Include="Models\Dto\Resident\ResidentProjectDownloadDto.cs" />
+    <Compile Include="Models\Params\Resident\ResidentHospitalizationRegisterParam.cs" />
+    <Compile Include="Models\Params\Resident\ResidentProjectDownloadParam.cs" />
+    <Compile Include="Models\Params\Resident\ResidentUserInfoParam.cs" />
+    <Compile Include="Models\Dto\Resident\ResultData.cs" />
+    <Compile Include="Models\Dto\Web\BasicResultDto.cs" />
+    <Compile Include="Models\Dto\Web\CatalogDto.cs" />
+    <Compile Include="Models\Dto\Web\CatalogInfoDto.cs" />
+    <Compile Include="Models\Dto\Web\Class1.cs" />
+    <Compile Include="Models\Dto\Web\ICD10InfoDto.cs" />
+    <Compile Include="Models\Dto\Web\InformationDto.cs" />
+    <Compile Include="Models\Dto\Web\IniDto.cs" />
+    <Compile Include="Models\Dto\Web\InpatientInfoDetailDto.cs" />
+    <Compile Include="Models\Dto\Web\InpatientInfoDetaiQueryDto.cs" />
+    <Compile Include="Models\Dto\Web\InpatientInfoDto.cs" />
+    <Compile Include="Models\Dto\Web\ListCount.cs" />
+    <Compile Include="Models\Dto\Web\MedicalInsuranceDataAllDto.cs" />
+    <Compile Include="Models\Dto\Web\MedicalInsuranceDto.cs" />
+    <Compile Include="Models\Dto\Web\MedicalInsuranceResidentInfoDto.cs" />
+    <Compile Include="Models\Dto\Web\OrgDto.cs" />
+    <Compile Include="Models\Dto\Web\OutpatientDetailDto.cs" />
+    <Compile Include="Models\Dto\Web\OutpatientDetailQuery.cs" />
+    <Compile Include="Models\Dto\Web\OutpatientInfoDto.cs" />
+    <Compile Include="Models\Dto\Web\PairCodeDto.cs" />
+    <Compile Include="Models\Dto\Web\paranmsss.cs" />
+    <Compile Include="Models\Dto\Web\QueryInpatientInfoDto.cs" />
+    <Compile Include="Models\Dto\Web\ResultDataDto.cs" />
+    <Compile Include="Models\Dto\Web\SaleOrderDto.cs" />
+    <Compile Include="Models\Dto\Web\ServiceTimeDto.cs" />
+    <Compile Include="Models\Dto\Web\SingleResidentInfoDto.cs" />
+    <Compile Include="Models\Dto\Web\UpdateInpatientInfoDetail.cs" />
+    <Compile Include="Models\Dto\Web\UserInfoDto.cs" />
+    <Compile Include="Models\Enums\CatalogTypeEnum.cs" />
+    <Compile Include="Models\Params\Base\BaseIniParam.cs" />
+    <Compile Include="Models\Params\UI\GetInpatientInfoDetailUIParam.cs" />
+    <Compile Include="Models\Params\UI\MedicalInsuranceDataAllParamUIQuery.cs" />
+    <Compile Include="Models\Params\UI\SaveXmlDataUiParam.cs" />
+    <Compile Include="Models\Params\UI\SingleResidentInfoDownloadUIParam.cs" />
+    <Compile Include="Models\Params\UI\TabelIni.cs" />
+    <Compile Include="Models\Params\UI\UiICD10Param.cs" />
+    <Compile Include="Models\Params\Web\CatalogParam.cs" />
+    <Compile Include="Models\Params\Web\DeleteMedicalInsuranceParam.cs" />
+    <Compile Include="Models\Params\Web\ExecuteSpParam.cs" />
+    <Compile Include="Models\Params\Web\ICD10InfoParam.cs" />
+    <Compile Include="Models\Params\Web\InformationParam.cs" />
+    <Compile Include="Models\Params\Web\InpatientInfoDetailParam.cs" />
+    <Compile Include="Models\Params\Web\InpatientInfoDetailQueryParam.cs" />
+    <Compile Include="Models\Params\Web\InpatientInfoParam.cs" />
+    <Compile Include="Models\Params\Web\MedicalInsuranceDataAllParam.cs" />
+    <Compile Include="Models\Params\Web\MedicalInsuranceParam.cs" />
+    <Compile Include="Models\Params\Web\MedicalInsuranceResidentInfoParam.cs" />
+    <Compile Include="Models\Params\Web\OrgParam.cs" />
+    <Compile Include="Models\Params\Web\OutpatientDetailParam.cs" />
+    <Compile Include="Models\Params\Web\OutpatientParam.cs" />
+    <Compile Include="Models\Params\Web\QueryInpatientInfoParam.cs" />
+    <Compile Include="Models\Params\Web\QueryMedicalInsuranceResidentInfoParam.cs" />
+    <Compile Include="Models\Params\Web\SaveXmlData.cs" />
+    <Compile Include="Models\Params\Web\SingleResidentInfQueryUiParam.cs" />
+    <Compile Include="Models\Params\Web\UiCatalogParam.cs" />
+    <Compile Include="Models\Params\Web\UpdateMedicalInsuranceResidentInfoParam.cs" />
+    <Compile Include="Models\Params\Web\UserInfoParam.cs" />
+    <Compile Include="Models\Params\Web\XmlData.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Xml\BaseConnect.cs" />
+    <Compile Include="Xml\LogParam.cs" />
+    <Compile Include="Xml\Logs.cs" />
+    <Compile Include="Xml\MedicalInsuranceDll.cs" />
+    <Compile Include="Xml\ValidXmlDto.cs" />
+    <Compile Include="Xml\XmlHelp.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

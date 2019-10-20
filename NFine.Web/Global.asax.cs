@@ -3,9 +3,6 @@ using System.Web.Http;
 using NFine.Code;
 using System.Web.Mvc;
 using System.Web.Routing;
-
-using BenDingWeb.Service.Interfaces;
-using BenDingWeb.Service.Providers;
 using NFine.Web.App_Start;
 using NFine.Web.Model;
 
