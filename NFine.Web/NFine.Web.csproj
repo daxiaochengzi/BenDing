@@ -193,6 +193,7 @@
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Content Include="Content\css\card.css" />
     <Content Include="Content\css\framework-font.css" />
     <Content Include="Content\css\framework-ui.css" />
     <Content Include="Content\css\framework-login.css" />
@@ -689,6 +690,8 @@
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Views\Insurance\Card.cshtml" />
     <Content Include="Views\BenDing\Test.cshtml" />
+    <Content Include="Views\Shared\_Card.cshtml" />
+    <Content Include="Views\Insurance\AdmissionRegistration.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

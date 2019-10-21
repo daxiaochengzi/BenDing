@@ -1,0 +1,16 @@
+﻿input, button, a {
+    border: none;
+    outline: none;
+}
+
+#form1 {
+    width: 100%;
+    overflow: hidden;
+}
+
+#form1 .form tr td button {
+    background: #fcf8e3;
+    font-size: 14px;
+    line-height: 22px;
+}
+
