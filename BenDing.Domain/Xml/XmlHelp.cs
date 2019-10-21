@@ -176,8 +176,8 @@ namespace BenDing.Domain.Xml
                 XmlElement xml = xmlDoc.CreateElement("", "ROW", "");
                 xml.InnerXml = strXml;
                 xmlDoc.AppendChild(xml);
-
-                string pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "RequestParams.xml";
+               
+                string pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\RequestParams.xml";
                 if (File.Exists(pathXml))
                 {
                     File.Delete(pathXml);
@@ -257,7 +257,7 @@ namespace BenDing.Domain.Xml
         {
             var result = t;
             string pathXml = null;
-            pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "ResponseParams.xml";
+            pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\ResponseParams.xml";
             XmlDocument doc = new XmlDocument();
             doc.Load(pathXml);
             string jsonText = JsonConvert.SerializeXmlNode(doc);
@@ -266,6 +266,7 @@ namespace BenDing.Domain.Xml
             {
                 var jsonStr = JsonConvert.SerializeObject(resultData.Row);
                 result = JsonConvert.DeserializeObject<T>(jsonStr);
+                
 
             }
 

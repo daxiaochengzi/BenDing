@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Models\Dto\Resident\ResidentHospitalizationRegisterDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentProjectDownloadDto.cs" />
+    <Compile Include="Models\Dto\Resident\ResidentUserInfoDto.cs" />
     <Compile Include="Models\Params\Resident\ResidentHospitalizationRegisterParam.cs" />
     <Compile Include="Models\Params\Resident\ResidentProjectDownloadParam.cs" />
     <Compile Include="Models\Params\Resident\ResidentUserInfoParam.cs" />

@@ -14,7 +14,7 @@ namespace BenDing.Service.Interfaces
         /// 获取个人基础资料
         /// </summary>
         /// <param name="param"></param>
-        Task<UserInfoDto> GetUserInfo(ResidentUserInfoParam param);
+        Task<ResidentUserInfoDto> GetUserInfo(ResidentUserInfoParam param);
         /// <summary>
         /// 入院登记
         /// </summary>

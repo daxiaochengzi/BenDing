@@ -14,6 +14,7 @@ namespace BenDingActive.Service.Interfaces
  /// </summary>
     public class ResidentMedicalInsuranceServices: IResidentMedicalInsuranceServices
     {
+       
 
         /// <summary>
         /// 获取个人基础资料

@@ -311,8 +311,8 @@ namespace BenDingActive.Xml
             {
                 var jsonStr = JsonConvert.SerializeObject(resultData.Row);
                 result = JsonConvert.DeserializeObject<IniDto>(jsonStr);
-                result.JsonData = jsonStr;
-                // result = JsonConvert.DeserializeObject<T>(jsonStr);
+              
+              
 
             }
 

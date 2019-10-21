@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.Web;
+using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces;
 using Newtonsoft.Json;
@@ -392,8 +393,70 @@ namespace NFine.Web.Controllers
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
 
-                var userBase = _residentMedicalInsurance.GetUserInfo(param);
-                y.Data = userBase;
+                var login = BaseConnect.Connect();
+                if (login == 1)
+                {
+                    var userBase =await _residentMedicalInsurance.GetUserInfo(param);
+                    y.Data = userBase;
+                }
+                else
+                {
+                    y.AddErrorMessage("登陆失败!!!");
+                }
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// 项目下载
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> ProjectDownload(ResidentUserInfoParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+
+                var login = BaseConnect.Connect();
+                if (login == 1)
+                {
+                    var userBase = await _residentMedicalInsurance.ProjectDownload(new ResidentProjectDownloadParam());
+                    y.Data = userBase;
+                }
+                else
+                {
+                    y.AddErrorMessage("登陆失败!!!");
+                }
+
+
+
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// 入院登记
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> HospitalizationRegister(ResidentUserInfoParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+
+                var login = BaseConnect.Connect();
+                if (login == 1)
+                {
+                    var paramIni = new ResidentHospitalizationRegisterParam();
+                    var userBase = await _residentMedicalInsurance.HospitalizationRegister(paramIni);
+                    y.Data = userBase;
+                }
+                else
+                {
+                    y.AddErrorMessage("登陆失败!!!");
+                }
+
+
 
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);

@@ -389,6 +389,7 @@ namespace BenDing.Domain.Xml
         /// <returns></returns>
         [DllImport("yyjk.dll", EntryPoint = "ReadCardInfo_cxjb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern int ReadCardInfo_cxjb(string aReaderPort, string aCardPasswd);
+        
         #endregion
     }
 }

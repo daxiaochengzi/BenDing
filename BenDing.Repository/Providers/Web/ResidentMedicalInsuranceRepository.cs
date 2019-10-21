@@ -17,11 +17,11 @@ namespace BenDing.Repository.Providers.Web
      /// </summary>
      /// <param name="param"></param>
 
-        public async Task<UserInfoDto> GetUserInfo(ResidentUserInfoParam param)
+        public async Task<ResidentUserInfoDto> GetUserInfo(ResidentUserInfoParam param)
         {
             return await Task.Run(async () =>
             {
-                var data = new UserInfoDto();
+                var data = new ResidentUserInfoDto();
 
                 var xmlStr = XmlHelp.SaveXml(param);
                 if (xmlStr)
@@ -29,7 +29,7 @@ namespace BenDing.Repository.Providers.Web
                     int result = MedicalInsuranceDll.CallService_cxjb("CXJB001");
                     if (result == 1)
                     {
-                        data = XmlHelp.DeSerializerModel(new UserInfoDto());
+                        data = XmlHelp.DeSerializerModel(new ResidentUserInfoDto());
 
                     }
                     else
@@ -83,21 +83,22 @@ namespace BenDing.Repository.Providers.Web
             return await Task.Run(async () =>
             {
                 var data = new ResidentProjectDownloadDto();
-                var xmlStr = XmlHelp.SaveXml(param);
-                if (xmlStr)
-                {
-                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB019");
-                    if (result == 1)
-                    {
-                        data = XmlHelp.DeSerializerModel(new ResidentProjectDownloadDto());
+                data = XmlHelp.DeSerializerModel(new ResidentProjectDownloadDto());
+                //var xmlStr = XmlHelp.SaveXml(param);
+                //if (xmlStr)
+                //{
+                //    int result = MedicalInsuranceDll.CallService_cxjb("CXJB019");
+                //    if (result == 1)
+                //    {
+                //        data = XmlHelp.DeSerializerModel(new ResidentProjectDownloadDto());
 
-                    }
+                //    }
 
-                }
-                else
-                {
-                    throw new Exception("居民项目下载执行失败!!!");
-                }
+                //}
+                //else
+                //{
+                //    throw new Exception("居民项目下载执行失败!!!");
+                //}
 
                 return data;
             });

@@ -8,6 +8,16 @@ using BenDing.Domain.Models.Dto.Web;
 namespace BenDing.Domain.Models.Dto.Resident
 {
    public class ResidentProjectDownloadDto: IniDto
+    {
+        public ResidentProjectDownloadRowDataDto RowData { get; set; }
+    }
+
+    public class ResidentProjectDownloadRowDataDto
+    {
+      public List<ResidentProjectDownloadRowDataRowDto> Row { get; set; }
+    }
+
+    public class ResidentProjectDownloadRowDataRowDto
     {/// <summary>
      /// 收费项目编码
      /// </summary>
