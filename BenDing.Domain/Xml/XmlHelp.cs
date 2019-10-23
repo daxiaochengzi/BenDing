@@ -158,14 +158,22 @@ namespace BenDing.Domain.Xml
 
         public static bool SaveXml<T>(T t)
         {
-            var strXml = ToXml(t);
+            // var strXml = ToXml(t);
+            var strXmls = XmlSerializeHelper.XmlSerialize(t);
+           
+           
+           
+           
             bool result = false;
-            if (string.IsNullOrWhiteSpace(strXml))
+            if (string.IsNullOrWhiteSpace(strXmls))
             {
                 return result;
             }
             else
-            {
+            {  //创建XmlDocument对象
+                XmlDocument xmlDocXml = new XmlDocument();
+                xmlDocXml.LoadXml(strXmls);
+
                 //创建XmlDocument对象
                 XmlDocument xmlDoc = new XmlDocument();
                 //XML的声明<?xml version="1.0" encoding="gb2312"?> 
@@ -174,6 +182,7 @@ namespace BenDing.Domain.Xml
                 xmlDoc.AppendChild(xmlSM);
                 //添加一个名为Gen的根节点
                 XmlElement xml = xmlDoc.CreateElement("", "ROW", "");
+                string strXml= xmlDocXml.SelectSingleNode("ROW").InnerXml.ToString();
                 xml.InnerXml = strXml;
                 xmlDoc.AppendChild(xml);
                
@@ -273,7 +282,33 @@ namespace BenDing.Domain.Xml
             return result;
         }
 
+        public static string DeSerializerModelStr(string rowsName)
+        {
+            
+            string resultData = null;
+            var result = new ValidXmlDto();
+            string pathXml = null;
+            pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\ResponseParams.xml";
+            XmlDocument doc = new XmlDocument();
+            doc.Load(pathXml);
+          
+            XmlNode po_fhzNode = doc.SelectSingleNode("/ROW/PO_FHZ");
+            result.PO_FHZ = po_fhzNode.InnerText;
+            XmlNode po_msgNode = doc.SelectSingleNode("/ROW/PO_MSG");
+            result.PO_MSG = po_msgNode.InnerText;
+            if (result.PO_FHZ == "1")
+            {
+                var pO_RDXXNode = doc.SelectSingleNode("/ROW/" + rowsName);
+                string strIni= "xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'";
+                resultData = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" + "<ROWDATA "+ strIni + ">" + pO_RDXXNode.InnerXml + "</ROWDATA>";
 
+            }
+            else
+            {
+                throw new SystemException(result.PO_MSG);
+            }
+            return resultData;
+        }
 
         //// <summary>
         //// 实体转换为model
@@ -293,7 +328,7 @@ namespace BenDing.Domain.Xml
         //    {
         //        pathXml = "C:\\Program Files\\Microsoft\\BenDingActiveSetup" + "\\ResponseParams.xml";
         //    }
-            
+
         //    XmlDocument doc = new XmlDocument();
         //    doc.Load(pathXml);
         //    string jsonText = JsonConvert.SerializeXmlNode(doc);

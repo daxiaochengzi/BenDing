@@ -31,10 +31,12 @@ namespace BenDing.Service.Providers
         {
 
             var ini = new UserInfoDto();
+          
             List<UserInfoDto> resultList;
             var data = await _webServiceBasic.HIS_InterfaceListAsync(tradeCode, inputParameter, "");
             resultList = GetResultData(ini, data);
             return resultList.FirstOrDefault();
+           
         }
         /// <summary>
         /// 获取医疗机构
@@ -47,8 +49,8 @@ namespace BenDing.Service.Providers
             Int32 resultData = 0;
             List<OrgDto> result;
             var init = new OrgDto();
-            var info = new { 验证码 = userInfo.验证码, 医院名称 = name };
-            var data = await _webServiceBasic.HIS_InterfaceListAsync("30", JsonConvert.SerializeObject(info), userInfo.职员ID);
+            var info = new { 验证码 = userInfo.AuthCode, 医院名称 = name };
+            var data = await _webServiceBasic.HIS_InterfaceListAsync("30", JsonConvert.SerializeObject(info), userInfo.UserId);
             result = GetResultData(init, data);
             if (result.Any())
             {
@@ -73,10 +75,10 @@ namespace BenDing.Service.Providers
                 目录名称 = "",
                 开始时间 = timeNew,
                 结束时间 = DateTime.Now.ToString("yyyy-MM-dd HH:ss:mm"),
-                验证码 = param.验证码,
-                机构编码 = param.机构编码,
+                验证码 = param.AuthCode,
+                机构编码 = param.OrganizationCode,
             };
-            var data = await _webServiceBasic.HIS_InterfaceListAsync("06", JsonConvert.SerializeObject(oCatalogInfo), user.职员ID);
+            var data = await _webServiceBasic.HIS_InterfaceListAsync("06", JsonConvert.SerializeObject(oCatalogInfo), user.UserId);
             List<ListCount> nums;
             var init = new ListCount();
             nums = GetResultData(init, data);
@@ -86,8 +88,8 @@ namespace BenDing.Service.Providers
             while (i < cnt)
             {
                 oCatalogInfo.开始行数 = i;
-                oCatalogInfo.结束行数 = i + param.条数;
-                var catalogDtoData = await _webServiceBasic.HIS_InterfaceListAsync("05", JsonConvert.SerializeObject(oCatalogInfo), user.职员ID);
+                oCatalogInfo.结束行数 = i + param.Nums;
+                var catalogDtoData = await _webServiceBasic.HIS_InterfaceListAsync("05", JsonConvert.SerializeObject(oCatalogInfo), user.UserId);
                 List<CatalogDto> resultCatalogDto;
                 var initCatalogDto = new CatalogDto();
                 resultCatalogDto = GetResultData(initCatalogDto, catalogDtoData);
@@ -96,7 +98,7 @@ namespace BenDing.Service.Providers
                     resultCatalogDtoList.AddRange(resultCatalogDto);
                 }
                 await _dataBaseHelpService.AddCatalog(user, resultCatalogDto, param.CatalogType);
-                i = i + param.条数;
+                i = i + param.Nums;
             }
             return "下载【" + param.CatalogType + "】成功 共" + resultCatalogDtoList.Count() + "条记录";
         }
@@ -125,10 +127,10 @@ namespace BenDing.Service.Providers
             {
                 开始时间 = timeNew,
                 结束时间 = DateTime.Now.ToString("yyyy-MM-dd HH:ss:mm"),
-                验证码 = param.验证码,
+                验证码 = param.AuthCode,
                 病种名称 = ""
             };
-            var data = await _webServiceBasic.HIS_InterfaceListAsync("08", Newtonsoft.Json.JsonConvert.SerializeObject(oICD10Info), user.职员ID);
+            var data = await _webServiceBasic.HIS_InterfaceListAsync("08", Newtonsoft.Json.JsonConvert.SerializeObject(oICD10Info), user.UserId);
             List<ListCount> nums;
             var init = new ListCount();
             nums = GetResultData(init, data);
@@ -138,8 +140,8 @@ namespace BenDing.Service.Providers
             while (i < cnt)
             {
                 oICD10Info.开始行数 = i;
-                oICD10Info.结束行数 = i + param.条数;
-                var catalogDtoData = await _webServiceBasic.HIS_InterfaceListAsync("07", JsonConvert.SerializeObject(oICD10Info), user.职员ID);
+                oICD10Info.结束行数 = i + param.Nums;
+                var catalogDtoData = await _webServiceBasic.HIS_InterfaceListAsync("07", JsonConvert.SerializeObject(oICD10Info), user.UserId);
                 List<ICD10InfoDto> resultCatalogDto;
                 var initCatalogDto = new ICD10InfoDto();
                 resultCatalogDto = GetResultData(initCatalogDto, catalogDtoData);
@@ -147,7 +149,7 @@ namespace BenDing.Service.Providers
                 {
                     resultCatalogDtoList.AddRange(resultCatalogDto);
                     await _dataBaseHelpService.AddICD10(resultCatalogDto, user);
-                    i = i + param.条数;
+                    i = i + param.Nums;
                 }
             }
             return "下载【ICD10】成功 共" + resultCatalogDtoList.Count() + "条记录";
@@ -161,7 +163,7 @@ namespace BenDing.Service.Providers
         {
             List<OutpatientInfoDto> result;
             var init = new OutpatientInfoDto();
-            var data = await _webServiceBasic.HIS_InterfaceListAsync("12", JsonConvert.SerializeObject(param), user.职员ID);
+            var data = await _webServiceBasic.HIS_InterfaceListAsync("12", JsonConvert.SerializeObject(param), user.UserId);
             result = GetResultData(init, data);
             if (result.Any())
             {
@@ -179,7 +181,7 @@ namespace BenDing.Service.Providers
         {
             List<OutpatientDetailDto> result;
             var init = new OutpatientDetailDto();
-            var data = await _webServiceBasic.HIS_InterfaceListAsync("16", JsonConvert.SerializeObject(param), user.职员ID);
+            var data = await _webServiceBasic.HIS_InterfaceListAsync("16", JsonConvert.SerializeObject(param), user.UserId);
 
             result = GetResultData(init, data);
 
@@ -198,7 +200,7 @@ namespace BenDing.Service.Providers
         {
             List<InpatientInfoDto> result;
             var init = new InpatientInfoDto();
-            var data = await _webServiceBasic.HIS_InterfaceListAsync("10", infoParam, user.职员ID);
+            var data = await _webServiceBasic.HIS_InterfaceListAsync("10", infoParam, user.UserId);
             result = GetResultData(init, data);
             if (result.Any())
             {
@@ -222,7 +224,7 @@ namespace BenDing.Service.Providers
             var result = new List<InpatientInfoDetailDto>();
 
             var init = new InpatientInfoDetailDto();
-            var data = await _webServiceBasic.HIS_InterfaceListAsync("14", JsonConvert.SerializeObject(param), user.职员ID);
+            var data = await _webServiceBasic.HIS_InterfaceListAsync("14", JsonConvert.SerializeObject(param), user.UserId);
             result = GetResultData(init, data);
 
             if (result.Any())
@@ -248,7 +250,7 @@ namespace BenDing.Service.Providers
             }
             else
             {
-                var oResult = await _webServiceBasic.HIS_InterfaceListAsync("37", "{'验证码':'" + param.验证码 + "','业务ID':'" + param.业务ID + "'}", user.职员ID);
+                var oResult = await _webServiceBasic.HIS_InterfaceListAsync("37", "{'验证码':'" + param.验证码 + "','业务ID':'" + param.业务ID + "'}", user.UserId);
                 if (oResult.Result == "1")
                 {
                     throw new Exception("此业务ID已经报销过，在试图调用接口删除中心住院医保信息时异常。中心返回删除失败消息：" + oResult.Msg.FirstOrDefault()?.ToString() + "！");
@@ -258,7 +260,7 @@ namespace BenDing.Service.Providers
 
             List<MedicalInsuranceDto> result;
             var init = new MedicalInsuranceDto();
-            var data = await _webServiceBasic.HIS_InterfaceListAsync("36", JsonConvert.SerializeObject(param), user.职员ID);
+            var data = await _webServiceBasic.HIS_InterfaceListAsync("36", JsonConvert.SerializeObject(param), user.UserId);
             result = GetResultData(init, data);
             var resultFirst = result.FirstOrDefault();
             if (resultFirst != null)
@@ -283,7 +285,7 @@ namespace BenDing.Service.Providers
                     var msg = "数据库中未找到相应的住院业务ID的医保信息！";
                 }
             }
-            var resultData = await _webServiceBasic.HIS_InterfaceListAsync("37", "{'验证码':'" + param.验证码 + "','业务ID':'" + param.业务ID + "'}", user.职员ID);
+            var resultData = await _webServiceBasic.HIS_InterfaceListAsync("37", "{'验证码':'" + param.验证码 + "','业务ID':'" + param.业务ID + "'}", user.UserId);
             if (resultData.Result == "1")
             {
                 var count = await _dataBaseHelpService.DeleteMedicalInsurance(user, param.业务ID);
@@ -296,7 +298,7 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public async Task<List<InformationDto>> GetInformation(UserInfoDto user, InformationParam param)
         {
-            var resultData = await _webServiceBasic.HIS_InterfaceListAsync("03", JsonConvert.SerializeObject(param), user.职员ID);
+            var resultData = await _webServiceBasic.HIS_InterfaceListAsync("03", JsonConvert.SerializeObject(param), user.UserId);
             var result = new List<InformationDto>();
             var init = new InformationDto();
             if (resultData.Result == "1")

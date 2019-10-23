@@ -20,7 +20,7 @@ namespace NFine.Web.Controllers
     /// </summary>
     public class BenDingController : AsyncController
     {
-
+        private IDataBaseHelpRepository _baseHelpRepository;
         private IWebServiceBasicService _webServiceBasicService;
         private IBaseSqlServerRepository _dataBaseSqlServerService;
         private IResidentMedicalInsuranceRepository _residentMedicalInsurance;
@@ -32,15 +32,14 @@ namespace NFine.Web.Controllers
         /// <param name="iDataBaseSqlServerService"></param>
         public BenDingController(IResidentMedicalInsuranceRepository insuranceRepository,
             IWebServiceBasicService iWebServiceBasicService,
-            IBaseSqlServerRepository iDataBaseSqlServerService
-
+            IBaseSqlServerRepository iDataBaseSqlServerService,
+            IDataBaseHelpRepository iBaseHelpRepository
             )
         {
-
             _webServiceBasicService = iWebServiceBasicService;
             _dataBaseSqlServerService = iDataBaseSqlServerService;
             _residentMedicalInsurance = insuranceRepository;
-
+            _baseHelpRepository = iBaseHelpRepository;
         }
         #region 基层接口
         // [HttpGet]
@@ -99,10 +98,10 @@ namespace NFine.Web.Controllers
                 {
                     var inputInpatientInfo = new CatalogParam()
                     {
-                        验证码 = userBase.验证码,
+                        AuthCode = userBase.AuthCode,
                         CatalogType = param.CatalogType,
-                        机构编码 = userBase.机构编码,
-                        条数 = 500,
+                        OrganizationCode = userBase.OrganizationCode,
+                        Nums = 500,
                     };
 
 
@@ -147,14 +146,28 @@ namespace NFine.Web.Controllers
                 var userBase = await GetUserBaseInfo();
                 var data = await _webServiceBasicService.GetICD10(userBase, new CatalogParam()
                 {
-                    机构编码 = userBase.机构编码,
-                    验证码 = userBase.验证码,
-                    条数 = 500,
+                    OrganizationCode = userBase.OrganizationCode,
+                    AuthCode = userBase.AuthCode,
+                    Nums = 1000,
                     CatalogType = param.CatalogType
                 });
                 y.Data = data;
 
 
+            }), JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// 查询ICD10
+        /// </summary>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> QueryICD10(QueryICD10UiParam param)
+        {
+            return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+
+                var data = await _baseHelpRepository.QueryICD10(param);
+                y.Data = data;
             }), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
@@ -186,9 +199,9 @@ namespace NFine.Web.Controllers
                 {
                     var inputInpatientInfo = new InformationParam()
                     {
-                        验证码 = userBase.验证码,
-                        机构编码 = userBase.机构编码,
-                        目录类型 = "1"
+                        AuthCode = userBase.AuthCode,
+                        OrganizationCode = userBase.OrganizationCode,
+                        DirectoryType = "1"
                     };
                     //string inputInpatientInfoJson = JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
 
@@ -232,12 +245,12 @@ namespace NFine.Web.Controllers
                {
                    var inputInpatientInfo = new InpatientInfoParam()
                    {
-                       验证码 = verificationCode.验证码,
-                       机构编码 = verificationCode.机构编码,
-                       身份证号码 = "512501195802085180",
-                       开始时间 = "2018-04-27 11:09:00",
-                       结束时间 = "2020-04-27 11:09:00",
-                       状态 = "0"
+                       AuthCode = verificationCode.AuthCode,
+                       OrganizationCode = verificationCode.OrganizationCode,
+                       IdCardNo = "512501195802085180",
+                       StartTime = "2018-04-27 11:09:00",
+                       EndTime = "2020-04-27 11:09:00",
+                       State = "0"
                    };
                    string inputInpatientInfoJson =
                        JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
@@ -269,12 +282,12 @@ namespace NFine.Web.Controllers
                 {
                     var inputInpatientInfo = new InpatientInfoParam()
                     {
-                        验证码 = verificationCode.验证码,
-                        机构编码 = verificationCode.机构编码,
-                        身份证号码 = "511523198701122345",
-                        开始时间 = "2019-04-27 11:09:00",
-                        结束时间 = "2020-04-27 11:09:00",
-                        状态 = "0"
+                        AuthCode = verificationCode.AuthCode,
+                        OrganizationCode = verificationCode.OrganizationCode,
+                        IdCardNo = "511523198701122345",
+                        StartTime = "2019-04-27 11:09:00",
+                        EndTime = "2020-04-27 11:09:00",
+                        State = "0"
                     };
                     string inputInpatientInfoJson =
                         JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
@@ -285,12 +298,12 @@ namespace NFine.Web.Controllers
                     var inpatientIni = inpatientInList.FirstOrDefault();
                     var InpatientInfoDetail = new InpatientInfoDetailParam()
                     {
-                        验证码 = verificationCode.验证码,
-                        住院号 = inpatientIni.住院号,
-                        业务ID = inpatientIni.业务ID,
-                        开始时间 = inpatientIni.入院日期,
-                        结束时间 = "2020-04-27 11:09:00",
-                        状态 = "0"
+                        AuthCode = verificationCode.AuthCode,
+                        HospitalizationNo = inpatientIni.HospitalizationNo,
+                        BusinessId = inpatientIni.BusinessId,
+                        StartTime = inpatientIni.AdmissionDate,
+                        EndTime = "2020-04-27 11:09:00",
+                        State = "0"
                     };
                     var data = await _webServiceBasicService.GetInpatientInfoDetail(verificationCode, InpatientInfoDetail);
                     y.Data = data;
@@ -313,8 +326,8 @@ namespace NFine.Web.Controllers
                {
                    var outPatient = new OutpatientParam()
                    {
-                       验证码 = verificationCode.验证码,
-                       机构编码 = verificationCode.机构编码,
+                       验证码 = verificationCode.AuthCode,
+                       机构编码 = verificationCode.OrganizationCode,
                        身份证号码 = "511526199610225518",
                        开始时间 = "2019-04-27 11:09:00",
                        结束时间 = "2020-04-27 11:09:00",
@@ -343,8 +356,8 @@ namespace NFine.Web.Controllers
               {
                   var outPatient = new OutpatientParam()
                   {
-                      验证码 = verificationCode.验证码,
-                      机构编码 = verificationCode.机构编码,
+                      验证码 = verificationCode.AuthCode,
+                      机构编码 = verificationCode.OrganizationCode,
                       身份证号码 = "511526199610225518",
                       开始时间 = "2019-04-27 11:09:00",
                       结束时间 = "2020-04-27 11:09:00",
@@ -356,10 +369,9 @@ namespace NFine.Web.Controllers
                       var inputInpatientInfoFirst = inputInpatientInfoData.FirstOrDefault();
                       var outpatientDetailParam = new OutpatientDetailParam()
                       {
-                          验证码 = verificationCode.验证码,
+                          验证码 = verificationCode.AuthCode,
                           门诊号 = inputInpatientInfoFirst.门诊号,
                           业务ID = inputInpatientInfoFirst.业务ID
-
                       };
                       var inputInpatientInfoDatas = await _webServiceBasicService.
                           GetOutpatientDetailPerson(verificationCode, outpatientDetailParam);
@@ -376,9 +388,9 @@ namespace NFine.Web.Controllers
         {
             var inputParam = new UserInfoParam()
             {
-                用户名 = "liqian",
-                密码 = "123",
-                厂商编号 = "510303001",
+                UserName = "liqian",
+                Pwd = "123",
+                ManufacturerNumber = "510303001",
             };
             string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
             var verificationCode = await _webServiceBasicService.GetVerificationCode("01", inputParamJson);
@@ -386,7 +398,11 @@ namespace NFine.Web.Controllers
         }
         #endregion
         #region 居民医保
-
+        /// <summary>
+        /// 获取居民医保信息
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> GetUserInfo(ResidentUserInfoParam param)
         {
@@ -412,16 +428,24 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> ProjectDownload(ResidentUserInfoParam param)
+        public async Task<ActionResult> ProjectDownload(ResidentProjectDownloadParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-
-                var login = BaseConnect.Connect();
+                
+                var login = 1;
                 if (login == 1)
                 {
                     var userBase = await _residentMedicalInsurance.ProjectDownload(new ResidentProjectDownloadParam());
-                    y.Data = userBase;
+                   
+                    if (userBase.Row!=null && userBase.Row.Any())
+                    {
+                       
+                        await _baseHelpRepository.ProjectDownload(new UserInfoDto() { UserId = "E075AC49FCE443778F897CF839F3B924" }, userBase.Row);
+                    }
+
+
+                    // y.Data = userBase;
                 }
                 else
                 {

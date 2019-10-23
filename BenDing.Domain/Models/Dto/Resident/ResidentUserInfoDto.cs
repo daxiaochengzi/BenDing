@@ -3,102 +3,149 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using BenDing.Domain.Models.Dto.Web;
+using Newtonsoft.Json;
 
 namespace BenDing.Domain.Models.Dto.Resident
 {
-  public  class ResidentUserInfoDto: IniDto
+    
+    public  class ResidentUserInfoDto: IniDto
     {/// <summary>
      /// 个人编码
      /// </summary>
-        public string PO_GRSHBZH { get; set; }
+       
+        [JsonProperty(PropertyName = "PO_GRSHBZH")]
+        public string PersonalCoding { get; set; }
+
         /// <summary>
-        /// 行政区划
+        /// 行政区域
         /// </summary>
-        public string PO_XZQH { get; set; }
+     
+        [JsonProperty(PropertyName = "PO_XZQH")]
+        public string AdministrativeArea { get; set; }
         /// <summary>
         /// 姓名
         /// </summary>
-        public string PO_XM { get; set; }
+      
+        [JsonProperty(PropertyName = "PO_XM")]
+        public string PatientName { get; set; }
         /// <summary>
         /// 性别
         /// </summary>
-        public string PO_XB { get; set; }
+      
+        [JsonProperty(PropertyName = "PO_XB")]
+        public string PatientSex { get; set; }
         /// <summary>
-        /// 出生日期
+        /// 出生日期 Birthday
         /// </summary>
-        public string PO_CSNY { get; set; }
+       
+        [JsonProperty(PropertyName = "PO_CSNY")]
+        public string Birthday { get; set; }
         /// <summary>
         /// 险种类型310:城镇职工基本医疗保险342：城乡居民基本医疗保险根据获取的险种类型，调用对应的职工或者居民接口办理入院。
         /// </summary>
-        public string PO_XZLX { get; set; }
+      
+        [JsonProperty(PropertyName = "PO_XZLX")]
+        public string InsuranceType { get; set; }
         /// <summary>
         /// 参保状态
         /// </summary>
-        public string PO_CBZT { get; set; }
+       
+        [JsonProperty(PropertyName = "PO_CBZT")]
+        public string InsuredState { get; set; }
         /// <summary>
         /// 报销状态
         /// </summary>
-        public string PO_YBTSZT { get; set; }
+      
+        [JsonProperty(PropertyName = "PO_YBTSZT")]
+        public string ReimbursementStatus { get; set; }
         /// <summary>
         /// 报销状态说明
         /// </summary>
-        public string P0_YBBXZTSM { get; set; }
+        
+         [JsonProperty(PropertyName = "P0_YBBXZTSM")]
+        public string ReimbursementStatusExplain { get; set; }
         /// <summary>
         /// 人员分类
         /// </summary>
-        public string PO_RYFL { get; set; }
+       
+        [JsonProperty(PropertyName = "PO_RYFL")]
+        public string PersonnelClassification { get; set; }
         /// <summary>
         /// 联系地址
         /// </summary>
-        public string PO_LXDZ { get; set; }
+       
+        [JsonProperty(PropertyName = "PO_LXDZ")]
+        public string ContactAddress { get; set; }
         /// <summary>
         /// 联系电话
         /// </summary>
-        public string PO_LXDH { get; set; }
+     
+        [JsonProperty(PropertyName = "PO_LXDH")]
+        public string ContactPhone { get; set; }
         /// <summary>
         /// 身份证号
         /// </summary>
-        public string PO_SFZH { get; set; }
+     
+        [JsonProperty(PropertyName = "PO_SFZH")]
+        public string IdCardNo { get; set; }
         /// <summary>
         /// 实足年龄
         /// </summary>
-        public string PO_SZNL { get; set; }
+        
+        [JsonProperty(PropertyName = "PO_SZNL")]
+        public string Age { get; set; }
         /// <summary>
         /// 社区名称
         /// </summary>
-        public string PO_SQMC { get; set; }
+    
+        [JsonProperty(PropertyName = "PO_SQMC")]
+        public string CommunityName { get; set; }
         /// <summary>
-        /// 居民医保账户余额
+        /// 居民医保账户余额ResidentInsuranceBalance
         /// </summary>
-        public string PO_JBZHYE { get; set; }
+        
+        [JsonProperty(PropertyName = "PO_JBZHYE")]
+        public string ResidentInsuranceBalance { get; set; }
         /// <summary>
-        /// 职工医保账户余额
+        /// 职工医保账户余额 
         /// </summary>
-        public string PO_ZGZHYE { get; set; }
+     
+        [JsonProperty(PropertyName = "PO_ZGZHYE")]
+        public string WorkersInsuranceBalance { get; set; }
         /// <summary>
         /// 门特余额
         /// </summary>
-        public string PO_MTYE { get; set; }
+        
+        [JsonProperty(PropertyName = "PO_MTYE")]
+        public string MentorBalance { get; set; }
         /// <summary>
         /// 建卡贫困户标志
         /// </summary>
-        public string PO_PKHBZ { get; set; }
+      
+        [JsonProperty(PropertyName = "PO_PKHBZ")]
+        public string PoorMark { get; set; }
         /// <summary>
         /// 重点救助对象类别
         /// </summary>
-        public string PO_MZJZLB { get; set; }
+    
+        [JsonProperty(PropertyName = "PO_MZJZLB")]
+        public string RescueType { get; set; }
         /// <summary>
         /// 重点优抚对象类别
         /// </summary>
-        public string PO_MZYFLB { get; set; }
+        [JsonProperty(PropertyName = "PO_MZYFLB")]
+        public string PreferentialTreatmentType { get; set; }
         /// <summary>
         /// 民政特殊人员认定地
         /// </summary>
-        public string PO_MZRDD { get; set; }
+        [JsonProperty(PropertyName = "PO_MZRDD")]
+        public string SpecialPeopleCognizancePlace { get; set; }
         /// <summary>
         /// 统筹支付余额
         /// </summary>
-        public string PO_TCZFYE { get; set; }
+        [JsonProperty(PropertyName = "PO_TCZFYE")]
+        public string OverallPaymentBalance { get; set; }
     }
 }

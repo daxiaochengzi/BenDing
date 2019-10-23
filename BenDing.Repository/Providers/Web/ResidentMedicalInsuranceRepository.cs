@@ -83,7 +83,11 @@ namespace BenDing.Repository.Providers.Web
             return await Task.Run(async () =>
             {
                 var data = new ResidentProjectDownloadDto();
-                data = XmlHelp.DeSerializerModel(new ResidentProjectDownloadDto());
+                
+                string strXml= XmlHelp.DeSerializerModelStr("ROWDATA");
+               
+                data = XmlHelp.DeSerializer<ResidentProjectDownloadDto>(strXml);
+               // data = XmlHelp.DeSerializerModel(new ResidentProjectDownloadDto());
                 //var xmlStr = XmlHelp.SaveXml(param);
                 //if (xmlStr)
                 //{

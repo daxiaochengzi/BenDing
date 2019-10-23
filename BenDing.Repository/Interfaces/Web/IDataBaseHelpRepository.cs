@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.UI;
@@ -86,6 +87,12 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
         Task AddICD10(List<ICD10InfoDto> param, UserInfoDto user);
         /// <summary>
+        /// ICD10查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task<List<QueryICD10InfoDto>> QueryICD10(QueryICD10UiParam param);
+        /// <summary>
         /// 保存住院病人信息
         /// </summary>
         /// <param name="param"></param>
@@ -118,6 +125,6 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="user"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task<Int32> PairCode(UserInfoDto user, List<PairCodeDto> param);
+        Task<Int32> ProjectDownload(UserInfoDto user, List<ResidentProjectDownloadRowDataRowDto> param);
     }
 }

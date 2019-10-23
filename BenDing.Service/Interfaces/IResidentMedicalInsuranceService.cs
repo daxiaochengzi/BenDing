@@ -26,6 +26,6 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
 
-        Task<ResidentProjectDownloadDto> ProjectDownload(ResidentProjectDownloadParam param);
+        Task<string> ProjectDownload(ResidentProjectDownloadParam param);
     }
 }

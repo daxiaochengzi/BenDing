@@ -194,7 +194,7 @@ namespace BenDing.Repository.Providers.Web
                                       ,[经办人]
                                       ,[执业医师证号]
                                       ,[费用冲销ID]
-                                      ,[机构编码]
+                                      ,[OrganizationCode]
                                       ,[机构名称]
                                       ,[费用时间]
                                       ,[CreateTime]

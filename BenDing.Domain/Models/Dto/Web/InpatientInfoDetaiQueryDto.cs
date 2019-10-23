@@ -8,7 +8,7 @@ namespace BenDing.Domain.Models.Dto.Web
 {
    public class InpatientInfoDetailQueryDto
     {
-        public string cost_detail_id { get; set; }
-        public  int data_sort { get; set; }
+        public string CostDetailId { get; set; }
+        public  int DataSort { get; set; }
     }
 }

@@ -8,14 +8,18 @@ namespace BenDing.Domain.Models.Params.Web
 {
    public class InpatientInfoDetailParam
     {
-        public string 验证码 { get; set; }
-        public string 住院号 { get; set; }
-        public string 业务ID { get; set; }
-        public string 开始时间 { get; set; }
-        /// <summary>
-        /// 结束时间 不能位空
-        /// </summary>
-        public string 结束时间 { get; set; }
-        public string 状态 { get; set; }
+
+        [JsonProperty(PropertyName = "业务ID")]
+        public string BusinessId { get; set; }
+        [JsonProperty(PropertyName = "验证码")]
+        public string AuthCode { get; set; }
+        [JsonProperty(PropertyName = "住院号")]
+        public string HospitalizationNo { get; set; }
+        [JsonProperty(PropertyName = "开始时间")]
+        public string StartTime { get; set; }
+        [JsonProperty(PropertyName = "结束时间")]
+        public string EndTime { get; set; }
+        [JsonProperty(PropertyName = "状态")]
+        public string State { get; set; }
     }
 }

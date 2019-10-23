@@ -68,7 +68,7 @@ namespace NFine.Web.Controllers
             {
                 if (Session["nfine_session_verifycode"].IsEmpty() || Md5.md5(code.ToLower(), 16) != Session["nfine_session_verifycode"].ToString())
                 {
-                    throw new Exception("验证码错误，请重新输入");
+                    throw new Exception("UserId错误，请重新输入");
                 }
 
                 UserEntity userEntity = new UserApp().CheckLogin(username, password);

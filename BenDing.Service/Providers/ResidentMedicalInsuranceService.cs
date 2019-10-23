@@ -42,11 +42,12 @@ namespace BenDing.Service.Providers
             return resultData;
         }
 
-        public async Task<ResidentProjectDownloadDto> ProjectDownload(ResidentProjectDownloadParam param)
+        public async Task<string> ProjectDownload(ResidentProjectDownloadParam param)
         {
-            var resultData = await _residentMedicalInsurance.ProjectDownload(param);
+            var resultData=new ResidentProjectDownloadDto();
+            resultData = await _residentMedicalInsurance.ProjectDownload(param);
 
-            return resultData;
+            return "123";
         }
     }
 }
