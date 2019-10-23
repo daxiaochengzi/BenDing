@@ -9,18 +9,20 @@ namespace NFine.Web.Controllers
 { 
     public class InsuranceController : AsyncController
     {
-        //
-        // GET: /Insurance/
+       
 
         public ActionResult Card()
         {
-            if (!ModelState.IsValid)
-            {
-                return Content("数据校验不通过");
-            }
-
             return View();
         }
-     
+
+       
+
+        public ActionResult AdmissionRegistration()
+        {
+            return View();
+        }
+
+
     }
 }
