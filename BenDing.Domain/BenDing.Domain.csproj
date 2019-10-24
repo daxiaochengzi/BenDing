@@ -48,6 +48,7 @@
     <Compile Include="Models\Dto\Resident\ResidentHospitalizationRegisterDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentProjectDownloadDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentUserInfoDto.cs" />
+    <Compile Include="Models\Dto\Web\HospitalThreeCatalogueCodeDto.cs" />
     <Compile Include="Models\Dto\Web\QueryICD10InfoDto.cs" />
     <Compile Include="Models\Params\Base\BaseUiIniParam.cs" />
     <Compile Include="Models\Params\Resident\ResidentHospitalizationRegisterParam.cs" />

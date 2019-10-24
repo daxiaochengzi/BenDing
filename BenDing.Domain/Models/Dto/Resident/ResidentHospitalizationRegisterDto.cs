@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
+using Newtonsoft.Json;
 
 namespace BenDing.Domain.Models.Dto.Resident
 {
@@ -12,20 +13,24 @@ namespace BenDing.Domain.Models.Dto.Resident
      /// </summary>
         public class ResidentHospitalizationRegisterDto : IniDto
         {/// <summary>
-            /// 社保住院号
-            /// </summary>
-            public string PO_ZYH { get; set; }
-            /// <summary>
-            /// 审批编号
-            /// </summary>
-            public string PO_SPBH { get; set; }
-            /// <summary>
-            /// 本年统筹可支付金额
-            /// </summary>
-            public string PO_BNTCKZFJE { get; set; }
-            /// <summary>
-            /// 本年已住院次数
-            /// </summary>
-            public string PO_BNYZYCS { get; set; }
+         /// 社保住院号
+         /// </summary>
+        [JsonProperty(PropertyName = "PO_ZYH")]
+        public string MedicalInsuranceInpatientNo { get; set; }
+        /// <summary>
+        /// 审批编号
+        /// </summary>
+        [JsonProperty(PropertyName = "PO_SPBH")]
+        public string ApprovalNumber { get; set; }
+        /// <summary>
+        /// 本年统筹可支付金额
+        /// </summary>
+        [JsonProperty(PropertyName = "PO_BNTCKZFJE")]
+        public string PO_BNTCKZFJE { get; set; }
+        /// <summary>
+        /// 本年已住院次数
+        /// </summary>
+        [JsonProperty(PropertyName = "PO_SPBH")]
+        public string YearInpatientsNumber { get; set; }
         }
 }

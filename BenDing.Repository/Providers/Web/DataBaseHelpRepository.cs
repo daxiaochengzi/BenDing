@@ -824,6 +824,19 @@ namespace BenDing.Repository.Providers.Web
                 _sqlConnection.Open();
                 if (param.Any())
                 {
+                    var projectCodeList = ListToStr(param.Select(c => c.ProjectCode).ToList());
+                    string deleteSql = "delete [dbo].[MedicalInsuranceProject] where ProjectCode in (" + projectCodeList + ")";
+                    await _sqlConnection.ExecuteAsync(deleteSql);
+                    string querySql = "select [DirectoryCode],[FixedEncoding] from [dbo].[HospitalThreeCatalogueCode]";
+                   
+                    var queryData = await _sqlConnection.QueryAsync<QueryICD10InfoDto>(querySql);
+                    var queryDataList=new  List<QueryICD10InfoDto>();
+                    if (queryData != null && queryData.Count() > 0)
+                    {
+                        queryDataList= queryData.ToList();
+                    }
+
+                    //20191024023636736DateTime.Now.ToString("yyyyMMddhhmmssfff")
                     string insertSql = null;
                     foreach (var item in param)
                     {
@@ -841,8 +854,6 @@ namespace BenDing.Repository.Providers.Web
                                   ,'{item.NewUpdateTime}','{item.StartTime}','{item.EndTime}','{item.LimitPaymentScope}',GETDATE(),'{user.UserId}'
                                );";
                     }
-
-
                     result = await _sqlConnection.ExecuteAsync(insertSql);
                 }
                 return result;

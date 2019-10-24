@@ -11,7 +11,6 @@ using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces;
 using Newtonsoft.Json;
-using NFine.Web.Model;
 
 namespace NFine.Web.Controllers
 {
@@ -389,7 +388,7 @@ namespace NFine.Web.Controllers
             var inputParam = new UserInfoParam()
             {
                 UserName = "liqian",
-                Pwd = "123",
+                Pwd = "liqian",
                 ManufacturerNumber = "510303001",
             };
             string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
@@ -464,7 +463,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> HospitalizationRegister(ResidentUserInfoParam param)
+        public async Task<ActionResult> HospitalizationRegister(ResidentHospitalizationRegisterParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
@@ -472,8 +471,8 @@ namespace NFine.Web.Controllers
                 var login = BaseConnect.Connect();
                 if (login == 1)
                 {
-                    var paramIni = new ResidentHospitalizationRegisterParam();
-                    var userBase = await _residentMedicalInsurance.HospitalizationRegister(paramIni);
+                
+                    var userBase = await _residentMedicalInsurance.HospitalizationRegister(param);
                     y.Data = userBase;
                 }
                 else
