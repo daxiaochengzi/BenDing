@@ -402,7 +402,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.HttpPost]
         public async Task<ActionResult> GetUserInfo(ResidentUserInfoParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
@@ -462,7 +462,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.HttpPost]
         public async Task<ActionResult> HospitalizationRegister(ResidentHospitalizationRegisterParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>

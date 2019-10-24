@@ -16,7 +16,7 @@ namespace BenDing.Domain.Models.Params.Resident
         [Display(Name = "身份证号或个人编号")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         [XmlElementAttribute("PI_SFBZ", IsNullable = false)]
-        public string PI_SFBZ { get; set; }
+        public string InformationNumber { get; set; }
         /// <summary>
         /// 身份标志 1为公民身份号码 2为个人编号
         /// </summary>
