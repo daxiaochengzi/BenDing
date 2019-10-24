@@ -5,68 +5,132 @@
 
 
 <form id="form1">
+    <div class="topPanel" style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+        <div class="search">
+            <table>
+                <tr>
+                    <td>
+                        <div id="txt_condition" class="btn-group">
+                            <a class="btn btn-default dropdown-text" data-toggle="dropdown">选择条件</a>
+                            <a class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" data-value="1">身份证号</a></li>
+                                <li><a href="#" data-value="2">个人编号</a></li>
+                                <li><a href="#" data-value="3">住院编号</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td style="padding-left: 2px;">
+                        <div class="input-group">
+                            <input id="txt_keyword" type="text" class="form-control" placeholder="请输入身份证号/个人编号/住院编号" style="width: 300px;">
+                            <span class="input-group-btn">
+                                <button id="btn_search" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
     <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
         <ul class="nav nav-tabs">
             <li role="presentation" class="active"><a href="#">城乡居保</a></li>
-            @*<li role="presentation"><a href="#">扩展信息</a></li>*@
             <li role="presentation"><a href="#">城镇职工</a></li>
+            <!--
+            PO_XZLX	险种类型
+            310:城镇职工基本医疗保险
+            342：城乡居民基本医疗保险
+            -->
         </ul>
         <div style="padding-top: 20px; margin-right: 30px;">
             <table class="form">
                 <tr>
-                    <th class="formTitle">上级</th>
+                    <th class="formTitle">住院编号</th>
                     <td class="formValue">
-                        <select id="F_ParentId" name="F_ParentId" class="form-control required">
-                            <option value="0">父节点</option>
-                        </select>
+                        <input id="PI_YYZYH_Id" name="PI_YYZYH" type="text" class="form-control required" placeholder="请输入住院号" />
                     </td>
-                    <th class="formTitle">类型</th>
+                    <th class="formTitle">患者姓名</th>
                     <td class="formValue">
-                        <select id="F_CategoryId" name="F_Target" class="form-control required">
+                        <input id="PO_XM_Id" name="PO_XM" type="text" class="form-control required" placeholder="请输入姓名" />
+                    </td>
+
+                    <th class="formTitle">医疗类别</th>
+                    <td class="formValue">
+                        <select id="F_YLLBCategoryId" name="F_Target" class="form-control required">
                             <option value="">==请选择==</option>
-                            <option value="Group">集团</option>
-                            <option value="Company">公司</option>
-                            <option value="Department">部门</option>
-                            <option value="WorkGroup">小组</option>
+                            <option value="11">11-普通入院</option>
+                            <option value="14">14-大病门诊</option>
+                            <option value="15">15-大病住院</option>
+                            <option value="22">22-急诊入院</option>
+                            <option value="23">23-市内转院住院</option>
+                            <option value="41">41-病理剖宫产</option>
+                            <option value="71">71-顺产</option>
+                            <option value="72">72-剖宫产</option>
                         </select>
                     </td>
                 </tr>
                 <tr>
-                    <th class="formTitle">名称</th>
+                    <!--
+                        PI_SFBZ 身份标志 : 个人编号或身份证号
+                        PI_CRBZ 传入标志 : 1为公民身份号码 2为个人编号
+                    -->
+                    <th class="formTitle">个人编号</th>
                     <td class="formValue">
-                        <input id="F_FullName" name="F_FullName" type="text" class="form-control required" placeholder="请输入名称" />
+                        <input id="PI_CRBZ_1" name="PI_SFBZ_1" type="text" class="form-control" placeholder="请输入个人编号" />
                     </td>
-                    <th class="formTitle">编号</th>
+                    <th class="formTitle">身份证号</th>
                     <td class="formValue">
-                        <input id="F_EnCode" name="F_EnCode" type="text" class="form-control required" placeholder="请输入编号" />
+                        <input id="PI_CRBZ_2" name="PI_SFBZ_2" type="text" class="form-control" placeholder="请输入身份证号" />
+                    </td>
+                    <th class="formTitle">户口性质</th>
+                    <!--如果为生育入院（即就诊类别为71，72，41）的，需录入产妇的户口性质。-->
+                    <td class="formValue">
+                        <select id="PI_HKXZ_ID" name="PI_HKXZ" class="form-control required">
+                            <option value="">==请选择==</option>
+                            <option value="10">10-城镇户口</option>
+                            <option value="20">20-农业户口</option>
+                        </select>
                     </td>
                 </tr>
                 <tr>
-                <tr>
-                    <th class="formTitle">负责人</th>
+                    <th class="formTitle">入院日期</th>
+                    <!--格式为YYYYMMDD-->
                     <td class="formValue">
-                        <input id="F_ManagerId" name="F_ManagerId" type="text" class="form-control" />
+                        <input id="PI_RYRQ_Id" name="PI_RYRQ" type="text" class="form-control input-wdatepicker" onfocus="WdatePicker()" placeholder="请选择入院日期" />
                     </td>
-                    <th class="formTitle">手机</th>
+                    <th class="formTitle">住院科室</th>
                     <td class="formValue">
-                        <input id="F_MobilePhone" name="F_MobilePhone" type="text" class="form-control" />
+                        <input id="PI_ZYBQ_Id" name="PI_ZYBQ" type="text" class="form-control" />
+                    </td>
+                    <th class="formTitle">床位号</th>
+                    <td class="formValue">
+                        <input id="PI_CWH_Id" name="PI_CWH" type="text" class="form-control" />
                     </td>
                 </tr>
                 <tr>
-                    <th class="formTitle">微信</th>
+                    <th class="formTitle">主诊编码</th>
+                    <!--主要诊断，必录项-->
                     <td class="formValue">
-                        <input id="F_WeChat" name="F_ManagerId" type="text" class="form-control" />
+                        <input id="PI_ICD10_Id" name="PI_ICD10" type="text" class="form-control required" placeholder="入院主要诊断疾病ICD-10编码" />
                     </td>
-                    <th class="formTitle">电话</th>
+                    <th class="formTitle">次诊编码</th>
                     <td class="formValue">
-                        <input id="F_TelePhone" name="F_TelePhone" type="text" class="form-control" />
+                        <input id="PI_ICD10_2_Id" name="PI_ICD10_2" type="text" class="form-control" placeholder="" />
+                    </td>
+                    <!--如果为生育入院（即就诊类别为71，72，41）的，需录入生育的胎儿数量-->
+                    <th class="formTitle">胎儿数</th>
+                    <td class="formValue">
+                        <input id="PI_TES_Id" name="PI_TES" type="text" class="form-control" />
                     </td>
                 </tr>
                 <tr>
 
-                    <th class="formTitle">邮箱</th>
+                    <th class="formTitle">疾病名称</th>
+                    <!--PI_RYZD-->
                     <td class="formValue">
-                        <input id="F_Email" name="F_MobilePhone" type="text" class="form-control" />
+                        <input id="PI_RYZD_Id" name="PI_RYZD" type="text" class="form-control required" placeholder="入院诊断疾病名称" />
                     </td>
                     <th class="formTitle">传真</th>
                     <td class="formValue">
@@ -83,18 +147,29 @@
                     <th class="formTitle" style="height: 35px;">选项</th>
                     <td class="formValue" colspan="3" style="padding-top: 1px;">
                         <div class="ckbox">
-                            <input id="F_EnabledMark" name="F_EnabledMark" type="checkbox" checked="checked"><label for="F_EnabledMark">有效</label>
+                            <input id="F_EnabledMark" name="F_EnabledMark" type="checkbox" checked="checked">
+                            <label for="F_EnabledMark">有效</label>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <th class="formTitle" valign="top" style="padding-top: 5px;">
-                        备注
-                    </th>
+                    <th class="formTitle" valign="top" style="padding-top: 5px;"> 备注 </th>
                     <td class="formValue" colspan="3">
                         <textarea id="F_Description" name="F_Descriptions" class="form-control" style="height: 60px;"></textarea>
                     </td>
+
+                    <!--<th class="formTitle">类型</th>
+                    <td class="formValue">
+                        <select id="F_CategoryId" name="F_Target" class="form-control required">
+                            <option value="">==请选择==</option>
+                            <option value="Group">集团</option>
+                            <option value="Company">公司</option>
+                            <option value="Department">部门</option>
+                            <option value="WorkGroup">小组</option>
+                        </select>
+                    </td>-->
                 </tr>
+
             </table>
         </div>
     </div>

@@ -307,6 +307,9 @@
     <Content Include="Content\js\highcharts\themes\gray.js" />
     <Content Include="Content\js\highcharts\themes\grid.js" />
     <Content Include="Content\js\highcharts\themes\skies.js" />
+    <Content Include="Content\js\html5shiv\html5shiv-printshiv.min.js" />
+    <Content Include="Content\js\html5shiv\html5shiv.min.js" />
+    <Content Include="Content\js\html5shiv\placeholders.min.js" />
     <Content Include="Content\js\index.js" />
     <Content Include="Content\js\indextab.js" />
     <Content Include="Content\js\framework-ui.js" />
