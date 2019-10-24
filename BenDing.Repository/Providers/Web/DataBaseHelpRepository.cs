@@ -17,7 +17,7 @@ using Dapper;
 
 namespace BenDing.Repository.Providers.Web
 {
-   public class DataBaseHelpRepository: IDataBaseHelpRepository
+    public class DataBaseHelpRepository : IDataBaseHelpRepository
     {
         private string _connectionString;
 
@@ -97,44 +97,61 @@ namespace BenDing.Repository.Providers.Web
         /// <returns></returns>
         public async Task AddCatalog(UserInfoDto userInfo, List<CatalogDto> param, CatalogTypeEnum type)
         {
+
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
-                //排除已有项目
-
                 _sqlConnection.Open();
-                if (param.Any())
+                IDbTransaction transaction = _sqlConnection.BeginTransaction();
+                try
                 {
-                    List<CatalogDto> paramNew;
-                    //获取唯一编码
-                    var catalogDtoIdList = param.Select(c => c.DirectoryCode).ToList();
-                    var ids = ListToStr(catalogDtoIdList);
-                    string sqlstr = $"select DirectoryCode  from [dbo].[HospitalThreeCatalogue]  where DirectoryCode in({ids})";
-                    var idListNew = await _sqlConnection.QueryAsync<string>(sqlstr);
-                    //排除已有项目
-                    paramNew = idListNew.Any() == true ? param.Where(c => !idListNew.Contains(c.DirectoryCode)).ToList()
-                               : param;
-                    string insterCount = null;
-                    if (paramNew.Any())
+                    if (param.Any())
                     {
-                        foreach (var itmes in paramNew)
+                       
+                     
+                      
+                        string sqlStr = $"update [dbo].[HospitalThreeCatalogue] set IsDelete=1 ,DeleteUserId='{userInfo.UserId}',DeleteTime=GETDATE()  where DirectoryCategoryCode='{Convert.ToInt16(type).ToString()}'";
+                        await _sqlConnection.ExecuteAsync(sqlStr, null, transaction);
+
+                        string queryStr = "select [DirectoryCode],[FixedEncoding]  from [dbo].[HospitalThreeCatalogueCode]";
+                        var queryData = await _sqlConnection.QueryAsync<HospitalThreeCatalogueCodeDto>(queryStr, null, transaction);
+
+                        var queryDataList = new List<HospitalThreeCatalogueCodeDto>();
+                        if (queryData != null && queryData.Any() == true)
                         {
+                            queryDataList = queryData.ToList();
+                        }
+
+                        string insterCount = null;
+
+                        foreach (var itmes in param)
+                        {
+                            var fixedEncoding = queryDataList.Count > 0 ? queryDataList.Where(d => d.DirectoryCode == itmes.DirectoryCode).Select(c => c.FixedEncoding).FirstOrDefault() : "";
+                            string fixedEncodingNew = !string.IsNullOrWhiteSpace(fixedEncoding) ? fixedEncoding : GuidToLongID().ToString();
+                           
                             string insterSql = $@"
-                                        insert into [dbo].[HospitalThreeCatalogue]([id],[DirectoryCode],[DirectoryName],[MnemonicCode],[DirectoryCategoryCode],[DirectoryCategoryName],[Unit],[Specification],[formulation],
-                                        [ManufacturerName],[remark],DirectoryCreateTime,CreateTime,IsDelete,CreateUserId)
-                                        values('{Guid.NewGuid()}','{itmes.DirectoryCode}','{itmes.DirectoryName}','{itmes.MnemonicCode}',{Convert.ToInt16(type)},'{itmes.DirectoryCategoryName}','{itmes.Unit}','{itmes.Specification}','{itmes.Formulation}',
-                                       '{itmes.ManufacturerName}','{itmes.Remark}', '{itmes.DirectoryCreateTime}',GETDATE(),0,'{userInfo.UserId}');";
+                                    insert into [dbo].[HospitalThreeCatalogue]([id],[DirectoryCode],[DirectoryName],[MnemonicCode],[DirectoryCategoryCode],[DirectoryCategoryName],[Unit],[Specification],[formulation],
+                                    [ManufacturerName],[remark],DirectoryCreateTime,CreateTime,IsDelete,CreateUserId,FixedEncoding)
+                                    values('{Guid.NewGuid()}','{itmes.DirectoryCode}','{itmes.DirectoryName}','{itmes.MnemonicCode}',{Convert.ToInt16(type)},'{itmes.DirectoryCategoryName}','{itmes.Unit}','{itmes.Specification}','{itmes.Formulation}',
+                                   '{itmes.ManufacturerName}','{itmes.Remark}', '{itmes.DirectoryCreateTime}',GETDATE(),0,'{userInfo.UserId}','{fixedEncodingNew}');";
                             insterCount += insterSql;
                         }
-                        await _sqlConnection.ExecuteAsync(insterCount);
+                        await _sqlConnection.ExecuteAsync(insterCount, null, transaction);
+
+                        string insertStrCode = $@"insert  into [dbo].[HospitalThreeCatalogueCode] select NEWID() as Id, b.DirectoryCode,b.FixedEncoding  
+                                    from [dbo].[HospitalThreeCatalogue] as b where b.[DirectoryCategoryCode]='{Convert.ToInt16(type).ToString()}' and b.IsDelete=0
+                                    and  not exists(select id from HospitalThreeCatalogueCode where DirectoryCode=b.DirectoryCode)";
+                        await _sqlConnection.ExecuteAsync(insertStrCode, null, transaction);
+                        transaction.Commit();
                     }
-
-
+                    _sqlConnection.Close();
 
                 }
-
-
-                _sqlConnection.Close();
-
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _sqlConnection.Close();
+                    throw new Exception(e.Message);
+                }
 
             }
 
@@ -254,12 +271,12 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<List<QueryICD10InfoDto>>QueryICD10(QueryICD10UiParam param)
+        public async Task<List<QueryICD10InfoDto>> QueryICD10(QueryICD10UiParam param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
                 //排除已有项目
-                var resultData=new List<QueryICD10InfoDto>();
+                var resultData = new List<QueryICD10InfoDto>();
                 _sqlConnection.Open();
 
                 string strSql = $"select  [id],[DiseaseCoding],[DiseaseName] ,[MnemonicCode],[Remark] ,DiseaseId from [dbo].[ICD10]  where IsDelete=0";
@@ -276,12 +293,12 @@ namespace BenDing.Repository.Providers.Web
 
                 var data = await _sqlConnection.QueryAsync<QueryICD10InfoDto>(strSql);
 
-                if (data !=null && data.Any())
+                if (data != null && data.Any())
                 {
                     resultData = data.ToList();
                 }
 
-                
+
                 _sqlConnection.Close();
 
                 return resultData;
@@ -827,14 +844,7 @@ namespace BenDing.Repository.Providers.Web
                     var projectCodeList = ListToStr(param.Select(c => c.ProjectCode).ToList());
                     string deleteSql = "delete [dbo].[MedicalInsuranceProject] where ProjectCode in (" + projectCodeList + ")";
                     await _sqlConnection.ExecuteAsync(deleteSql);
-                    string querySql = "select [DirectoryCode],[FixedEncoding] from [dbo].[HospitalThreeCatalogueCode]";
-                   
-                    var queryData = await _sqlConnection.QueryAsync<QueryICD10InfoDto>(querySql);
-                    var queryDataList=new  List<QueryICD10InfoDto>();
-                    if (queryData != null && queryData.Count() > 0)
-                    {
-                        queryDataList= queryData.ToList();
-                    }
+
 
                     //20191024023636736DateTime.Now.ToString("yyyyMMddhhmmssfff")
                     string insertSql = null;
@@ -903,6 +913,16 @@ namespace BenDing.Repository.Providers.Web
 
             }
             return result?.Substring(0, result.Length - 1);
+        }
+
+        /// <summary>  
+        /// 根据GUID获取19位的唯一数字序列  
+        /// </summary>  
+        /// <returns></returns>  
+        private long GuidToLongID()
+        {
+            byte[] buffer = Guid.NewGuid().ToByteArray();
+            return BitConverter.ToInt64(buffer, 0);
         }
     }
 }

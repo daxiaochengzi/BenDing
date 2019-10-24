@@ -97,10 +97,18 @@ namespace BenDing.Service.Providers
                 {
                     resultCatalogDtoList.AddRange(resultCatalogDto);
                 }
-                await _dataBaseHelpService.AddCatalog(user, resultCatalogDto, param.CatalogType);
+
+                if (resultCatalogDto.Count > 1)//排除单条更新
+                {
+                    await _dataBaseHelpService.AddCatalog(user, resultCatalogDto, param.CatalogType);
+                }
+
+               
                 i = i + param.Nums;
             }
-            return "下载【" + param.CatalogType + "】成功 共" + resultCatalogDtoList.Count() + "条记录";
+
+            Int64 allNum = resultCatalogDtoList.Count() == 1 ? 0 : resultCatalogDtoList.Count();
+            return "下载【" + param.CatalogType + "】成功 共" + allNum.ToString() + "条记录";
         }
         /// <summary>
         /// 删除下载的三大目录

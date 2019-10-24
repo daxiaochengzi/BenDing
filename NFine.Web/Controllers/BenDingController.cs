@@ -100,7 +100,7 @@ namespace NFine.Web.Controllers
                         AuthCode = userBase.AuthCode,
                         CatalogType = param.CatalogType,
                         OrganizationCode = userBase.OrganizationCode,
-                        Nums = 500,
+                        Nums = 1000,
                     };
 
 
@@ -426,7 +426,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.HttpPost]
         public async Task<ActionResult> ProjectDownload(ResidentProjectDownloadParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
@@ -483,7 +483,7 @@ namespace NFine.Web.Controllers
 
 
             });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+            return Json(resultData);
         }
         #endregion
     }
