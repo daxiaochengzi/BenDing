@@ -695,6 +695,7 @@
     <Content Include="Views\BenDing\Test.cshtml" />
     <Content Include="Views\Shared\_Card.cshtml" />
     <Content Include="Views\Insurance\AdmissionRegistration.cshtml" />
+    <Content Include="Views\Shared\_Admission.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
