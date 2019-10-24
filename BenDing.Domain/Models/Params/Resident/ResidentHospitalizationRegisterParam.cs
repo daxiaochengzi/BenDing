@@ -3,66 +3,83 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace BenDing.Domain.Models.Params.Resident
 {
-   public class ResidentHospitalizationRegisterParam
+    [XmlRootAttribute("ROW", IsNullable = false)]
+    public class ResidentHospitalizationRegisterParam
     {
         ///<summary>
         /// 身份标识
         /// </summary>
-        public string PI_SFBZ { get; set; }
+        [XmlElementAttribute("PI_SFBZ", IsNullable = false)]
+        public string IdentityMark { get; set; }
         /// <summary>
         /// 传入标志
         /// </summary>
-        public string PI_CRBZ { get; set; }
+        [XmlElementAttribute("PI_CRBZ", IsNullable = false)]
+        public string AfferentSign { get; set; }
         /// <summary>
         /// 医疗类别11：普通入院23: 市内转院住院14: 大病门诊15: 大病住院22: 急诊入院71：顺产72：剖宫产41：病理剖宫产
         /// </summary>
-        public string PI_YLLB { get; set; }
+        [XmlElementAttribute("PI_YLLB", IsNullable = false)]
+        public string MedicalCategory { get; set; }
         /// <summary>
         /// 胎儿数
         /// </summary>
-        public string PI_TES { get; set; }
+        [XmlElementAttribute("PI_TES", IsNullable = false)]
+        public string FetusNumber { get; set; }
         /// <summary>
         /// 户口性质
         /// </summary>
-        public string PI_HKXZ { get; set; }
+        [XmlElementAttribute("PI_HKXZ", IsNullable = false)]
+        public string HouseholdNature { get; set; }
         /// <summary>
         /// 入院日期  (格式为YYYYMMDD)
         /// </summary>
-        public string PI_RYRQ { get; set; }
+        [XmlElementAttribute("PI_RYRQ", IsNullable = false)]
+        public string AdmissionDate { get; set; }
         /// <summary>
         /// 入院主要诊断疾病ICD-10编码
         /// </summary>
-        public string PI_ICD10 { get; set; }
+        [XmlElementAttribute("PI_ICD10", IsNullable = false)]
+        public string AdmissionMainDiagnosisIcd10 { get; set; }
         /// <summary>
         /// 入院诊断疾病ICD-10编码
         /// </summary>
-        public string PI_ICD10_2 { get; set; }
+        [XmlElementAttribute("PI_ICD10_2", IsNullable = false)]
+        public string DiagnosisIcd10Two { get; set; }
         /// <summary>
-        /// 入院诊断疾病ICD-10编码
+        /// 入院诊断疾病ICD-10编码three
         /// </summary>
-        public string PI_ICD10_3 { get; set; }
+        [XmlElementAttribute("PI_ICD10_3", IsNullable = false)]
+        public string DiagnosisIcd10Three { get; set; }
         /// <summary>
         /// 入院诊断疾病名称
         /// </summary>
-        public string PI_RYZD { get; set; }
+        [XmlElementAttribute("PI_RYZD", IsNullable = false)]
+        public string AdmissionMainDiagnosis { get; set; }
         /// <summary>
-        /// 住院科室
+        /// 住院科室 
         /// </summary>
-        public string PI_ZYBQ { get; set; }
+        [XmlElementAttribute("PI_ZYBQ", IsNullable = false)]
+        public string InpatientDepartment { get; set; }
         /// <summary>
         /// 床位号
         /// </summary>
-        public string PI_CWH { get; set; }
+         [XmlElementAttribute("PI_CWH", IsNullable = false)]
+        public string BedNumber { get; set; }
         /// <summary>
         /// 医院住院号
         /// </summary>
-        public string PI_YYZYH { get; set; }
+        [XmlElementAttribute("PI_YYZYH", IsNullable = false)]
+        public string HospitalizationNo { get; set; }
         /// <summary>
         /// 经办人
         /// </summary>
-        public string PI_JBR { get; set; }
+        [XmlElementAttribute("PI_JBR", IsNullable = false)]
+        public string Operators { get; set; }
+
     }
 }

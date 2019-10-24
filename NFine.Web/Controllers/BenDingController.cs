@@ -52,7 +52,7 @@ namespace NFine.Web.Controllers
 
         //}
         /// <summary>
-        /// 
+        /// 获取基础人员信息
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
@@ -442,6 +442,7 @@ namespace NFine.Web.Controllers
                     {
                        
                         await _baseHelpRepository.ProjectDownload(new UserInfoDto() { UserId = "E075AC49FCE443778F897CF839F3B924" }, userBase.Row);
+                        y.Data = userBase;
                     }
 
 

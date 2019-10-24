@@ -827,7 +827,7 @@ namespace BenDing.Repository.Providers.Web
                     string insertSql = null;
                     foreach (var item in param)
                     {
-                        insertSql += $@"INSERT INTO [dbo].[medical_insurance_project]
+                        insertSql += $@"INSERT INTO [dbo].[MedicalInsuranceProject]
                            (id,[ProjectCode],[ProjectName] ,[ProjectCodeType] ,[ProjectLevel],[WorkersSelfPayProportion]
                            ,[Unit],[MnemonicCode] ,[Formulation],[ResidentSelfPayProportion],[RestrictionSign]
                            ,[ZeroBlock],[OneBlock],[TwoBlock],[ThreeBlock],[FourBlock],[EffectiveSign],[ResidentOutpatientSign]

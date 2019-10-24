@@ -24,6 +24,6 @@ namespace BenDing.Domain.Models.Params.Resident
         [Required(ErrorMessage = "{0}不能为空!!!")]
         [StringLength(1, ErrorMessage = "身份标志输入过长，不能超过1位")]
         [XmlElementAttribute("PI_CRBZ", IsNullable = false)]
-        public string PI_CRBZ { get; set; }
+        public string IdentityMark { get; set; }
     }
 }
