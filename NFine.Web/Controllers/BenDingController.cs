@@ -88,12 +88,28 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetLoginInfo()
+        public async Task<ActionResult> GetLoginInfo(AddHospitalOperatorParam param)
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
-               var userBase= await GetUserBaseInfo();
-                y.Data = userBase;
+                
+                var data = await _dataBaseSqlServerService.QueryHospitalOperator(param);
+                if (string.IsNullOrWhiteSpace(data.HisUserAccount))
+                {
+                    throw new Exception("当前用户未授权,基层账户信息,请重新授权!!!");
+                }
+                else
+                {
+                    var inputParam = new UserInfoParam()
+                    {
+                        UserName = data.HisUserAccount,
+                        Pwd = data.HisUserPwd,
+                        ManufacturerNumber = data.ManufacturerNumber,
+                    };
+                    string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
+                    var verificationCode = await _webServiceBasicService.GetVerificationCode("01", inputParamJson);
+                    y.Data = verificationCode;
+                }
 
             }), JsonRequestBehavior.AllowGet);
             
@@ -397,6 +413,43 @@ namespace NFine.Web.Controllers
 
           }), JsonRequestBehavior.AllowGet);
         }
+        /// <summary>
+        /// 添加医保账户与基层his账户
+        /// </summary>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> AddHospitalOperator(AddHospitalOperatorParam Param)
+        {
+            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+                {
+                    if (Param.IsHis)
+                    {
+                        if (string.IsNullOrWhiteSpace(Param.ManufacturerNumber))
+                        {
+                            throw new Exception("厂商编号不能为空!!!");
+                        }
+                        var inputParam = new UserInfoParam()
+                        {
+                            UserName = Param.UserAccount,
+                            Pwd = Param.UserPwd,
+                            ManufacturerNumber = Param.ManufacturerNumber,
+                        };
+                        string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
+                        var verificationCode = await _webServiceBasicService.GetVerificationCode("01", inputParamJson);
+                        await _dataBaseSqlServerService.AddHospitalOperator(Param);
+                    }
+                    else
+                    {
+                        var login = MedicalInsuranceDll.ConnectAppServer_cxjb(Param.UserAccount, Param.UserPwd);
+                        if (login != 1)
+                        {
+                            throw new Exception("医保登陆失败,请核对账户与密码!!!");
+                        }
+                    }
+
+                   
+                }), JsonRequestBehavior.AllowGet);
+        }
         [System.Web.Mvc.NonAction]
         private async Task<UserInfoDto> GetUserBaseInfo()
         {
@@ -408,6 +461,7 @@ namespace NFine.Web.Controllers
             };
             string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
             var verificationCode = await _webServiceBasicService.GetVerificationCode("01", inputParamJson);
+
             return verificationCode;
         }
         #endregion
@@ -523,25 +577,29 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public ActionResult HospitalizationRegister( )
+        public async Task<ActionResult> HospitalizationRegister(AddHospitalOperatorParam param)
         {
-            //var data= new ApiJsonResultData
-            
-            //return Json(resultData);
-            return Json(new ApiJsonResultData().RunWithTry(y =>
+
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var login = BaseConnect.Connect();
-                if (login == 1)
+
+                var data = await _dataBaseSqlServerService.QueryHospitalOperator(param);
+                if (string.IsNullOrWhiteSpace(data.MedicalInsuranceAccount))
                 {
-                    y.AddMessage("医保连接成功!!!");
+                   throw new Exception("当前用户未授权,医保账户信息,请重新授权!!!");
                 }
                 else
                 {
-                    y.AddErrorMessage("医保连接失败!!!");
+                    var login = MedicalInsuranceDll.ConnectAppServer_cxjb(data.MedicalInsuranceAccount, data.MedicalInsurancePwd); ;
+                    if (login != 1)
+                    {
+                        throw new Exception("医保连接失败!!!");
+                    }
+                    
                 }
 
-                //y.Data = JwtHelperb.IssueJWT(data);
-            }), JsonRequestBehavior.AllowGet);
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
         }
 
         #endregion

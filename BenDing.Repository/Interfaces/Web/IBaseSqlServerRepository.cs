@@ -47,5 +47,12 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         Task<Int32> SingleResidentInfoDownload(UserInfoDto user, List<SingleResidentInfoDto> param);
+        Task AddHospitalOperator(AddHospitalOperatorParam param);
+        /// <summary>
+        /// 操作员登陆信息查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task<QueryHospitalOperatorDto> QueryHospitalOperator(AddHospitalOperatorParam param);
     }
 }

@@ -242,7 +242,6 @@ namespace BenDing.Repository.Providers.Web
                 return result;
             }
         }
-
         public async Task<SingleResidentInfoDto> SingleResidentInfoQuery(SingleResidentInfQueryUiParam param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
@@ -257,6 +256,74 @@ namespace BenDing.Repository.Providers.Web
                 var data = await _sqlConnection.QueryFirstOrDefaultAsync<SingleResidentInfoDto>(strSql);
                 _sqlConnection.Close();
                 return data != null ? data : resultData;
+            }
+        }
+        /// <summary>
+        /// 添加用户登陆信息
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task AddHospitalOperator(AddHospitalOperatorParam param)
+        {
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+
+                _sqlConnection.Open();
+
+                string querySql = $"select COUNT(*) from [dbo].[HospitalOperator] where [HisUserId]='{param.UserId}' ";
+                var resultNum = await _sqlConnection.QueryFirstAsync<int>(querySql);
+                if (resultNum > 0)
+                {
+
+                    string updateSql = null;
+                    updateSql = param.IsHis ? $"update [dbo].[HospitalOperator] set HisUserAccount='{param.UserAccount}',HisUserPwd='{param.UserPwd}',UpdateUserId='{param.UserId}',OrganizationCode='{param.OrganizationCode}',ManufacturerNumber='{param.ManufacturerNumber}' where [HisUserId]='{param.UserId}'" 
+                        : $"update [dbo].[HospitalOperator] set [MedicalInsuranceAccount]='{param.UserAccount}',[MedicalInsuranceAccount]='{param.UserPwd}',UpdateUserId='{param.UserId}' where [HisUserId]='{param.UserId}'";
+
+                    await _sqlConnection.ExecuteAsync(updateSql);
+                }
+                else
+                {
+                    string insertSql = null;
+                    insertSql = param.IsHis ? $@"
+                                   INSERT INTO [dbo].[HospitalOperator]
+                                   ([Id] ,[FixedEncoding],[HisUserId],ManufacturerNumber,
+                                   [HisUserAccount],[HisUserPwd] ,[CreateTime],[CreateUserId]
+                                   )
+                             VALUES('{Guid.NewGuid()}','{BitConverter.ToInt64(Guid.Parse(param.UserId).ToByteArray(), 0)}','{param.ManufacturerNumber}'
+                                      '{param.UserAccount}','{param.UserPwd}',GETDATE(),'{param.UserId}')" : $@"
+                                   INSERT INTO [dbo].[HospitalOperator]
+                                   ([Id] ,[FixedEncoding],[HisUserId],
+                                   [MedicalInsuranceAccount],[MedicalInsurancePwd] ,[CreateTime],[CreateUserId]
+                                   )
+                             VALUES('{Guid.NewGuid()}','{BitConverter.ToInt64(Guid.Parse(param.UserId).ToByteArray(), 0)}',
+                                      '{param.UserAccount}','{param.UserPwd}',GETDATE(),'{param.UserId}')";
+
+                    await _sqlConnection.ExecuteAsync(insertSql);
+
+                }
+            }
+        }
+        /// <summary>
+        /// 操作员登陆信息查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<QueryHospitalOperatorDto> QueryHospitalOperator(AddHospitalOperatorParam param)
+        {
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+                var resultData = new QueryHospitalOperatorDto();
+                _sqlConnection.Open();
+                string querySql = $"select top 1 MedicalInsuranceAccount,[MedicalInsurancePwd],[HisUserAccount],[HisUserPwd],ManufacturerNumber from [dbo].[HospitalOperator] where [HisUserId]='{param.UserId}' ";
+                var data= await _sqlConnection.QueryFirstAsync<QueryHospitalOperatorDto>(querySql);
+                if (data != null)
+                {
+                    resultData = data;
+                }
+
+                _sqlConnection.Close();
+                return resultData;
             }
         }
 
