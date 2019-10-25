@@ -35,11 +35,11 @@ namespace BenDing.Service.Providers
         /// 入院登记
         /// </summary>
         /// <returns></returns>
-        public async Task<ResidentHospitalizationRegisterDto> HospitalizationRegister(ResidentHospitalizationRegisterParam param)
+        public async Task HospitalizationRegister(ResidentHospitalizationRegisterParam param)
         {
-            var resultData = await _residentMedicalInsurance.HospitalizationRegister(param);
+            await _residentMedicalInsurance.HospitalizationRegister(param);
 
-            return resultData;
+           
         }
 
         public async Task<string> ProjectDownload(ResidentProjectDownloadParam param)

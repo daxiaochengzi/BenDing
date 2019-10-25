@@ -26,11 +26,11 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// 本年统筹可支付金额
         /// </summary>
         [JsonProperty(PropertyName = "PO_BNTCKZFJE")]
-        public string PO_BNTCKZFJE { get; set; }
+        public string MedicalInsuranceYearBalance { get; set; }
         /// <summary>
         /// 本年已住院次数
         /// </summary>
-        [JsonProperty(PropertyName = "PO_SPBH")]
+        [JsonProperty(PropertyName = "PO_BNYZYCS")]
         public string YearInpatientsNumber { get; set; }
         }
 }

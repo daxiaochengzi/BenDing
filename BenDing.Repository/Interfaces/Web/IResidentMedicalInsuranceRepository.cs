@@ -19,7 +19,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// 入院登记
         /// </summary>
         /// <returns></returns>
-        Task<ResidentHospitalizationRegisterDto> HospitalizationRegister(ResidentHospitalizationRegisterParam param);
+        Task HospitalizationRegister(ResidentHospitalizationRegisterParam param);
         /// <summary>
         /// 项目下载
         /// </summary>

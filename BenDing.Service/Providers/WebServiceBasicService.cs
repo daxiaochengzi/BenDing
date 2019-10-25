@@ -68,6 +68,7 @@ namespace BenDing.Service.Providers
         {
 
             var time = await _dataBaseHelpService.GetTime(Convert.ToInt16(param.CatalogType));
+            await _dataBaseHelpService.DeleteCatalog(user, Convert.ToInt16(param.CatalogType));
             var timeNew = Convert.ToDateTime(time).ToString("yyyy-MM-dd HH:ss:mm") ?? DateTime.Now.AddYears(-40).ToString("yyyy-MM-dd HH:ss:mm");
             var oCatalogInfo = new CatalogInfoDto
             {
@@ -237,7 +238,7 @@ namespace BenDing.Service.Providers
 
             if (result.Any())
             {
-                await _dataBaseHelpService.GetInpatientInfoDetailDto(user, result);
+                //await _dataBaseHelpService.GetInpatientInfoDetailDto(user, result);
                 //var msg = "获取住院号【" + resultFirst.住院号 + "】，业务ID【" + param.业务ID + "】的时间段内的住院费用成功，共" + result.Count +
                 //          "条记录";
             }

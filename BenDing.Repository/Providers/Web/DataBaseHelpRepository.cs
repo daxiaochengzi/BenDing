@@ -101,54 +101,34 @@ namespace BenDing.Repository.Providers.Web
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
                 _sqlConnection.Open();
-                IDbTransaction transaction = _sqlConnection.BeginTransaction();
+              
                 try
                 {
                     if (param.Any())
                     {
-                       
-                     
-                      
-                        string sqlStr = $"update [dbo].[HospitalThreeCatalogue] set IsDelete=1 ,DeleteUserId='{userInfo.UserId}',DeleteTime=GETDATE()  where DirectoryCategoryCode='{Convert.ToInt16(type).ToString()}'";
-                        await _sqlConnection.ExecuteAsync(sqlStr, null, transaction);
 
-                        string queryStr = "select [DirectoryCode],[FixedEncoding]  from [dbo].[HospitalThreeCatalogueCode]";
-                        var queryData = await _sqlConnection.QueryAsync<HospitalThreeCatalogueCodeDto>(queryStr, null, transaction);
-
-                        var queryDataList = new List<HospitalThreeCatalogueCodeDto>();
-                        if (queryData != null && queryData.Any() == true)
-                        {
-                            queryDataList = queryData.ToList();
-                        }
+                   
 
                         string insterCount = null;
-
                         foreach (var itmes in param)
                         {
-                            var fixedEncoding = queryDataList.Count > 0 ? queryDataList.Where(d => d.DirectoryCode == itmes.DirectoryCode).Select(c => c.FixedEncoding).FirstOrDefault() : "";
-                            string fixedEncodingNew = !string.IsNullOrWhiteSpace(fixedEncoding) ? fixedEncoding : GuidToLongID().ToString();
-                           
+                            
                             string insterSql = $@"
                                     insert into [dbo].[HospitalThreeCatalogue]([id],[DirectoryCode],[DirectoryName],[MnemonicCode],[DirectoryCategoryCode],[DirectoryCategoryName],[Unit],[Specification],[formulation],
                                     [ManufacturerName],[remark],DirectoryCreateTime,CreateTime,IsDelete,CreateUserId,FixedEncoding)
                                     values('{Guid.NewGuid()}','{itmes.DirectoryCode}','{itmes.DirectoryName}','{itmes.MnemonicCode}',{Convert.ToInt16(type)},'{itmes.DirectoryCategoryName}','{itmes.Unit}','{itmes.Specification}','{itmes.Formulation}',
-                                   '{itmes.ManufacturerName}','{itmes.Remark}', '{itmes.DirectoryCreateTime}',GETDATE(),0,'{userInfo.UserId}','{fixedEncodingNew}');";
+                                   '{itmes.ManufacturerName}','{itmes.Remark}', '{itmes.DirectoryCreateTime}',GETDATE(),0,'{userInfo.UserId}','{ BitConverter.ToInt64(Guid.Parse(itmes.DirectoryCode).ToByteArray(), 0)}');";
                             insterCount += insterSql;
                         }
-                        await _sqlConnection.ExecuteAsync(insterCount, null, transaction);
-
-                        string insertStrCode = $@"insert  into [dbo].[HospitalThreeCatalogueCode] select NEWID() as Id, b.DirectoryCode,b.FixedEncoding  
-                                    from [dbo].[HospitalThreeCatalogue] as b where b.[DirectoryCategoryCode]='{Convert.ToInt16(type).ToString()}' and b.IsDelete=0
-                                    and  not exists(select id from HospitalThreeCatalogueCode where DirectoryCode=b.DirectoryCode)";
-                        await _sqlConnection.ExecuteAsync(insertStrCode, null, transaction);
-                        transaction.Commit();
+                        await _sqlConnection.ExecuteAsync(insterCount, null);
+                      
                     }
                     _sqlConnection.Close();
 
                 }
                 catch (Exception e)
                 {
-                    transaction.Rollback();
+               
                     _sqlConnection.Close();
                     throw new Exception(e.Message);
                 }
@@ -168,7 +148,7 @@ namespace BenDing.Repository.Providers.Web
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
                 _sqlConnection.Open();
-                string strSql = $"delete [dbo].[HospitalThreeCatalogue] where [DirectoryCode]= {param}";
+                string strSql = $" update [dbo].[HospitalThreeCatalogue] set IsDelete=1 ,DeleteUserId='{user.UserId}',DeleteTime=GETDATE()  where DirectoryCategoryCode='{param.ToString()}'";
                 var num = await _sqlConnection.ExecuteAsync(strSql);
                 _sqlConnection.Close();
                 return num;
@@ -541,14 +521,14 @@ namespace BenDing.Repository.Providers.Web
                                            ,[AdmissionWard] ,[AdmissionOperator] ,[AdmissionOperateTime] ,[HospitalizationTotalCost] ,[Remark] ,[LeaveDepartmentName] ,[LeaveDepartmentId] 
 		                                   ,[LeaveHospitalWard] ,[LeaveHospitalBed]  ,[LeaveHospitalMainDiagnosis] ,[LeaveHospitalMainDiagnosisIcd10] ,[LeaveHospitalSecondaryDiagnosis] ,[LeaveHospitalSecondaryDiagnosisIcd10]
                                            ,[InpatientHospitalState] ,[AdmissionDiagnosticDoctorId] ,[AdmissionBedId]  ,[AdmissionWardId],[LeaveHospitalBedId] ,[LeaveHospitalWardId]
-                                           ,[CreateTime]  ,[IsDelete] ,[DeleteTime],OrganizationCode,CreateUserId)
+                                           ,[CreateTime]  ,[IsDelete] ,[DeleteTime],OrganizationCode,CreateUserId,FixedEncoding)
                                      VALUES ('{Guid.NewGuid()}','{item.HospitalName}','{item.AdmissionDate}','{item.LeaveHospitalDate}','{item.HospitalizationNo}','{item.BusinessId}','{item.PatientName}','{item.IdCardNo}',
                                              '{item.PatientSex}','{item.Birthday}','{item.ContactName}','{item.ContactPhone}','{item.FamilyAddress}','{item.InDepartmentName}','{item.InDepartmentId}',
                                              '{item.AdmissionDiagnosticDoctor}','{item.AdmissionBed}','{item.AdmissionMainDiagnosis}','{item.AdmissionMainDiagnosisIcd10}','{item.AdmissionSecondaryDiagnosis}','{item.AdmissionSecondaryDiagnosisIcd10}',
                                              '{item.AdmissionWard}','{item.AdmissionOperator}','{item.AdmissionOperateTime}',{Convert.ToDecimal(item.HospitalizationTotalCost)},'{item.Remark}','{item.LeaveDepartmentName}','{item.LeaveDepartmentId}',
                                              '{item.LeaveHospitalWard}','{item.LeaveHospitalBed}','{item.LeaveHospitalMainDiagnosis}','{item.LeaveHospitalMainDiagnosisIcd10}','{item.LeaveHospitalSecondaryDiagnosis}','{item.LeaveHospitalSecondaryDiagnosisIcd10}',
                                              '{item.InpatientHospitalState}','{item.AdmissionDiagnosticDoctorId}','{item.AdmissionBedId}','{item.AdmissionWardId}','{item.LeaveHospitalBedId}','{item.LeaveHospitalWardId}',
-                                               GETDATE(),0,null,'{user.OrganizationCode}','{user.UserId}'
+                                               GETDATE(),0,null,'{user.OrganizationCode}','{user.UserId}','{BitConverter.ToInt64(Guid.Parse(item.BusinessId).ToByteArray(), 0)}'
                                               );";
                             insertSql += str;
                         }
@@ -649,30 +629,31 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="user"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task MedicalInsurance(UserInfoDto user, List<MedicalInsuranceDto> param)
+        public async Task SaveMedicalInsurance(UserInfoDto user, MedicalInsuranceDto param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
-
                 _sqlConnection.Open();
-                if (param.Any())
+                string insertSql = null;
+                if (!string.IsNullOrWhiteSpace(param.MedicalInsuranceHospitalizationNo))
                 {
-                    string insertSql = "";
-                    foreach (var item in param)
-                    {
-                        string str = $@"INSERT INTO [dbo].[住院医保信息]([住院Id],[业务ID],[医保卡号]
-                               ,[医保总费用],[报账费用] ,[自付费用],[其他信息] 
-		                       ,[create_time],[update_time] ,[IsDelete] ,[DeleteTime],OrgCode,CreateUserId)
-                           VALUES(
-                                 {item.业务ID},{item.业务ID}, {item.医保卡号},{item.医保总费用},
-                                 {item.报账费用},{item.自付费用}, {item.其他信息},
-                                GETDATE(),GETDATE(),0,null,'{user.OrganizationCode}','{user.UserId}'
-                                 );";
-                        insertSql += str;
-
-                    }
-                    var nums = await _sqlConnection.ExecuteAsync(insertSql);
+                    insertSql = $@"update [dbo].[MedicalInsurance] set [MedicalInsuranceYearBalance]=0,
+                    [MedicalInsuranceHospitalizationNo]='{param.MedicalInsuranceHospitalizationNo}',[Isdelete]=0
+                    where [HisHospitalizationId]='{param.HisHospitalizationId}' and [Isdelete]=1";
                 }
+                else
+                {
+                    insertSql = $@"INSERT INTO [dbo].[MedicalInsurance]([Id],[HisHospitalizationId],[InsuranceNo],[MedicalInsuranceYearBalance]
+                               ,[AdmissionInfoJson],[ReimbursementExpenses] ,[SelfPayFee],[OtherInfo] 
+		                       ,[CreateTime],[IsDelete] ,OrganizationCode,CreateUserId)
+                           VALUES('{Guid.NewGuid()}', '{param.HisHospitalizationId}','{param.InsuranceNo}', {param.MedicalInsuranceYearBalance},'{param.AdmissionInfoJson}',
+                                 {param.ReimbursementExpenses},{param.SelfPayFee},'{param.OtherInfo}',
+                                GETDATE(),1,'{user.OrganizationCode}','{user.UserId}');";
+                    insertSql = $"delete [dbo].[MedicalInsurance] where [HisHospitalizationId]='{param.HisHospitalizationId}';" +insertSql;
+
+                }
+                await _sqlConnection.ExecuteAsync(insertSql);
+
 
             }
         }
@@ -921,8 +902,8 @@ namespace BenDing.Repository.Providers.Web
         /// <returns></returns>  
         private long GuidToLongID()
         {
-            byte[] buffer = Guid.NewGuid().ToByteArray();
-            return BitConverter.ToInt64(buffer, 0);
+            //byte[] buffer = Guid.NewGuid().ToByteArray();
+            return BitConverter.ToInt64(Guid.NewGuid().ToByteArray(), 0);
         }
     }
 }

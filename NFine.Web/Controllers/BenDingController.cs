@@ -84,6 +84,21 @@ namespace NFine.Web.Controllers
             return View();
         }
         /// <summary>
+        /// 获取登陆信息
+        /// </summary>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> GetLoginInfo()
+        {
+            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+            {
+               var userBase= await GetUserBaseInfo();
+                y.Data = userBase;
+
+            }), JsonRequestBehavior.AllowGet);
+            
+        }
+        /// <summary>
         /// 获取三大目录
         /// </summary>
         /// <returns></returns>
@@ -111,7 +126,7 @@ namespace NFine.Web.Controllers
                     }
                 }
 
-                //var data = await webService.ExecuteSp(param.Params);
+             
 
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
@@ -471,9 +486,27 @@ namespace NFine.Web.Controllers
                 var login = BaseConnect.Connect();
                 if (login == 1)
                 {
-                
-                    var userBase = await _residentMedicalInsurance.HospitalizationRegister(param);
-                    y.Data = userBase;
+                   
+                     await _residentMedicalInsurance.HospitalizationRegister(param);
+                    var inputInpatientInfo = new InpatientInfoParam()
+                    {
+                        AuthCode = param.AuthCode,
+                        OrganizationCode = param.OrganizationCode,
+                        IdCardNo = param.IdCardNo,
+                        StartTime = param.StartTime,
+                        EndTime = param.EndTime,
+                        State = param.State,
+                    };
+                    string inputInpatientInfoJson =
+                        JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
+
+                    var inputInpatientInfoData = await _webServiceBasicService
+                        .GetInpatientInfo(new UserInfoDto()
+                        {
+                            OrganizationCode = param.OrganizationCode,
+                            UserId = param.Operators
+                        }, inputInpatientInfoJson);
+
                 }
                 else
                 {
@@ -485,6 +518,32 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData);
         }
+        /// <summary>
+        /// 医保连接
+        /// </summary>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public ActionResult HospitalizationRegister( )
+        {
+            //var data= new ApiJsonResultData
+            
+            //return Json(resultData);
+            return Json(new ApiJsonResultData().RunWithTry(y =>
+            {
+                var login = BaseConnect.Connect();
+                if (login == 1)
+                {
+                    y.AddMessage("医保连接成功!!!");
+                }
+                else
+                {
+                    y.AddErrorMessage("医保连接失败!!!");
+                }
+
+                //y.Data = JwtHelperb.IssueJWT(data);
+            }), JsonRequestBehavior.AllowGet);
+        }
+
         #endregion
     }
 }
