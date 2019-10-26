@@ -35,9 +35,9 @@ namespace BenDing.Service.Providers
         /// 入院登记
         /// </summary>
         /// <returns></returns>
-        public async Task HospitalizationRegister(ResidentHospitalizationRegisterParam param)
+        public async Task HospitalizationRegister(ResidentHospitalizationRegisterParam param, UserInfoDto user)
         {
-            await _residentMedicalInsurance.HospitalizationRegister(param);
+            await _residentMedicalInsurance.HospitalizationRegister(param, user);
 
            
         }
