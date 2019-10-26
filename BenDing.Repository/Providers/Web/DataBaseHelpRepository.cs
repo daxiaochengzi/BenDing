@@ -137,6 +137,58 @@ namespace BenDing.Repository.Providers.Web
 
 
         }
+
+        /// <summary>
+        /// 基层端三大目录查询
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <param name="param"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public async Task<List<QueryCatalogDto>> QueryCatalogDto(UserInfoDto userInfo, List<CatalogDto> param, CatalogTypeEnum type)
+        {
+            var resultData = new List<QueryCatalogDto>();
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+                _sqlConnection.Open();
+
+                try
+                {
+                    if (param.Any())
+                    {
+
+
+
+                        string insterCount = null;
+                        foreach (var itmes in param)
+                        {
+
+                            string insterSql = $@"
+                                    insert into [dbo].[HospitalThreeCatalogue]([id],[DirectoryCode],[DirectoryName],[MnemonicCode],[DirectoryCategoryCode],[DirectoryCategoryName],[Unit],[Specification],[formulation],
+                                    [ManufacturerName],[remark],DirectoryCreateTime,CreateTime,IsDelete,CreateUserId,FixedEncoding)
+                                    values('{Guid.NewGuid()}','{itmes.DirectoryCode}','{itmes.DirectoryName}','{itmes.MnemonicCode}',{Convert.ToInt16(type)},'{itmes.DirectoryCategoryName}','{itmes.Unit}','{itmes.Specification}','{itmes.Formulation}',
+                                   '{itmes.ManufacturerName}','{itmes.Remark}', '{itmes.DirectoryCreateTime}',GETDATE(),0,'{userInfo.UserId}','{ BitConverter.ToInt64(Guid.Parse(itmes.DirectoryCode).ToByteArray(), 0)}');";
+                            insterCount += insterSql;
+                        }
+                        await _sqlConnection.ExecuteAsync(insterCount, null);
+
+                    }
+                    _sqlConnection.Close();
+
+                }
+                catch (Exception e)
+                {
+
+                    _sqlConnection.Close();
+                    throw new Exception(e.Message);
+                }
+
+            }
+
+            return resultData;
+
+        }
+
         /// <summary>
         /// 删除三大目录
         /// </summary>

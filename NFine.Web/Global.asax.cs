@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using NFine.Web.App_Start;
 using NFine.Web.Model;
+using System.Linq;
 
 namespace NFine.Web
 {
@@ -15,6 +16,11 @@ namespace NFine.Web
         /// </summary>
         protected void Application_Start()
         {
+
+            if (Request.Headers.AllKeys.Contains("Origin") && Request.HttpMethod == "OPTIONS")
+            {
+                Response.End();
+            }
             AreaRegistration.RegisterAllAreas();
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);

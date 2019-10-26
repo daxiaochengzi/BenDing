@@ -76,14 +76,16 @@ namespace NFine.Web.Controllers
 
         //    });
         //}
-        ///// <summary>
-        ///// 测试
-        ///// </summary>
-        ///// <returns></returns>
-        //public ActionResult Test()
-        //{
-        //    return View();
-        //}
+        /// <summary>
+        /// 测试
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Test(string Id)
+        {
+            //@ViewBag.bid
+            ViewBag.bid = Id;
+            return View();
+        }
         /// <summary>
         /// 获取登陆信息
         /// </summary>

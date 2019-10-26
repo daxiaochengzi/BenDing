@@ -45,11 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Dto\Base\PaginationDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentHospitalizationRegisterDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentProjectDownloadDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentUserInfoDto.cs" />
     <Compile Include="Models\Dto\Web\AddHospitalOperatorParam.cs" />
     <Compile Include="Models\Dto\Web\HospitalThreeCatalogueCodeDto.cs" />
+    <Compile Include="Models\Dto\Web\QueryCatalogDto.cs" />
     <Compile Include="Models\Dto\Web\QueryHospitalOperatorDto.cs" />
     <Compile Include="Models\Dto\Web\QueryICD10InfoDto.cs" />
     <Compile Include="Models\Dto\Web\UiIniParam.cs" />
