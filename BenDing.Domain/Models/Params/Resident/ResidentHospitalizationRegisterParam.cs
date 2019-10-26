@@ -6,12 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 
 namespace BenDing.Domain.Models.Params.Resident
 {
     [XmlRootAttribute("ROW", IsNullable = false)]
-    public class ResidentHospitalizationRegisterParam: InpatientInfoParam
+    public class ResidentHospitalizationRegisterParam: InpatientInfoUiParam
     {
         ///<summary>
         /// 身份标识

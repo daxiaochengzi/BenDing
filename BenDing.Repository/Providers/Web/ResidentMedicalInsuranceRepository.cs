@@ -59,7 +59,7 @@ namespace BenDing.Repository.Providers.Web
         /// 入院登记
         /// </summary>
         /// <returns></returns>
-        public async Task HospitalizationRegister(ResidentHospitalizationRegisterParam param)
+        public async Task HospitalizationRegister(ResidentHospitalizationRegisterParam param,UserInfoDto user)
         {
 
             var paramIni = param;
@@ -74,9 +74,9 @@ namespace BenDing.Repository.Providers.Web
                     HisHospitalizationId = param.HospitalizationNo
                 };
 
-                var user = new UserInfoDto() { OrganizationCode = param.OrganizationCode, UserId = param.Operators };
-                //保存医保信息
-                await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
+               
+                  //保存医保信息
+                  await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
                 //var data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto());
                 //saveData.MedicalInsuranceHospitalizationNo = "888";
                 //saveData.MedicalInsuranceYearBalance = 777;

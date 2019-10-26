@@ -13,7 +13,7 @@ using Dapper;
 
 namespace BenDing.Repository.Providers.Web
 {
-  public  class BaseSqlServerRepository: IBaseSqlServerRepository
+    public class BaseSqlServerRepository : IBaseSqlServerRepository
     {
         private string _connectionString;
         private SqlConnection _sqlConnection;
@@ -275,9 +275,8 @@ namespace BenDing.Repository.Providers.Web
                 var resultNum = await _sqlConnection.QueryFirstAsync<int>(querySql);
                 if (resultNum > 0)
                 {
-
                     string updateSql = null;
-                    updateSql = param.IsHis ? $"update [dbo].[HospitalOperator] set HisUserAccount='{param.UserAccount}',HisUserPwd='{param.UserPwd}',UpdateUserId='{param.UserId}',OrganizationCode='{param.OrganizationCode}',ManufacturerNumber='{param.ManufacturerNumber}' where [HisUserId]='{param.UserId}'" 
+                    updateSql = param.IsHis ? $"update [dbo].[HospitalOperator] set HisUserAccount='{param.UserAccount}',HisUserPwd='{param.UserPwd}',UpdateUserId='{param.UserId}',OrganizationCode='{param.OrganizationCode}',ManufacturerNumber='{param.ManufacturerNumber}' where [HisUserId]='{param.UserId}'"
                         : $"update [dbo].[HospitalOperator] set [MedicalInsuranceAccount]='{param.UserAccount}',[MedicalInsurancePwd]='{param.UserPwd}',UpdateUserId='{param.UserId}' where [HisUserId]='{param.UserId}'";
                     await _sqlConnection.ExecuteAsync(updateSql);
                 }
@@ -304,9 +303,6 @@ namespace BenDing.Repository.Providers.Web
                              VALUES('{Guid.NewGuid()}','{BitConverter.ToInt64(Guid.Parse(param.UserId).ToByteArray(), 0)}','{param.UserId}',
                                       '{param.UserAccount}','{param.UserPwd}',GETDATE(),'{param.UserId}')";
                     }
-
-                   
-
                     await _sqlConnection.ExecuteAsync(insertSql);
 
                 }
@@ -317,14 +313,14 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<QueryHospitalOperatorDto> QueryHospitalOperator(AddHospitalOperatorParam param)
+        public async Task<QueryHospitalOperatorDto> QueryHospitalOperator(QueryHospitalOperatorParam param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
                 var resultData = new QueryHospitalOperatorDto();
                 _sqlConnection.Open();
                 string querySql = $"select top 1 MedicalInsuranceAccount,[MedicalInsurancePwd],[HisUserAccount],[HisUserPwd],ManufacturerNumber from [dbo].[HospitalOperator] where [HisUserId]='{param.UserId}' ";
-                var data= await _sqlConnection.QueryFirstAsync<QueryHospitalOperatorDto>(querySql);
+                var data = await _sqlConnection.QueryFirstAsync<QueryHospitalOperatorDto>(querySql);
                 if (data != null)
                 {
                     resultData = data;

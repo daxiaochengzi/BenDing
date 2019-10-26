@@ -88,11 +88,13 @@
     <Compile Include="Models\Enums\CatalogTypeEnum.cs" />
     <Compile Include="Models\Params\Base\BaseIniParam.cs" />
     <Compile Include="Models\Params\UI\GetInpatientInfoDetailUIParam.cs" />
+    <Compile Include="Models\Params\UI\InpatientInfoUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalInsuranceDataAllParamUIQuery.cs" />
     <Compile Include="Models\Params\UI\SaveXmlDataUiParam.cs" />
     <Compile Include="Models\Params\UI\SingleResidentInfoDownloadUIParam.cs" />
     <Compile Include="Models\Params\UI\TabelIni.cs" />
     <Compile Include="Models\Params\UI\UiICD10Param.cs" />
+    <Compile Include="Models\Params\UI\UiInIParam.cs" />
     <Compile Include="Models\Params\Web\CatalogParam.cs" />
     <Compile Include="Models\Params\Web\DeleteMedicalInsuranceParam.cs" />
     <Compile Include="Models\Params\Web\ExecuteSpParam.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="Models\Params\Web\OrgParam.cs" />
     <Compile Include="Models\Params\Web\OutpatientDetailParam.cs" />
     <Compile Include="Models\Params\Web\OutpatientParam.cs" />
+    <Compile Include="Models\Params\Web\QueryHospitalOperatorParam.cs" />
     <Compile Include="Models\Params\Web\QueryICD10UiParam.cs" />
     <Compile Include="Models\Params\Web\QueryInpatientInfoParam.cs" />
     <Compile Include="Models\Params\Web\QueryMedicalInsuranceResidentInfoParam.cs" />

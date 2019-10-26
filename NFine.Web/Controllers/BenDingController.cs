@@ -6,6 +6,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
@@ -50,21 +51,21 @@ namespace NFine.Web.Controllers
         //    //return Ok();
 
         //}
-        /// <summary>
-        /// 获取基础人员信息
-        /// </summary>
-        /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetUserBaseInfos()
-        {
-            var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
-             {
-                 var userBase = await GetUserBaseInfo();
-                 y.Data = userBase;
+        ///// <summary>
+        ///// 获取基础人员信息
+        ///// </summary>
+        ///// <returns></returns>
+        //[System.Web.Mvc.HttpGet]
+        //public async Task<ActionResult> GetUserBaseInfos()
+        //{
+        //    var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
+        //     {
+        //         var userBase = await GetUserBaseInfo();
+        //         y.Data = userBase;
 
-             });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
-        }
+        //     });
+        //    return Json(resultData, JsonRequestBehavior.AllowGet);
+        //}
         //[HttpGet]
         //public ApiJsonResultData GetUserBaseInfoss(string dd)
         //{
@@ -75,22 +76,22 @@ namespace NFine.Web.Controllers
 
         //    });
         //}
-        /// <summary>
-        /// 测试
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult Test()
-        {
-            return View();
-        }
+        ///// <summary>
+        ///// 测试
+        ///// </summary>
+        ///// <returns></returns>
+        //public ActionResult Test()
+        //{
+        //    return View();
+        //}
         /// <summary>
         /// 获取登陆信息
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetLoginInfo(AddHospitalOperatorParam param)
+        public async Task<ActionResult> GetLoginInfo(QueryHospitalOperatorParam param)
         {
-            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+            return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
                 
                 var data = await _dataBaseSqlServerService.QueryHospitalOperator(param);
@@ -123,7 +124,7 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var userBase = await GetUserBaseInfo();
+                var userBase = await GetUserBaseInfo("");
                 if (userBase != null)
                 {
                     var inputInpatientInfo = new CatalogParam()
@@ -157,7 +158,7 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
-                var userBase = await GetUserBaseInfo();
+                var userBase = await GetUserBaseInfo(param.UserId);
                 var data = await _webServiceBasicService.DeleteCatalog(userBase, Convert.ToInt16(param.CatalogType));
                 y.Data = data;
 
@@ -173,7 +174,7 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var userBase = await GetUserBaseInfo();
+                var userBase = await GetUserBaseInfo(param.UserId);
                 var data = await _webServiceBasicService.GetICD10(userBase, new CatalogParam()
                 {
                     OrganizationCode = userBase.OrganizationCode,
@@ -210,7 +211,7 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var userBase = await GetUserBaseInfo();
+                var userBase = await GetUserBaseInfo(param.UserId);
                 var data = await _webServiceBasicService.GetOrg(userBase, param.Name);
                 y.Data = "更新机构" + data + "条";
             }), JsonRequestBehavior.AllowGet);
@@ -220,11 +221,11 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetInformation()
+        public async Task<ActionResult> GetInformation(UiInIParam param)
         {
-            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+            return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var userBase = await GetUserBaseInfo();
+                var userBase = await GetUserBaseInfo(param.UserId);
                 if (userBase != null)
                 {
                     var inputInpatientInfo = new InformationParam()
@@ -266,29 +267,35 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> GetInpatientInfo(InpatientInfoParam param)
+        public async Task<ActionResult> GetInpatientInfo(InpatientInfoUiParam param)
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
            {
-               //var verificationCode = await GetUserBaseInfo();
-               //if (verificationCode != null)
+               var verificationCode = await GetUserBaseInfo(param.UserId);
+               //var inputInpatientInfo = new InpatientInfoParam()
                //{
-               //    var inputInpatientInfo = new InpatientInfoParam()
-               //    {
-               //        AuthCode = verificationCode.AuthCode,
-               //        OrganizationCode = verificationCode.OrganizationCode,
-               //        IdCardNo = "512501195802085180",
-               //        StartTime = "2018-04-27 11:09:00",
-               //        EndTime = "2020-04-27 11:09:00",
-               //        State = "0"
-               //    };
+               //    AuthCode = verificationCode.AuthCode,
+               //    OrganizationCode = verificationCode.OrganizationCode,
+               //    IdCardNo = "512501195802085180",
+               //    StartTime = "2018-04-27 11:09:00",
+               //    EndTime = "2020-04-27 11:09:00",
+               //    State = "0"
+               //};
+               var inputInpatientInfo = new InpatientInfoParam()
+               {
+                   AuthCode = verificationCode.AuthCode,
+                   OrganizationCode = verificationCode.OrganizationCode,
+                   IdCardNo = param.IdCardNo,
+                   StartTime = param.StartTime,
+                   EndTime = param.EndTime,
+                   State = param.State
+               };
 
-               //}
                string inputInpatientInfoJson =
                    JsonConvert.SerializeObject(param, Formatting.Indented);
 
                var inputInpatientInfoData = await _webServiceBasicService
-                   .GetInpatientInfo(new UserInfoDto(){OrganizationCode = param.OrganizationCode,UserId =param.UserId }, inputInpatientInfoJson);
+                   .GetInpatientInfo(verificationCode, inputInpatientInfoJson);
                if (inputInpatientInfoData.Any())
                {
                    y.Data = inputInpatientInfoData;
@@ -303,12 +310,12 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetInpatientInfoDetail()
+        public async Task<ActionResult> GetInpatientInfoDetail(UiInIParam param)
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
                 var inpatientInList = new List<InpatientInfoDto>();
-                var verificationCode = await GetUserBaseInfo();
+                var verificationCode = await GetUserBaseInfo(param.UserId);
                 if (verificationCode != null)
                 {
                     var inputInpatientInfo = new InpatientInfoParam()
@@ -352,7 +359,7 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
            {
-               var verificationCode = await GetUserBaseInfo();
+               var verificationCode = await GetUserBaseInfo("");
                if (verificationCode != null)
                {
                    var outPatient = new OutpatientParam()
@@ -378,11 +385,11 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetOutpatientDetailPerson()
+        public async Task<ActionResult> GetOutpatientDetailPerson(UiInIParam param)
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
           {
-              var verificationCode = await GetUserBaseInfo();
+              var verificationCode = await GetUserBaseInfo(param.UserId);
               if (verificationCode != null)
               {
                   var outPatient = new OutpatientParam()
@@ -457,20 +464,30 @@ namespace NFine.Web.Controllers
                    
                 }));
         }
-        [System.Web.Mvc.NonAction]
-        private async Task<UserInfoDto> GetUserBaseInfo()
-        {
-            var inputParam = new UserInfoParam()
-            {
-                UserName = "liqian",
-                Pwd = "liqian",
-                ManufacturerNumber = "510303001",
-            };
-            string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
-            var verificationCode = await _webServiceBasicService.GetVerificationCode("01", inputParamJson);
 
-            return verificationCode;
+        [System.Web.Mvc.NonAction]
+        private async Task<UserInfoDto> GetUserBaseInfo(string param)
+        {
+            var data = await _dataBaseSqlServerService.QueryHospitalOperator(new QueryHospitalOperatorParam(){UserId = param });
+            if (string.IsNullOrWhiteSpace(data.HisUserAccount))
+            {
+                throw new Exception("当前用户未授权,基层账户信息,请重新授权!!!");
+            }
+            else
+            {
+                var inputParam = new UserInfoParam()
+                {
+                    UserName = data.HisUserAccount,
+                    Pwd = data.HisUserPwd,
+                    ManufacturerNumber = data.ManufacturerNumber,
+                };
+                string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
+                var verificationCode = await _webServiceBasicService.GetVerificationCode("01", inputParamJson);
+
+                return verificationCode;
+            }
         }
+
         #endregion
         #region 居民医保
         /// <summary>
@@ -543,16 +560,15 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-
+                var userBase =await GetUserBaseInfo(param.UserId);
                 var login = BaseConnect.Connect();
                 if (login == 1)
                 {
-                   
-                     await _residentMedicalInsurance.HospitalizationRegister(param);
+                    await _residentMedicalInsurance.HospitalizationRegister(param, userBase);
                     var inputInpatientInfo = new InpatientInfoParam()
                     {
-                        AuthCode = param.AuthCode,
-                        OrganizationCode = param.OrganizationCode,
+                        AuthCode = userBase.AuthCode,
+                        OrganizationCode = userBase.OrganizationCode,
                         IdCardNo = param.IdCardNo,
                         StartTime = param.StartTime,
                         EndTime = param.EndTime,
@@ -560,22 +576,13 @@ namespace NFine.Web.Controllers
                     };
                     string inputInpatientInfoJson =
                         JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
-
                     var inputInpatientInfoData = await _webServiceBasicService
-                        .GetInpatientInfo(new UserInfoDto()
-                        {
-                            OrganizationCode = param.OrganizationCode,
-                            UserId = param.Operators
-                        }, inputInpatientInfoJson);
-
+                        .GetInpatientInfo(userBase, inputInpatientInfoJson);
                 }
                 else
                 {
                     y.AddErrorMessage("登陆失败!!!");
                 }
-
-
-
             });
             return Json(resultData);
         }
@@ -584,7 +591,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> HospitalizationRegister(AddHospitalOperatorParam param)
+        public async Task<ActionResult> HospitalizationRegister(QueryHospitalOperatorParam param)
         {
 
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>

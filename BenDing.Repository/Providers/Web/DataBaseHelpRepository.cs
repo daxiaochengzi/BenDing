@@ -645,10 +645,10 @@ namespace BenDing.Repository.Providers.Web
                 {
                     insertSql = $@"INSERT INTO [dbo].[MedicalInsurance]([Id],[HisHospitalizationId],[InsuranceNo],[MedicalInsuranceYearBalance]
                                ,[AdmissionInfoJson],[ReimbursementExpenses] ,[SelfPayFee],[OtherInfo] 
-		                       ,[CreateTime],[IsDelete] ,OrganizationCode,CreateUserId)
+		                       ,[CreateTime],[IsDelete] ,OrganizationCode,CreateUserId,OrganizationName)
                            VALUES('{Guid.NewGuid()}', '{param.HisHospitalizationId}','{param.InsuranceNo}', {param.MedicalInsuranceYearBalance},'{param.AdmissionInfoJson}',
                                  {param.ReimbursementExpenses},{param.SelfPayFee},'{param.OtherInfo}',
-                                GETDATE(),1,'{user.OrganizationCode}','{user.UserId}');";
+                                GETDATE(),1,'{user.OrganizationCode}','{user.UserId}',,'{user.OrganizationName}');";
                     insertSql = $"delete [dbo].[MedicalInsurance] where [HisHospitalizationId]='{param.HisHospitalizationId}';" +insertSql;
 
                 }

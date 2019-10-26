@@ -53,6 +53,6 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task<QueryHospitalOperatorDto> QueryHospitalOperator(AddHospitalOperatorParam param);
+        Task<QueryHospitalOperatorDto> QueryHospitalOperator(QueryHospitalOperatorParam param);
     }
 }
