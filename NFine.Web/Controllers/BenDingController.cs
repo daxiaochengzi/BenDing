@@ -265,37 +265,38 @@ namespace NFine.Web.Controllers
         /// 获取住院病人
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetInpatientInfo()
+        [System.Web.Mvc.HttpPost]
+        public async Task<ActionResult> GetInpatientInfo(InpatientInfoParam param)
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
            {
-               var verificationCode = await GetUserBaseInfo();
-               if (verificationCode != null)
-               {
-                   var inputInpatientInfo = new InpatientInfoParam()
-                   {
-                       AuthCode = verificationCode.AuthCode,
-                       OrganizationCode = verificationCode.OrganizationCode,
-                       IdCardNo = "512501195802085180",
-                       StartTime = "2018-04-27 11:09:00",
-                       EndTime = "2020-04-27 11:09:00",
-                       State = "0"
-                   };
-                   string inputInpatientInfoJson =
-                       JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
+               //var verificationCode = await GetUserBaseInfo();
+               //if (verificationCode != null)
+               //{
+               //    var inputInpatientInfo = new InpatientInfoParam()
+               //    {
+               //        AuthCode = verificationCode.AuthCode,
+               //        OrganizationCode = verificationCode.OrganizationCode,
+               //        IdCardNo = "512501195802085180",
+               //        StartTime = "2018-04-27 11:09:00",
+               //        EndTime = "2020-04-27 11:09:00",
+               //        State = "0"
+               //    };
 
-                   var inputInpatientInfoData = await _webServiceBasicService
-                       .GetInpatientInfo(verificationCode, inputInpatientInfoJson);
-                   if (inputInpatientInfoData.Any())
-                   {
-                       y.Data = inputInpatientInfoData;
-                   }
+               //}
+               string inputInpatientInfoJson =
+                   JsonConvert.SerializeObject(param, Formatting.Indented);
+
+               var inputInpatientInfoData = await _webServiceBasicService
+                   .GetInpatientInfo(new UserInfoDto(){OrganizationCode = param.OrganizationCode,UserId =param.UserId }, inputInpatientInfoJson);
+               if (inputInpatientInfoData.Any())
+               {
+                   y.Data = inputInpatientInfoData;
                }
 
 
 
-           }), JsonRequestBehavior.AllowGet);
+           }));
         }
         /// <summary>
         /// 获取住院病人明细费用

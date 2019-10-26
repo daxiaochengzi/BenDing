@@ -211,10 +211,10 @@ namespace BenDing.Service.Providers
             var init = new InpatientInfoDto();
             var data = await _webServiceBasic.HIS_InterfaceListAsync("10", infoParam, user.UserId);
             result = GetResultData(init, data);
-            if (result.Any())
-            {
-                await _dataBaseHelpService.GetInpatientInfo(user, result);
-            }
+            //if (result.Any())
+            //{
+            //    await _dataBaseHelpService.GetInpatientInfo(user, result);
+            //}
 
             return result;
         }

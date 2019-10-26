@@ -26,5 +26,15 @@ namespace BenDing.Domain.Models.Params.Base
         [Required(ErrorMessage = "{0}不能为空!!!")]
         [XmlIgnore]
         public string OrganizationCode { get; set; }
+
+        /// <summary>
+        /// 用户id
+        /// </summary>
+        [JsonProperty(PropertyName = "用户id")]
+        [Display(Name = "用户id")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        [XmlIgnore]
+        [JsonIgnore]
+        public string UserId { get; set; }
     }
 }
