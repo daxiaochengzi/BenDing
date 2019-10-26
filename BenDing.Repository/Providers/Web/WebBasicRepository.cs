@@ -30,7 +30,7 @@ namespace BenDing.Repository.Providers.Web
                 var callClient = factory.CreateChannel();
                 //var paramIni = new ExecuteSPRequest(new ExecuteSPRequestBody() {param = param});
                 string resultData = await callClient.HIS_InterfaceAsync(tradeCode, inputParameter);
-                if (resultData != "" && resultData != null)
+                if (!string.IsNullOrEmpty(resultData))
                 {
                     var resultDto = JsonConvert.DeserializeObject<ResultDataDto>(resultData);
 

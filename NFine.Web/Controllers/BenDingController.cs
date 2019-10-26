@@ -417,10 +417,10 @@ namespace NFine.Web.Controllers
         /// 添加医保账户与基层his账户
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.HttpPost]
         public async Task<ActionResult> AddHospitalOperator(AddHospitalOperatorParam Param)
         {
-            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+            return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
                 {
                     if (Param.IsHis)
                     {
@@ -436,6 +436,8 @@ namespace NFine.Web.Controllers
                         };
                         string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
                         var verificationCode = await _webServiceBasicService.GetVerificationCode("01", inputParamJson);
+                        if (verificationCode != null) Param.OrganizationCode = verificationCode.OrganizationCode;
+                    
                         await _dataBaseSqlServerService.AddHospitalOperator(Param);
                     }
                     else
@@ -445,10 +447,14 @@ namespace NFine.Web.Controllers
                         {
                             throw new Exception("医保登陆失败,请核对账户与密码!!!");
                         }
+                        else
+                        {
+                            await _dataBaseSqlServerService.AddHospitalOperator(Param);
+                        }
                     }
 
                    
-                }), JsonRequestBehavior.AllowGet);
+                }));
         }
         [System.Web.Mvc.NonAction]
         private async Task<UserInfoDto> GetUserBaseInfo()
