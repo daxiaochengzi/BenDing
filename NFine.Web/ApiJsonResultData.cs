@@ -128,22 +128,22 @@ namespace NFine.Web
     {
         public static ApiJsonResultData RunWithTry(this ApiJsonResultData jsonResultEntry, Action<ApiJsonResultData> runMethod)
         {
-            string Is_msg = "";
-            string Is_day = DateTime.Now.Date.ToString("yyyy-MM-dd").Substring(0, 10);
+            //string Is_msg = "";
+            //string Is_day = DateTime.Now.Date.ToString("yyyy-MM-dd").Substring(0, 10);
 
-            string path = System.IO.Directory.GetCurrentDirectory();
-            string pathError = path + "\\logs";
-            string pathErrorInfo = path + "\\logs\\" + Is_day + "log.txt";
-            if (!System.IO.Directory.Exists(pathError))
-            {
-                System.IO.Directory.CreateDirectory(pathError);
-            }
-            if (!System.IO.File.Exists(pathErrorInfo))
-            {
-                FileStream fs1 = new FileStream(pathErrorInfo, FileMode.Create, FileAccess.Write);//创建写入文件 
-                fs1.Close();
+            //string path = System.IO.Directory.GetCurrentDirectory();
+            //string pathError = path + "\\logs";
+            //string pathErrorInfo = path + "\\logs\\" + Is_day + "log.txt";
+            //if (!System.IO.Directory.Exists(pathError))
+            //{
+            //    System.IO.Directory.CreateDirectory(pathError);
+            //}
+            //if (!System.IO.File.Exists(pathErrorInfo))
+            //{
+            //    FileStream fs1 = new FileStream(pathErrorInfo, FileMode.Create, FileAccess.Write);//创建写入文件 
+            //    fs1.Close();
 
-            }
+            //}
 
             try
             {
@@ -157,19 +157,19 @@ namespace NFine.Web
                 jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message : e.InnerException.InnerException == null ? e.InnerException.Message : e.InnerException.InnerException.Message));
 
             }
-            if (!string.IsNullOrWhiteSpace(Is_msg))
-            {
-                string Is_time_fish = null;
-                Is_time_fish = "【" + DateTime.Now.ToString() + "】" + Is_msg;
-                StreamWriter sw = File.AppendText(pathErrorInfo);
-                // //获得字节数组
-                string data = System.Text.Encoding.Default.GetBytes(Is_time_fish).ToString();
-                // //开始写入
-                sw.WriteLine(Is_time_fish.ToString());
-                // //清空缓冲区、关闭流
-                sw.Flush();
-                sw.Close();
-            }
+            //if (!string.IsNullOrWhiteSpace(Is_msg))
+            //{
+            //    string Is_time_fish = null;
+            //    Is_time_fish = "【" + DateTime.Now.ToString() + "】" + Is_msg;
+            //    StreamWriter sw = File.AppendText(pathErrorInfo);
+            //    // //获得字节数组
+            //    string data = System.Text.Encoding.Default.GetBytes(Is_time_fish).ToString();
+            //    // //开始写入
+            //    sw.WriteLine(Is_time_fish.ToString());
+            //    // //清空缓冲区、关闭流
+            //    sw.Flush();
+            //    sw.Close();
+            //}
             if (jsonResultEntry.Success) jsonResultEntry.Code = 0;
             return jsonResultEntry;
         }
@@ -177,22 +177,22 @@ namespace NFine.Web
 
         public static async Task<ApiJsonResultData> RunWithTryAsync(this ApiJsonResultData jsonResultEntry, Func<ApiJsonResultData, Task> runMethod)
         {
-            string Is_msg = "";
-            string Is_day = DateTime.Now.Date.ToString("yyyy-MM-dd").Substring(0, 10);
+            //string Is_msg = "";
+            //string Is_day = DateTime.Now.Date.ToString("yyyy-MM-dd").Substring(0, 10);
 
-            string path = System.IO.Directory.GetCurrentDirectory();
-            string pathError = path + "\\logs";
-            string pathErrorInfo = path + "\\logs\\" + Is_day + "nlog.txt";
-            if (!System.IO.Directory.Exists(pathError))
-            {
-                System.IO.Directory.CreateDirectory(pathError);
-            }
-            if (!System.IO.File.Exists(pathErrorInfo))
-            {
-                FileStream fs1 = new FileStream(pathErrorInfo, FileMode.Create, FileAccess.Write);//创建写入文件 
-                fs1.Close();
+            //string path = System.IO.Directory.GetCurrentDirectory();
+            //string pathError = path + "\\logs";
+            //string pathErrorInfo = path + "\\logs\\" + Is_day + "nlog.txt";
+            //if (!System.IO.Directory.Exists(pathError))
+            //{
+            //    System.IO.Directory.CreateDirectory(pathError);
+            //}
+            //if (!System.IO.File.Exists(pathErrorInfo))
+            //{
+            //    FileStream fs1 = new FileStream(pathErrorInfo, FileMode.Create, FileAccess.Write);//创建写入文件 
+            //    fs1.Close();
 
-            }
+            //}
             try
             {
                 if (jsonResultEntry.Success)
@@ -213,19 +213,19 @@ namespace NFine.Web
                 //        jsonResultEntry.AddErrorMessage(e.InnerException.InnerException.Message);
                 //}
             }
-            if (!string.IsNullOrWhiteSpace(Is_msg))
-            {
-                string Is_time_fish = null;
-                Is_time_fish = "【" + DateTime.Now.ToString() + "】" + Is_msg;
-                StreamWriter sw = File.AppendText(pathErrorInfo);
-                // //获得字节数组
-                string data = System.Text.Encoding.Default.GetBytes(Is_time_fish).ToString();
-                // //开始写入
-                sw.WriteLine(Is_time_fish.ToString());
-                // //清空缓冲区、关闭流
-                sw.Flush();
-                sw.Close();
-            }
+            //if (!string.IsNullOrWhiteSpace(Is_msg))
+            //{
+            //    string Is_time_fish = null;
+            //    Is_time_fish = "【" + DateTime.Now.ToString() + "】" + Is_msg;
+            //    StreamWriter sw = File.AppendText(pathErrorInfo);
+            //    // //获得字节数组
+            //    string data = System.Text.Encoding.Default.GetBytes(Is_time_fish).ToString();
+            //    // //开始写入
+            //    sw.WriteLine(Is_time_fish.ToString());
+            //    // //清空缓冲区、关闭流
+            //    sw.Flush();
+            //    sw.Close();
+            //}
 
             if (jsonResultEntry.Success) jsonResultEntry.Code = 0;
             return jsonResultEntry;
