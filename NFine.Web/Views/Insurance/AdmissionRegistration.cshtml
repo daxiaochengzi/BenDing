@@ -5,6 +5,8 @@
 
 
 <form id="form1">
+    <input type="hidden" id="bid" value="@ViewBag.bid" />
+    <input type="hidden" id="empid" value="@ViewBag.empid" />
     <div class="topPanel" style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
         <div class="search">
             <table>
@@ -243,38 +245,47 @@
 </form>
 
 <script>
-    var keyValue = $.request("keyValue");
     $(function () {
-        initControl();
-        if (!!keyValue) {
-            $.ajax({
-                url: "/SystemManage/Organize/GetFormJson",
-                data: { keyValue: keyValue },
-                dataType: "json",
-                async: false,
-                success: function (data) {
-                    $("#form1").formSerialize(data);
-                }
-            });
-        }
-    });
-    function initControl() {
-        $("#F_CategoryId").select2({ minimumResultsForSearch: -1 })
-        $("#F_ParentId").bindSelect({
-            url: "/SystemManage/Organize/GetTreeSelectJson",
+        //loading ...
+        
+        var userId = $("#empid").val();
+
+
+
+        $("#txt_condition .dropdown-menu li").click(function () {
+            var text = $(this).find('a').html();
+            var value = $(this).find('a').attr('data-value');
+            $("#txt_condition .dropdown-text").html(text).attr('data-value', value)
         });
-    }
-    function submitForm() {
-        if (!$('#form1').formValid()) {
-            return false;
-        }
-        $.submitForm({
-            url: "/SystemManage/Organize/SubmitForm?keyValue=" + keyValue,
-            param: $("#form1").formSerialize(),
-            success: function () {
-                $.currentWindow().$("#gridList").resetSelection();
-                $.currentWindow().$("#gridList").trigger("reloadGrid");
+        $("#btn_search").click(function () {
+            alert(userId)
+            var queryJson = {
+                condition: $("#txt_condition").find('.dropdown-text').attr('data-value'),
+                keyword: $("#txt_keyword").val()
             }
-        })
-    }
+            console.log(queryJson)
+            //$gridList.jqGrid('setGridParam', {
+            //    postData: { queryJson: JSON.stringify(queryJson) },
+            //}).trigger('reloadGrid');
+            if (!!queryJson) {
+                $.ajax({
+                    url: "/BenDing/GetInpatientInfo",
+                    data: {
+                        "UserId": userId,
+                        "IdCardNo": queryJson.keyword,
+                        "StartTime": "2019-09-16 11:09:00",
+                        "EndTime": "2019-09-20 11:09:00",
+                        "State":"0"
+                    },
+                    type: "POST",
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        console.log(data);
+                        //$("#form1").formSerialize(data);
+                    }
+                });
+            }
+        });
+    })
 </script>
