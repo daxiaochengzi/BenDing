@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Mvc;
+using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
@@ -298,8 +299,28 @@ namespace NFine.Web.Controllers
                var inputInpatientInfoData = await _webServiceBasicService
                    .GetInpatientInfo(verificationCode, inputInpatientInfoJson);
                if (inputInpatientInfoData.Any())
-               {
-                   y.Data = inputInpatientInfoData.FirstOrDefault(c => c.BusinessId== param.BusinessId);
+               {//获取医保个人信息
+                   var login = BaseConnect.Connect();
+                   var userBase = new ResidentUserInfoDto();
+                   if (login == 1)
+                   {
+                        userBase = await _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
+                       {
+                           IdentityMark = "1",
+                           InformationNumber = param.IdCardNo,
+                       });
+                      
+                   }
+                   else
+                   {
+                       y.AddErrorMessage("登陆失败!!!");
+                   }
+                   var data = inputInpatientInfoData.FirstOrDefault(c => c.BusinessId == param.BusinessId);
+                   if (data != null)
+                   {
+                       data.MedicalInsuranceResidentInfo = userBase;
+                       y.Data = data;
+                   }
                }
            }));
         }

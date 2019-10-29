@@ -151,14 +151,14 @@ namespace BenDing.Repository.Providers.Web
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
                     _sqlConnection.Open();
-                    string insterSql = @"
+                    string querySql = @"
                              select Id, DirectoryCode ,DirectoryName,MnemonicCode,DirectoryCategoryName,Unit,Specification
                              ,Formulation,ManufacturerName,Remark,DirectoryCreateTime from [dbo].[HospitalThreeCatalogue] where IsDelete=0";
-                   var data=  await _sqlConnection.QueryAsync<QueryCatalogDto>(insterSql, null);
+                   var data=  await _sqlConnection.QueryAsync<QueryCatalogDto>(querySql, null);
                     if (data != null && data.Count() > 0)
                     {
                         resultData = data.ToList();
-                    }
+                    }  
 
                 _sqlConnection.Close();
 

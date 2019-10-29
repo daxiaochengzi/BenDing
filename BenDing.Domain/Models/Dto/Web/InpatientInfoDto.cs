@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using BenDing.Domain.Models.Dto.Resident;
 using Newtonsoft.Json;
 
 namespace BenDing.Domain.Models.Dto.Web
@@ -85,6 +86,6 @@ namespace BenDing.Domain.Models.Dto.Web
         public string LeaveHospitalBedId { get; set; }
         [JsonProperty(PropertyName = "出院病区编码")]
         public string LeaveHospitalWardId { get; set; }
-
+        public ResidentUserInfoDto MedicalInsuranceResidentInfo { get; set; }
     }
 }

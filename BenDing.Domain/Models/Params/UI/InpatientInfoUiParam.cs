@@ -13,7 +13,7 @@ namespace BenDing.Domain.Models.Params.UI
     {
         [Display(Name = "身份证号码")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
-        [JsonProperty(PropertyName = "身份证号码")]
+      
      
         public string IdCardNo { get; set; }
         [JsonProperty(PropertyName = "开始时间")]
