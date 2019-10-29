@@ -27,13 +27,13 @@ namespace NFine.Web
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             Bootstrapper.Initialise();
 
-            HttpConfiguration config = GlobalConfiguration.Configuration;
-            config.Formatters.JsonFormatter.SerializerSettings.Formatting =
-                Newtonsoft.Json.Formatting.Indented;
-            var json = config.Formatters.JsonFormatter;
-            json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.None;
-            json.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            json.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+            //HttpConfiguration config = GlobalConfiguration.Configuration;
+            //config.Formatters.JsonFormatter.SerializerSettings.Formatting =
+            //    Newtonsoft.Json.Formatting.Indented;
+            //var json = config.Formatters.JsonFormatter;
+            //json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.None;
+            //json.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            //json.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
            
         }
        

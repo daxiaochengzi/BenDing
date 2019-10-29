@@ -154,8 +154,13 @@ namespace BenDing.Repository.Providers.Web
                     string insterSql = @"
                              select Id, DirectoryCode ,DirectoryName,MnemonicCode,DirectoryCategoryName,Unit,Specification
                              ,Formulation,ManufacturerName,Remark,DirectoryCreateTime from [dbo].[HospitalThreeCatalogue] where IsDelete=0";
-                    await _sqlConnection.ExecuteAsync(insterSql, null);
-                   _sqlConnection.Close();
+                   var data=  await _sqlConnection.QueryAsync<QueryCatalogDto>(insterSql, null);
+                    if (data != null && data.Count() > 0)
+                    {
+                        resultData = data.ToList();
+                    }
+
+                _sqlConnection.Close();
 
 
             }

@@ -301,9 +301,6 @@ namespace NFine.Web.Controllers
                {
                    y.Data = inputInpatientInfoData.FirstOrDefault(c => c.BusinessId== param.BusinessId);
                }
-
-
-
            }));
         }
         /// <summary>
