@@ -154,9 +154,10 @@
                     </td>
                     <td>
                         <div style="padding-left: 10px;" class="input-group">
-                            <input type="text" id="idc10_search_text" class="form-control" placeholder="请输入诊断关键字" style="width: 200px;">
+                            <input type="text" id="search_idc10_text" class="form-control" placeholder="请输入诊断关键字" style="width: 200px;">
+                            <input type="hidden" id="hidden_idc10_text" class="form-control" />
                             <span class="input-group-btn">
-                                <button id="idc10_search" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                                <button id="search_idc10" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
                             </span>
                         </div>
                     </td>
@@ -246,7 +247,84 @@
 </form>
 
 <script>
+    function send_get(url) {
+        var json_data = "";
+        $.ajax({
+            type: "get",
+            url: url,
+            datatype: "json",
+            async: false,
+            error: function () {
+                pop_window("请求数据失败");
+            },
+            success: function (data) {
+                //json_data = $.parseJSON(data);
+                json_data = data;
+                console.log(json_data);
+            },
+        });
+        return json_data;
+    }
+    function pop_window(message) {
+        layer.alert(message, {
+            skin: 'layui-layer-lan',
+            closeBtn: 0
+        });
+    }
+    function add_field() {
+        $('#time_path').blur(function () {
+            var path = $('#time_path').val();
+            var json_data = send_get('/time_config_item?path=' + path);
+            if (json_data != {}) {
+                $("#time_buffer_time").val(json_data['buffer_time']);
+                $("#time_task_name").val(json_data['item_name']);
+                $("#time_email").val(json_data['owner_email']);
+                $("#time_phone").val(json_data['owner_phone']);
+                $("#time_owner").val(json_data['owner']);
+                $("#bd_DW_monitor_status_select").val(json_data['status']);
+                var cron_config = json_data['cron_config'];
+                var list = cron_config.split(':');
+                if (list[0] == '*') {
+                    $('#bd_DW_monitor_type_select').val('hour');
+                }
+                else {
+                    $('#bd_DW_monitor_type_select').val('day');
+                }
+                $("#time_hour").val(list[0]);
+                $("#time_minute").val(list[1]);
+            }
+        });
+    }
+
+
     $(function () {
+        //定义新数组
+        var path_data = [];
+        var _path_data = [];
+
+        $("#search_idc10_text").autocomplete({
+            source: _path_data
+        });
+        $("#search_idc10_text").keyup(
+            function (event) {
+                var path = $("#search_idc10_text").val();
+                if (path.length > 0) {
+                    var data_dict = send_get("/BenDing/QueryICD10?SearchKey=" + path)
+                    var data = data_dict['Data'];
+
+                    var len = data.length;
+                    for (var i = 0; i < len - 1; i++) {
+                        path_data[i] = data[i];
+                    };
+                    $("#hidden_idc10_text").val(path_data);
+                    var _data = $("#hidden_idc10_text").val().split(",");
+                    for (var j = 0; j < _data.length; j++) {
+                        _path_data[j] = _data[j];
+                    }
+                }
+            }
+        );
+
         //loading ...
         
         var userId = $("#empid").val();
