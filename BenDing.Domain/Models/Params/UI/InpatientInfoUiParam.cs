@@ -31,5 +31,13 @@ namespace BenDing.Domain.Models.Params.UI
         [Display(Name = "状态")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string State { get; set; }
+        /// <summary>
+        /// 业务id
+        /// </summary>
+       
+        [Display(Name = "业务id")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        [JsonIgnore]
+        public  string BusinessId { get; set; }
     }
 }

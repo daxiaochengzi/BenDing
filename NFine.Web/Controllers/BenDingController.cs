@@ -300,7 +300,8 @@ namespace NFine.Web.Controllers
                    .GetInpatientInfo(verificationCode, inputInpatientInfoJson);
                if (inputInpatientInfoData.Any())
                {
-                   y.Data = inputInpatientInfoData;
+                
+                   y.Data = inputInpatientInfoData.FirstOrDefault(c => c.BusinessId== param.BusinessId);
                }
 
 

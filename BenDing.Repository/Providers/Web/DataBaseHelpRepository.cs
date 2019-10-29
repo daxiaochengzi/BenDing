@@ -156,9 +156,6 @@ namespace BenDing.Repository.Providers.Web
                 {
                     if (param.Any())
                     {
-
-
-
                         string insterCount = null;
                         foreach (var itmes in param)
                         {
