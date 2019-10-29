@@ -36,8 +36,9 @@
     </div>
     <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
         <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a href="#">城乡居保</a></li>
-            <li role="presentation"><a href="#">城镇职工</a></li>
+            
+            <li role="presentation" id="insuranceType342"><a href="#">城乡居保</a></li>
+            <li role="presentation" id="insuranceType310"><a href="#">城镇职工</a></li>
             <!--
             PO_XZLX	险种类型
             310:城镇职工基本医疗保险
@@ -78,7 +79,7 @@
                     -->
                     <th class="formTitle">个人编号</th>
                     <td class="formValue">
-                        <input id="PI_CRBZ_1" name="PI_SFBZ_1" type="text" class="form-control" placeholder="请输入个人编号" />
+                        <input id="PI_CRBZ_1" name="PersonalCoding" type="text" class="form-control" placeholder="请输入个人编号" />
                     </td>
                     <th class="formTitle">身份证号</th>
                     <td class="formValue">
@@ -87,7 +88,7 @@
                     <th class="formTitle">户口性质</th>
                     <!--如果为生育入院（即就诊类别为71，72，41）的，需录入产妇的户口性质。-->
                     <td class="formValue">
-                        <select id="PI_HKXZ_ID" name="PI_HKXZ" class="form-control required">
+                        <select id="PI_HKXZ_ID" name="HouseholdNature" class="form-control required">
                             <option value="">==请选择==</option>
                             <option value="10">10-城镇户口</option>
                             <option value="20">20-农业户口</option>
@@ -111,33 +112,11 @@
                     </td>
                 </tr>
                 <tr>
-                    <th class="formTitle">入院费别</th>
-                    <td class="formValue">
-                        <select id="F_CategoryId" name="F_Target" class="form-control required">
-                            <option value="">==请选择==</option>
-                            <option value="1">1-记账病人</option>
-                            <option value="2">2-记账病人</option>
-                            <option value="3">3-工伤保险</option>
-                            <option value="5">5-其他</option>
-                            <option value="6">6-县社保病人</option>
-                            <option value="7">7-市社保病人</option>
-                            <option value="8">8-绿色通道</option>
-                            <option value="9">9-新农合病人</option>
-                        </select>
-                    </td>
-                    <th class="formTitle">病员分类</th>
-                    <td class="formValue">
-                        <select id="" name="F_Target" class="form-control required">
-                            <option value="">==请选择==</option>
-                            <option value="0001">0001-自费</option>
-                            <option value="0002">0002-医保病人</option>
-                            <option value="0003">0003-新农合病人</option>
-                        </select>
-                    </td>
+                    
                     <!--如果为生育入院（即就诊类别为71，72，41）的，需录入生育的胎儿数量-->
                     <th class="formTitle">胎儿数</th>
                     <td class="formValue">
-                        <input id="PI_TES_Id" name="PI_TES" type="text" class="form-control" />
+                        <input id="PI_TES_Id" name="FetusNumber" type="text" class="form-control" />
                     </td>
                 </tr>
             </table>
@@ -154,10 +133,10 @@
                     </td>
                     <td>
                         <div style="padding-left: 10px;" class="input-group">
-                            <input type="text" id="search_idc10_text" class="form-control" placeholder="请输入诊断关键字" style="width: 200px;">
-                            <input type="hidden" id="hidden_idc10_text" class="form-control" />
+                            <input type="text"   id="search_idc10_text" name="idc10_text" class="form-control" value="" filterType="=" placeholder="请输入诊断关键字" style="width: 200px;">
+                            <input type="hidden" id="search_idc10_code" name="idc10_code" class="form-control" />
                             <span class="input-group-btn">
-                                <button id="search_idc10" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                                <button id="btn_search_idc10" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
                             </span>
                         </div>
                     </td>
@@ -247,102 +226,53 @@
 </form>
 
 <script>
-    function send_get(url) {
-        var json_data = "";
-        $.ajax({
-            type: "get",
-            url: url,
-            datatype: "json",
-            async: false,
-            error: function () {
-                pop_window("请求数据失败");
-            },
-            success: function (data) {
-                //json_data = $.parseJSON(data);
-                json_data = data;
-                console.log(json_data);
-            },
-        });
-        return json_data;
-    }
-    function pop_window(message) {
-        layer.alert(message, {
-            skin: 'layui-layer-lan',
-            closeBtn: 0
-        });
-    }
-    function add_field() {
-        $('#time_path').blur(function () {
-            var path = $('#time_path').val();
-            var json_data = send_get('/time_config_item?path=' + path);
-            if (json_data != {}) {
-                $("#time_buffer_time").val(json_data['buffer_time']);
-                $("#time_task_name").val(json_data['item_name']);
-                $("#time_email").val(json_data['owner_email']);
-                $("#time_phone").val(json_data['owner_phone']);
-                $("#time_owner").val(json_data['owner']);
-                $("#bd_DW_monitor_status_select").val(json_data['status']);
-                var cron_config = json_data['cron_config'];
-                var list = cron_config.split(':');
-                if (list[0] == '*') {
-                    $('#bd_DW_monitor_type_select').val('hour');
-                }
-                else {
-                    $('#bd_DW_monitor_type_select').val('day');
-                }
-                $("#time_hour").val(list[0]);
-                $("#time_minute").val(list[1]);
-            }
-        });
-    }
-
-
     $(function () {
-        //定义新数组
-        var path_data = [];
-        var _path_data = [];
-
-        $("#search_idc10_text").autocomplete({
-            source: _path_data
-        });
-        $("#search_idc10_text").keyup(
-            function (event) {
-                var path = $("#search_idc10_text").val();
-                if (path.length > 0) {
-                    var data_dict = send_get("/BenDing/QueryICD10?SearchKey=" + path)
-                    var data = data_dict['Data'];
-
-                    var len = data.length;
-                    for (var i = 0; i < len - 1; i++) {
-                        path_data[i] = data[i];
-                    };
-                    $("#hidden_idc10_text").val(path_data);
-                    var _data = $("#hidden_idc10_text").val().split(",");
-                    for (var j = 0; j < _data.length; j++) {
-                        _path_data[j] = _data[j];
-                    }
-                }
-            }
-        );
-
-        //loading ...
-        
-        var userId = $("#empid").val();
-        var bid = $("#bid").val();
-
-
-
         $("#txt_condition .dropdown-menu li").click(function () {
             var text = $(this).find('a').html();
             var value = $(this).find('a').attr('data-value');
             $("#txt_condition .dropdown-text").html(text).attr('data-value', value)
         });
+
+        //QueryICD10 诊断查询
+        $("#search_idc10_text").autocomplete({
+            minLength: 2,  //满足搜索的最小长度
+            source: function (request, response) {
+                $.ajax({
+                    url: "/BenDing/QueryICD10",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        SearchKey: $("#search_idc10_text").val()
+                    },
+                    success: function (data) {
+                        response($.map(data.Data, function (item) {
+                            return {
+                                label: item.DiseaseName,
+                                value: item.DiseaseCoding
+                            }
+                        }));
+                    }
+                });
+            },
+            select: function (event, ui) {
+                //设置输入框值
+                $("#search_idc10_text").val(ui.item.label);
+                //设置id值
+                $("#search_idc10_code").val(ui.item.value);
+                return false;
+            }
+        });
+        //    .data("autocomplete")._renderItem = function (ul, item) {
+        //    //拼装html添加到ul上，a标签下的item.xxx就是从后台组装的属性值
+        //    return $("<li></li>").data("item.autocomplete", item).append("<a>" + item.DiseaseCoding + "</a>").appendTo(ul);
+        //};
+
         //身份证查询--> form数据回显
         $("#btn_search").click(function () {
             var queryJson = {
                 condition: $("#txt_condition").find('.dropdown-text').attr('data-value'),
                 keyword: $("#txt_keyword").val()
-            }
+            };
             //$gridList.jqGrid('setGridParam', {
             //    postData: { queryJson: JSON.stringify(queryJson) },
             //}).trigger('reloadGrid');
@@ -350,20 +280,26 @@
                 $.ajax({
                     url: "/BenDing/GetInpatientInfo",
                     data: {
-                        "UserId": userId,
-                        "IdCardNo": queryJson.keyword,
-                        "BusinessId": bid,
+                        "UserId": $('#empid').val(),
+                        "IdCardNo": $("#txt_keyword").val(),
+                        "BusinessId": $('#bid').val(),
                         "StartTime": "2019-09-16 11:09:00",
                         "EndTime": "2019-09-20 11:09:00",
-                        "State":"0"
+                        "State": "0"
                     },
                     type: "POST",
                     dataType: "json",
                     async: false,
                     success: function (data) {
-                        console.log(data.Data);
+                        var jsonData = data.Data;
+                        console.log(jsonData);
                         //$("#form1").formSerialize(data);
-                        jsonToForm(data.Data, "form1");
+                        //InsuranceType:险种类型310:城镇职工基本医疗保险342：城乡居民基本医疗保险根据获取的险种类型，调用对应的职工或者居民接口办理入院。
+                        if (jsonData.MedicalInsuranceResidentInfo["InsuranceType"] == 342) {
+                            $("#insuranceType342").addClass("active");
+                            jsonToForm(jsonData, "form1");
+                        }
+                        
                     }
                 });
             }
@@ -377,11 +313,11 @@
                     var value = jsonData[name];
                     $("[name='" + name + "']").val(value);
                 }
+                if (jsonData.MedicalInsuranceResidentInfo[name]) {
+                    var value = jsonData.MedicalInsuranceResidentInfo[name];
+                    $("[name='" + name + "']").val(value);
+                }
             }
         };
-         //QueryICD10 诊断查询
-       
-
-
     })
 </script>
