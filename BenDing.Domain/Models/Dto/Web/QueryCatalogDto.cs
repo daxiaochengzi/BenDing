@@ -8,11 +8,11 @@ using Newtonsoft.Json;
 
 namespace BenDing.Domain.Models.Dto.Web
 {
-   public class QueryCatalogDto: PaginationDto
+   public class QueryCatalogDto
         {/// <summary>
         /// Id
         /// </summary>
-        public  string Id { get; set; }
+        public Guid Id { get; set; }
         /// <summary>
         /// 目录编码
         /// </summary>
@@ -58,10 +58,10 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
        
         public string Remark { get; set; }
-        /// <summary>
-        /// 创建时间
-        /// </summary>
+        ///// <summary>
+        ///// 创建时间
+        ///// </summary>
       
-        public string DirectoryCreateTime { get; set; }
+       public string DirectoryCreateTime { get; set; }
     }
 }

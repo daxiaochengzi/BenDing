@@ -20,7 +20,6 @@ namespace BenDing.Repository.Providers.Web
     public class DataBaseHelpRepository : IDataBaseHelpRepository
     {
         private string _connectionString;
-
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -97,22 +96,16 @@ namespace BenDing.Repository.Providers.Web
         /// <returns></returns>
         public async Task AddCatalog(UserInfoDto userInfo, List<CatalogDto> param, CatalogTypeEnum type)
         {
-
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
                 _sqlConnection.Open();
-              
                 try
                 {
                     if (param.Any())
                     {
-
-                   
-
                         string insterCount = null;
                         foreach (var itmes in param)
                         {
-                            
                             string insterSql = $@"
                                     insert into [dbo].[HospitalThreeCatalogue]([id],[DirectoryCode],[DirectoryName],[MnemonicCode],[DirectoryCategoryCode],[DirectoryCategoryName],[Unit],[Specification],[formulation],
                                     [ManufacturerName],[remark],DirectoryCreateTime,CreateTime,IsDelete,CreateUserId,FixedEncoding)
@@ -121,14 +114,13 @@ namespace BenDing.Repository.Providers.Web
                             insterCount += insterSql;
                         }
                         await _sqlConnection.ExecuteAsync(insterCount, null);
-                      
+
                     }
                     _sqlConnection.Close();
-
                 }
                 catch (Exception e)
                 {
-               
+
                     _sqlConnection.Close();
                     throw new Exception(e.Message);
                 }
@@ -137,45 +129,67 @@ namespace BenDing.Repository.Providers.Web
 
 
         }
-
         /// <summary>
         /// 基层端三大目录查询
         /// </summary>
-        /// <param name="userInfo"></param>
         /// <param name="param"></param>
-        /// <param name="type"></param>
         /// <returns></returns>
-        public async Task<List<QueryCatalogDto>> QueryCatalogDto(UserInfoDto userInfo, List<CatalogDto> param, CatalogTypeEnum type)
+        public async Task<Dictionary<int, List<QueryCatalogDto>>> QueryCatalog(QueryCatalogUiParam param)
         {
-            var resultData = new List<QueryCatalogDto>();
+            var dataList = new List<QueryCatalogDto>();
+            var resultData = new Dictionary<int, List<QueryCatalogDto>>();
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
-                    _sqlConnection.Open();
-                    string querySql = @"
+                _sqlConnection.Open();
+                string querySql = @"
                              select Id, DirectoryCode ,DirectoryName,MnemonicCode,DirectoryCategoryName,Unit,Specification
                              ,Formulation,ManufacturerName,Remark,DirectoryCreateTime from [dbo].[HospitalThreeCatalogue] where IsDelete=0";
-                   var data=  await _sqlConnection.QueryAsync<QueryCatalogDto>(querySql, null);
-                    if (data != null && data.Count() > 0)
-                    {
-                        resultData = data.ToList();
-                    }  
+                string countSql = @"select count(*) from [dbo].[HospitalThreeCatalogue] where IsDelete=0";
+                string whereSql = "";
+                if (!string.IsNullOrWhiteSpace(param.DirectoryCategoryCode))
+                {
+                    whereSql += $" and DirectoryCategoryCode='{param.DirectoryCategoryCode}'";
+                }
+                if (!string.IsNullOrWhiteSpace(param.DirectoryCode))
+                {
+                    whereSql += $" and DirectoryCode='{param.DirectoryCode}'";
+                }
+                if (!string.IsNullOrWhiteSpace(param.DirectoryName))
+                {
+                    whereSql += "  and DirectoryName like '" + param.DirectoryName + "%'";
+                }
+                if (param.rows != 0 && param.page > 0)
+                {
+                    var skipCount = param.rows * (param.page - 1);
+                    querySql+= whereSql+" order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.rows + " ROWS ONLY;";
+                }
+                string executeSql = countSql+ whereSql+";"+ querySql;
+                //var data = await _sqlConnection.QueryAsync<QueryCatalogDto>(querySql, null);
+                //if (data != null && data.Count() > 0)
+                //{
+                //    dataList = data.ToList();
+                //}
+                var result = await _sqlConnection.QueryMultipleAsync(executeSql);
+                 //dataList = result.Read<QueryCatalogDto>().ToList();
+                int totalPageCount = result.Read<int>().FirstOrDefault();
+                 dataList = (from t in result.Read<QueryCatalogDto>()
 
+                    select t).ToList();
+                resultData.Add(totalPageCount,dataList);
                 _sqlConnection.Close();
 
-
             }
-
+           
+           
             return resultData;
 
         }
-
         /// <summary>
         /// 删除三大目录
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<int> DeleteCatalog(UserInfoDto user,
-            int param)
+        public async Task<int> DeleteCatalog(UserInfoDto user,int param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
@@ -681,7 +695,7 @@ namespace BenDing.Repository.Providers.Web
                            VALUES('{Guid.NewGuid()}', '{param.HisHospitalizationId}','{param.InsuranceNo}', {param.MedicalInsuranceYearBalance},'{param.AdmissionInfoJson}',
                                  {param.ReimbursementExpenses},{param.SelfPayFee},'{param.OtherInfo}',
                                 GETDATE(),1,'{user.OrganizationCode}','{user.UserId}',,'{user.OrganizationName }');";
-                    insertSql = $"delete [dbo].[MedicalInsurance] where [HisHospitalizationId]='{param.HisHospitalizationId}';" +insertSql;
+                    insertSql = $"delete [dbo].[MedicalInsurance] where [HisHospitalizationId]='{param.HisHospitalizationId}';" + insertSql;
 
                 }
                 await _sqlConnection.ExecuteAsync(insertSql);
@@ -845,6 +859,12 @@ namespace BenDing.Repository.Providers.Web
                 return counts;
             }
         }
+        /// <summary>
+        /// 医保项目下载
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public async Task<Int32> ProjectDownload(UserInfoDto user, List<ResidentProjectDownloadRowDataRowDto> param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
@@ -927,7 +947,6 @@ namespace BenDing.Repository.Providers.Web
             }
             return result?.Substring(0, result.Length - 1);
         }
-
         /// <summary>  
         /// 根据GUID获取19位的唯一数字序列  
         /// </summary>  

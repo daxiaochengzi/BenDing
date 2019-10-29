@@ -60,6 +60,12 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
         Task GetOutpatientDetailPerson(UserInfoDto user, List<OutpatientDetailDto> param);
         /// <summary>
+        /// 基层端三大目录查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task<Dictionary<int, List<QueryCatalogDto>>> QueryCatalog(QueryCatalogUiParam param);
+        /// <summary>
         /// 添加三大目录
         /// </summary>
         /// <param name="param"></param>

@@ -112,6 +112,7 @@
     <Compile Include="Models\Params\Web\OrgParam.cs" />
     <Compile Include="Models\Params\Web\OutpatientDetailParam.cs" />
     <Compile Include="Models\Params\Web\OutpatientParam.cs" />
+    <Compile Include="Models\Params\Web\QueryCatalogUiParam.cs" />
     <Compile Include="Models\Params\Web\QueryHospitalOperatorParam.cs" />
     <Compile Include="Models\Params\Web\QueryICD10UiParam.cs" />
     <Compile Include="Models\Params\Web\QueryInpatientInfoParam.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Models\Params\Web\XmlData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Xml\BaseConnect.cs" />
+    <Compile Include="Xml\CustomJsonResult.cs" />
     <Compile Include="Xml\LogParam.cs" />
     <Compile Include="Xml\Logs.cs" />
     <Compile Include="Xml\MedicalInsuranceDll.cs" />

@@ -127,7 +127,7 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var userBase = await GetUserBaseInfo("");
+                var userBase = await GetUserBaseInfo(param.UserId);
                 if (userBase != null)
                 {
                     var inputInpatientInfo = new CatalogParam()
@@ -194,7 +194,7 @@ namespace NFine.Web.Controllers
         /// 查询ICD10
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.HttpPost]
         public async Task<ActionResult> QueryICD10(QueryICD10UiParam param)
         {
             return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
@@ -202,7 +202,7 @@ namespace NFine.Web.Controllers
 
                 var data = await _baseHelpRepository.QueryICD10(param);
                 y.Data = data;
-            }), JsonRequestBehavior.AllowGet);
+            }));
         }
         /// <summary>
         /// 更新机构
@@ -506,7 +506,34 @@ namespace NFine.Web.Controllers
                 return verificationCode;
             }
         }
-
+        #endregion
+        #region 医保对码
+        /// <summary>
+        /// 基层端三大目录查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> QueryCatalog(QueryCatalogUiParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+                var queryData = await _baseHelpRepository.QueryCatalog(param);
+                var list = queryData.Values.FirstOrDefault();
+                var data = new
+                {
+                    rows = queryData.Values.FirstOrDefault(),
+                    //总页数
+                    total = queryData.Keys.FirstOrDefault()>0?Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault()/param.rows))+1):0, 
+                    //当前页
+                    page = param.page,
+                    //总记录数
+                    records = queryData.Keys.FirstOrDefault()
+                };
+                y.Data = data; //new PagedList<WaterUserChangeDto>(list, parm.pageIndex, parm.pageSize, entity.Keys.FirstOrDefault());
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
+        }
         #endregion
         #region 居民医保
         /// <summary>

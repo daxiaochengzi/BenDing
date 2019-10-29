@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,8 +9,10 @@ namespace BenDing.Domain.Models.Dto.Base
 {
    public class PaginationDto
     {/// <summary>
-        /// 每页行数
-        /// </summary>
+     /// 每页行数
+     /// </summary>
+        [Display(Name = "每页行数")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
         public int rows { get; set; }
         /// <summary>
         /// 当前页

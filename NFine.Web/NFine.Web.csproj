@@ -178,6 +178,7 @@
     <Compile Include="Areas\SystemSecurity\Controllers\ServerMonitoringController.cs" />
     <Compile Include="Areas\SystemSecurity\SystemSecurityAreaRegistration.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Controllers\BaseAsyncController.cs" />
     <Compile Include="Controllers\BenDingController.cs" />
     <Compile Include="Controllers\ClientsDataController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
