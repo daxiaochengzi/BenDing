@@ -150,35 +150,13 @@ namespace BenDing.Repository.Providers.Web
             var resultData = new List<QueryCatalogDto>();
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
-                _sqlConnection.Open();
+                    _sqlConnection.Open();
+                    string insterSql = @"
+                             select Id, DirectoryCode ,DirectoryName,MnemonicCode,DirectoryCategoryName,Unit,Specification
+                             ,Formulation,ManufacturerName,Remark,DirectoryCreateTime from [dbo].[HospitalThreeCatalogue] where IsDelete=0";
+                    await _sqlConnection.ExecuteAsync(insterSql, null);
+                   _sqlConnection.Close();
 
-                try
-                {
-                    if (param.Any())
-                    {
-                        string insterCount = null;
-                        foreach (var itmes in param)
-                        {
-
-                            string insterSql = $@"
-                                    insert into [dbo].[HospitalThreeCatalogue]([id],[DirectoryCode],[DirectoryName],[MnemonicCode],[DirectoryCategoryCode],[DirectoryCategoryName],[Unit],[Specification],[formulation],
-                                    [ManufacturerName],[remark],DirectoryCreateTime,CreateTime,IsDelete,CreateUserId,FixedEncoding)
-                                    values('{Guid.NewGuid()}','{itmes.DirectoryCode}','{itmes.DirectoryName}','{itmes.MnemonicCode}',{Convert.ToInt16(type)},'{itmes.DirectoryCategoryName}','{itmes.Unit}','{itmes.Specification}','{itmes.Formulation}',
-                                   '{itmes.ManufacturerName}','{itmes.Remark}', '{itmes.DirectoryCreateTime}',GETDATE(),0,'{userInfo.UserId}','{ BitConverter.ToInt64(Guid.Parse(itmes.DirectoryCode).ToByteArray(), 0)}');";
-                            insterCount += insterSql;
-                        }
-                        await _sqlConnection.ExecuteAsync(insterCount, null);
-
-                    }
-                    _sqlConnection.Close();
-
-                }
-                catch (Exception e)
-                {
-
-                    _sqlConnection.Close();
-                    throw new Exception(e.Message);
-                }
 
             }
 

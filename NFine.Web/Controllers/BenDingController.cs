@@ -294,13 +294,11 @@ namespace NFine.Web.Controllers
                };
 
                string inputInpatientInfoJson =
-                   JsonConvert.SerializeObject(param, Formatting.Indented);
-
+                   JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
                var inputInpatientInfoData = await _webServiceBasicService
                    .GetInpatientInfo(verificationCode, inputInpatientInfoJson);
                if (inputInpatientInfoData.Any())
                {
-                
                    y.Data = inputInpatientInfoData.FirstOrDefault(c => c.BusinessId== param.BusinessId);
                }
 
