@@ -49,11 +49,11 @@
                 <tr>
                     <th class="formTitle">住院编号</th>
                     <td class="formValue">
-                        <input id="PI_YYZYH_Id" name="PI_YYZYH" type="text" class="form-control required" placeholder="请输入住院号" />
+                        <input id="PI_YYZYH_Id" name="HospitalizationNo" type="text" class="form-control required" placeholder="请输入住院号" />
                     </td>
                     <th class="formTitle">患者姓名</th>
                     <td class="formValue">
-                        <input id="PO_XM_Id" name="PO_XM" type="text" class="form-control required" placeholder="请输入患者姓名" />
+                        <input id="PO_XM_Id" name="PatientName" type="text" class="form-control required" placeholder="请输入患者姓名" />
                     </td>
 
                     <th class="formTitle">医疗类别</th>
@@ -82,7 +82,7 @@
                     </td>
                     <th class="formTitle">身份证号</th>
                     <td class="formValue">
-                        <input id="PI_CRBZ_2" name="PI_SFBZ_2" type="text" class="form-control" placeholder="请输入身份证号" />
+                        <input id="PI_CRBZ_2" name="IdCardNo" type="text" class="form-control" placeholder="请输入身份证号" />
                     </td>
                     <th class="formTitle">户口性质</th>
                     <!--如果为生育入院（即就诊类别为71，72，41）的，需录入产妇的户口性质。-->
@@ -98,15 +98,16 @@
                     <th class="formTitle">入院日期</th>
                     <!--格式为YYYYMMDD-->
                     <td class="formValue">
-                        <input id="PI_RYRQ_Id" name="PI_RYRQ" type="text" class="form-control input-wdatepicker" onfocus="WdatePicker()" placeholder="请选择入院日期" />
+                        <input id="PI_RYRQ_Id" name="AdmissionDate" type="text" class="form-control input-wdatepicker" onfocus="WdatePicker()" placeholder="请选择入院日期" />
                     </td>
                     <th class="formTitle">住院科室</th>
                     <td class="formValue">
-                        <input id="PI_ZYBQ_Id" name="PI_ZYBQ" type="text" class="form-control" />
+                        <input id="PI_ZYBQ_Name" name="InDepartmentName" type="text" class="form-control" />
+                        <input id="PI_ZYBQ_Id" name="InDepartmentId" type="hidden" class="form-control" />
                     </td>
                     <th class="formTitle">床位号</th>
                     <td class="formValue">
-                        <input id="PI_CWH_Id" name="PI_CWH" type="text" class="form-control" />
+                        <input id="PI_CWH_Id" name="AdmissionBed" type="text" class="form-control" />
                     </td>
                 </tr>
                 <tr>
@@ -153,9 +154,10 @@
                     </td>
                     <td>
                         <div style="padding-left: 10px;" class="input-group">
-                            <input type="text" class="form-control" placeholder="请输入诊断关键字" style="width: 200px;">
+                            <input type="text" id="search_idc10_text" class="form-control" placeholder="请输入诊断关键字" style="width: 200px;">
+                            <input type="hidden" id="hidden_idc10_text" class="form-control" />
                             <span class="input-group-btn">
-                                <button type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                                <button id="search_idc10" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
                             </span>
                         </div>
                     </td>
@@ -245,10 +247,88 @@
 </form>
 
 <script>
+    function send_get(url) {
+        var json_data = "";
+        $.ajax({
+            type: "get",
+            url: url,
+            datatype: "json",
+            async: false,
+            error: function () {
+                pop_window("请求数据失败");
+            },
+            success: function (data) {
+                //json_data = $.parseJSON(data);
+                json_data = data;
+                console.log(json_data);
+            },
+        });
+        return json_data;
+    }
+    function pop_window(message) {
+        layer.alert(message, {
+            skin: 'layui-layer-lan',
+            closeBtn: 0
+        });
+    }
+    function add_field() {
+        $('#time_path').blur(function () {
+            var path = $('#time_path').val();
+            var json_data = send_get('/time_config_item?path=' + path);
+            if (json_data != {}) {
+                $("#time_buffer_time").val(json_data['buffer_time']);
+                $("#time_task_name").val(json_data['item_name']);
+                $("#time_email").val(json_data['owner_email']);
+                $("#time_phone").val(json_data['owner_phone']);
+                $("#time_owner").val(json_data['owner']);
+                $("#bd_DW_monitor_status_select").val(json_data['status']);
+                var cron_config = json_data['cron_config'];
+                var list = cron_config.split(':');
+                if (list[0] == '*') {
+                    $('#bd_DW_monitor_type_select').val('hour');
+                }
+                else {
+                    $('#bd_DW_monitor_type_select').val('day');
+                }
+                $("#time_hour").val(list[0]);
+                $("#time_minute").val(list[1]);
+            }
+        });
+    }
+
+
     $(function () {
+        //定义新数组
+        var path_data = [];
+        var _path_data = [];
+
+        $("#search_idc10_text").autocomplete({
+            source: _path_data
+        });
+        $("#search_idc10_text").keyup(
+            function (event) {
+                var path = $("#search_idc10_text").val();
+                if (path.length > 0) {
+                    var data_dict = send_get("/BenDing/QueryICD10?SearchKey=" + path)
+                    var data = data_dict['Data'];
+
+                    var len = data.length;
+                    for (var i = 0; i < len - 1; i++) {
+                        path_data[i] = data[i];
+                    };
+                    $("#hidden_idc10_text").val(path_data);
+                    var _data = $("#hidden_idc10_text").val().split(",");
+                    for (var j = 0; j < _data.length; j++) {
+                        _path_data[j] = _data[j];
+                    }
+                }
+            }
+        );
+
         //loading ...
         
         var userId = $("#empid").val();
+        var bid = $("#bid").val();
 
 
 
@@ -257,13 +337,12 @@
             var value = $(this).find('a').attr('data-value');
             $("#txt_condition .dropdown-text").html(text).attr('data-value', value)
         });
+        //身份证查询--> form数据回显
         $("#btn_search").click(function () {
-            alert(userId)
             var queryJson = {
                 condition: $("#txt_condition").find('.dropdown-text').attr('data-value'),
                 keyword: $("#txt_keyword").val()
             }
-            console.log(queryJson)
             //$gridList.jqGrid('setGridParam', {
             //    postData: { queryJson: JSON.stringify(queryJson) },
             //}).trigger('reloadGrid');
@@ -273,6 +352,7 @@
                     data: {
                         "UserId": userId,
                         "IdCardNo": queryJson.keyword,
+                        "BusinessId": bid,
                         "StartTime": "2019-09-16 11:09:00",
                         "EndTime": "2019-09-20 11:09:00",
                         "State":"0"
@@ -281,11 +361,27 @@
                     dataType: "json",
                     async: false,
                     success: function (data) {
-                        console.log(data);
+                        console.log(data.Data);
                         //$("#form1").formSerialize(data);
+                        jsonToForm(data.Data, "form1");
                     }
                 });
             }
         });
+        //form数据回显
+        var jsonToForm = function (jsonData, formId) {
+            var serializeArray = $("#" + formId).serializeArray();
+            for (var i = 0; i < serializeArray.length; i++) {
+                var name = serializeArray[i].name;
+                if (jsonData[name]) {
+                    var value = jsonData[name];
+                    $("[name='" + name + "']").val(value);
+                }
+            }
+        };
+         //QueryICD10 诊断查询
+       
+
+
     })
 </script>
