@@ -139,5 +139,8 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         Task<Int32> ProjectDownload(UserInfoDto user, List<ResidentProjectDownloadRowDataRowDto> param);
+
+       Task<Dictionary<int, List<ResidentProjectDownloadRow>>> QueryProjectDownload(
+            QueryProjectUiParam param);
     }
 }

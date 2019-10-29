@@ -19,7 +19,7 @@ namespace NFine.Web.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public class BenDingController : AsyncController
+    public class BenDingController : BaseAsyncController
     {
         private IDataBaseHelpRepository _baseHelpRepository;
         private IWebServiceBasicService _webServiceBasicService;
@@ -519,7 +519,7 @@ namespace NFine.Web.Controllers
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
                 var queryData = await _baseHelpRepository.QueryCatalog(param);
-                var list = queryData.Values.FirstOrDefault();
+              
                 var data = new
                 {
                     rows = queryData.Values.FirstOrDefault(),
@@ -530,7 +530,33 @@ namespace NFine.Web.Controllers
                     //总记录数
                     records = queryData.Keys.FirstOrDefault()
                 };
-                y.Data = data; //new PagedList<WaterUserChangeDto>(list, parm.pageIndex, parm.pageSize, entity.Keys.FirstOrDefault());
+                y.Data = data; 
+            });
+            return Json(resultData,JsonRequestBehavior.AllowGet);
+        }
+      /// <summary>
+      /// 医保中心项目查询
+      /// </summary>
+      /// <param name="param"></param>
+      /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> QueryProjectDownload(QueryProjectUiParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+                var queryData = await _baseHelpRepository.QueryProjectDownload(param);
+                var list = queryData.Values.FirstOrDefault();
+                var data = new
+                {
+                    rows = queryData.Values.FirstOrDefault(),
+                    //总页数
+                    total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.rows)) + 1) : 0,
+                    //当前页
+                    page = param.page,
+                    //总记录数
+                    records = queryData.Keys.FirstOrDefault()
+                };
+                y.Data = data;
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
@@ -581,10 +607,7 @@ namespace NFine.Web.Controllers
                        
                         await _baseHelpRepository.ProjectDownload(new UserInfoDto() { UserId = "E075AC49FCE443778F897CF839F3B924" }, userBase.Row);
                         y.Data = userBase;
-                    }
-
-
-                    // y.Data = userBase;
+                    } 
                 }
                 else
                 {

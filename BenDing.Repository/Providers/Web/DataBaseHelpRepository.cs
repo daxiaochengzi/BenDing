@@ -185,6 +185,73 @@ namespace BenDing.Repository.Providers.Web
 
         }
         /// <summary>
+        /// 医保中心端
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<Dictionary<int, List<ResidentProjectDownloadRow>>> QueryProjectDownload(QueryProjectUiParam param)
+        {
+            var dataList = new List<ResidentProjectDownloadRow>();
+            var resultData = new Dictionary<int, List<ResidentProjectDownloadRow>>();
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+                _sqlConnection.Open();
+                string querySql = @"
+                             select [Id],[ProjectCode],[ProjectName],[ProjectCodeType],Unit,MnemonicCode,Formulation,
+                             Manufacturer,QuasiFontSize,Specification,Remark,NewCodeMark,NewUpdateTime from [dbo].[MedicalInsuranceProject] 
+                             where  [CreateUserId] is not null";
+                string countSql = @"select count(*) from [dbo].[MedicalInsuranceProject] where  [CreateUserId] is not null";
+                string whereSql = "";
+                if (!string.IsNullOrWhiteSpace(param.ProjectCodeType))
+                {   //西药
+                    if (param.ProjectCodeType == "1")
+                    {
+                        whereSql += $" and ProjectCodeType in('11','91','92')";
+                    }//中药
+                    if (param.ProjectCodeType == "0")
+                    {
+                        whereSql += $" and ProjectCodeType in('12','13','91','92')";
+                    }//耗材
+                    if (param.ProjectCodeType == "3")
+                    {
+                        whereSql += $" and ProjectCodeType in('41','81','91','92')";
+                    }
+
+                    if (param.ProjectCodeType == "2")
+                    {
+                        whereSql += $" and ProjectCodeType not in('11','12','13','41','81','91','92')";
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(param.ProjectCode))
+                {
+                    whereSql += $" and ProjectCode='{param.ProjectCode}'";
+                }
+                if (!string.IsNullOrWhiteSpace(param.ProjectName))
+                {
+                    whereSql += "  and ProjectName like '" + param.ProjectName + "%'";
+                }
+                if (param.rows != 0 && param.page > 0)
+                {
+                    var skipCount = param.rows * (param.page - 1);
+                    querySql += whereSql + " order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.rows + " ROWS ONLY;";
+                }
+                string executeSql = countSql + whereSql + ";" + querySql;
+
+                var result = await _sqlConnection.QueryMultipleAsync(executeSql);
+              
+                int totalPageCount = result.Read<int>().FirstOrDefault();
+                dataList = (from t in result.Read<ResidentProjectDownloadRow>()
+                            select t).ToList();
+                resultData.Add(totalPageCount, dataList);
+                _sqlConnection.Close();
+
+            }
+
+
+            return resultData;
+
+        }
+        /// <summary>
         /// 删除三大目录
         /// </summary>
         /// <param name="param"></param>

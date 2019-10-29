@@ -62,6 +62,6 @@ namespace BenDing.Domain.Models.Dto.Web
         ///// 创建时间
         ///// </summary>
       
-       public string DirectoryCreateTime { get; set; }
+       public DateTime DirectoryCreateTime { get; set; }
     }
 }

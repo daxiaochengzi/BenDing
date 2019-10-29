@@ -48,6 +48,7 @@
     <Compile Include="Models\Dto\Base\PaginationDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentHospitalizationRegisterDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentProjectDownloadDto.cs" />
+    <Compile Include="Models\Dto\Resident\ResidentProjectDownloadRow.cs" />
     <Compile Include="Models\Dto\Resident\ResidentUserInfoDto.cs" />
     <Compile Include="Models\Dto\Web\AddHospitalOperatorParam.cs" />
     <Compile Include="Models\Dto\Web\HospitalThreeCatalogueCodeDto.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Models\Params\UI\InpatientInfoUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalInsuranceDataAllParamUIQuery.cs" />
     <Compile Include="Models\Params\UI\QueryCatalogUiParam.cs" />
+    <Compile Include="Models\Params\UI\QueryProjectUiParam.cs" />
     <Compile Include="Models\Params\UI\SaveXmlDataUiParam.cs" />
     <Compile Include="Models\Params\UI\SingleResidentInfoDownloadUIParam.cs" />
     <Compile Include="Models\Params\UI\TabelIni.cs" />
@@ -125,7 +127,6 @@
     <Compile Include="Models\Params\Web\XmlData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Xml\BaseConnect.cs" />
-    <Compile Include="Xml\CustomJsonResult.cs" />
     <Compile Include="Xml\LogParam.cs" />
     <Compile Include="Xml\Logs.cs" />
     <Compile Include="Xml\MedicalInsuranceDll.cs" />
