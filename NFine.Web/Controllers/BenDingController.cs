@@ -534,7 +534,7 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData,JsonRequestBehavior.AllowGet);
         }
-      /// <summary>
+        /// <summary>
       /// 医保中心项目查询
       /// </summary>
       /// <param name="param"></param>
@@ -627,7 +627,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> ProjectDownload(ResidentProjectDownloadParam param)
+        public async Task<ActionResult> ProjectDownload([FromBody]ResidentProjectDownloadParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
@@ -678,10 +678,10 @@ namespace NFine.Web.Controllers
                         EndTime = param.EndTime,
                         State = param.State,
                     };
+                    param.Operators = param.UserId;
                     string inputInpatientInfoJson =
                         JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
-                    List<InpatientInfoDto> inputInpatientInfoData = await _webServiceBasicService
-                        .GetInpatientInfo(userBase, inputInpatientInfoJson);
+                    List<InpatientInfoDto> inputInpatientInfoData = await _webServiceBasicService.GetInpatientInfo(userBase, inputInpatientInfoJson);
                 }
                 else
                 {

@@ -100,8 +100,8 @@ namespace BenDing.Domain.Models.Params.Resident
         /// 经办人
         /// </summary>
         [XmlElementAttribute("PI_JBR", IsNullable = false)]
-        [Display(Name = "经办人")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
+        //[Display(Name = "经办人")]
+        //[Required(ErrorMessage = "{0}不能为空!!!")]
         public string Operators { get; set; }
       
        
