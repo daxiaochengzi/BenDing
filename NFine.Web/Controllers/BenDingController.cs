@@ -581,7 +581,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> MedicalInsurancePairCode(MedicalInsurancePairCodesUiParam param)
+        public async Task<ActionResult> MedicalInsurancePairCode([FromBody]MedicalInsurancePairCodesUiParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
@@ -631,7 +631,6 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                
                 var login = 1;
                 if (login == 1)
                 {
@@ -659,9 +658,9 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.HttpPost]
        
-        public async Task<ActionResult> HospitalizationRegister(ResidentHospitalizationRegisterParam param)
+        public async Task<ActionResult> HospitalizationRegister([FromBody]ResidentHospitalizationRegisterParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
@@ -689,7 +688,7 @@ namespace NFine.Web.Controllers
                     y.AddErrorMessage("登陆失败!!!");
                 }
             });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+            return Json(resultData);
         }
         /// <summary>
         /// 医保连接

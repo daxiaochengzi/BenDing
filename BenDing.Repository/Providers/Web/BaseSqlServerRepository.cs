@@ -397,7 +397,6 @@ namespace BenDing.Repository.Providers.Web
                 {
                     result = "'" + item + "'" + ",";
                 }
-
             }
             return result?.Substring(0, result.Length - 1);
         }
