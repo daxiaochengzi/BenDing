@@ -7,6 +7,7 @@
 <form id="form1">
     <input type="hidden" id="bid" value="@ViewBag.bid" />
     <input type="hidden" id="empid" value="@ViewBag.empid" />
+    <input type="hidden" id="PI_JBR" value="@ViewBag.empid" placeholder="经办人" />
     <div class="topPanel" style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
         <div class="search">
             <table>
@@ -59,7 +60,7 @@
 
                     <th class="formTitle">医疗类别</th>
                     <td class="formValue">
-                        <select id="F_YLLBCategoryId" name="F_Target" class="form-control required">
+                        <select id="F_YLLBCategoryId" name="MedicalCategory" class="form-control required">
                             <option value="">==请选择==</option>
                             <option value="11">11-普通入院</option>
                             <option value="14">14-大病门诊</option>
@@ -133,8 +134,8 @@
                     </td>
                     <td>
                         <div style="padding-left: 10px;" class="input-group">
-                            <input type="text" id="search_idc10_text" name="idc10_text" class="form-control" value="" filterType="=" placeholder="请输入诊断关键字" style="width: 200px;">
-                            <input type="hidden" id="search_idc10_code" name="idc10_code" class="form-control" />
+                            <input type="text" id="search_idc10_text"  class="form-control" value="" filterType="=" placeholder="请输入诊断关键字" style="width: 200px;">
+                            <input type="hidden" id="search_idc10_code"  class="form-control" />
                             <span class="input-group-btn">
                                 <button id="btn_search_idc10" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
                             </span>
@@ -320,5 +321,37 @@
                 }
             }
         };
+
+        
     })
+
+    function submitForm() {
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+        var postData = {
+            "IdentityMark": 1,
+            "AfferentSign": $("#PI_CRBZ_2").val(),
+            "MedicalCategory": $("#F_YLLBCategoryId").find("option:selected").val(), //选中的值,
+            "FetusNumber": $("#PI_TES_Id").val(),
+            "AdmissionDate": $("#PI_RYRQ_Id").val(),
+            "HouseholdNature": $("#PI_HKXZ_ID").find("option:selected").val(),
+            "InpatientDepartmentCode": $("#PI_ZYBQ_Id").val(),
+            "BedNumber": $("#PI_CWH_Id").val(),
+            "HospitalizationNo": $("#PI_YYZYH_Id").val(),
+            "Operators": $("#PI_JBR").val(),
+
+        };
+        //postData["content"] = editor.getValue();
+        console.log(postData);
+
+        $.submitForm({
+            loading: "正在登记，请稍候...",
+            url: "/BenDing/HospitalizationRegister",
+            param: postData ,
+            success: function () {
+                $.reload();
+            }
+        })
+    }
 </script>
