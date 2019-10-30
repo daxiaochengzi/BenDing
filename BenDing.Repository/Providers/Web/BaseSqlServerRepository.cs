@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Repository.Interfaces.Web;
 using Dapper;
@@ -330,7 +331,63 @@ namespace BenDing.Repository.Providers.Web
                 return resultData;
             }
         }
+        /// <summary>
+        /// 医保对码
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task MedicalInsurancePairCode(MedicalInsurancePairCodesUiParam param)
+        {
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+                var resultData = new MedicalInsuranceResidentInfoDto();
+                _sqlConnection.Open();
 
+                if (param.PairCodeList.Any())
+                {
+                    IDbTransaction transaction = _sqlConnection.BeginTransaction();
+                    try
+                    {
+                        string updateSql = "";
+                        var pairCodeIdList = param.PairCodeList.Where(c => c.PairCodeId != null).Select(d=> d.PairCodeId.ToString()).ToList();
+                        var updateId = ListToStr(pairCodeIdList);
+                        //更新对码
+                        if (pairCodeIdList.Any())
+                        {
+                            updateSql += $@"update [dbo].[ThreeCataloguePairCode] set [IsDelete]=1,
+                             [DeleteUserId]='{param.UserId}',DeleteTime=GETDATE() where [Id] in ({updateId});";
+                            await _sqlConnection.ExecuteAsync(updateSql, null, transaction);
+
+                        }
+                        var insertParam = param.PairCodeList.ToList();
+                        string insertSql = "";
+                        //新增对码
+                        if (insertParam.Any())
+                        {
+                            foreach (var items in insertParam)
+                            {
+                                insertSql += $@"insert into [dbo].[ThreeCataloguePairCode]
+                                           ([Id],[OrganizationCode],[OrganizationName],[DirectoryType],[State],[MedicalInsuranceDirectoryCode],
+                                            [HisDirectoryCode],[CreateTime],[IsDelete],[CreateUserId]) values (
+                                           '{Guid.NewGuid()}','{param.OrganizationCode}','{param.OrganizationName}','{items.DirectoryType}',0,'{items.MedicalInsuranceDirectoryCode}',
+                                             '{items.HisDirectoryCode}',GETDATE(),0,'{param.UserId}') ";
+                              
+                            }
+                            await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
+                        }
+                        transaction.Commit();
+
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        throw new Exception(e.Message);
+                    }
+                }
+                _sqlConnection.Close();
+
+            }
+        }
         private string ListToStr(List<string> param)
         {
             string result = null;

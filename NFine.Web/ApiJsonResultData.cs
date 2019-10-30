@@ -123,7 +123,9 @@ namespace NFine.Web
             AddErrorMessage(message);
         }
         #endregion
-    }
+    }/// <summary>
+    /// 
+    /// </summary>
     public static class ApiJsonResultEntryExtensions
     {
         public static ApiJsonResultData RunWithTry(this ApiJsonResultData jsonResultEntry, Action<ApiJsonResultData> runMethod)
@@ -174,7 +176,12 @@ namespace NFine.Web
             return jsonResultEntry;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="jsonResultEntry"></param>
+        /// <param name="runMethod"></param>
+        /// <returns></returns>
         public static async Task<ApiJsonResultData> RunWithTryAsync(this ApiJsonResultData jsonResultEntry, Func<ApiJsonResultData, Task> runMethod)
         {
             //string Is_msg = "";

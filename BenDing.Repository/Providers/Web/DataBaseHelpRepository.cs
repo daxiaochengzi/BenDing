@@ -818,7 +818,7 @@ namespace BenDing.Repository.Providers.Web
                     transaction.Rollback();
                     throw new Exception(exception.Message);
                 }
-
+                _sqlConnection.Close();
             }
 
         }

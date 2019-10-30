@@ -25,15 +25,15 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// </summary>
        
         public string ProjectCodeType { get; set; }
-        /// <summary>
-        /// 收费项目等级
-        /// </summary>  [XmlElementAttribute("AKA065", IsNullable = false)]
-        public string ProjectLevel { get; set; }
-        /// <summary>
-        /// 职工医保自付比例
-        /// </summary>
+        ///// <summary>
+        ///// 收费项目等级
+        ///// </summary>  
+        //public string ProjectLevel { get; set; }
+        ///// <summary>
+        ///// 职工医保自付比例
+        ///// </summary>
      
-        public string WorkersSelfPayProportion { get; set; }
+        //public string WorkersSelfPayProportion { get; set; }
 
         /// <summary>
         /// 单位
@@ -50,58 +50,58 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// </summary>
       
         public string Formulation { get; set; }
-        /// <summary>
-        /// 居民医保自付比例
-        /// </summary>
+        ///// <summary>
+        ///// 居民医保自付比例
+        ///// </summary>
       
-        public string ResidentSelfPayProportion { get; set; }
+        //public string ResidentSelfPayProportion { get; set; }
 
         /// <summary>
         /// 限制用药标志
         /// </summary>
       
-        public string RestrictionSign { get; set; }
-        /// <summary>
-        /// 零档限价（二级乙等以下）
-        /// </summary>
+       public string RestrictionSign { get; set; }
+        ///// <summary>
+        ///// 零档限价（二级乙等以下）
+        ///// </summary>
        
-        public string ZeroBlock { get; set; }
-        /// <summary>
-        /// 一档限价（二级乙等）
-        /// </summary>
+        //public string ZeroBlock { get; set; }
+        ///// <summary>
+        ///// 一档限价（二级乙等）
+        ///// </summary>
        
-        public string OneBlock { get; set; }
-        /// <summary>
-        /// 二档限价（二级甲等）
-        /// </summary>
+        //public string OneBlock { get; set; }
+        ///// <summary>
+        ///// 二档限价（二级甲等）
+        ///// </summary>
      
-        public string TwoBlock { get; set; }
-        /// <summary>
-        /// 三档限价（三级乙等）
-        /// </summary>
+        //public string TwoBlock { get; set; }
+        ///// <summary>
+        ///// 三档限价（三级乙等）
+        ///// </summary>
       
-        public string ThreeBlock { get; set; }
+        //public string ThreeBlock { get; set; }
 
-        /// <summary>
-        /// 四档限价（三级甲等）
-        /// </summary>
+        ///// <summary>
+        ///// 四档限价（三级甲等）
+        ///// </summary>
        
-        public string FourBlock { get; set; }
-        /// <summary>
-        /// 有效标志
-        /// </summary>
+        //public string FourBlock { get; set; }
+        ///// <summary>
+        ///// 有效标志
+        ///// </summary>
       
-        public string EffectiveSign { get; set; }
-        /// <summary>
-        /// 居民普通门诊报销标志
-        /// </summary>
+        //public string EffectiveSign { get; set; }
+        ///// <summary>
+        ///// 居民普通门诊报销标志
+        ///// </summary>
        
-        public string ResidentOutpatientSign { get; set; }
-        /// <summary>
-        /// 居民普通门诊报销限价
-        /// </summary>
+        //public string ResidentOutpatientSign { get; set; }
+        ///// <summary>
+        ///// 居民普通门诊报销限价
+        ///// </summary>
         
-        public string ResidentOutpatientBlock { get; set; }
+        //public string ResidentOutpatientBlock { get; set; }
         /// <summary>
         /// 生产厂家
         /// </summary>
@@ -132,16 +132,16 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// </summary>
       
         public string NewUpdateTime { get; set; }
-        /// <summary>
-        /// 开始时间
-        /// </summary>
+        ///// <summary>
+        ///// 开始时间
+        ///// </summary>
       
-        public string StartTime { get; set; }
-        /// <summary>
-        /// 终止时间
-        /// </summary>
+        //public string StartTime { get; set; }
+        ///// <summary>
+        ///// 终止时间
+        ///// </summary>
       
-        public string EndTime { get; set; }
+        //public string EndTime { get; set; }
 
         /// <summary>
         /// 限制支付范围

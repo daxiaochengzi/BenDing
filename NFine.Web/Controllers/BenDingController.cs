@@ -25,12 +25,13 @@ namespace NFine.Web.Controllers
         private IWebServiceBasicService _webServiceBasicService;
         private IBaseSqlServerRepository _dataBaseSqlServerService;
         private IResidentMedicalInsuranceRepository _residentMedicalInsurance;
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="iGrammarNewService"></param>
-        /// <param name="iWebServiceBasicService"></param>
-        /// <param name="iDataBaseSqlServerService"></param>
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="insuranceRepository"></param>
+       /// <param name="iWebServiceBasicService"></param>
+       /// <param name="iDataBaseSqlServerService"></param>
+       /// <param name="iBaseHelpRepository"></param>
         public BenDingController(IResidentMedicalInsuranceRepository insuranceRepository,
             IWebServiceBasicService iWebServiceBasicService,
             IBaseSqlServerRepository iDataBaseSqlServerService,
@@ -519,7 +520,6 @@ namespace NFine.Web.Controllers
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
                 var queryData = await _baseHelpRepository.QueryCatalog(param);
-              
                 var data = new
                 {
                     rows = queryData.Values.FirstOrDefault(),
@@ -546,9 +546,24 @@ namespace NFine.Web.Controllers
             {
                 var queryData = await _baseHelpRepository.QueryProjectDownload(param);
                 var list = queryData.Values.FirstOrDefault();
+                var listNew = (list ?? throw new InvalidOperationException()).Select(c => new ResidentProjectDownloadRow
+                {  
+                    Formulation = c.Formulation,
+                    Id=c.Id,
+                    LimitPaymentScope = c.LimitPaymentScope,
+                    MnemonicCode = c.MnemonicCode,
+                    Manufacturer = c.Manufacturer,
+                    NewCodeMark = c.NewCodeMark,
+                    NewUpdateTime = c.NewUpdateTime!=null? DateTime.ParseExact(c.NewUpdateTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture).ToString("yyyy-MM-dd HH:mm:ss") : "",
+                    ProjectName = c.ProjectName,
+                    ProjectCode = c.ProjectCode,
+                    ProjectCodeType = c.ProjectCodeType,
+                    QuasiFontSize = c.QuasiFontSize
+
+                }).ToList();
                 var data = new
                 {
-                    rows = queryData.Values.FirstOrDefault(),
+                    rows = listNew,
                     //总页数
                     total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.rows)) + 1) : 0,
                     //当前页
@@ -559,6 +574,26 @@ namespace NFine.Web.Controllers
                 y.Data = data;
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// 医保对码
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpPost]
+        public async Task<ActionResult> MedicalInsurancePairCode(MedicalInsurancePairCodesUiParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+                var userBase = await GetUserBaseInfo(param.UserId);
+                if (userBase != null && string.IsNullOrWhiteSpace(userBase.OrganizationCode) == false)
+                {
+                    param.OrganizationCode = userBase.OrganizationCode;
+                    param.OrganizationName = userBase.OrganizationName;
+                    await _dataBaseSqlServerService.MedicalInsurancePairCode(param);
+                }
+            });
+            return Json(resultData);
         }
         #endregion
         #region 居民医保
@@ -624,7 +659,8 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.HttpGet]
+       
         public async Task<ActionResult> HospitalizationRegister(ResidentHospitalizationRegisterParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
@@ -645,7 +681,7 @@ namespace NFine.Web.Controllers
                     };
                     string inputInpatientInfoJson =
                         JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
-                    var inputInpatientInfoData = await _webServiceBasicService
+                    List<InpatientInfoDto> inputInpatientInfoData = await _webServiceBasicService
                         .GetInpatientInfo(userBase, inputInpatientInfoJson);
                 }
                 else
@@ -653,7 +689,7 @@ namespace NFine.Web.Controllers
                     y.AddErrorMessage("登陆失败!!!");
                 }
             });
-            return Json(resultData);
+            return Json(resultData, JsonRequestBehavior.AllowGet);
         }
         /// <summary>
         /// 医保连接

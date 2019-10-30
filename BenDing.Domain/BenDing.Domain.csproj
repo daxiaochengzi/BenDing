@@ -57,6 +57,8 @@
     <Compile Include="Models\Dto\Web\QueryICD10InfoDto.cs" />
     <Compile Include="Models\Dto\Web\UiIniParam.cs" />
     <Compile Include="Models\Params\Base\BaseUiIniParam.cs" />
+    <Compile Include="Models\Params\UI\MedicalInsurancePairCodesUiParam.cs" />
+    <Compile Include="Models\Params\UI\MedicalInsurancePairCodeUiParam.cs" />
     <Compile Include="Models\Params\Resident\ResidentConnectParam.cs" />
     <Compile Include="Models\Params\Resident\ResidentHospitalizationRegisterParam.cs" />
     <Compile Include="Models\Params\Resident\ResidentProjectDownloadParam.cs" />

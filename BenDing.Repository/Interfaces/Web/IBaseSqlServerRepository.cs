@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 
 namespace BenDing.Repository.Interfaces.Web
@@ -39,7 +40,6 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         Task<List<OutpatientDetailQuery>> InpatientInfoDetailQuery(InpatientInfoDetailQueryParam param);
-
         /// <summary>
         /// 单病种下载
         /// </summary>
@@ -54,5 +54,11 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         Task<QueryHospitalOperatorDto> QueryHospitalOperator(QueryHospitalOperatorParam param);
+        /// <summary>
+        /// 医保对码
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task MedicalInsurancePairCode(MedicalInsurancePairCodesUiParam param);
     }
 }
