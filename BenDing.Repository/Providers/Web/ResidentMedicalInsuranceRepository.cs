@@ -54,14 +54,15 @@ namespace BenDing.Repository.Providers.Web
                 return data;
             });
         }
-
         /// <summary>
         /// 入院登记
         /// </summary>
         /// <returns></returns>
         public async Task HospitalizationRegister(ResidentHospitalizationRegisterParam param,UserInfoDto user)
         {
-            var paramIni = param;
+            await Task.Run(async () =>
+            {
+                var paramIni = param;
             paramIni.Operators = BitConverter.ToInt64(Guid.Parse(param.Operators).ToByteArray(), 0).ToString();
             paramIni.InpatientDepartmentCode= BitConverter.ToInt64(Guid.Parse(param.InpatientDepartmentCode).ToByteArray(), 0).ToString();
             var xmlStr = XmlHelp.SaveXml(paramIni);
@@ -95,6 +96,30 @@ namespace BenDing.Repository.Providers.Web
 
             }
 
+
+            });
+
+        }
+        /// <summary>
+        /// 修改入院登记
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task HospitalizationModify(HospitalizationModifyParam param)
+        {
+             await Task.Run(async () =>
+            {
+                var xmlStr = XmlHelp.SaveXml(param);
+                if (xmlStr)
+                {
+                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB003");
+                    if (result != 1)
+                    {
+                        throw new Exception("居民修改入院登记失败!!!");
+                    }
+
+                }
+            });
 
 
 

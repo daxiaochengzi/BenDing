@@ -649,7 +649,7 @@ namespace NFine.Web.Controllers
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
         /// <summary>
-        /// 入院登记
+        /// 居民入院登记
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -676,6 +676,31 @@ namespace NFine.Web.Controllers
                     string inputInpatientInfoJson =
                         JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
                     List<InpatientInfoDto> inputInpatientInfoData = await _webServiceBasicService.GetInpatientInfo(userBase, inputInpatientInfoJson);
+                }
+                else
+                {
+                    y.AddErrorMessage("登陆失败!!!");
+                }
+            });
+            return Json(resultData);
+        }
+
+        /// <summary>
+        /// 居民入院登记修改
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpPost]
+        public async Task<ActionResult> HospitalizationModify([FromBody]HospitalizationModifyParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+              
+                var login = BaseConnect.Connect();
+                if (login == 1)
+                {
+
+                    await _residentMedicalInsurance.HospitalizationModify(param);
                 }
                 else
                 {

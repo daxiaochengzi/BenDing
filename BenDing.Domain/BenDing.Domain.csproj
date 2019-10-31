@@ -59,6 +59,7 @@
     <Compile Include="Models\Dto\Web\QueryICD10InfoDto.cs" />
     <Compile Include="Models\Dto\Web\UiIniParam.cs" />
     <Compile Include="Models\Params\Base\BaseUiIniParam.cs" />
+    <Compile Include="Models\Params\Resident\HospitalizationModifyParam.cs" />
     <Compile Include="Models\Params\UI\DirectoryComparisonManagementUiParam.cs" />
     <Compile Include="Models\Params\UI\InpatientInfosUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalInsurancePairCodesUiParam.cs" />

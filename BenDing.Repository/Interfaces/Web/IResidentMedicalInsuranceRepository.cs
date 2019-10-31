@@ -27,5 +27,11 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
 
         Task<ResidentProjectDownloadDto> ProjectDownload(ResidentProjectDownloadParam param);
+        /// <summary>
+        /// 修改居民入院登记
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task HospitalizationModify(HospitalizationModifyParam param);
     }
 }
