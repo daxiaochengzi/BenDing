@@ -131,7 +131,7 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// 最近一次变更日期
         /// </summary>
       
-        public string NewUpdateTime { get; set; }
+        public DateTime NewUpdateTime { get; set; }
         ///// <summary>
         ///// 开始时间
         ///// </summary>

@@ -36,7 +36,7 @@ namespace BenDing.Repository.Providers.Web
 
                     if (resultDto.Result == "0")
                     {
-                        throw new Exception("[" + operatorId + "]" + resultDto.Msg);
+                        throw new Exception(resultDto.Msg);
                     }
 
                     var basicResultDto = JsonConvert.DeserializeObject<BasicResultDto>(resultData);

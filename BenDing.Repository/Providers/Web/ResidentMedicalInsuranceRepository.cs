@@ -61,7 +61,6 @@ namespace BenDing.Repository.Providers.Web
         /// <returns></returns>
         public async Task HospitalizationRegister(ResidentHospitalizationRegisterParam param,UserInfoDto user)
         {
-
             var paramIni = param;
             paramIni.Operators = BitConverter.ToInt64(Guid.Parse(param.Operators).ToByteArray(), 0).ToString();
             paramIni.InpatientDepartmentCode= BitConverter.ToInt64(Guid.Parse(param.InpatientDepartmentCode).ToByteArray(), 0).ToString();
@@ -73,8 +72,6 @@ namespace BenDing.Repository.Providers.Web
                     AdmissionInfoJson = JsonConvert.SerializeObject(param),
                     HisHospitalizationId = param.HospitalizationNo
                 };
-
-               
                   //保存医保信息
                   await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
                 //var data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto());

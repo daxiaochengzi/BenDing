@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
@@ -60,5 +61,8 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         Task MedicalInsurancePairCode(MedicalInsurancePairCodesUiParam param);
+
+        Task<Dictionary<int, List<DirectoryComparisonManagementDto>>> DirectoryComparisonManagement(
+            DirectoryComparisonManagementUiParam param);
     }
 }

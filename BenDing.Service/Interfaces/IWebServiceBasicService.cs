@@ -87,6 +87,7 @@ namespace BenDing.Service.Interfaces
         Task GetXmlData(XmlData param);
         Task SaveXmlData(SaveXmlData param);
         Task<QueryInpatientInfoDto> QueryInpatientInfo(QueryInpatientInfoParam param);
+        Task<UserInfoDto> GetUserBaseInfo(string param);
         Task<dynamic> TestFun(QueryInpatientInfoParam param);
     }
 }

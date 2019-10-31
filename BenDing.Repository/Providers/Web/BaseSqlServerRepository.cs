@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
@@ -388,6 +389,84 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
+       /// <summary>
+       /// 目录对照中心
+       /// </summary>
+       /// <param name="param"></param>
+       /// <returns></returns>
+        public async Task<Dictionary<int, List<DirectoryComparisonManagementDto>>> DirectoryComparisonManagement(DirectoryComparisonManagementUiParam param)
+        {
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+            
+                _sqlConnection.Open();
+                string querySql = "";
+                string countSql = "";
+                string whereSql = "";
+                var resultData = new Dictionary<int, List<DirectoryComparisonManagementDto>>();
+                if (param.State == 0)
+                {
+                        whereSql = $@" where not exists(select b.HisFixedEncoding from  [dbo].[ThreeCataloguePairCode] as b 
+                                where b.OrganizationCode='{param.OrganizationCode}' and b.HisFixedEncoding=a.FixedEncoding and b.IsDelete=0 )";
+                        querySql = @"select a.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
+                                a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding
+                                 from [dbo].[HospitalThreeCatalogue]  as a ";
+                        countSql = @"select COUNT(*) from[dbo].[HospitalThreeCatalogue] as a ";
+                    
+
+                }
+                else
+                {
+                    querySql =
+                            $@"select a.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
+                            a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,
+                            c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,NewUpdateTime
+                             from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
+                             on b.[HisFixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
+                             on b.MedicalInsuranceDirectoryCode=c.ProjectCode
+                             where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0 ";
+                    countSql = $@"select COUNT(*)
+                             from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
+                             on b.[HisFixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
+                             on b.MedicalInsuranceDirectoryCode=c.ProjectCode
+                             where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0 ";
+
+
+                }
+
+                if (!string.IsNullOrWhiteSpace(param.DirectoryCode))
+                {
+                    whereSql += $" and a.DirectoryCode='{param.DirectoryCode}'";
+                }
+                if (!string.IsNullOrWhiteSpace(param.DirectoryCategoryCode))
+                {
+                    whereSql += $" and a.DirectoryCategoryCode='{param.DirectoryCategoryCode}'";
+                }
+                if (!string.IsNullOrWhiteSpace(param.DirectoryName))
+                {
+                    whereSql += "  and a.DirectoryName like '" + param.DirectoryName + "%'";
+                }
+                if (param.rows != 0 && param.page > 0)
+                {
+                    var skipCount = param.rows * (param.page - 1);
+                    querySql += whereSql + " order by a.CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.rows + " ROWS ONLY;";
+                }
+                string executeSql = countSql + whereSql + ";" + querySql;
+                var result = await _sqlConnection.QueryMultipleAsync(executeSql);
+               
+                int totalPageCount = result.Read<int>().FirstOrDefault();
+               var dataList = (from t in result.Read<DirectoryComparisonManagementDto>()
+
+                    select t).ToList();
+                resultData.Add(totalPageCount, dataList);
+                _sqlConnection.Close();
+               
+                return resultData;
+
+            }
+        }
+
+        
         private string ListToStr(List<string> param)
         {
             string result = null;

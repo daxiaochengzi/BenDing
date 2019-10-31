@@ -945,7 +945,7 @@ namespace BenDing.Repository.Providers.Web
                     string deleteSql = "delete [dbo].[MedicalInsuranceProject] where ProjectCode in (" + projectCodeList + ")";
                     await _sqlConnection.ExecuteAsync(deleteSql);
 
-
+                   
                     //20191024023636736DateTime.Now.ToString("yyyyMMddhhmmssfff")
                     string insertSql = null;
                     foreach (var item in param)
@@ -961,7 +961,8 @@ namespace BenDing.Repository.Providers.Web
                                   ,'{item.Unit}','{item.MnemonicCode}', '{item.Formulation}','{item.ResidentSelfPayProportion}','{item.RestrictionSign}'
                                   ,'{item.ZeroBlock}','{item.OneBlock}','{item.TwoBlock}','{item.ThreeBlock}','{item.FourBlock}','{item.EffectiveSign}','{item.ResidentOutpatientSign}'
                                   ,'{item.ResidentOutpatientBlock}','{item.Manufacturer}','{item.QuasiFontSize}','{item.Specification}','{item.Remark}','{item.NewCodeMark}'
-                                  ,'{item.NewUpdateTime}','{item.StartTime}','{item.EndTime}','{item.LimitPaymentScope}',GETDATE(),'{user.UserId}'
+                                  ,'{ DateTime.ParseExact(item.NewUpdateTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture).ToString("yyyy-MM-dd HH:mm:ss")}',
+                                  '{item.StartTime}','{item.EndTime}','{item.LimitPaymentScope}',GETDATE(),'{user.UserId}'
                                );";
                     }
                     result = await _sqlConnection.ExecuteAsync(insertSql);

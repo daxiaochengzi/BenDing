@@ -128,7 +128,7 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var userBase = await GetUserBaseInfo(param.UserId);
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 if (userBase != null)
                 {
                     var inputInpatientInfo = new CatalogParam()
@@ -162,7 +162,7 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
-                var userBase = await GetUserBaseInfo(param.UserId);
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var data = await _webServiceBasicService.DeleteCatalog(userBase, Convert.ToInt16(param.CatalogType));
                 y.Data = data;
 
@@ -178,7 +178,7 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var userBase = await GetUserBaseInfo(param.UserId);
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var data = await _webServiceBasicService.GetICD10(userBase, new CatalogParam()
                 {
                     OrganizationCode = userBase.OrganizationCode,
@@ -215,7 +215,7 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var userBase = await GetUserBaseInfo(param.UserId);
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var data = await _webServiceBasicService.GetOrg(userBase, param.Name);
                 y.Data = "更新机构" + data + "条";
             }), JsonRequestBehavior.AllowGet);
@@ -229,7 +229,7 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var userBase = await GetUserBaseInfo(param.UserId);
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 if (userBase != null)
                 {
                     var inputInpatientInfo = new InformationParam()
@@ -275,7 +275,7 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
            {
-               var verificationCode = await GetUserBaseInfo(param.UserId);
+               var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                //var inputInpatientInfo = new InpatientInfoParam()
                //{
                //    AuthCode = verificationCode.AuthCode,
@@ -335,7 +335,7 @@ namespace NFine.Web.Controllers
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
                 var inpatientInList = new List<InpatientInfoDto>();
-                var verificationCode = await GetUserBaseInfo(param.UserId);
+                var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 if (verificationCode != null)
                 {
                     var inputInpatientInfo = new InpatientInfoParam()
@@ -379,7 +379,7 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
            {
-               var verificationCode = await GetUserBaseInfo("");
+               var verificationCode = await _webServiceBasicService.GetUserBaseInfo("");
                if (verificationCode != null)
                {
                    var outPatient = new OutpatientParam()
@@ -409,7 +409,7 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
           {
-              var verificationCode = await GetUserBaseInfo(param.UserId);
+              var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
               if (verificationCode != null)
               {
                   var outPatient = new OutpatientParam()
@@ -485,28 +485,6 @@ namespace NFine.Web.Controllers
                 }));
         }
 
-        [System.Web.Mvc.NonAction]
-        private async Task<UserInfoDto> GetUserBaseInfo(string param)
-        {
-            var data = await _dataBaseSqlServerService.QueryHospitalOperator(new QueryHospitalOperatorParam(){UserId = param });
-            if (string.IsNullOrWhiteSpace(data.HisUserAccount))
-            {
-                throw new Exception("当前用户未授权,基层账户信息,请重新授权!!!");
-            }
-            else
-            {
-                var inputParam = new UserInfoParam()
-                {
-                    UserName = data.HisUserAccount,
-                    Pwd = data.HisUserPwd,
-                    ManufacturerNumber = data.ManufacturerNumber,
-                };
-                string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
-                var verificationCode = await _webServiceBasicService.GetVerificationCode("01", inputParamJson);
-
-                return verificationCode;
-            }
-        }
         #endregion
         #region 医保对码
         /// <summary>
@@ -546,24 +524,10 @@ namespace NFine.Web.Controllers
             {
                 var queryData = await _baseHelpRepository.QueryProjectDownload(param);
                 var list = queryData.Values.FirstOrDefault();
-                var listNew = (list ?? throw new InvalidOperationException()).Select(c => new ResidentProjectDownloadRow
-                {  
-                    Formulation = c.Formulation,
-                    Id=c.Id,
-                    LimitPaymentScope = c.LimitPaymentScope,
-                    MnemonicCode = c.MnemonicCode,
-                    Manufacturer = c.Manufacturer,
-                    NewCodeMark = c.NewCodeMark,
-                    NewUpdateTime = c.NewUpdateTime!=null? DateTime.ParseExact(c.NewUpdateTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture).ToString("yyyy-MM-dd HH:mm:ss") : "",
-                    ProjectName = c.ProjectName,
-                    ProjectCode = c.ProjectCode,
-                    ProjectCodeType = c.ProjectCodeType,
-                    QuasiFontSize = c.QuasiFontSize
-
-                }).ToList();
+                
                 var data = new
                 {
-                    rows = listNew,
+                    rows = list,
                     //总页数
                     total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.rows)) + 1) : 0,
                     //当前页
@@ -585,7 +549,7 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var userBase = await GetUserBaseInfo(param.UserId);
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 if (userBase != null && string.IsNullOrWhiteSpace(userBase.OrganizationCode) == false)
                 {
                     param.OrganizationCode = userBase.OrganizationCode;
@@ -595,6 +559,37 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData);
         }
+        /// <summary>
+        ///对照目录中心管理
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> DirectoryComparisonManagement(DirectoryComparisonManagementUiParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+                var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                param.OrganizationCode = verificationCode.OrganizationCode;
+              
+                var queryData = await _dataBaseSqlServerService.DirectoryComparisonManagement(param);
+                var list = queryData.Values.FirstOrDefault();
+
+                var data = new
+                {
+                    rows = list,
+                    //总页数
+                    total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.rows)) + 1) : 0,
+                    //当前页
+                    page = param.page,
+                    //总记录数
+                    records = queryData.Keys.FirstOrDefault()
+                };
+                y.Data = data;
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
+        }
+        
         #endregion
         #region 居民医保
         /// <summary>
@@ -659,12 +654,11 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [System.Web.Mvc.HttpPost]
-       
         public async Task<ActionResult> HospitalizationRegister([FromBody]ResidentHospitalizationRegisterParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var userBase =await GetUserBaseInfo(param.UserId);
+                var userBase =await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var login = BaseConnect.Connect();
                 if (login == 1)
                 {
@@ -675,8 +669,8 @@ namespace NFine.Web.Controllers
                         OrganizationCode = userBase.OrganizationCode,
                         IdCardNo = param.IdCardNo,
                         StartTime = param.StartTime,
-                        EndTime = param.EndTime,
-                        State = param.State,
+                        EndTime = Convert.ToDateTime(param.StartTime).AddMonths(1).ToString("yyyy-MM-dd HH:mm:ss"),
+                        State = "0",
                     };
                     param.Operators = param.UserId;
                     string inputInpatientInfoJson =

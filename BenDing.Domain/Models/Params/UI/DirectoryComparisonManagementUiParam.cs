@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Base;
 
-namespace BenDing.Domain.Models.Params.Web
+namespace BenDing.Domain.Models.Params.UI
 {
-   public class QueryCatalogUiParam: PaginationDto
+   public class DirectoryComparisonManagementUiParam: PaginationUserDto
     {/// <summary>
      /// 目录编码
      /// </summary>
@@ -21,10 +21,10 @@ namespace BenDing.Domain.Models.Params.Web
         /// 目录类别
         /// </summary>
         public string DirectoryCategoryCode { get; set; }
-
-
-
-
-
-}
+        /// <summary>
+        /// 0未对码,1已对码
+        /// </summary>
+        public  int  State { get; set; }
+       
+    }
 }

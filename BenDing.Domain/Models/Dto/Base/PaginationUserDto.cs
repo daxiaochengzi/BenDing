@@ -9,16 +9,22 @@ using Newtonsoft.Json;
 
 namespace BenDing.Domain.Models.Dto.Base
 {
-   public class PaginationDto
-    {
-      
+   public class PaginationUserDto
+    {/// <summary>
+        /// 用户id
+        /// </summary>
+        [JsonProperty(PropertyName = "UserId")]
+        [Display(Name = "用户id")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        [XmlIgnore]
+        [JsonIgnore]
+        public string UserId { get; set; }
+        public string OrganizationCode { get; set; }
         /// <summary>
         /// 每页行数
         /// </summary>
         [Display(Name = "每页行数")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
-
-     
         public int rows { get; set; }
         /// <summary>
         /// 当前页
@@ -36,7 +42,7 @@ namespace BenDing.Domain.Models.Dto.Base
         /// 总记录数
         /// </summary>
         public int records { get; set; }
-        
+
         /// <summary>
         /// 总页数
         /// </summary>

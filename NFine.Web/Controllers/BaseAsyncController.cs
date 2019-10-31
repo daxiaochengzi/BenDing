@@ -3,14 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.Web;
+using BenDing.Repository.Interfaces.Web;
+using BenDing.Service.Interfaces;
+using Newtonsoft.Json;
 
 namespace NFine.Web.Controllers
-{
+{/// <summary>
+/// 
+/// </summary>
     public abstract class BaseAsyncController : AsyncController
     {
+     /// <summary>
+     /// 
+     /// </summary>
+     /// <param name="data"></param>
+     /// <param name="contentType"></param>
+     /// <param name="contentEncoding"></param>
+     /// <param name="behavior"></param>
+     /// <returns></returns>
         protected override JsonResult Json(object data, string contentType, System.Text.Encoding contentEncoding, JsonRequestBehavior behavior)
         {
             return new ToJsonResult
@@ -22,6 +38,11 @@ namespace NFine.Web.Controllers
                 FormateStr = "yyyy-MM-dd HH:mm:ss"
             };
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         protected JsonResult MyJson(object data)
         {
             return new ToJsonResult
@@ -88,10 +109,10 @@ namespace NFine.Web.Controllers
                 }
             }
 
-            /// <summary>
+          
             /// 说明：将Json序列化的时间由/Date(1294499956278+0800)转为字符串
  
-            /// </summary>
+           
             private string ConvertJsonDateToDateString(Match m)
             {
                 string result = string.Empty;
@@ -114,5 +135,6 @@ namespace NFine.Web.Controllers
                 return result;
             }
         }
+       
     }
 }

@@ -15,11 +15,13 @@ namespace BenDing.Service.Providers
    public class WebServiceBasicService:IWebServiceBasicService
     {
         private IDataBaseHelpRepository _dataBaseHelpService;
+        private IBaseSqlServerRepository _baseSqlServer;
         private IWebBasicRepository _webServiceBasic;
-        public WebServiceBasicService(IWebBasicRepository iWebServiceBasic, IDataBaseHelpRepository dataBase)
+        public WebServiceBasicService(IWebBasicRepository iWebServiceBasic, IDataBaseHelpRepository dataBase, IBaseSqlServerRepository iBaseSqlServerRepository)
         {
             _webServiceBasic = iWebServiceBasic;
             _dataBaseHelpService = dataBase;
+            _baseSqlServer = iBaseSqlServerRepository;
         }
         /// <summary>
         /// 获取验证码
@@ -367,6 +369,28 @@ namespace BenDing.Service.Providers
         {
             var data = await _dataBaseHelpService.QueryInpatientInfo(param);
             return data;
+        }
+
+        public async Task<UserInfoDto> GetUserBaseInfo(string param)
+        {
+            var data = await _baseSqlServer.QueryHospitalOperator(new QueryHospitalOperatorParam() { UserId = param });
+            if (string.IsNullOrWhiteSpace(data.HisUserAccount))
+            {
+                throw new Exception("当前用户未授权,基层账户信息,请重新授权!!!");
+            }
+            else
+            {
+                var inputParam = new UserInfoParam()
+                {
+                    UserName = data.HisUserAccount,
+                    Pwd = data.HisUserPwd,
+                    ManufacturerNumber = data.ManufacturerNumber,
+                };
+                string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
+                var verificationCode = await GetVerificationCode("01", inputParamJson);
+
+                return verificationCode;
+            }
         }
 
         /// <summary>
