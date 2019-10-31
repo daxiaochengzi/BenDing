@@ -22,14 +22,11 @@ namespace BenDing.Domain.Models.Params.UI
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string StartTime { get; set; }
         [JsonProperty(PropertyName = "结束时间")]
-    
-        [Display(Name = "结束时间")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
+      
         public string EndTime { get; set; }
       
         [JsonProperty(PropertyName = "状态")]
-        [Display(Name = "状态")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
+       
         public string State { get; set; }
         /// <summary>
         /// 业务id

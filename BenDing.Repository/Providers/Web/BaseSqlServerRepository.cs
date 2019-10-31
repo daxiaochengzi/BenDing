@@ -419,8 +419,8 @@ namespace BenDing.Repository.Providers.Web
                 {
                     querySql =
                             $@"select a.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
-                            a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,
-                            c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,NewUpdateTime
+                            a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,
+                            c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,c.NewUpdateTime
                              from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
                              on b.[HisFixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
                              on b.MedicalInsuranceDirectoryCode=c.ProjectCode

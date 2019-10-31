@@ -291,8 +291,8 @@ namespace NFine.Web.Controllers
                    OrganizationCode = verificationCode.OrganizationCode,
                    IdCardNo = param.IdCardNo,
                    StartTime = param.StartTime,
-                   EndTime = param.EndTime,
-                   State = param.State
+                   EndTime =DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                   State = "0"
                };
 
                string inputInpatientInfoJson =
@@ -669,7 +669,7 @@ namespace NFine.Web.Controllers
                         OrganizationCode = userBase.OrganizationCode,
                         IdCardNo = param.IdCardNo,
                         StartTime = param.StartTime,
-                        EndTime = Convert.ToDateTime(param.StartTime).AddMonths(1).ToString("yyyy-MM-dd HH:mm:ss"),
+                        EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                         State = "0",
                     };
                     param.Operators = param.UserId;
