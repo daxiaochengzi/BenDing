@@ -39,5 +39,9 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 厂商编号
         /// </summary>
         public string ManufacturerNumber { get; set; }
+       /// <summary>
+       /// 用户姓名
+       /// </summary>
+        public  string HisUserName { get; set; }
     }
 }

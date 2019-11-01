@@ -464,8 +464,12 @@ namespace NFine.Web.Controllers
                         };
                         string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
                         var verificationCode = await _webServiceBasicService.GetVerificationCode("01", inputParamJson);
-                        if (verificationCode != null) Param.OrganizationCode = verificationCode.OrganizationCode;
-                    
+                        if (verificationCode != null)
+                        {
+                            Param.OrganizationCode = verificationCode.OrganizationCode;
+                            Param.HisUserName = verificationCode.UserName;
+                        }
+
                         await _dataBaseSqlServerService.AddHospitalOperator(Param);
                     }
                     else
@@ -716,8 +720,7 @@ namespace NFine.Web.Controllers
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> HospitalizationRegister(QueryHospitalOperatorParam param)
-        {
-
+        {  
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
 

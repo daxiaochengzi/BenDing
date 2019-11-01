@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Repository.Interfaces.Web;
@@ -290,10 +291,10 @@ namespace BenDing.Repository.Providers.Web
                         insertSql = $@"
                                    INSERT INTO [dbo].[HospitalOperator]
                                    ([Id] ,[FixedEncoding],[HisUserId],ManufacturerNumber,
-                                   [HisUserAccount],[HisUserPwd],[CreateTime],[CreateUserId]
+                                   [HisUserAccount],[HisUserPwd],[CreateTime],[CreateUserId],[HisUserName]
                                    )
                              VALUES('{Guid.NewGuid()}','{BitConverter.ToInt64(Guid.Parse(param.UserId).ToByteArray(), 0)}','{param.UserId}','{param.ManufacturerNumber}',
-                                     '{param.UserAccount}','{param.UserPwd}',GETDATE(),'{param.UserId}')";
+                                     '{param.UserAccount}','{param.UserPwd}',GETDATE(),'{param.UserId}','{param.HisUserName}')";
                     }
                     else
                     {
@@ -326,6 +327,27 @@ namespace BenDing.Repository.Providers.Web
                 if (data != null)
                 {
                     resultData = data;
+                }
+
+                _sqlConnection.Close();
+                return resultData;
+            }
+        }
+        /// <summary>
+        /// 获取所有的操作人员
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<QueryHospitalOperatorAll>> QueryHospitalOperatorAll()
+        {
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+                var resultData = new List<QueryHospitalOperatorAll>();
+                _sqlConnection.Open();
+                string querySql = @"select HisUserId,[HisUserName] from [dbo].[HospitalOperator]";
+                var data = await _sqlConnection.QueryAsync<QueryHospitalOperatorAll>(querySql);
+                if (data != null && data.Count()>0)
+                {
+                    resultData = data.ToList();
                 }
 
                 _sqlConnection.Close();
@@ -369,9 +391,9 @@ namespace BenDing.Repository.Providers.Web
                             {
                                 insertSql += $@"insert into [dbo].[ThreeCataloguePairCode]
                                            ([Id],[OrganizationCode],[OrganizationName],[DirectoryType],[State],[MedicalInsuranceDirectoryCode],
-                                            [HisFixedEncoding],[CreateTime],[IsDelete],[CreateUserId],[ProjectLevel],[ProjectCodeType]) values (
+                                            [HisFixedEncoding],[CreateTime],[IsDelete],[CreateUserId],[ProjectLevel],[ProjectCodeType],[UploadState]) values (
                                            '{Guid.NewGuid()}','{param.OrganizationCode}','{param.OrganizationName}','{items.DirectoryType}',0,'{items.MedicalInsuranceDirectoryCode}',
-                                             '{items.HisDirectoryCode}',GETDATE(),0,'{param.UserId}',{Convert.ToInt32(items.ProjectLevel)},{Convert.ToInt32(items.ProjectCodeType)}) ";
+                                             '{items.HisDirectoryCode}',GETDATE(),0,'{param.UserId}',{Convert.ToInt32(items.ProjectLevel)},{Convert.ToInt32(items.ProjectCodeType)},0) ";
                               
                             }
                             await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
@@ -419,8 +441,8 @@ namespace BenDing.Repository.Providers.Web
                 {
                     querySql =
                             $@"select a.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
-                            a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,
-                            c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,c.NewUpdateTime
+                             a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
+                             c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,b.CreateTime as PairCodeTime,c.ProjectLevel,c.ProjectCodeType
                              from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
                              on b.[HisFixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
                              on b.MedicalInsuranceDirectoryCode=c.ProjectCode
@@ -437,17 +459,17 @@ namespace BenDing.Repository.Providers.Web
                 {
                     querySql =
                         $@"select a.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
-                            a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,
-                            c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,c.NewUpdateTime,c.ProjectLevel,c.ProjectCodeType
-                             from [dbo].[HospitalThreeCatalogue]  as a  left join  [dbo].[ThreeCataloguePairCode] as b
+                            a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
+                            c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,b.CreateTime as PairCodeTime,c.ProjectLevel,c.ProjectCodeType
+                             from [dbo].[HospitalThreeCatalogue]  as a  left join (select * from [dbo].[ThreeCataloguePairCode] where OrganizationCode ='{param.OrganizationCode}'  and IsDelete=0) as b
                              on b.[HisFixedEncoding]=a.FixedEncoding left join [dbo].[MedicalInsuranceProject] as c
                              on b.MedicalInsuranceDirectoryCode=c.ProjectCode
-                             where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0 ";
+                             where a.IsDelete='0' ";
                     countSql = $@"select COUNT(*)
-                              from [dbo].[HospitalThreeCatalogue]  as a  left join  [dbo].[ThreeCataloguePairCode] as b
+                              from [dbo].[HospitalThreeCatalogue]  as a  left join  (select * from [dbo].[ThreeCataloguePairCode] where OrganizationCode ='{param.OrganizationCode}'  and IsDelete=0) as b
                              on b.[HisFixedEncoding]=a.FixedEncoding left join [dbo].[MedicalInsuranceProject] as c
                              on b.MedicalInsuranceDirectoryCode=c.ProjectCode
-                             where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0 ";
+                             where a.IsDelete='0' ";
 
 
                 }
@@ -473,9 +495,29 @@ namespace BenDing.Repository.Providers.Web
                 var result = await _sqlConnection.QueryMultipleAsync(executeSql);
                
                 int totalPageCount = result.Read<int>().FirstOrDefault();
+               var hospitalOperatorAll= await QueryHospitalOperatorAll();
                var dataList = (from t in result.Read<DirectoryComparisonManagementDto>()
-
-                    select t).ToList();
+                                select new DirectoryComparisonManagementDto
+                                {Id = t.Id,
+                                 DirectoryCode = t.DirectoryCode,
+                                 DirectoryCategoryName = t.DirectoryCategoryName,
+                                 DirectoryName = t.DirectoryName,
+                                 FixedEncoding = t.FixedEncoding,
+                                 Formulation = t.Formulation,
+                                 LimitPaymentScope = t.LimitPaymentScope,
+                                 ManufacturerName = t.ManufacturerName,
+                                 MnemonicCode = t.MnemonicCode,
+                                 PairCodeTime = t.PairCodeTime,
+                                 ProjectName = t.ProjectName,
+                                 ProjectCode = t.ProjectCode,
+                                 ProjectLevel = t.ProjectLevel!=null?((ProjectLevel)Convert.ToInt32(t.ProjectLevel)).ToString(): t.ProjectLevel,
+                                 ProjectCodeType = t.ProjectCodeType != null ? ((ProjectCodeType)Convert.ToInt32(t.ProjectCodeType)).ToString():t.ProjectCodeType,
+                                 QuasiFontSize = t.QuasiFontSize,
+                                 Unit = t.Unit,
+                                 Specification=t.Specification,
+                                 Remark = t.Remark,
+                                 PairCodeUser= t.PairCodeUser!=null? hospitalOperatorAll.Where(c=>c.HisUserId==t.PairCodeUser).Select(d=>d.HisUserName).FirstOrDefault(): t.PairCodeUser,
+                                }).ToList();
                 resultData.Add(totalPageCount, dataList);
                 _sqlConnection.Close();
                
@@ -483,7 +525,6 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
-
         
         private string ListToStr(List<string> param)
         {

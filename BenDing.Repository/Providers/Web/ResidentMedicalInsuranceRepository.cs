@@ -15,7 +15,7 @@ namespace BenDing.Repository.Providers.Web
     public class ResidentMedicalInsuranceRepository : IResidentMedicalInsuranceRepository
     {
         private IDataBaseHelpRepository _baseHelpRepository;
-        // IDataBaseHelpRepository
+      
 
         public ResidentMedicalInsuranceRepository(
             IDataBaseHelpRepository iDataBaseHelpRepository
@@ -58,45 +58,45 @@ namespace BenDing.Repository.Providers.Web
         /// 入院登记
         /// </summary>
         /// <returns></returns>
-        public async Task HospitalizationRegister(ResidentHospitalizationRegisterParam param,UserInfoDto user)
+        public async Task HospitalizationRegister(ResidentHospitalizationRegisterParam param, UserInfoDto user)
         {
             await Task.Run(async () =>
             {
                 var paramIni = param;
-            paramIni.Operators = BitConverter.ToInt64(Guid.Parse(param.Operators).ToByteArray(), 0).ToString();
-            paramIni.InpatientDepartmentCode= BitConverter.ToInt64(Guid.Parse(param.InpatientDepartmentCode).ToByteArray(), 0).ToString();
-            paramIni.HospitalizationNo = BitConverter.ToInt64(Guid.Parse(param.BusinessId).ToByteArray(), 0).ToString();
-                paramIni.AdmissionDate =Convert.ToDateTime(param.AdmissionDate).ToString("yyyyMMdd") ;
-            var xmlStr = XmlHelp.SaveXml(paramIni);
-            if (xmlStr)
-            {
-                var saveData = new MedicalInsuranceDto
+                paramIni.Operators = BitConverter.ToInt64(Guid.Parse(param.Operators).ToByteArray(), 0).ToString();
+                paramIni.InpatientDepartmentCode = BitConverter.ToInt64(Guid.Parse(param.InpatientDepartmentCode).ToByteArray(), 0).ToString();
+                paramIni.HospitalizationNo = BitConverter.ToInt64(Guid.Parse(param.BusinessId).ToByteArray(), 0).ToString();
+                paramIni.AdmissionDate = Convert.ToDateTime(param.AdmissionDate).ToString("yyyyMMdd");
+                var xmlStr = XmlHelp.SaveXml(paramIni);
+                if (xmlStr)
                 {
-                    AdmissionInfoJson = JsonConvert.SerializeObject(param),
-                    HisHospitalizationId = param.HospitalizationNo
-                };
-                  //保存医保信息
-                  await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
-                //var data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto());
-                //saveData.MedicalInsuranceHospitalizationNo = "888";
-                //saveData.MedicalInsuranceYearBalance = 777;
-                ////更新医保信息
-                //await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
-                int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
-                if (result == 1)
-                {
-                    var data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto());
-                    saveData.MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo;
-                    saveData.MedicalInsuranceYearBalance = Convert.ToDecimal(data.MedicalInsuranceYearBalance);
-                    //更新医保信息
+                    var saveData = new MedicalInsuranceDto
+                    {
+                        AdmissionInfoJson = JsonConvert.SerializeObject(param),
+                        HisHospitalizationId = param.HospitalizationNo
+                    };
+                    //保存医保信息
                     await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
-                }
-                else
-                {
-                    throw new Exception("居民入院登记执行失败!!!");
-                }
+                    //var data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto());
+                    //saveData.MedicalInsuranceHospitalizationNo = "888";
+                    //saveData.MedicalInsuranceYearBalance = 777;
+                    ////更新医保信息
+                    //await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
+                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
+                    if (result == 1)
+                    {
+                        var data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto());
+                        saveData.MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo;
+                        saveData.MedicalInsuranceYearBalance = Convert.ToDecimal(data.MedicalInsuranceYearBalance);
+                        //更新医保信息
+                        await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
+                    }
+                    else
+                    {
+                        throw new Exception("居民入院登记执行失败!!!");
+                    }
 
-            }
+                }
 
 
             });
@@ -109,19 +109,19 @@ namespace BenDing.Repository.Providers.Web
         /// <returns></returns>
         public async Task HospitalizationModify(HospitalizationModifyParam param)
         {
-             await Task.Run(async () =>
-            {
-                var xmlStr = XmlHelp.SaveXml(param);
-                if (xmlStr)
-                {
-                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB003");
-                    if (result != 1)
-                    {
-                        throw new Exception("居民修改入院登记失败!!!");
-                    }
+            await Task.Run(async () =>
+           {
+               var xmlStr = XmlHelp.SaveXml(param);
+               if (xmlStr)
+               {
+                   int result = MedicalInsuranceDll.CallService_cxjb("CXJB003");
+                   if (result != 1)
+                   {
+                       throw new Exception("居民修改入院登记失败!!!");
+                   }
 
-                }
-            });
+               }
+           });
 
 
 

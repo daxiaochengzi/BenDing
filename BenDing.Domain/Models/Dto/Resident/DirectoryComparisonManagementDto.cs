@@ -88,6 +88,11 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// 对码时间
         /// </summary>
         public DateTime? PairCodeTime { get; set; }
-        
+        /// <summary>
+        /// 对码操作人员
+        /// </summary>
+        public  string PairCodeUser { get; set; }
+
+
     }
 }
