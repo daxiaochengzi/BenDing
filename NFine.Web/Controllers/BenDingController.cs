@@ -663,6 +663,7 @@ namespace NFine.Web.Controllers
                 if (login == 1)
                 {
                     param.Operators = param.UserId;
+                  
                     await _residentMedicalInsurance.HospitalizationRegister(param, userBase);
                     var inputInpatientInfo = new InpatientInfoParam()
                     {
