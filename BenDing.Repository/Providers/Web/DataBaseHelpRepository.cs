@@ -761,7 +761,7 @@ namespace BenDing.Repository.Providers.Web
 		                       ,[CreateTime],[IsDelete] ,OrganizationCode,CreateUserId,OrganizationName)
                            VALUES('{Guid.NewGuid()}', '{param.HisHospitalizationId}','{param.InsuranceNo}', {param.MedicalInsuranceYearBalance},'{param.AdmissionInfoJson}',
                                  {param.ReimbursementExpenses},{param.SelfPayFee},'{param.OtherInfo}',
-                                GETDATE(),1,'{user.OrganizationCode}','{user.UserId}',,'{user.OrganizationName }');";
+                                GETDATE(),1,'{user.OrganizationCode}','{user.UserId}','{user.OrganizationName }');";
                     insertSql = $"delete [dbo].[MedicalInsurance] where [HisHospitalizationId]='{param.HisHospitalizationId}';" + insertSql;
 
                 }
