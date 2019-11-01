@@ -7,9 +7,11 @@
 
 
 <form id="form1">
+
     <input type="hidden" id="bid" value="@ViewBag.bid" />
     <input type="hidden" id="empid" value="@ViewBag.empid" />
     <input type="hidden" id="idCardNo" name="IdCardNo" value="" />
+
     <div class="topPanel" style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
         <div class="search">
             <table>
@@ -31,7 +33,7 @@
                     </td>
                     <td style="padding-left: 12px;">
                         <div class="input-group">
-                            <input id="txt_time" name="StartTime" type="text" class="form-control input-wdatepicker" placeholder="请选择入院日期" style="width: 150px;" onfocus="WdatePicker()" />
+                            <input id="txt_time" type="text" class="form-control input-wdatepicker" placeholder="请选择入院日期" style="width: 150px;" onfocus="WdatePicker()" />
                             <span class="input-group-btn">
                                 <button id="btn_search" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
                             </span>
@@ -118,7 +120,6 @@
                     </td>
                 </tr>
                 <tr>
-
                     <!--如果为生育入院（即就诊类别为71，72，41）的，需录入生育的胎儿数量-->
                     <th class="formTitle">胎儿数</th>
                     <td class="formValue">
@@ -227,14 +228,11 @@
 
 <script>
     $(function () {
-
-
         $("#txt_condition .dropdown-menu li").click(function () {
             var text = $(this).find('a').html();
             var value = $(this).find('a').attr('data-value');
             $("#txt_condition .dropdown-text").html(text).attr('data-value', value)
         });
-
         //QueryICD10 诊断查询
         $("#search_idc10_text").autocomplete({
             minLength: 2,  //满足搜索的最小长度
@@ -264,16 +262,12 @@
                 return false;
             }
         });
-
         //身份证查询--> form数据回显
         $("#btn_search").click(function () {
             var queryJson = {
                 condition: $("#txt_condition").find('.dropdown-text').attr('data-value'),
                 keyword: $("#txt_keyword").val()
             };
-            //$gridList.jqGrid('setGridParam', {
-            //    postData: { queryJson: JSON.stringify(queryJson) },
-            //}).trigger('reloadGrid');
             if (!!queryJson) {
                 $.ajax({
                     url: "/BenDing/GetInpatientInfo",
@@ -322,37 +316,68 @@
                 }
             }
         };
-
-
     })
 
     function submitForm() {
         if (!$('#form1').formValid()) {
             return false;
         }
-        var tableData = getTable();
-        console.log(tableData);
+        var medicalCategoryValue = $("#F_YLLBCategoryId").find("option:selected").val();
+        if (medicalCategoryValue != null && medicalCategoryValue == '41' || medicalCategoryValue == '71' || medicalCategoryValue == '72') {
+            //胎儿数:类别为71，72，41需要该字段
+            if ($("#PI_TES_Id").val() == null) {
+                alert("胎儿数不能为空");
+                return false;
+            }
+             //户口性质:类别为71，72，41需要该字段
+            if ($("#PI_HKXZ_ID").find("option:selected").val() == null) {
+                alert("户口性质不能为空");
+                return false;
+            }
+        }
+        var queryJson = {
+            condition: $("#txt_condition").find('.dropdown-text').attr('data-value'),
+            keyword: $("#txt_keyword").val()
+        };
+
+        //var tableData = getTable();//多个ICD10编码
         var postData = {
-            "IdentityMark": 1,
-            "AfferentSign": $("#PI_CRBZ_2").val(),
-            "MedicalCategory": $("#F_YLLBCategoryId").find("option:selected").val(), //选中的值,
+            //传入标志-->1为公民身份号码 2为个人编号
+            "IdentityMark": 1, 
+            //身份标志--> 个人编号或身份证号
+            "AfferentSign": $("#PI_CRBZ_2").val(), 
+            //医疗类别-<选中的值,
+            "MedicalCategory": $("#F_YLLBCategoryId").find("option:selected").val(), 
+            //胎儿数:类别为71，72，41需要该字段
             "FetusNumber": $("#PI_TES_Id").val(),
-            "AdmissionDate": $("#PI_RYRQ_Id").val(),
+            //户口性质:类别为71，72，41需要该字段
             "HouseholdNature": $("#PI_HKXZ_ID").find("option:selected").val(),
+            //入院日期:格式为YYYYMMDD 后台转换
+            "AdmissionDate": $("#PI_RYRQ_Id").val(),
+            //住院科室:ID
             "InpatientDepartmentCode": $("#PI_ZYBQ_Id").val(),
+            //床位号
             "BedNumber": $("#PI_CWH_Id").val(),
+            //医院住院号
             "HospitalizationNo": $("#PI_YYZYH_Id").val(),
-            //"Operators": $("#PI_JBR").val(),
-            //"AdmissionMainDiagnosisIcd10": getTable(),
+            //"AdmissionMainDiagnosisIcd10": getTable(),//多个诊断ICD-10编码
+            //诊断ICD-10编码的ID
             //"AdmissionMainDiagnosisIcd10": $("#ICD10_DiseaseId").attr('data-value'),
+             //主诊ICD-10编码
             "AdmissionMainDiagnosisIcd10": $("#ICD10_DiseaseCoding").text(),
+            //诊断疾病名称
             "AdmissionMainDiagnosis": $("#ICD10_DiseaseName").text(),
+            //HIS查询参数:
+            //患者身份证号
             "IdCardNo": $("#idCardNo").val(),
+            //当前业务ID
             "BusinessId": $('#bid').val(),
+            //开始日期
             "StartTime": $("#PI_RYRQ_Id").val(),
+            //操作员ID
             "UserId": $('#empid').val(),
         };
-        //postData["content"] = editor.getValue();
+        //postData["content"] = editor.getValue(); //添加字段
         console.log(postData);
         $.ajax({
             url: "/BenDing/HospitalizationRegister",
@@ -363,17 +388,9 @@
             success: function (data) {
                 var jsonData = data.Data;
                 console.log(jsonData);
-                //$.reload();
+                //$.reload();//登记完成之后，关闭或刷新页面
             }
         });
-        //$.submitForm({
-        //    loading: "正在登记，请稍候...",
-        //    url: "/BenDing/HospitalizationRegister",
-        //    param: postData ,
-        //    success: function () {
-        //        $.reload();
-        //    }
-        //})
     }
 
     function getTable() {
