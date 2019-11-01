@@ -58,6 +58,8 @@
     <Compile Include="Models\Dto\Web\QueryHospitalOperatorDto.cs" />
     <Compile Include="Models\Dto\Web\QueryICD10InfoDto.cs" />
     <Compile Include="Models\Dto\Web\UiIniParam.cs" />
+    <Compile Include="Models\Enums\ProjectCodeType.cs" />
+    <Compile Include="Models\Enums\ProjectLevel.cs" />
     <Compile Include="Models\Params\Base\BaseUiIniParam.cs" />
     <Compile Include="Models\Params\Resident\HospitalizationModifyParam.cs" />
     <Compile Include="Models\Params\UI\DirectoryComparisonManagementUiParam.cs" />
@@ -87,7 +89,6 @@
     <Compile Include="Models\Dto\Web\OutpatientDetailQuery.cs" />
     <Compile Include="Models\Dto\Web\OutpatientInfoDto.cs" />
     <Compile Include="Models\Dto\Web\PairCodeDto.cs" />
-    <Compile Include="Models\Dto\Web\paranmsss.cs" />
     <Compile Include="Models\Dto\Web\QueryInpatientInfoDto.cs" />
     <Compile Include="Models\Dto\Web\ResultDataDto.cs" />
     <Compile Include="Models\Dto\Web\SaleOrderDto.cs" />

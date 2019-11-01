@@ -369,9 +369,9 @@ namespace BenDing.Repository.Providers.Web
                             {
                                 insertSql += $@"insert into [dbo].[ThreeCataloguePairCode]
                                            ([Id],[OrganizationCode],[OrganizationName],[DirectoryType],[State],[MedicalInsuranceDirectoryCode],
-                                            [HisDirectoryCode],[CreateTime],[IsDelete],[CreateUserId]) values (
+                                            [HisFixedEncoding],[CreateTime],[IsDelete],[CreateUserId],[ProjectLevel],[ProjectCodeType]) values (
                                            '{Guid.NewGuid()}','{param.OrganizationCode}','{param.OrganizationName}','{items.DirectoryType}',0,'{items.MedicalInsuranceDirectoryCode}',
-                                             '{items.HisDirectoryCode}',GETDATE(),0,'{param.UserId}') ";
+                                             '{items.HisDirectoryCode}',GETDATE(),0,'{param.UserId}',{Convert.ToInt32(items.ProjectLevel)},{Convert.ToInt32(items.ProjectCodeType)}) ";
                               
                             }
                             await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
@@ -404,7 +404,7 @@ namespace BenDing.Repository.Providers.Web
                 string countSql = "";
                 string whereSql = "";
                 var resultData = new Dictionary<int, List<DirectoryComparisonManagementDto>>();
-                if (param.State == 0)
+                if (param.State == 1)
                 {
                         whereSql = $@" where not exists(select b.HisFixedEncoding from  [dbo].[ThreeCataloguePairCode] as b 
                                 where b.OrganizationCode='{param.OrganizationCode}' and b.HisFixedEncoding=a.FixedEncoding and b.IsDelete=0 )";
@@ -415,7 +415,7 @@ namespace BenDing.Repository.Providers.Web
                     
 
                 }
-                else
+                else if(param.State == 2)
                 {
                     querySql =
                             $@"select a.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
@@ -428,6 +428,24 @@ namespace BenDing.Repository.Providers.Web
                     countSql = $@"select COUNT(*)
                              from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
                              on b.[HisFixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
+                             on b.MedicalInsuranceDirectoryCode=c.ProjectCode
+                             where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0 ";
+
+
+                }
+                else if (param.State == 0)
+                {
+                    querySql =
+                        $@"select a.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
+                            a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,
+                            c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,c.NewUpdateTime,c.ProjectLevel,c.ProjectCodeType
+                             from [dbo].[HospitalThreeCatalogue]  as a  left join  [dbo].[ThreeCataloguePairCode] as b
+                             on b.[HisFixedEncoding]=a.FixedEncoding left join [dbo].[MedicalInsuranceProject] as c
+                             on b.MedicalInsuranceDirectoryCode=c.ProjectCode
+                             where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0 ";
+                    countSql = $@"select COUNT(*)
+                              from [dbo].[HospitalThreeCatalogue]  as a  left join  [dbo].[ThreeCataloguePairCode] as b
+                             on b.[HisFixedEncoding]=a.FixedEncoding left join [dbo].[MedicalInsuranceProject] as c
                              on b.MedicalInsuranceDirectoryCode=c.ProjectCode
                              where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0 ";
 

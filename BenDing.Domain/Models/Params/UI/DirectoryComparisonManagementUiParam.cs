@@ -22,7 +22,7 @@ namespace BenDing.Domain.Models.Params.UI
         /// </summary>
         public string DirectoryCategoryCode { get; set; }
         /// <summary>
-        /// 0未对码,1已对码
+        /// 0.全部显示,1.未对码,2.已对码
         /// </summary>
         public  int  State { get; set; }
        

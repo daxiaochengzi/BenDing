@@ -28,7 +28,7 @@ namespace BenDing.Domain.Models.Dto.Resident
         ///// <summary>
         ///// 收费项目等级
         ///// </summary>  
-        //public string ProjectLevel { get; set; }
+        public string ProjectLevel { get; set; }
         ///// <summary>
         ///// 职工医保自付比例
         ///// </summary>

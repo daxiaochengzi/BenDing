@@ -197,7 +197,7 @@ namespace BenDing.Repository.Providers.Web
             {
                 _sqlConnection.Open();
                 string querySql = @"
-                             select [Id],[ProjectCode],[ProjectName],[ProjectCodeType],Unit,MnemonicCode,Formulation,
+                             select [Id],[ProjectCode],[ProjectName],[ProjectCodeType],Unit,MnemonicCode,Formulation,ProjectLevel,
                              Manufacturer,QuasiFontSize,Specification,Remark,NewCodeMark,NewUpdateTime from [dbo].[MedicalInsuranceProject] 
                              where  [CreateUserId] is not null";
                 string countSql = @"select count(*) from [dbo].[MedicalInsuranceProject] where  [CreateUserId] is not null";
@@ -962,7 +962,7 @@ namespace BenDing.Repository.Providers.Web
                                   ,'{item.ZeroBlock}','{item.OneBlock}','{item.TwoBlock}','{item.ThreeBlock}','{item.FourBlock}','{item.EffectiveSign}','{item.ResidentOutpatientSign}'
                                   ,'{item.ResidentOutpatientBlock}','{item.Manufacturer}','{item.QuasiFontSize}','{item.Specification}','{item.Remark}','{item.NewCodeMark}'
                                   ,'{ DateTime.ParseExact(item.NewUpdateTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture).ToString("yyyy-MM-dd HH:mm:ss")}',
-                                  '{item.StartTime}','{item.EndTime}','{item.LimitPaymentScope}',GETDATE(),'{user.UserId}'
+                                  NULL,NULL,'{item.LimitPaymentScope}',GETDATE(),'{user.UserId}'
                                );";
                     }
                     result = await _sqlConnection.ExecuteAsync(insertSql);

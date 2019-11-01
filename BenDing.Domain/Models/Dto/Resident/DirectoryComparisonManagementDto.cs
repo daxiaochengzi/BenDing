@@ -77,9 +77,17 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// </summary>
         public string QuasiFontSize { get; set; }
         /// <summary>
-        /// 更新时间
+        /// 医保类别
         /// </summary>
-        public DateTime? NewUpdateTime { get; set; }
+        public string ProjectCodeType { get; set; }
+        /// <summary>
+        /// 医保报销比例
+        /// </summary>
+        public string ProjectLevel { get; set; }
+        /// <summary>
+        /// 对码时间
+        /// </summary>
+        public DateTime? PairCodeTime { get; set; }
         
     }
 }
