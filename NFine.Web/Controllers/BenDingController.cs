@@ -662,6 +662,7 @@ namespace NFine.Web.Controllers
                 var login = BaseConnect.Connect();
                 if (login == 1)
                 {
+                    param.Operators = param.UserId;
                     await _residentMedicalInsurance.HospitalizationRegister(param, userBase);
                     var inputInpatientInfo = new InpatientInfoParam()
                     {
@@ -672,7 +673,7 @@ namespace NFine.Web.Controllers
                         EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                         State = "0",
                     };
-                    param.Operators = param.UserId;
+                
                     string inputInpatientInfoJson =
                         JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
                     List<InpatientInfoDto> inputInpatientInfoData = await _webServiceBasicService.GetInpatientInfo(userBase, inputInpatientInfoJson);
