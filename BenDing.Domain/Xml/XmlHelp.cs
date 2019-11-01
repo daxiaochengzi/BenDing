@@ -266,17 +266,27 @@ namespace BenDing.Domain.Xml
         {
             var result = t;
             string pathXml = null;
+            var valid = new ValidXmlDto();
             pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\ResponseParams.xml";
             XmlDocument doc = new XmlDocument();
             doc.Load(pathXml);
-            string jsonText = JsonConvert.SerializeXmlNode(doc);
-            var resultData = JsonConvert.DeserializeObject<ResultData>(jsonText);
-            if (resultData?.Row != null && resultData.Row.ToString() != "")
+            XmlNode po_fhzNode = doc.SelectSingleNode("/ROW/PO_FHZ");
+            valid.PO_FHZ = po_fhzNode.InnerText;
+            XmlNode po_msgNode = doc.SelectSingleNode("/ROW/PO_MSG");
+            valid.PO_MSG = po_msgNode.InnerText;
+            if (valid.PO_FHZ == "1")
             {
-                var jsonStr = JsonConvert.SerializeObject(resultData.Row);
-                result = JsonConvert.DeserializeObject<T>(jsonStr);
-                
-
+                string jsonText = JsonConvert.SerializeXmlNode(doc);
+                var resultData = JsonConvert.DeserializeObject<ResultData>(jsonText);
+                if (resultData?.Row != null && resultData.Row.ToString() != "")
+                {
+                    var jsonStr = JsonConvert.SerializeObject(resultData.Row);
+                    result = JsonConvert.DeserializeObject<T>(jsonStr);
+                }
+            }
+            else
+            {
+                throw new SystemException(valid.PO_MSG);
             }
 
             return result;
