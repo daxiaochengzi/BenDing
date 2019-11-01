@@ -17,14 +17,14 @@ namespace BenDing.Domain.Models.Params.Resident
         ///<summary>
         /// 身份标识
         /// </summary>
-        [XmlElementAttribute("PI_SFBZ", IsNullable = false)]
+        [XmlElementAttribute("PI_CRBZ", IsNullable = false)]
         [Display(Name = "身份标识")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string IdentityMark { get; set; }
         /// <summary>
         ///身份证号或者个人编号
         /// </summary>
-        [XmlElementAttribute("PI_CRBZ", IsNullable = false)]
+        [XmlElementAttribute("PI_SFBZ", IsNullable = false)]
         [Display(Name = "身份证号或者个人编号")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string AfferentSign { get; set; }
