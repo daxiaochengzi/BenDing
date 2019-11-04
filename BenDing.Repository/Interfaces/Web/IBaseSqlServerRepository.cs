@@ -80,6 +80,11 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <returns></returns>
         Task<List<QueryHospitalOperatorAll>> QueryHospitalOperatorAll();
+
+         Task<List<QueryThreeCataloguePairCodeUploadDto>> ThreeCataloguePairCodeUpload(
+            string organizationCode);
+
+        Task<int> UpdateThreeCataloguePairCodeUpload(string organizationCode);
     }
 
 }

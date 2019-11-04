@@ -337,26 +337,26 @@ namespace BenDing.Service.Providers
         public async Task SaveXmlData(SaveXmlData param)
         {
 
-            var data = await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(param), param.操作人员ID);
-            if (data.Result == "1")
-            {
-                var saveParam = new MedicalInsuranceDataAllParam()
-                {
-                    DataAllId = Guid.NewGuid().ToString("N"),
-                    BusinessId = param.业务ID,
-                    CreateUserId = param.操作人员ID,
-                    DataId = param.发起交易的动作ID,
-                    DataType = param.医保交易码,
-                    OrgCode = param.机构ID,
-                    ParticipationJson = param.入参,
-                    ResultDataJson = param.出参,
-                    HisMedicalInsuranceId = param.发起交易的动作ID,
-                    Remark = param.Remark,
-                    IdCard = param.IDCard,
+            var data = await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(param), param.UserId);
+            //if (data.Result == "1")
+            //{
+            //    var saveParam = new MedicalInsuranceDataAllParam()
+            //    {
+            //        DataAllId = Guid.NewGuid().ToString("N"),
+            //        BusinessId = param.业务ID,
+            //        CreateUserId = param.操作人员ID,
+            //        DataId = param.发起交易的动作ID,
+            //        DataType = param.医保交易码,
+            //        OrgCode = param.机构ID,
+            //        ParticipationJson = param.入参,
+            //        ResultDataJson = param.出参,
+            //        HisMedicalInsuranceId = param.发起交易的动作ID,
+            //        Remark = param.Remark,
+            //        IdCard = param.IDCard,
 
-                };
-                await _dataBaseHelpService.SaveMedicalInsuranceDataAll(saveParam);
-            }
+            //    };
+            //    await _dataBaseHelpService.SaveMedicalInsuranceDataAll(saveParam);
+            //}
 
 
         }
@@ -419,5 +419,53 @@ namespace BenDing.Service.Providers
             }
             return result;
         }
+
+        public async Task<int> ThreeCataloguePairCodeUpload(UserInfoDto user)
+        {
+            int resultData = 0;
+            var data = await _baseSqlServer.ThreeCataloguePairCodeUpload(user.OrganizationCode);
+            if (data.Any())
+            {
+                var uploadDataRow = data.Select(c => new ThreeCataloguePairCodeUploadRowDto()
+                {
+                    //ProjectId = c.Id.ToString("N"),
+                    HisDirectoryCode = c.DirectoryCode,
+                    Manufacturer = "",
+                    ProjectName = c.ProjectName,
+                    ProjectCode = c.ProjectCode,
+                    ProjectCodeType = c.DirectoryType,
+                    ProjectCodeTypeDetail = c.ProjectCodeType,
+                    Remark = c.Remark,
+                    ProjectLevel = ((ProjectLevel) Convert.ToInt32(c.ProjectLevel)).ToString(),
+                    RestrictionSign = GetStrData(c.ProjectCodeType, c.RestrictionSign)
+
+                }).ToList();
+                var uploadData = new ThreeCataloguePairCodeUploadDto()
+                {
+                    AuthCode = user.AuthCode,
+                    CanCelState = "0",
+                    UserName = user.UserName,
+                    OrganizationCode = user.OrganizationCode,
+                    PairCodeRow = uploadDataRow,
+                    VersionNumber = ""
+                };
+                await _webServiceBasic.HIS_InterfaceListAsync("35", JsonConvert.SerializeObject(uploadData), user.UserId);
+                resultData = await _baseSqlServer.UpdateThreeCataloguePairCodeUpload(user.OrganizationCode);
+            }
+
+            //限制用药
+                string GetStrData(string projectCodeType, string restrictionSign)
+                {
+                    string str = "0";
+                    if (projectCodeType != "92")
+                    {
+                        str = restrictionSign == "0" ? "" : "1";
+                    }
+
+                    return str;
+                }
+                return resultData;
+            }
+        }
     }
-}
+

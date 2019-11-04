@@ -89,5 +89,11 @@ namespace BenDing.Service.Interfaces
         Task<QueryInpatientInfoDto> QueryInpatientInfo(QueryInpatientInfoParam param);
         Task<UserInfoDto> GetUserBaseInfo(string param);
         Task<dynamic> TestFun(QueryInpatientInfoParam param);
+        /// <summary>
+        /// 三大目录对码信息回写至基层系统
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        Task<int> ThreeCataloguePairCodeUpload(UserInfoDto user);
     }
 }

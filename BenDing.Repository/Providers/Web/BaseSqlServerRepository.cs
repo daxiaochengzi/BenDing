@@ -391,9 +391,9 @@ namespace BenDing.Repository.Providers.Web
                             {
                                 insertSql += $@"insert into [dbo].[ThreeCataloguePairCode]
                                            ([Id],[OrganizationCode],[OrganizationName],[DirectoryType],[State],[MedicalInsuranceDirectoryCode],
-                                            [HisFixedEncoding],[CreateTime],[IsDelete],[CreateUserId],[ProjectLevel],[ProjectCodeType],[UploadState]) values (
+                                            [HisFixedEncoding],[CreateTime],[IsDelete],[CreateUserId],[ProjectLevel],[ProjectCodeType],[UploadState],[DirectoryCode]) values (
                                            '{Guid.NewGuid()}','{param.OrganizationCode}','{param.OrganizationName}','{items.DirectoryType}',0,'{items.MedicalInsuranceDirectoryCode}',
-                                             '{items.HisDirectoryCode}',GETDATE(),0,'{param.UserId}',{Convert.ToInt32(items.ProjectLevel)},{Convert.ToInt32(items.ProjectCodeType)},0) ";
+                                             '{BitConverter.ToInt64(Guid.Parse(items.HisDirectoryCode).ToByteArray(), 0)}',GETDATE(),0,'{param.UserId}',{Convert.ToInt32(items.ProjectLevel)},{Convert.ToInt32(items.ProjectCodeType)},0,'{items.HisDirectoryCode}') ";
                               
                             }
                             await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
@@ -526,6 +526,50 @@ namespace BenDing.Repository.Providers.Web
             }
         }
         
+        public async Task<List<QueryThreeCataloguePairCodeUploadDto>> ThreeCataloguePairCodeUpload(string organizationCode)
+        {
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+                var resultData = new List<QueryThreeCataloguePairCodeUploadDto>();
+                _sqlConnection.Open();
+                string querySql = $@"select a.[Id],[ProjectCode],[ProjectName],[ProjectCodeType],ProjectLevel,
+                                    [RestrictionSign],[Remark],b.DirectoryCode,[DirectoryType]
+                                    from [dbo].[MedicalInsuranceProject] as a inner join [dbo].[ThreeCataloguePairCode] as b
+                                    on a.ProjectCode=b.MedicalInsuranceDirectoryCode where b.UploadState=0 and OrganizationCode='{organizationCode}'
+                                    and IsDelete=0";
+                var data = await _sqlConnection.QueryAsync<QueryThreeCataloguePairCodeUploadDto>(querySql);
+                if (data != null && data.Count() > 0)
+                {
+                    resultData = data.ToList();
+                }
+
+                _sqlConnection.Close();
+                return resultData;
+            }
+        }
+        /// <summary>
+        /// his上传更新数据
+        /// </summary>
+        /// <param name="organizationCode"></param>
+        /// <returns></returns>
+        public async Task<int> UpdateThreeCataloguePairCodeUpload(string organizationCode)
+        {
+            Int32 resultData = 0;
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+              
+                _sqlConnection.Open();
+                string querySql = $@"update [dbo].[ThreeCataloguePairCode] set UploadState=1 where 
+                                 UploadState=0 and OrganizationCode='{organizationCode}' and IsDelete=0";
+                resultData= await _sqlConnection.ExecuteAsync(querySql);
+                
+                _sqlConnection.Close();
+              
+            }
+
+            return resultData;
+        }
+
         private string ListToStr(List<string> param)
         {
             string result = null;

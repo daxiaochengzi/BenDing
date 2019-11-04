@@ -488,6 +488,40 @@ namespace NFine.Web.Controllers
                    
                 }));
         }
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> SaveXmlData(UiInIParam param)
+        {
+            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+            {
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var dataInfo = new ResidentUserInfoParam()
+                { IdentityMark = "1",
+                  InformationNumber = "512501195802085180"
+                };
+                var strXmls = XmlSerializeHelper.XmlSerialize(dataInfo);
+                var data = new SaveXmlData();
+                data.OrganizationCode = userBase.OrganizationCode;
+                data.AuthCode = userBase.AuthCode;
+                data.BusinessId = "FFE6ADE4D0B746C58B972C7824B8C9DF";
+                data.TransactionId = Guid.Parse("05D3BE09-1ED6-484F-9807-1462101F02BF").ToString("N");
+                data.MedicalInsuranceBackNum = Guid.Parse("05D3BE09-1ED6-484F-9807-1462101F02BF").ToString("N");
+                data.BackParam = CommonHelp.EncodeBase64("utf-8", strXmls);
+                data.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmls);
+                data.MedicalInsuranceCode = "21";
+                data.UserId = userBase.UserId;
+                //await _webServiceBasicService.SaveXmlData(data);
+                var xmlData = new XmlData();
+                xmlData.业务ID = data.BusinessId;
+                xmlData.医保交易码 = "23";
+                xmlData.发起交易的动作ID = data.TransactionId;
+                xmlData.验证码 = data.AuthCode;
+                xmlData.操作人员ID = data.UserId;
+                xmlData.机构ID = data.OrganizationCode;
+                await _webServiceBasicService.GetXmlData(xmlData);
+
+            }), JsonRequestBehavior.AllowGet);
+        }
+        
 
         #endregion
         #region 医保对码
@@ -593,7 +627,25 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
-        
+        /// <summary>
+        /// 三大目录对码信息回写至基层系统
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> ThreeCataloguePairCodeUpload(UiInIParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+                var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+ 
+                var data = await _webServiceBasicService.ThreeCataloguePairCodeUpload(verificationCode);
+                
+                y.Data = "["+data+"] 条回写成功!!!";
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
+        }
+
         #endregion
         #region 居民医保
         /// <summary>
@@ -742,7 +794,6 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
-
         #endregion
     }
 }

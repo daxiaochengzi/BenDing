@@ -137,6 +137,7 @@
     <Compile Include="Models\Params\Web\XmlData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Xml\BaseConnect.cs" />
+    <Compile Include="Xml\CommonHelp.cs" />
     <Compile Include="Xml\LogParam.cs" />
     <Compile Include="Xml\Logs.cs" />
     <Compile Include="Xml\MedicalInsuranceDll.cs" />

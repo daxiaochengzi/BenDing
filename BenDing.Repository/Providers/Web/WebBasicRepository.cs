@@ -39,8 +39,19 @@ namespace BenDing.Repository.Providers.Web
                         throw new Exception(resultDto.Msg);
                     }
 
-                    var basicResultDto = JsonConvert.DeserializeObject<BasicResultDto>(resultData);
-                    result = basicResultDto;
+                    if (tradeCode == "35")
+                    {
+                        //var basicResultDto=new BasicResultDto();
+                        //basicResultDto.Msg.Add(resultDto.Msg);
+                        // result = basicResultDto;
+                    }
+                    else
+                    {
+                        var basicResultDto = JsonConvert.DeserializeObject<BasicResultDto>(resultData);
+                        result = basicResultDto;
+                    }
+
+                  
                     return result;
                 }
 

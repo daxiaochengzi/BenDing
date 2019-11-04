@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using Newtonsoft.Json;
@@ -15,13 +16,15 @@ namespace BenDing.Repository.Providers.Web
     public class ResidentMedicalInsuranceRepository : IResidentMedicalInsuranceRepository
     {
         private IDataBaseHelpRepository _baseHelpRepository;
-      
+
+        private IWebBasicRepository _webServiceBasic;
 
         public ResidentMedicalInsuranceRepository(
-            IDataBaseHelpRepository iDataBaseHelpRepository
+            IDataBaseHelpRepository iDataBaseHelpRepository, IWebBasicRepository webBasicRepository
             )
         {
             _baseHelpRepository = iDataBaseHelpRepository;
+            _webServiceBasic = webBasicRepository;
         }
         /// <summary>
         /// 获取个人基础资料
@@ -73,15 +76,12 @@ namespace BenDing.Repository.Providers.Web
                     var saveData = new MedicalInsuranceDto
                     {
                         AdmissionInfoJson = JsonConvert.SerializeObject(param),
-                        HisHospitalizationId = param.HospitalizationNo
+                        HisHospitalizationId = param.HospitalizationNo,
+                        Id = Guid.NewGuid(),
                     };
                     //保存医保信息
                     await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
-                    //var data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto());
-                    //saveData.MedicalInsuranceHospitalizationNo = "888";
-                    //saveData.MedicalInsuranceYearBalance = 777;
-                    ////更新医保信息
-                    //await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
+                   
                     int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
                     if (result == 1)
                     {
@@ -89,6 +89,20 @@ namespace BenDing.Repository.Providers.Web
                         saveData.MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo;
                         saveData.MedicalInsuranceYearBalance = Convert.ToDecimal(data.MedicalInsuranceYearBalance);
                         //更新医保信息
+                  
+                        var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(paramIni);
+                        var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
+                        var saveXmlData = new SaveXmlData();
+                        saveXmlData.OrganizationCode = user.OrganizationCode;
+                        saveXmlData.AuthCode = user.AuthCode;
+                        saveXmlData.BusinessId = param.BusinessId;
+                        saveXmlData.TransactionId = saveData.Id.ToString("N");
+                        saveXmlData.MedicalInsuranceBackNum = "CXJB002";
+                        saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
+                        saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                        saveXmlData.MedicalInsuranceCode = "21";
+                        saveXmlData.UserId = user.UserId;
+                        await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), param.UserId);
                         await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
                     }
                     else

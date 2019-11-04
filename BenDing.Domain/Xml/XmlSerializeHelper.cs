@@ -4,7 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Serialization;
+using BenDing.Domain.Models.Dto.Resident;
+using Newtonsoft.Json;
 
 namespace BenDing.Domain.Xml
 {
@@ -55,6 +58,34 @@ namespace BenDing.Domain.Xml
             }
         }
 
-       
+        public static string XmlBackParam()
+        {
+            var result = "";
+            string pathXml = null;
+            var valid = new ValidXmlDto();
+            pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\ResponseParams.xml";
+            XmlDocument doc = new XmlDocument();
+            doc.Load(pathXml);
+            XmlNode po_fhzNode = doc.SelectSingleNode("/ROW/PO_FHZ");
+            valid.PO_FHZ = po_fhzNode.InnerText;
+            XmlNode po_msgNode = doc.SelectSingleNode("/ROW/PO_MSG");
+            valid.PO_MSG = po_msgNode.InnerText;
+            if (valid.PO_FHZ == "1")
+            {
+                string jsonText = JsonConvert.SerializeXmlNode(doc);
+                var resultData = JsonConvert.DeserializeObject<ResultData>(jsonText);
+                if (resultData?.Row != null && resultData.Row.ToString() != "")
+                {
+                    var jsonStr = JsonConvert.SerializeObject(resultData.Row);
+                    result = doc.InnerXml;
+                }
+            }
+            else
+            {
+                throw new SystemException(valid.PO_MSG);
+            }
+
+            return result;
+        }
     }
 }

@@ -38,5 +38,9 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 入院信息
         /// </summary>
         public string AdmissionInfoJson { get; set; }
+        /// <summary>
+        /// Id
+        /// </summary>
+        public Guid Id { get; set; }
     }
 }

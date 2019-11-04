@@ -32,5 +32,6 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// </summary>
         [JsonProperty(PropertyName = "PO_BNYZYCS")]
         public string YearInpatientsNumber { get; set; }
+        
         }
 }
