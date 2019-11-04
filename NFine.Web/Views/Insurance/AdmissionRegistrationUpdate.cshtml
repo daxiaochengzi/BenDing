@@ -1,0 +1,427 @@
+﻿@{
+    ViewBag.Title = "医保入院登记修改";
+    Layout = "~/Views/Shared/_Admission.cshtml";
+}
+
+
+
+
+<form id="form1">
+
+    <input type="hidden" id="bid" value="@ViewBag.bid" />
+    <input type="hidden" id="empid" value="@ViewBag.empid" />
+    <input type="hidden" id="idCardNo" name="IdCardNo" value="" />
+
+    <div class="topPanel" style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+        <div class="search">
+            <table>
+                <tr>
+                    <td>
+                        <div id="txt_condition" class="btn-group">
+                            <a class="btn btn-default dropdown-text" data-toggle="dropdown">选择条件</a>
+                            <a class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" data-value="1">身份证号</a></li>
+                                <li><a href="#" data-value="2">个人编号</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td style="padding-left: 12px;">
+                        <div class="input-group">
+                            <input id="txt_keyword" type="text" class="form-control" placeholder="请输入身份证号/个人编号/住院编号" style="width: 300px;">
+                        </div>
+                    </td>
+                    <td style="padding-left: 12px;">
+                        <div class="input-group">
+                            <input id="txt_time" type="text" class="form-control input-wdatepicker" placeholder="请选择入院日期" style="width: 150px;" onfocus="WdatePicker()" />
+                            <span class="input-group-btn">
+                                <button id="btn_search" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+        <ul class="nav nav-tabs">
+            <li id="insuranceType342" class="active"><a href="#">城乡居保</a></li>
+            <li id="insuranceType310"><a href="#">城镇职工</a></li>
+            <!--
+            PO_XZLX	险种类型
+            310:城镇职工基本医疗保险
+            342：城乡居民基本医疗保险
+            -->
+        </ul>
+        <div style="padding-top: 10px; margin-right: 30px;margin-bottom: 10px;">
+            <table class="form">
+                <tr>
+                    <th class="formTitle">住院编号</th>
+                    <td class="formValue">
+                        <input id="PI_YYZYH_Id" name="HospitalizationNo" type="text" class="form-control required" placeholder="请输入住院号" />
+                    </td>
+                    <th class="formTitle">患者姓名</th>
+                    <td class="formValue">
+                        <input id="PO_XM_Id" name="PatientName" type="text" class="form-control required" placeholder="请输入患者姓名" />
+                    </td>
+
+                    <th class="formTitle">医疗类别</th>
+                    <td class="formValue">
+                        <select id="F_YLLBCategoryId" name="MedicalCategory" class="form-control required">
+                            <option value="">==请选择==</option>
+                            <option value="11">11-普通入院</option>
+                            <option value="14">14-大病门诊</option>
+                            <option value="15">15-大病住院</option>
+                            <option value="22">22-急诊入院</option>
+                            <option value="23">23-市内转院住院</option>
+                            <option value="41">41-病理剖宫产</option>
+                            <option value="71">71-顺产</option>
+                            <option value="72">72-剖宫产</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <!--
+                        PI_SFBZ 身份标志 : 个人编号或身份证号
+                        PI_CRBZ 传入标志 : 1为公民身份号码 2为个人编号
+                    -->
+                    <th class="formTitle">个人编号</th>
+                    <td class="formValue">
+                        <input id="PI_CRBZ_1" name="PersonalCoding" type="text" class="form-control" placeholder="请输入个人编号" />
+                    </td>
+                    <th class="formTitle">身份证号</th>
+                    <td class="formValue">
+                        <input id="PI_CRBZ_2" name="IdCardNo" type="text" class="form-control" placeholder="请输入身份证号" />
+                    </td>
+                    <th class="formTitle">户口性质</th>
+                    <!--如果为生育入院（即就诊类别为71，72，41）的，需录入产妇的户口性质。-->
+                    <td class="formValue">
+                        <select id="PI_HKXZ_ID" name="HouseholdNature" class="form-control required">
+                            <option value="">==请选择==</option>
+                            <option value="10">10-城镇户口</option>
+                            <option value="20">20-农业户口</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">入院日期</th>
+                    <!--格式为YYYYMMDD-->
+                    <td class="formValue">
+                        <input id="PI_RYRQ_Id" name="AdmissionDate" type="text" class="form-control input-wdatepicker" onfocus="WdatePicker()" placeholder="请选择入院日期" />
+                    </td>
+                    <th class="formTitle">住院科室</th>
+                    <td class="formValue">
+                        <input id="PI_ZYBQ_Name" name="InDepartmentName" type="text" class="form-control" />
+                        <input id="PI_ZYBQ_Id" name="InDepartmentId" type="hidden" class="form-control" />
+                    </td>
+                    <th class="formTitle">床位号</th>
+                    <td class="formValue">
+                        <input id="PI_CWH_Id" name="AdmissionBed" type="text" class="form-control" />
+                    </td>
+                </tr>
+                <tr>
+                    <!--如果为生育入院（即就诊类别为71，72，41）的，需录入生育的胎儿数量-->
+                    <th class="formTitle">胎儿数</th>
+                    <td class="formValue">
+                        <input id="PI_TES_Id" name="FetusNumber" type="text" class="form-control" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="topPanel">
+        <div class="search">
+            <table>
+                <tr>
+                    <td>
+                        <div>
+                            <span>录入诊断</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="padding-left: 10px;" class="input-group">
+                            <input type="text" id="search_idc10_text" class="form-control" value="" filterType="=" placeholder="请输入诊断关键字" style="width: 200px;">
+                            <input type="hidden" id="search_idc10_code" class="form-control" />
+                            <span class="input-group-btn">
+                                <button id="btn_search_idc10" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="gridPanel">
+        <style>
+            .ui-jqgrid {
+                border-left: 0;
+                border-right: 0;
+                border-bottom: 0;
+            }
+        </style>
+        <div class="ui-jqgrid">
+            <div class="ui-jqgrid-view table-responsive" role="grid" id="g_view_gridList" style="width:67%;">
+                <div class="ui-jqgrid-hdiv">
+                    <div class="ui-jqgrid-hbox">
+                        <table class="ui-jqgrid-htable ui-common-table table table-bordered">
+                            <thead>
+                                <tr class="ui-jqgrid-labels" role="row">
+                                    <th id="gridList_rn" style="text-align: center;" class="ui-th-column ui-th-ltr ">
+                                        <div class="ui-th-div">行号</div>
+                                    </th>
+                                    <th id="gridList_F_Id" style="text-align: left;" class="ui-th-column ui-th-ltr ">
+                                        <div class="ui-th-div">诊断代码</div>
+                                    </th>
+                                    <th id="gridList_F_FullName" style="text-align: left;" class="ui-th-column ui-th-ltr">
+                                        <div class="ui-th-div">诊断名称</div>
+                                    </th>
+                                    <th id="gridList_F_Location" style="text-align: left;" class="ui-th-column ui-th-ltr">
+                                        <div class="ui-th-div">结果</div>
+                                    </th>
+                                    <th id="gridList_F_JsEvent" style="text-align: left;" class="ui-th-column ui-th-ltr">
+                                        <div class="ui-th-div">主诊</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="ui-jqgrid-bdiv" style="height: 450px;">
+                    <div class="ui-jqgrid-hbox">
+                        <table id="gridList" class="ui-jqgrid-btable ui-common-table table table-bordered" tabindex="0">
+                            <tbody>
+                                <tr class="ui-jqgrid-labels jqgfirstrow">
+                                    <td style="height:0;" class="ui-th-column ui-th-ltr"></td>
+                                    <td style="height:0;" class="ui-th-column ui-th-ltr"></td>
+                                    <td style="height:0;" class="ui-th-column ui-th-ltr"></td>
+                                    <td style="height:0;" class="ui-th-column ui-th-ltr"></td>
+                                    <td style="height:0;" class="ui-th-column ui-th-ltr"></td>
+                                </tr>
+                                <tr class="ui-jqgrid-labels ui-row-ltr jqgrow">
+                                    <td class="ui-th-column ui-th-ltr" style="text-align:center;" id="ICD10_DiseaseId" data-value="123131">1</td>
+                                    <td class="ui-th-column ui-th-ltr" style="text-align:left;" id="ICD10_DiseaseCoding">K83.007</td>
+                                    <td class="ui-th-column ui-th-ltr" style="text-align:left;" id="ICD10_DiseaseName">复发性胆管炎</td>
+                                    <td style="text-align:left;" id="ICD10_Remark">
+                                        <select>
+                                            <option value="1" selected>治愈</option>
+                                            <option value="2">好转</option>
+                                            <option value="3">未愈</option>
+                                            <option value="4">死亡</option>
+                                            <option value="5">转院</option>
+                                            <option value="6">其他</option>
+                                        </select>
+                                    </td>
+                                    <td class="ui-th-column ui-th-ltr" style="text-align:left;" id="ICD10_MainDisease"><i class="fa fa-toggle-on"></i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-button" style="text-align: center;">
+        <a href="#" onclick="submitForm()" class="btn btn-primary" style="margin-right: 5px;">医保登记</a>
+        <a href="#" class="btn btn-warning">取消登记</a>
+    </div>
+</form>
+
+<script>
+    $(function () {
+        $("#txt_condition .dropdown-menu li").click(function () {
+            var text = $(this).find('a').html();
+            var value = $(this).find('a').attr('data-value');
+            $("#txt_condition .dropdown-text").html(text).attr('data-value', value)
+        });
+        //QueryICD10 诊断查询
+        $("#search_idc10_text").autocomplete({
+            minLength: 2,  //满足搜索的最小长度
+            source: function (request, response) {
+                $.ajax({
+                    url: "/BenDing/QueryICD10",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        SearchKey: $("#search_idc10_text").val()
+                    },
+                    success: function (data) {
+                        response($.map(data.Data, function (item) {
+                            return {
+                                label: item.DiseaseName,
+                                value: item.DiseaseCoding
+                            }
+                        }));
+                    }
+                });
+            },
+            select: function (event, ui) {
+                //设置输入框值
+                $("#search_idc10_text").val(ui.item.label);
+                //设置id值
+                $("#search_idc10_code").val(ui.item.value);
+                return false;
+            }
+        });
+        //身份证查询--> form数据回显
+        $("#btn_search").click(function () {
+            var queryJson = {
+                condition: $("#txt_condition").find('.dropdown-text').attr('data-value'),
+                keyword: $("#txt_keyword").val()
+            };
+            if (!!queryJson) {
+                $.ajax({
+                    url: "/BenDing/GetInpatientInfo",
+                    data: {
+                        "UserId": $('#empid').val(),
+                        "IdCardNo": $("#txt_keyword").val(),
+                        "BusinessId": $('#bid').val(),
+                        "StartTime": $("#txt_time").val(),
+                    },
+                    type: "POST",
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        if (data.Success === false) {
+                            alert(data.Message)
+                        } else {
+                            var jsonData = data.Data;
+                            //InsuranceType:险种类型310:城镇职工基本医疗保险342：城乡居民基本医疗保险根据获取的险种类型，调用对应的职工或者居民接口办理入院。
+                            if (jsonData.MedicalInsuranceResidentInfo["InsuranceType"] == 342) {
+                                $("#insuranceType342").addClass("active");
+                                jsonToForm(jsonData, "form1");
+                            } else if (jsonData.MedicalInsuranceResidentInfo["InsuranceType"] == 310) {
+                                $("#insuranceType310").addClass("active");
+                                jsonToForm(jsonData, "form1");
+                            }
+                        }
+                    },
+                    error: function (data) {
+                        alert("网络繁忙，请稍候再试！")
+                    }
+                });
+            }
+        });
+        //form数据回显
+        var jsonToForm = function (jsonData, formId) {
+            var serializeArray = $("#" + formId).serializeArray();
+            for (var i = 0; i < serializeArray.length; i++) {
+                var name = serializeArray[i].name;
+                if (jsonData[name]) {
+                    var value = jsonData[name];
+                    $("[name='" + name + "']").val(value);
+                }
+                if (jsonData.MedicalInsuranceResidentInfo[name]) {
+                    var value = jsonData.MedicalInsuranceResidentInfo[name];
+                    $("[name='" + name + "']").val(value);
+                }
+            }
+        };
+    })
+
+    function submitForm() {
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+        var medicalCategoryValue = $("#F_YLLBCategoryId").find("option:selected").val();
+        if (medicalCategoryValue != null && medicalCategoryValue == '41' || medicalCategoryValue == '71' || medicalCategoryValue == '72') {
+            //胎儿数:类别为71，72，41需要该字段
+            if ($("#PI_TES_Id").val() == null) {
+                alert("胎儿数不能为空");
+                return false;
+            }
+             //户口性质:类别为71，72，41需要该字段
+            if ($("#PI_HKXZ_ID").find("option:selected").val() == null) {
+                alert("户口性质不能为空");
+                return false;
+            }
+        }
+        var queryJson = {
+            condition: $("#txt_condition").find('.dropdown-text').attr('data-value'),
+            keyword: $("#txt_keyword").val()
+        };
+
+        //var tableData = getTable();//多个ICD10编码
+        var postData = {
+            //传入标志-->1为公民身份号码 2为个人编号
+            "IdentityMark": 1,
+            //身份标志--> 个人编号或身份证号
+            "AfferentSign": $("#PI_CRBZ_2").val(),
+            //医疗类别-<选中的值,
+            "MedicalCategory": $("#F_YLLBCategoryId").find("option:selected").val(),
+            //胎儿数:类别为71，72，41需要该字段
+            "FetusNumber": $("#PI_TES_Id").val(),
+            //户口性质:类别为71，72，41需要该字段
+            "HouseholdNature": $("#PI_HKXZ_ID").find("option:selected").val(),
+            //入院日期:格式为YYYYMMDD 后台转换
+            "AdmissionDate": $("#PI_RYRQ_Id").val(),
+            //住院科室:ID
+            "InpatientDepartmentCode": $("#PI_ZYBQ_Id").val(),
+            //床位号
+            "BedNumber": $("#PI_CWH_Id").val(),
+            //医院住院号
+            "HospitalizationNo": $("#PI_YYZYH_Id").val(),
+            //"AdmissionMainDiagnosisIcd10": getTable(),//多个诊断ICD-10编码
+            //诊断ICD-10编码的ID
+            //"AdmissionMainDiagnosisIcd10": $("#ICD10_DiseaseId").attr('data-value'),
+             //主诊ICD-10编码
+            "AdmissionMainDiagnosisIcd10": $("#ICD10_DiseaseCoding").text(),
+            //诊断疾病名称
+            "AdmissionMainDiagnosis": $("#ICD10_DiseaseName").text(),
+            //HIS查询参数:
+            //患者身份证号
+            "IdCardNo": $("#idCardNo").val(),
+            //当前业务ID
+            "BusinessId": $('#bid').val(),
+            //开始日期
+            "StartTime": $("#PI_RYRQ_Id").val(),
+            //操作员ID
+            "UserId": $('#empid').val(),
+        };
+        //postData["content"] = editor.getValue(); //添加字段
+        console.log(postData);
+        $.ajax({
+            url: "/BenDing/HospitalizationRegister",
+            data: postData,
+            type: "POST",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                var jsonData = data.Data;
+                console.log(jsonData);
+                //$.reload();//登记完成之后，关闭或刷新页面
+            }
+        });
+    }
+
+    function getTable() {
+        var orderItemArray = new Array();
+        var orderItem = {};
+        $('#gridList tr').each(function (i) {
+            if (i >= 1) {
+                $(this).children('td').each(function (j) {
+                    switch (j) {
+                        case 0:
+                            orderItem.DiseaseId = $(this).attr('data-value');
+                            break;
+                        case 1:
+                            orderItem.DiseaseCoding = $(this).text();
+                            break;
+                        case 2:
+                            orderItem.DiseaseName = $(this).text();
+                            break;
+                        case 3:
+                            orderItem.Remark = $(this).find("option:selected").text();
+                            break;
+                        case 4:
+                            orderItem.MainDisease = $(this).text();
+                            break;
+                    }
+                });
+                orderItemArray.push(orderItem);
+            }
+        });
+        //可以将数组对象转换成json字符串
+        //JSON.stringify(orderItemArray);
+        return orderItemArray;
+    }
+</script>
