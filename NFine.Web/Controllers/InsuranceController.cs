@@ -36,6 +36,13 @@ namespace NFine.Web.Controllers
             return View();
         }
 
+        public ActionResult AdmissionRegistrationUpdate(string bid, string empid)
+        {
+            ViewBag.bid = bid;
+            ViewBag.empid = empid;
+            return View();
+        }
+
 
     }
 }
