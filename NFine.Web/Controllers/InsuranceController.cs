@@ -11,13 +11,16 @@ namespace NFine.Web.Controllers
     {
        
 
+        /// <summary>
+        /// 读卡
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Card()
         {
             return View();
         }
 
 
-        
         /**
          * http://47.75.154.115:19519/ybsp/his/insurance/admissionRegistration?
          * YbOrgCode=99999&
@@ -29,6 +32,13 @@ namespace NFine.Web.Controllers
          * apiurl=&
          * TransKey=FFE6ADE4D0B746C58B972C7824B8C9DF
          */
+
+        /// <summary>
+        /// 入院登记
+        /// </summary>
+        /// <param name="bid"></param>
+        /// <param name="empid"></param>
+        /// <returns></returns>
         public ActionResult AdmissionRegistration(string bid,string empid)
         {
             ViewBag.bid = bid;
@@ -36,10 +46,25 @@ namespace NFine.Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 修改医保登记
+        /// </summary>
+        /// <param name="bid"></param>
+        /// <param name="empid"></param>
+        /// <returns></returns>
         public ActionResult AdmissionRegistrationUpdate(string bid, string empid)
         {
             ViewBag.bid = bid;
             ViewBag.empid = empid;
+            return View();
+        }
+
+        /// <summary>
+        /// 医保目录对码
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult MedicalDirectoryCode()
+        {
             return View();
         }
 

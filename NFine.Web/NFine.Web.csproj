@@ -691,6 +691,7 @@
     <Content Include="Views\Insurance\AdmissionRegistration.cshtml" />
     <Content Include="Views\Shared\_Admission.cshtml" />
     <Content Include="Views\Insurance\AdmissionRegistrationUpdate.cshtml" />
+    <Content Include="Views\Insurance\MedicalDirectoryCode.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
