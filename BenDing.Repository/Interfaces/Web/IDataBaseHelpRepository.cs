@@ -142,5 +142,12 @@ namespace BenDing.Repository.Interfaces.Web
 
        Task<Dictionary<int, List<ResidentProjectDownloadRow>>> QueryProjectDownload(
             QueryProjectUiParam param);
+        /// <summary>
+        /// 病人医保信息查询
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
+       Task<QueryMedicalInsuranceDto> QueryMedicalInsurance(UserInfoDto user, string businessId);
     }
 }

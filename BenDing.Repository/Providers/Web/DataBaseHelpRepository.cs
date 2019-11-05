@@ -744,11 +744,17 @@ namespace BenDing.Repository.Providers.Web
             {
                 _sqlConnection.Open();
                 string insertSql = null;
-                if (!string.IsNullOrWhiteSpace(param.MedicalInsuranceHospitalizationNo))
+                if (!string.IsNullOrWhiteSpace(param.MedicalInsuranceHospitalizationNo) && param.IsModify==false)
                 {
                     insertSql = $@"update [dbo].[MedicalInsurance] set [MedicalInsuranceYearBalance]=0,
-                    [MedicalInsuranceHospitalizationNo]='{param.MedicalInsuranceHospitalizationNo}',[Isdelete]=0
-                    where [HisHospitalizationId]='{param.HisHospitalizationId}' and [Isdelete]=1";
+                    [MedicalInsuranceHospitalizationNo]='{param.MedicalInsuranceHospitalizationNo}',[Isdelete]=0,
+                    where [Id]='{param.Id}' and [Isdelete]=1 and OrganizationCode='{user.OrganizationCode}'";
+                }
+                else if(param.IsModify)
+                {
+                    insertSql = $@"update [dbo].[MedicalInsurance] set [MedicalInsuranceYearBalance]=0,
+                    AdmissionInfoJson='{param.AdmissionInfoJson}'
+                    where [Id]='{param.Id}' and OrganizationCode='{user.OrganizationCode}'";
                 }
                 else
                 {
@@ -763,6 +769,24 @@ namespace BenDing.Repository.Providers.Web
                 }
                 await _sqlConnection.ExecuteAsync(insertSql);
 
+
+            }
+        }
+        public async Task<QueryMedicalInsuranceDto> QueryMedicalInsurance(UserInfoDto user, string businessId)
+        {
+            var resultData = new QueryMedicalInsuranceDto();
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+                _sqlConnection.Open();
+                string querySql = $@"select a.[Id],a.[AdmissionInfoJson],a.HisHospitalizationId,a.MedicalInsuranceHospitalizationNo from [dbo].[MedicalInsurance] as a
+                                inner join [dbo].[inpatient] as b on
+                                a.HisHospitalizationId=b.BusinessId
+                                where a.IsDelete=0 and b.IsDelete=0
+                                and b.BusinessId='{businessId}' and a.OrganizationCode='{user.OrganizationCode}'";
+               var data=  await _sqlConnection.QueryFirstAsync<QueryMedicalInsuranceDto>(querySql);
+                if (data != null) resultData = data;
+                _sqlConnection.Close();
+                return resultData;
 
             }
         }

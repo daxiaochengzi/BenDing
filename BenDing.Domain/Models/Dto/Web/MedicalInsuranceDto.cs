@@ -42,5 +42,9 @@ namespace BenDing.Domain.Models.Dto.Web
         /// Id
         /// </summary>
         public Guid Id { get; set; }
+        /// <summary>
+        /// 是否为修改
+        /// </summary>
+        public  bool IsModify { get; set; }
     }
 }

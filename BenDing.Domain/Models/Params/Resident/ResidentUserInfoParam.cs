@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using BenDing.Domain.Models.Dto.Web;
 
 namespace BenDing.Domain.Models.Params.Resident
 {[XmlRoot("ROW", IsNullable = false)]
-  public  class ResidentUserInfoParam
+  public  class ResidentUserInfoParam:UiIniParam
     {
         /// <summary>
         /// 身份标志身份证号或个人编号

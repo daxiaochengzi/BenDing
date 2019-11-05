@@ -312,275 +312,329 @@ namespace BenDing.Repository.Providers.Web
             }
         }
         /// <summary>
-        /// 操作员登陆信息查询
+        /// 设置医院等级
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<QueryHospitalOperatorDto> QueryHospitalOperator(QueryHospitalOperatorParam param)
+        public async Task HospitalOrganizationGrade(HospitalOrganizationGradeParam param)
         {
+            //医院等级
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
-                var resultData = new QueryHospitalOperatorDto();
-                _sqlConnection.Open();
-                string querySql = $"select top 1 MedicalInsuranceAccount,[MedicalInsurancePwd],[HisUserAccount],[HisUserPwd],ManufacturerNumber from [dbo].[HospitalOperator] where [HisUserId]='{param.UserId}' ";
-                var data = await _sqlConnection.QueryFirstAsync<QueryHospitalOperatorDto>(querySql);
-                if (data != null)
-                {
-                    resultData = data;
-                }
 
-                _sqlConnection.Close();
-                return resultData;
+                _sqlConnection.Open();
+
+                string querySql =
+                    $"select COUNT(*) from [dbo].[HospitalOrganizationGrade] where [HospitalId]='{param.HospitalId}' ";
+                var resultNum = await _sqlConnection.QueryFirstAsync<int>(querySql);
+                if (resultNum > 0)
+                {
+                    string updateSql = $@"";
+
+                    await _sqlConnection.ExecuteAsync(updateSql);
+                }
+                else
+                {
+                    string insertSql = null;
+                    //if (param.IsHis)
+                    //{
+                    //    insertSql = $@"
+                    //               INSERT INTO [dbo].[HospitalOperator]
+                    //               ([Id] ,[FixedEncoding],[HisUserId],ManufacturerNumber,
+                    //               [HisUserAccount],[HisUserPwd],[CreateTime],[CreateUserId],[HisUserName]
+                    //               )
+                    //         VALUES('{Guid.NewGuid()}','{BitConverter.ToInt64(Guid.Parse(param.UserId).ToByteArray(), 0)}','{param.UserId}','{param.ManufacturerNumber}',
+                    //                 '{param.UserAccount}','{param.UserPwd}',GETDATE(),'{param.UserId}','{param.HisUserName}')";
+                    //}
+                    //else
+                    //{
+                    //    insertSql = $@"
+                    //               INSERT INTO [dbo].[HospitalOperator]
+                    //               ([Id] ,[FixedEncoding],[HisUserId],
+                    //               [MedicalInsuranceAccount],[MedicalInsurancePwd] ,[CreateTime],[CreateUserId]
+                    //               )
+                    //         VALUES('{Guid.NewGuid()}','{BitConverter.ToInt64(Guid.Parse(param.UserId).ToByteArray(), 0)}','{param.UserId}',
+                    //                  '{param.UserAccount}','{param.UserPwd}',GETDATE(),'{param.UserId}')";
+                    //}
+                    await _sqlConnection.ExecuteAsync(insertSql);
+
+                    _sqlConnection.Close();
+
+                }
             }
         }
-        /// <summary>
-        /// 获取所有的操作人员
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<QueryHospitalOperatorAll>> QueryHospitalOperatorAll()
-        {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-            {
-                var resultData = new List<QueryHospitalOperatorAll>();
-                _sqlConnection.Open();
-                string querySql = @"select HisUserId,[HisUserName] from [dbo].[HospitalOperator]";
-                var data = await _sqlConnection.QueryAsync<QueryHospitalOperatorAll>(querySql);
-                if (data != null && data.Count()>0)
-                {
-                    resultData = data.ToList();
-                }
 
-                _sqlConnection.Close();
-                return resultData;
-            }
-        }
         /// <summary>
-        /// 医保对码
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task MedicalInsurancePairCode(MedicalInsurancePairCodesUiParam param)
-        {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            /// 操作员登陆信息查询
+            /// </summary>
+            /// <param name="param"></param>
+            /// <returns></returns>
+            public async Task<QueryHospitalOperatorDto> QueryHospitalOperator(QueryHospitalOperatorParam param)
             {
-                var resultData = new MedicalInsuranceResidentInfoDto();
-                _sqlConnection.Open();
-
-                if (param.PairCodeList.Any())
+                using (var _sqlConnection = new SqlConnection(_connectionString))
                 {
-                    IDbTransaction transaction = _sqlConnection.BeginTransaction();
-                    try
+                    var resultData = new QueryHospitalOperatorDto();
+                    _sqlConnection.Open();
+                    string querySql = $"select top 1 MedicalInsuranceAccount,[MedicalInsurancePwd],[HisUserAccount],[HisUserPwd],ManufacturerNumber from [dbo].[HospitalOperator] where [HisUserId]='{param.UserId}' ";
+                    var data = await _sqlConnection.QueryFirstAsync<QueryHospitalOperatorDto>(querySql);
+                    if (data != null)
                     {
-                        string updateSql = "";
-                        var pairCodeIdList = param.PairCodeList.Where(c => c.PairCodeId != null).Select(d=> d.PairCodeId.ToString()).ToList();
-                        var updateId = ListToStr(pairCodeIdList);
-                        //更新对码
-                        if (pairCodeIdList.Any())
-                        {
-                            updateSql += $@"update [dbo].[ThreeCataloguePairCode] set [IsDelete]=1,
-                             [DeleteUserId]='{param.UserId}',DeleteTime=GETDATE() where [Id] in ({updateId});";
-                            await _sqlConnection.ExecuteAsync(updateSql, null, transaction);
+                        resultData = data;
+                    }
 
-                        }
-                        var insertParam = param.PairCodeList.ToList();
-                        string insertSql = "";
-                        //新增对码
-                        if (insertParam.Any())
+                    _sqlConnection.Close();
+                    return resultData;
+                }
+            }
+            /// <summary>
+            /// 获取所有的操作人员
+            /// </summary>
+            /// <returns></returns>
+            public async Task<List<QueryHospitalOperatorAll>> QueryHospitalOperatorAll()
+            {
+                using (var _sqlConnection = new SqlConnection(_connectionString))
+                {
+                    var resultData = new List<QueryHospitalOperatorAll>();
+                    _sqlConnection.Open();
+                    string querySql = @"select HisUserId,[HisUserName] from [dbo].[HospitalOperator]";
+                    var data = await _sqlConnection.QueryAsync<QueryHospitalOperatorAll>(querySql);
+                    if (data != null && data.Count() > 0)
+                    {
+                        resultData = data.ToList();
+                    }
+
+                    _sqlConnection.Close();
+                    return resultData;
+                }
+            }
+            /// <summary>
+            /// 医保对码
+            /// </summary>
+            /// <param name="param"></param>
+            /// <returns></returns>
+            public async Task MedicalInsurancePairCode(MedicalInsurancePairCodesUiParam param)
+            {
+                using (var _sqlConnection = new SqlConnection(_connectionString))
+                {
+                    var resultData = new MedicalInsuranceResidentInfoDto();
+                    _sqlConnection.Open();
+
+                    if (param.PairCodeList.Any())
+                    {
+                        IDbTransaction transaction = _sqlConnection.BeginTransaction();
+                        try
                         {
-                            foreach (var items in insertParam)
+                            string updateSql = "";
+                            var pairCodeIdList = param.PairCodeList.Where(c => c.PairCodeId != null).Select(d => d.PairCodeId.ToString()).ToList();
+                            var updateId = ListToStr(pairCodeIdList);
+                            //更新对码
+                            if (pairCodeIdList.Any())
                             {
-                                insertSql += $@"insert into [dbo].[ThreeCataloguePairCode]
+                                updateSql += $@"update [dbo].[ThreeCataloguePairCode] set [IsDelete]=1,
+                             [DeleteUserId]='{param.UserId}',DeleteTime=GETDATE() where [Id] in ({updateId});";
+                                await _sqlConnection.ExecuteAsync(updateSql, null, transaction);
+
+                            }
+                            var insertParam = param.PairCodeList.ToList();
+                            string insertSql = "";
+                            //新增对码
+                            if (insertParam.Any())
+                            {
+                                foreach (var items in insertParam)
+                                {
+                                    insertSql += $@"insert into [dbo].[ThreeCataloguePairCode]
                                            ([Id],[OrganizationCode],[OrganizationName],[DirectoryType],[State],[MedicalInsuranceDirectoryCode],
                                             [HisFixedEncoding],[CreateTime],[IsDelete],[CreateUserId],[ProjectLevel],[ProjectCodeType],[UploadState],[DirectoryCode]) values (
                                            '{Guid.NewGuid()}','{param.OrganizationCode}','{param.OrganizationName}','{items.DirectoryType}',0,'{items.MedicalInsuranceDirectoryCode}',
                                              '{BitConverter.ToInt64(Guid.Parse(items.HisDirectoryCode).ToByteArray(), 0)}',GETDATE(),0,'{param.UserId}',{Convert.ToInt32(items.ProjectLevel)},{Convert.ToInt32(items.ProjectCodeType)},0,'{items.HisDirectoryCode}') ";
-                              
+
+                                }
+                                await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
                             }
-                            await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
+                            transaction.Commit();
+
                         }
-                        transaction.Commit();
+                        catch (Exception e)
+                        {
+                            transaction.Rollback();
+                            throw new Exception(e.Message);
+                        }
+                    }
+                    _sqlConnection.Close();
 
-                    }
-                    catch (Exception e)
-                    {
-                        transaction.Rollback();
-                        throw new Exception(e.Message);
-                    }
                 }
-                _sqlConnection.Close();
-
             }
-        }
-       /// <summary>
-       /// 目录对照中心
-       /// </summary>
-       /// <param name="param"></param>
-       /// <returns></returns>
-        public async Task<Dictionary<int, List<DirectoryComparisonManagementDto>>> DirectoryComparisonManagement(DirectoryComparisonManagementUiParam param)
-        {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            /// <summary>
+            /// 目录对照中心
+            /// </summary>
+            /// <param name="param"></param>
+            /// <returns></returns>
+            public async Task<Dictionary<int, List<DirectoryComparisonManagementDto>>> DirectoryComparisonManagement(DirectoryComparisonManagementUiParam param)
             {
-            
-                _sqlConnection.Open();
-                string querySql = "";
-                string countSql = "";
-                string whereSql = "";
-                var resultData = new Dictionary<int, List<DirectoryComparisonManagementDto>>();
-                if (param.State == 1)
+                using (var _sqlConnection = new SqlConnection(_connectionString))
                 {
+
+                    _sqlConnection.Open();
+                    string querySql = "";
+                    string countSql = "";
+                    string whereSql = "";
+                    var resultData = new Dictionary<int, List<DirectoryComparisonManagementDto>>();
+                    if (param.State == 1)
+                    {
                         whereSql = $@" where not exists(select b.HisFixedEncoding from  [dbo].[ThreeCataloguePairCode] as b 
                                 where b.OrganizationCode='{param.OrganizationCode}' and b.HisFixedEncoding=a.FixedEncoding and b.IsDelete=0 )";
                         querySql = @"select a.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
                                 a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding
                                  from [dbo].[HospitalThreeCatalogue]  as a ";
                         countSql = @"select COUNT(*) from[dbo].[HospitalThreeCatalogue] as a ";
-                    
 
-                }
-                else if(param.State == 2)
-                {
-                    querySql =
-                            $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
+
+                    }
+                    else if (param.State == 2)
+                    {
+                        querySql =
+                                $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
                              a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
                              c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,b.CreateTime as PairCodeTime,c.ProjectLevel,c.ProjectCodeType
                              from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
                              on b.[HisFixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
                              on b.MedicalInsuranceDirectoryCode=c.ProjectCode
                              where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0 ";
-                    countSql = $@"select COUNT(*)
+                        countSql = $@"select COUNT(*)
                              from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
                              on b.[HisFixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
                              on b.MedicalInsuranceDirectoryCode=c.ProjectCode
                              where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0 ";
 
 
-                }
-                else if (param.State == 0)
-                {
-                    querySql =
-                        $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
+                    }
+                    else if (param.State == 0)
+                    {
+                        querySql =
+                            $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
                             a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
                             c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,b.CreateTime as PairCodeTime,c.ProjectLevel,c.ProjectCodeType
                              from [dbo].[HospitalThreeCatalogue]  as a  left join (select * from [dbo].[ThreeCataloguePairCode] where OrganizationCode ='{param.OrganizationCode}'  and IsDelete=0) as b
                              on b.[HisFixedEncoding]=a.FixedEncoding left join [dbo].[MedicalInsuranceProject] as c
                              on b.MedicalInsuranceDirectoryCode=c.ProjectCode
                              where a.IsDelete='0' ";
-                    countSql = $@"select COUNT(*)
+                        countSql = $@"select COUNT(*)
                               from [dbo].[HospitalThreeCatalogue]  as a  left join  (select * from [dbo].[ThreeCataloguePairCode] where OrganizationCode ='{param.OrganizationCode}'  and IsDelete=0) as b
                              on b.[HisFixedEncoding]=a.FixedEncoding left join [dbo].[MedicalInsuranceProject] as c
                              on b.MedicalInsuranceDirectoryCode=c.ProjectCode
                              where a.IsDelete='0' ";
 
 
-                }
+                    }
 
-                if (!string.IsNullOrWhiteSpace(param.DirectoryCode))
-                {
-                    whereSql += $" and a.DirectoryCode='{param.DirectoryCode}'";
-                }
-                if (!string.IsNullOrWhiteSpace(param.DirectoryCategoryCode))
-                {
-                    whereSql += $" and a.DirectoryCategoryCode='{param.DirectoryCategoryCode}'";
-                }
-                if (!string.IsNullOrWhiteSpace(param.DirectoryName))
-                {
-                    whereSql += "  and a.DirectoryName like '" + param.DirectoryName + "%'";
-                }
-                if (param.rows != 0 && param.page > 0)
-                {
-                    var skipCount = param.rows * (param.page - 1);
-                    querySql += whereSql + " order by a.CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.rows + " ROWS ONLY;";
-                }
-                string executeSql = countSql + whereSql + ";" + querySql;
-                var result = await _sqlConnection.QueryMultipleAsync(executeSql);
-               
-                int totalPageCount = result.Read<int>().FirstOrDefault();
-               var hospitalOperatorAll= await QueryHospitalOperatorAll();
-               var dataList = (from t in result.Read<DirectoryComparisonManagementDto>()
-                                select new DirectoryComparisonManagementDto
-                                {Id = t.Id,
-                                 DirectoryCode = t.DirectoryCode,
-                                 DirectoryCategoryName = t.DirectoryCategoryName,
-                                 DirectoryName = t.DirectoryName,
-                                 FixedEncoding = t.FixedEncoding,
-                                 Formulation = t.Formulation,
-                                 LimitPaymentScope = t.LimitPaymentScope,
-                                 ManufacturerName = t.ManufacturerName,
-                                 MnemonicCode = t.MnemonicCode,
-                                 PairCodeTime = t.PairCodeTime,
-                                 ProjectName = t.ProjectName,
-                                 ProjectCode = t.ProjectCode,
-                                 ProjectLevel = t.ProjectLevel!=null?((ProjectLevel)Convert.ToInt32(t.ProjectLevel)).ToString(): t.ProjectLevel,
-                                 ProjectCodeType = t.ProjectCodeType != null ? ((ProjectCodeType)Convert.ToInt32(t.ProjectCodeType)).ToString():t.ProjectCodeType,
-                                 QuasiFontSize = t.QuasiFontSize,
-                                 Unit = t.Unit,
-                                 Specification=t.Specification,
-                                 Remark = t.Remark,
-                                 PairCodeUser= t.PairCodeUser!=null? hospitalOperatorAll.Where(c=>c.HisUserId==t.PairCodeUser).Select(d=>d.HisUserName).FirstOrDefault(): t.PairCodeUser,
-                                }).ToList();
-                resultData.Add(totalPageCount, dataList);
-                _sqlConnection.Close();
-               
-                return resultData;
+                    if (!string.IsNullOrWhiteSpace(param.DirectoryCode))
+                    {
+                        whereSql += $" and a.DirectoryCode='{param.DirectoryCode}'";
+                    }
+                    if (!string.IsNullOrWhiteSpace(param.DirectoryCategoryCode))
+                    {
+                        whereSql += $" and a.DirectoryCategoryCode='{param.DirectoryCategoryCode}'";
+                    }
+                    if (!string.IsNullOrWhiteSpace(param.DirectoryName))
+                    {
+                        whereSql += "  and a.DirectoryName like '" + param.DirectoryName + "%'";
+                    }
+                    if (param.rows != 0 && param.page > 0)
+                    {
+                        var skipCount = param.rows * (param.page - 1);
+                        querySql += whereSql + " order by a.CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.rows + " ROWS ONLY;";
+                    }
+                    string executeSql = countSql + whereSql + ";" + querySql;
+                    var result = await _sqlConnection.QueryMultipleAsync(executeSql);
 
+                    int totalPageCount = result.Read<int>().FirstOrDefault();
+                    var hospitalOperatorAll = await QueryHospitalOperatorAll();
+                    var dataList = (from t in result.Read<DirectoryComparisonManagementDto>()
+                                    select new DirectoryComparisonManagementDto
+                                    {
+                                        Id = t.Id,
+                                        DirectoryCode = t.DirectoryCode,
+                                        DirectoryCategoryName = t.DirectoryCategoryName,
+                                        DirectoryName = t.DirectoryName,
+                                        FixedEncoding = t.FixedEncoding,
+                                        Formulation = t.Formulation,
+                                        LimitPaymentScope = t.LimitPaymentScope,
+                                        ManufacturerName = t.ManufacturerName,
+                                        MnemonicCode = t.MnemonicCode,
+                                        PairCodeTime = t.PairCodeTime,
+                                        ProjectName = t.ProjectName,
+                                        ProjectCode = t.ProjectCode,
+                                        ProjectLevel = t.ProjectLevel != null ? ((ProjectLevel)Convert.ToInt32(t.ProjectLevel)).ToString() : t.ProjectLevel,
+                                        ProjectCodeType = t.ProjectCodeType != null ? ((ProjectCodeType)Convert.ToInt32(t.ProjectCodeType)).ToString() : t.ProjectCodeType,
+                                        QuasiFontSize = t.QuasiFontSize,
+                                        Unit = t.Unit,
+                                        Specification = t.Specification,
+                                        Remark = t.Remark,
+                                        PairCodeUser = t.PairCodeUser != null ? hospitalOperatorAll.Where(c => c.HisUserId == t.PairCodeUser).Select(d => d.HisUserName).FirstOrDefault() : t.PairCodeUser,
+                                    }).ToList();
+                    resultData.Add(totalPageCount, dataList);
+                    _sqlConnection.Close();
+
+                    return resultData;
+
+                }
             }
-        }
-        
-        public async Task<List<QueryThreeCataloguePairCodeUploadDto>> ThreeCataloguePairCodeUpload(string organizationCode)
-        {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+
+            public async Task<List<QueryThreeCataloguePairCodeUploadDto>> ThreeCataloguePairCodeUpload(string organizationCode)
             {
-                var resultData = new List<QueryThreeCataloguePairCodeUploadDto>();
-                _sqlConnection.Open();
-                string querySql = $@"select a.[Id],[ProjectCode],[ProjectName],[ProjectCodeType],ProjectLevel,
+                using (var _sqlConnection = new SqlConnection(_connectionString))
+                {
+                    var resultData = new List<QueryThreeCataloguePairCodeUploadDto>();
+                    _sqlConnection.Open();
+                    string querySql = $@"select a.[Id],[ProjectCode],[ProjectName],[ProjectCodeType],ProjectLevel,
                                     [RestrictionSign],[Remark],b.DirectoryCode,[DirectoryType]
                                     from [dbo].[MedicalInsuranceProject] as a inner join [dbo].[ThreeCataloguePairCode] as b
                                     on a.ProjectCode=b.MedicalInsuranceDirectoryCode where b.UploadState=0 and OrganizationCode='{organizationCode}'
                                     and IsDelete=0";
-                var data = await _sqlConnection.QueryAsync<QueryThreeCataloguePairCodeUploadDto>(querySql);
-                if (data != null && data.Count() > 0)
+                    var data = await _sqlConnection.QueryAsync<QueryThreeCataloguePairCodeUploadDto>(querySql);
+                    if (data != null && data.Count() > 0)
+                    {
+                        resultData = data.ToList();
+                    }
+
+                    _sqlConnection.Close();
+                    return resultData;
+                }
+            }
+            /// <summary>
+            /// his上传更新数据
+            /// </summary>
+            /// <param name="organizationCode"></param>
+            /// <returns></returns>
+            public async Task<int> UpdateThreeCataloguePairCodeUpload(string organizationCode)
+            {
+                Int32 resultData = 0;
+                using (var _sqlConnection = new SqlConnection(_connectionString))
                 {
-                    resultData = data.ToList();
+
+                    _sqlConnection.Open();
+                    string querySql = $@"update [dbo].[ThreeCataloguePairCode] set UploadState=1 where 
+                                 UploadState=0 and OrganizationCode='{organizationCode}' and IsDelete=0";
+                    resultData = await _sqlConnection.ExecuteAsync(querySql);
+
+                    _sqlConnection.Close();
+
                 }
 
-                _sqlConnection.Close();
                 return resultData;
             }
-        }
-        /// <summary>
-        /// his上传更新数据
-        /// </summary>
-        /// <param name="organizationCode"></param>
-        /// <returns></returns>
-        public async Task<int> UpdateThreeCataloguePairCodeUpload(string organizationCode)
-        {
-            Int32 resultData = 0;
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-            {
-              
-                _sqlConnection.Open();
-                string querySql = $@"update [dbo].[ThreeCataloguePairCode] set UploadState=1 where 
-                                 UploadState=0 and OrganizationCode='{organizationCode}' and IsDelete=0";
-                resultData= await _sqlConnection.ExecuteAsync(querySql);
-                
-                _sqlConnection.Close();
-              
-            }
 
-            return resultData;
-        }
-
-        private string ListToStr(List<string> param)
-        {
-            string result = null;
-            if (param.Any())
+            private string ListToStr(List<string> param)
             {
-                foreach (var item in param)
+                string result = null;
+                if (param.Any())
                 {
-                    result = "'" + item + "'" + ",";
+                    foreach (var item in param)
+                    {
+                        result = "'" + item + "'" + ",";
+                    }
                 }
+                return result?.Substring(0, result.Length - 1);
             }
-            return result?.Substring(0, result.Length - 1);
         }
     }
-}

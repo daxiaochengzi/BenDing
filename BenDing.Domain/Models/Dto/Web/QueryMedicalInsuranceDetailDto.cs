@@ -5,21 +5,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using BenDing.Domain.Models.Params.UI;
 
-namespace BenDing.Domain.Models.Params.Resident
+namespace BenDing.Domain.Models.Dto.Web
 {
-    [XmlRootAttribute("ROW", IsNullable = false)]
-    public class HospitalizationModifyParam: UiInIDataParam
+   public class QueryMedicalInsuranceDetailDto
     {
-        /// <summary>
-        /// 医保住院号
-        /// </summary>
-        [XmlElement("PI_ZHY", IsNullable = false)]
-        [Display(Name = "医保住院号")]
+        public Guid? Id { get; set; }
+
+        ///<summary>
+      /// 身份标识
+      /// </summary>
+        [XmlElement("PI_CRBZ", IsNullable = false)]
+        [Display(Name = "身份标识")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
-        public string MedicalInsuranceHospitalizationNo { get; set; }
-        
+        public string IdentityMark { get; set; }
+        /// <summary>
+        ///身份证号或者个人编号
+        /// </summary>
+        [XmlElement("PI_SFBZ", IsNullable = false)]
+        [Display(Name = "身份证号或者个人编号")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        public string AfferentSign { get; set; }
+        /// <summary>
+        /// 医疗类别11：普通入院23: 市内转院住院14: 大病门诊15: 大病住院22: 急诊入院71：顺产72：剖宫产41：病理剖宫产
+        /// </summary>
+        [XmlElement("PI_YLLB", IsNullable = false)]
+        [Display(Name = " 医疗类别")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        public string MedicalCategory { get; set; }
         /// <summary>
         /// 胎儿数
         /// </summary>
@@ -35,13 +48,15 @@ namespace BenDing.Domain.Models.Params.Resident
         /// </summary>
 
         [XmlElement("PI_RYRQ", IsNullable = false)]
-      
+        [Display(Name = "入院日期(格式为YYYYMMDD)")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
         public string AdmissionDate { get; set; }
         /// <summary>
         /// 入院主要诊断疾病ICD-10编码
         /// </summary>
         [XmlElement("PI_ICD10", IsNullable = false)]
-     
+        [Display(Name = "入院主要诊断")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
         public string AdmissionMainDiagnosisIcd10 { get; set; }
         /// <summary>
         /// 入院诊断疾病ICD-10编码
@@ -57,21 +72,34 @@ namespace BenDing.Domain.Models.Params.Resident
         /// 入院诊断疾病名称
         /// </summary>
         [XmlElement("PI_RYZD", IsNullable = false)]
-        
+        [Display(Name = "入院诊断疾病名称")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
         public string AdmissionMainDiagnosis { get; set; }
         /// <summary>
         /// 住院科室编号 
         /// </summary>
         [XmlElement("PI_ZYBQ", IsNullable = false)]
-       
+        [Display(Name = "住院科室编号")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
         public string InpatientDepartmentCode { get; set; }
         /// <summary>
         /// 床位号
         /// </summary>
         [XmlElement("PI_CWH", IsNullable = false)]
         public string BedNumber { get; set; }
-        
-
-
+        /// <summary>
+        /// 医院住院号
+        /// </summary>
+        [XmlElement("PI_YYZYH", IsNullable = false)]
+        [Display(Name = "医院住院号")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        public string HospitalizationNo { get; set; }
+        /// <summary>
+        /// 经办人
+        /// </summary>
+        [XmlElement("PI_JBR", IsNullable = false)]
+        //[Display(Name = "经办人")]
+        //[Required(ErrorMessage = "{0}不能为空!!!")]
+        public string Operators { get; set; }
     }
 }

@@ -301,21 +301,13 @@ namespace NFine.Web.Controllers
                    .GetInpatientInfo(verificationCode, inputInpatientInfoJson);
                if (inputInpatientInfoData.Any())
                {//获取医保个人信息
-                   var login = BaseConnect.Connect();
+                   await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                    var userBase = new ResidentUserInfoDto();
-                   if (login == 1)
+                   userBase = await _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
                    {
-                        userBase = await _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
-                       {
-                           IdentityMark = "1",
-                           InformationNumber = param.IdCardNo,
-                       });
-                      
-                   }
-                   else
-                   {
-                       y.AddErrorMessage("登陆失败!!!");
-                   }
+                       IdentityMark = "1",
+                       InformationNumber = param.IdCardNo,
+                   });
                    var data = inputInpatientInfoData.FirstOrDefault(c => c.BusinessId == param.BusinessId);
                    if (data != null)
                    {
@@ -370,36 +362,36 @@ namespace NFine.Web.Controllers
             }), JsonRequestBehavior.AllowGet);
 
         }
-        /// <summary>
-        /// 获取门诊病人
-        /// </summary>
-        /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetOutpatientPerson()
-        {
-            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
-           {
-               var verificationCode = await _webServiceBasicService.GetUserBaseInfo("");
-               if (verificationCode != null)
-               {
-                   var outPatient = new OutpatientParam()
-                   {
-                       验证码 = verificationCode.AuthCode,
-                       机构编码 = verificationCode.OrganizationCode,
-                       身份证号码 = "511526199610225518",
-                       开始时间 = "2019-04-27 11:09:00",
-                       结束时间 = "2020-04-27 11:09:00",
+        ///// <summary>
+        ///// 获取门诊病人
+        ///// </summary>
+        ///// <returns></returns>
+        //[System.Web.Mvc.HttpGet]
+        //public async Task<ActionResult> GetOutpatientPerson()
+        //{
+        //    return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+        //   {
+        //       var verificationCode = await _webServiceBasicService.GetUserBaseInfo("");
+        //       if (verificationCode != null)
+        //       {
+        //           var outPatient = new OutpatientParam()
+        //           {
+        //               验证码 = verificationCode.AuthCode,
+        //               机构编码 = verificationCode.OrganizationCode,
+        //               身份证号码 = "511526199610225518",
+        //               开始时间 = "2019-04-27 11:09:00",
+        //               结束时间 = "2020-04-27 11:09:00",
 
-                   };
-                   var inputInpatientInfoData = await _webServiceBasicService.GetOutpatientPerson(verificationCode, outPatient);
-                   if (inputInpatientInfoData.Any())
-                   {
-                       y.Data = inputInpatientInfoData;
-                   }
-               }
+        //           };
+        //           var inputInpatientInfoData = await _webServiceBasicService.GetOutpatientPerson(verificationCode, outPatient);
+        //           if (inputInpatientInfoData.Any())
+        //           {
+        //               y.Data = inputInpatientInfoData;
+        //           }
+        //       }
 
-           }), JsonRequestBehavior.AllowGet);
-        }
+        //   }), JsonRequestBehavior.AllowGet);
+        //}
         /// <summary>
         /// 获取门诊病人明细
         /// </summary>
@@ -488,6 +480,11 @@ namespace NFine.Web.Controllers
                    
                 }));
         }
+        /// <summary>
+        /// 医保信息回写至基层系统
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> SaveXmlData(UiInIParam param)
         {
@@ -676,6 +673,14 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
+        public ActionResult MedicalDirectoryCodePair(string bid, string empid)
+        {
+
+            ViewBag.bid = bid;
+            ViewBag.empid = empid;
+            return View();
+        }
+        
         #endregion
         #region 居民医保
         /// <summary>
@@ -688,17 +693,10 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-
-                var login = BaseConnect.Connect();
-                if (login == 1)
-                {
-                    var userBase =await _residentMedicalInsurance.GetUserInfo(param);
-                    y.Data = userBase;
-                }
-                else
-                {
-                    y.AddErrorMessage("登陆失败!!!");
-                }
+                //医保登陆
+                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                var userBase = await _residentMedicalInsurance.GetUserInfo(param);
+                y.Data = userBase;
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
@@ -767,6 +765,29 @@ namespace NFine.Web.Controllers
             return Json(resultData);
         }
         /// <summary>
+        /// 居民入院登记查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> QueryMedicalInsurance(QueryMedicalInsuranceUiParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var queryData = await _baseHelpRepository.QueryMedicalInsurance(userBase, param.BusinessId);
+                if (!string.IsNullOrWhiteSpace(queryData.AdmissionInfoJson))
+                {
+                  var data=  JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailDto>(queryData.AdmissionInfoJson);
+                   data.Id = queryData.Id;
+                   y.Data = data;
+                }
+
+
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
         /// 居民入院登记修改
         /// </summary>
         /// <param name="param"></param>
@@ -775,9 +796,11 @@ namespace NFine.Web.Controllers
         public async Task<ActionResult> HospitalizationModify([FromBody]HospitalizationModifyParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {
+            {  //his登陆
                 var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //医保登陆
                 await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId});
+                //医保修改
                 await _residentMedicalInsurance.HospitalizationModify(param, verificationCode);
             });
             return Json(resultData);
