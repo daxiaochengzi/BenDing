@@ -1,0 +1,113 @@
+﻿@{
+    ViewBag.Title = "医保目录对码";
+    Layout = "~/Views/Shared/_Admission.cshtml";
+}
+
+
+<form id="form1">
+    <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#">医保端目录</a></li>
+            <li><a href="javascript:void()">HIS端目录</a></li>
+            <li><a href="javascript:void()">目录对照管理</a></li>
+            <li><a href="javascript:void()">中心端目录对照结果查询</a></li>
+            <li><a href="javascript:void()">异地诊疗材料对照</a></li>
+        </ul>
+        <div class="topPanel">
+            <div class="search">
+                <table>
+                    <tr>
+                        <td>
+                            <div id="txt_condition" class="btn-group">
+                                <a class="btn btn-default dropdown-text" data-toggle="dropdown">目录类别</a>
+                                <a class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#" data-value="1">药品</a></li>
+                                    <li><a href="#" data-value="2">诊疗项目</a></li>
+                                    <li><a href="#" data-value="3">服务设施</a></li>
+                                    <li><a href="#" data-value="4">材料</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                        <th class="formTitle" style="padding-left: 12px;">中心目录编码</th>
+                        <td style="padding-left: 12px;">
+                            <div class="input-group">
+                                <input id="txt_keyword1" type="text" class="form-control" placeholder="请输入中心目录编码" style="width: 300px;">
+                            </div>
+                        </td>
+                        <th class="formTitle" style="padding-left: 12px;">中心目录名称</th>
+                        <td style="padding-left: 12px;">
+                            <div class="input-group">
+                                <input id="txt_keyword2" type="text" class="form-control" placeholder="请输入中心目录名称" style="width: 300px;">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="toolbar">
+                <div class="btn-group">
+                    <a class="btn btn-default">查询</a>
+                </div>
+                <div class="btn-group">
+                    <a class="btn btn-default">重置</a>
+                </div>
+                <div class="btn-group">
+                    <a id="NF-add" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_add()"><i class="fa fa-plus"></i>更新目录</a>
+                </div>
+            </div>
+        </div>
+        <div class="gridPanel">
+            <table id="gridList"></table>
+            <div id="gridPager"></div>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(function () {
+        gridList();
+    })
+    function gridList() {
+        var $gridList = $("#gridList");
+        $gridList.dataGrid({
+            url: "/BenDing/QueryCatalog",
+            height: $(window).height() - 128,
+            colModel: [
+                { label: 'ID', name: 'Id', width: 300, align: 'left'},
+                { label: '医保目录编码', name: 'DirectoryCode', width: 300, align: 'left'},
+                { label: '医保目录名称', name: 'DirectoryName', width: 300, align: 'left'},
+                { label: '单位', name: 'Unit', width: 100, },
+                { label: '规格', name: 'Specification', width: 100, },
+                { label: '剂型', name: 'Formulation', width: 100,},
+                { label: '生产厂家', name: 'ManufacturerName', width: 200,},
+                { label: '目录类别名称', name: 'DirectoryCategoryName', width: 100, },
+                { label: '助记码', name: 'MnemonicCode', width: 300, },
+                { label: '备注', name: 'Remark', width: 100, },
+                {
+                    label: '创建时间', name: 'DirectoryCreateTime',
+                    formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
+                }
+            ],
+            pager: "#gridPager",
+            sortname: 'DirectoryCreateTime desc',
+            shrinkToFit: false,
+            autoScroll: true,
+            viewrecords: true
+        });
+        $("#time_horizon a.btn-default").click(function () {
+            $("#time_horizon a.btn-default").removeClass("active");
+            $(this).addClass("active");
+            $('#btn_search').trigger("click");
+        });
+        $("#btn_search").click(function () {
+            var timeType = $("#time_horizon a.active").attr('data-value');
+            var queryJson = {
+                keyword: $("#txt_keyword").val(),
+                timeType: $("#time_horizon a.active").attr('data-value'),
+            }
+            $gridList.jqGrid('setGridParam', {
+                postData: { queryJson: JSON.stringify(queryJson) },
+            }).trigger('reloadGrid');
+        });
+    }
+</script>
