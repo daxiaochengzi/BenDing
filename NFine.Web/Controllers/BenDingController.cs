@@ -533,21 +533,22 @@ namespace NFine.Web.Controllers
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> QueryCatalog(QueryCatalogUiParam param)
         {
-            //var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            //{
-            //    var queryData = await _baseHelpRepository.QueryCatalog(param);
-            //    var data = new
-            //    {
-            //        rows = queryData.Values.FirstOrDefault(),
-            //        //总页数
-            //        total = queryData.Keys.FirstOrDefault()>0?Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault()/param.rows))+1):0, 
-            //        //当前页
-            //        page = param.page,
-            //        //总记录数
-            //        records = queryData.Keys.FirstOrDefault()
-            //    };
-            //    y.Data = data; 
-            //});
+            if (!ModelState.IsValid)
+            {
+                string error = string.Empty;
+                foreach (var key in ModelState.Keys)
+                {
+                    var state = ModelState[key];
+                    if (state.Errors.Any())
+                    {
+                        error = state.Errors.First().ErrorMessage;
+                        throw new Exception(error);
+                    }
+                }
+
+            }
+
+
             var queryData = await _baseHelpRepository.QueryCatalog(param);
             var data = new
             {
@@ -569,24 +570,35 @@ namespace NFine.Web.Controllers
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> QueryProjectDownload(QueryProjectUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            if (!ModelState.IsValid)
             {
-                var queryData = await _baseHelpRepository.QueryProjectDownload(param);
-                var list = queryData.Values.FirstOrDefault();
-                
-                var data = new
+                string error = string.Empty;
+                foreach (var key in ModelState.Keys)
                 {
-                    rows = list,
-                    //总页数
-                    total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.rows)) + 1) : 0,
-                    //当前页
-                    page = param.page,
-                    //总记录数
-                    records = queryData.Keys.FirstOrDefault()
-                };
-                y.Data = data;
-            });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+                    var state = ModelState[key];
+                    if (state.Errors.Any())
+                    {
+                        error = state.Errors.First().ErrorMessage;
+                         throw new Exception(error);
+                    }
+                }
+                
+            }
+
+            var queryData = await _baseHelpRepository.QueryProjectDownload(param);
+            var list = queryData.Values.FirstOrDefault();
+
+            var data = new
+            {
+                rows = list,
+                //总页数
+                total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.rows)) + 1) : 0,
+                //当前页
+                page = param.page,
+                //总记录数
+                records = queryData.Keys.FirstOrDefault()
+            };
+            return Json(data, JsonRequestBehavior.AllowGet);
         }
         /// <summary>
         /// 医保对码
@@ -616,27 +628,37 @@ namespace NFine.Web.Controllers
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> DirectoryComparisonManagement(DirectoryComparisonManagementUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            if (!ModelState.IsValid)
             {
-                var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                param.OrganizationCode = verificationCode.OrganizationCode;
-              
-                var queryData = await _dataBaseSqlServerService.DirectoryComparisonManagement(param);
-                var list = queryData.Values.FirstOrDefault();
-
-                var data = new
+                string error = string.Empty;
+                foreach (var key in ModelState.Keys)
                 {
-                    rows = list,
-                    //总页数
-                    total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.rows)) + 1) : 0,
-                    //当前页
-                    page = param.page,
-                    //总记录数
-                    records = queryData.Keys.FirstOrDefault()
-                };
-                y.Data = data;
-            });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+                    var state = ModelState[key];
+                    if (state.Errors.Any())
+                    {
+                        error = state.Errors.First().ErrorMessage;
+                        throw new Exception(error);
+                    }
+                }
+
+            }
+
+            var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+            param.OrganizationCode = verificationCode.OrganizationCode;
+
+            var queryData = await _dataBaseSqlServerService.DirectoryComparisonManagement(param);
+            var list = queryData.Values.FirstOrDefault();
+            var data = new
+            {
+                rows = list,
+                //总页数
+                total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.rows)) + 1) : 0,
+                //当前页
+                page = param.page,
+                //总记录数
+                records = queryData.Keys.FirstOrDefault()
+            };
+            return Json(data, JsonRequestBehavior.AllowGet);
         }
         /// <summary>
         /// 三大目录对码信息回写至基层系统
