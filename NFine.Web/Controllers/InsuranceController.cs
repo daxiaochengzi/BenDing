@@ -63,8 +63,9 @@ namespace NFine.Web.Controllers
         /// 医保目录对码
         /// </summary>
         /// <returns></returns>
-        public ActionResult MedicalDirectoryCode()
+        public ActionResult MedicalDirectoryCode(string empid)
         {
+            ViewBag.empid = empid;
             return View();
         }
 
