@@ -1,0 +1,101 @@
+﻿@{
+    ViewBag.Title = "医保目录对码";
+    Layout = "~/Views/Shared/_Admission.cshtml";
+}
+
+
+<form id="form1">
+    <input type="hidden" id="empid" value="@ViewBag.empid" />
+    <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+        <div class="topPanel">
+            <div class="search">
+                <table>
+                    <tr>
+                        <td>
+                            <div id="txt_condition" class="btn-group">
+                                <a class="btn btn-default dropdown-text" data-toggle="dropdown">目录类别</a>
+                                <a class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#" data-value="1">药品</a></li>
+                                    <li><a href="#" data-value="2">诊疗项目</a></li>
+                                    <li><a href="#" data-value="3">服务设施</a></li>
+                                    <li><a href="#" data-value="4">材料</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                        <th class="formTitle" style="padding-left: 12px;">目录编码</th>
+                        <td style="padding-left: 12px;">
+                            <div class="input-group">
+                                <input id="txt_code" type="text" class="form-control" placeholder="请输入目录编码">
+                            </div>
+                        </td>
+                        <th class="formTitle" style="padding-left: 12px;">目录名称</th>
+                        <td style="padding-left: 12px;">
+                            <div class="input-group">
+                                <input id="txt_name" type="text" class="form-control" placeholder="请输入目录名称">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="toolbar">
+                <div class="btn-group" id="btn_search">
+                    <a class="btn btn-default">查询</a>
+                </div>
+            </div>
+        </div>
+        <div class="gridPanel">
+            <table id="gridList"></table>
+            <div id="gridPager"></div>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(function () {
+
+        $("#txt_condition .dropdown-menu li").click(function () {
+            var text = $(this).find('a').html();
+            var value = $(this).find('a').attr('data-value');
+            $("#txt_condition .dropdown-text").html(text).attr('data-value', value)
+        });
+        var userId = $('#empid').val();
+        gridList2(userId);
+    })
+
+    //医保中心三大目录
+    function gridList2(userId) {
+        var $gridList = $("#gridList");
+        $gridList.dataGrid({
+            url: "/BenDing/QueryProjectDownload",
+            height: $(window).height() - 128,
+            colModel: [
+                //{ label: 'ID', name: 'Id', width: 300, align: 'left' },
+                { label: '收费项目编码', name: 'ProjectCode', width: 300, align: 'left' },
+                { label: '收费项目名称', name: 'ProjectName', width: 300, align: 'left' },
+                { label: '分类代码', name: 'ProjectCodeType', width: 300, align: 'left' },
+                { label: '收费项目等级', name: 'ProjectLevel', width: 100, align: 'left' },
+                { label: '单位', name: 'Unit', width: 100, align: 'left' },
+                { label: '拼音助记码', name: 'MnemonicCode', width: 300, align: 'left' },
+                { label: '剂型', name: 'Formulation', width: 100, align: 'left' },
+                { label: '限制用药标志', name: 'RestrictionSign', width: 100, align: 'left' },
+                { label: '生产厂家', name: 'Manufacturer', width: 200, align: 'left' },
+                { label: '药品准字号', name: 'QuasiFontSize', width: 100, align: 'left' },
+                { label: '规格', name: 'Specification', width: 100, align: 'left' },
+                { label: '备注', name: 'Remark', width: 100, align: 'left' },
+                { label: '新码标志', name: 'NewCodeMark', width: 100, align: 'left' },
+                { label: '限制支付范围', name: 'LimitPaymentScope', width: 100, align: 'left' },
+                {
+                    label: '变更日期', name: 'NewUpdateTime',
+                    formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
+                }
+            ],
+            pager: "#gridPager",
+            sortname: 'NewUpdateTime desc',
+            shrinkToFit: false,
+            autoScroll: true,
+            viewrecords: true
+        });
+    }
+
+</script>

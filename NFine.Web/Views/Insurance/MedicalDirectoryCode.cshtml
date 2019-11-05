@@ -33,13 +33,13 @@
                         <th class="formTitle" style="padding-left: 12px;">目录编码</th>
                         <td style="padding-left: 12px;">
                             <div class="input-group">
-                                <input id="txt_code" type="text" class="form-control" placeholder="请输入目录编码" style="width: 300px;">
+                                <input id="txt_code" type="text" class="form-control" placeholder="请输入目录编码">
                             </div>
                         </td>
                         <th class="formTitle" style="padding-left: 12px;">目录名称</th>
                         <td style="padding-left: 12px;">
                             <div class="input-group">
-                                <input id="txt_name" type="text" class="form-control" placeholder="请输入目录名称" style="width: 300px;">
+                                <input id="txt_name" type="text" class="form-control" placeholder="请输入目录名称">
                             </div>
                         </td>
                     </tr>
@@ -238,16 +238,16 @@
     }
     //对码
     function btn_modulebutton(DirectoryName) {
-        var type = $("#txt_condition").find('.dropdown-text').attr('data-value');
+        //var type = $("#txt_condition").find('.dropdown-text').attr('data-value');
         var layer = layui.layer;
         layer.open({
             type: 2,
-            area: ['800px', '500px'],
+            area: ['1200px', '600px'],
             fixed: false, //不固定
             title: "药品对照",
             maxmin: false,
             shade: [0.8, '#DDDDDD'],
-            content: "/BenDing/QueryProjectDownload?ProjectName=" + DirectoryName + "&ProjectCodeType=" + type
+            content: "/BenDing/MedicalDirectoryPairCode?ProjectName=" + DirectoryName
         });
     }
 
