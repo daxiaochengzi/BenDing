@@ -5,11 +5,12 @@
 
 
 <form id="form1">
+    <input type="hidden" id="empid" value="@ViewBag.empid" />
     <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#">医保端目录</a></li>
-            <li><a href="javascript:void()">HIS端目录</a></li>
-            <li><a href="javascript:void()">目录对照管理</a></li>
+            <li><a href="#">HIS端目录</a></li>
+            <li><a href="javascript:void()">医保端目录</a></li>
+            <li class="active"><a href="javascript:void()">目录对照管理</a></li>
             <li><a href="javascript:void()">中心端目录对照结果查询</a></li>
             <li><a href="javascript:void()">异地诊疗材料对照</a></li>
         </ul>
@@ -65,24 +66,27 @@
 
 <script>
     $(function () {
-        gridList();
+        var userId = $('#empid').val();
+        gridList3(userId);
     })
+    //HIS基层三大目录
     function gridList() {
         var $gridList = $("#gridList");
         $gridList.dataGrid({
             url: "/BenDing/QueryCatalog",
             height: $(window).height() - 128,
             colModel: [
-                { label: 'ID', name: 'Id', width: 300, align: 'left'},
+                //{ label: "主键", name: "Id", hidden: true, key: true },
+                //{ label: 'ID', name: 'Id', width: 300, align: 'left'},
                 { label: '医保目录编码', name: 'DirectoryCode', width: 300, align: 'left'},
                 { label: '医保目录名称', name: 'DirectoryName', width: 300, align: 'left'},
-                { label: '单位', name: 'Unit', width: 100, },
-                { label: '规格', name: 'Specification', width: 100, },
-                { label: '剂型', name: 'Formulation', width: 100,},
-                { label: '生产厂家', name: 'ManufacturerName', width: 200,},
-                { label: '目录类别名称', name: 'DirectoryCategoryName', width: 100, },
-                { label: '助记码', name: 'MnemonicCode', width: 300, },
-                { label: '备注', name: 'Remark', width: 100, },
+                { label: '单位', name: 'Unit', width: 100, align: 'left' },
+                { label: '规格', name: 'Specification', width: 100, align: 'left'},
+                { label: '剂型', name: 'Formulation', width: 100, align: 'left'},
+                { label: '生产厂家', name: 'ManufacturerName', width: 200, align: 'left'},
+                { label: '目录类别名称', name: 'DirectoryCategoryName', width: 100, align: 'left' },
+                { label: '助记码', name: 'MnemonicCode', width: 300, align: 'left' },
+                { label: '备注', name: 'Remark', width: 100, align: 'left' },
                 {
                     label: '创建时间', name: 'DirectoryCreateTime',
                     formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
@@ -94,20 +98,128 @@
             autoScroll: true,
             viewrecords: true
         });
-        $("#time_horizon a.btn-default").click(function () {
-            $("#time_horizon a.btn-default").removeClass("active");
-            $(this).addClass("active");
-            $('#btn_search').trigger("click");
+    
+
+        //$("#time_horizon a.btn-default").click(function () {
+        //    $("#time_horizon a.btn-default").removeClass("active");
+        //    $(this).addClass("active");
+        //    $('#btn_search').trigger("click");
+        //});
+        //$("#btn_search").click(function () {
+        //    var timeType = $("#time_horizon a.active").attr('data-value');
+        //    var queryJson = {
+        //        keyword: $("#txt_keyword").val(),
+        //        timeType: $("#time_horizon a.active").attr('data-value'),
+        //    }
+        //    $gridList.jqGrid('setGridParam', {
+        //        postData: { queryJson: JSON.stringify(queryJson) },
+        //    }).trigger('reloadGrid');
+        //});
+    }
+    //医保中心三大目录
+    function gridList2() {
+        var $gridList = $("#gridList");
+        $gridList.dataGrid({
+            url: "/BenDing/QueryProjectDownload",
+            height: $(window).height() - 128,
+            colModel: [
+                //{ label: 'ID', name: 'Id', width: 300, align: 'left' },
+                { label: '收费项目编码', name: 'ProjectCode', width: 300, align: 'left' },
+                { label: '收费项目名称', name: 'ProjectName', width: 300, align: 'left' },
+                { label: '分类代码', name: 'ProjectCodeType', width: 300, align: 'left' },
+                { label: '收费项目等级', name: 'ProjectLevel', width: 100, align: 'left' },
+                { label: '单位', name: 'Unit', width: 100, align: 'left' },
+                { label: '拼音助记码', name: 'MnemonicCode', width: 300, align: 'left' },
+                { label: '剂型', name: 'Formulation', width: 100, align: 'left' },
+                { label: '限制用药标志', name: 'RestrictionSign', width: 100, align: 'left' },
+                { label: '生产厂家', name: 'Manufacturer', width: 200, align: 'left' },
+                { label: '药品准字号', name: 'QuasiFontSize', width: 100, align: 'left' },
+                { label: '规格', name: 'Specification', width: 100, align: 'left' },
+                { label: '备注', name: 'Remark', width: 100, align: 'left' },
+                { label: '新码标志', name: 'NewCodeMark', width: 100, align: 'left' },
+                { label: '限制支付范围', name: 'LimitPaymentScope', width: 100, align: 'left' },
+                {
+                    label: '变更日期', name: 'NewUpdateTime',
+                    formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
+                }
+            ],
+            pager: "#gridPager",
+            sortname: 'NewUpdateTime desc',
+            shrinkToFit: false,
+            autoScroll: true,
+            viewrecords: true
         });
-        $("#btn_search").click(function () {
-            var timeType = $("#time_horizon a.active").attr('data-value');
-            var queryJson = {
-                keyword: $("#txt_keyword").val(),
-                timeType: $("#time_horizon a.active").attr('data-value'),
-            }
-            $gridList.jqGrid('setGridParam', {
-                postData: { queryJson: JSON.stringify(queryJson) },
-            }).trigger('reloadGrid');
+
+
+        //$("#time_horizon a.btn-default").click(function () {
+        //    $("#time_horizon a.btn-default").removeClass("active");
+        //    $(this).addClass("active");
+        //    $('#btn_search').trigger("click");
+        //});
+        //$("#btn_search").click(function () {
+        //    var timeType = $("#time_horizon a.active").attr('data-value');
+        //    var queryJson = {
+        //        keyword: $("#txt_keyword").val(),
+        //        timeType: $("#time_horizon a.active").attr('data-value'),
+        //    }
+        //    $gridList.jqGrid('setGridParam', {
+        //        postData: { queryJson: JSON.stringify(queryJson) },
+        //    }).trigger('reloadGrid');
+        //});
+    }
+    //目录对照管理 前面部分是HIS，后部分是医保中心数据
+    function gridList3(userId) {
+        var $gridList = $("#gridList");
+        $gridList.dataGrid({
+            url: "/BenDing/DirectoryComparisonManagement?UserId=" + userId,
+            height: $(window).height() - 128,
+            colModel: [
+                {
+                    label: '对码', name: "DirectoryCode", index: 'DirectoryCode', width: 80, align: "center", sortable: false, edittype: "button", sortable: false,
+                    formatter: function (rows) {
+                        return '<a id="NF-add" class="btn btn-primary dropdown-text" onclick="btn_add(\'' + rows.DirectoryCode + '\')"><i class="fa fa-plus"></i></a>';
+                    }
+                },
+                //{ label: "主键", name: "DirectoryCode", hidden: true, key: true },
+                { label: '目录编码', name: 'DirectoryCode', width: 300, align: 'left' },
+                { label: '目录名称', name: 'DirectoryName', width: 300, align: 'left' },
+                { label: '助记码', name: 'MnemonicCode', width: 300, align: 'left' },
+                { label: '目录类别名称', name: 'DirectoryCategoryName', width: 100, align: 'left' },
+                { label: '单位', name: 'Unit', width: 100, align: 'left' },
+                { label: '规格', name: 'Specification', width: 100, align: 'left' },
+                { label: '剂型', name: 'Formulation', width: 100, align: 'left' },
+                { label: '生产厂家', name: 'ManufacturerName', width: 200, align: 'left' },
+
+                { label: '医保项目编码', name: 'ProjectCode', width: 300, align: 'left' },
+                { label: '医保项目名称', name: 'ProjectName', width: 300, align: 'left' },
+                { label: '医保限制使用范围', name: 'LimitPaymentScope', width: 100, align: 'left' },
+                { label: '医保准字号', name: 'QuasiFontSize', width: 100, align: 'left' },
+                { label: '医保类别', name: 'ProjectCodeType', width: 100, align: 'left' },
+                { label: '医保报销比例', name: 'ProjectLevel', width: 100, align: 'left' },
+                { label: '医保备注', name: 'Remark', width: 100, align: 'left' },
+                { label: '对码操作人员', name: 'PairCodeUser', width: 100, align: 'left' },
+                {
+                    label: '对码时间', name: 'PairCodeTime',
+                    formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
+                }
+            ],
+            pager: "#gridPager",
+            sortname: 'PairCodeTime desc',
+            shrinkToFit: false,
+            autoScroll: true,
+            viewrecords: true
         });
     }
+    function btn_modulebutton() {
+        var keyValue = $("#gridList").jqGridRowValue().F_Id;
+        $.modalOpen({
+            id: "modulebutton",
+            title: "药品对照",
+            url: "/SystemManage/ModuleButton/Index?moduleId=" + keyValue,
+            width: "950px",
+            height: "600px",
+            btn: null,
+        });
+    }
+
 </script>
