@@ -16,15 +16,34 @@ namespace BenDing.Repository.Providers.Web
     public class ResidentMedicalInsuranceRepository : IResidentMedicalInsuranceRepository
     {
         private IDataBaseHelpRepository _baseHelpRepository;
-
+        private IBaseSqlServerRepository _baseSqlServerRepository;
         private IWebBasicRepository _webServiceBasic;
 
         public ResidentMedicalInsuranceRepository(
-            IDataBaseHelpRepository iDataBaseHelpRepository, IWebBasicRepository webBasicRepository
+            IDataBaseHelpRepository iDataBaseHelpRepository,
+            IWebBasicRepository webBasicRepository,
+            IBaseSqlServerRepository baseSqlServerRepository
             )
         {
             _baseHelpRepository = iDataBaseHelpRepository;
             _webServiceBasic = webBasicRepository;
+            _baseSqlServerRepository = baseSqlServerRepository;
+        }
+        public async Task Login(QueryHospitalOperatorParam param)
+        {
+             await Task.Run(async () =>
+             {
+                 var userInfo = await _baseSqlServerRepository.QueryHospitalOperator(param);
+
+                var result = MedicalInsuranceDll.ConnectAppServer_cxjb(userInfo.MedicalInsuranceAccount, userInfo.MedicalInsurancePwd);
+
+                 if (result == 1)
+                 {
+                   var  data = XmlHelp.DeSerializerModel(new IniDto());
+
+                 }
+             
+             });
         }
         /// <summary>
         /// 获取个人基础资料
@@ -57,6 +76,7 @@ namespace BenDing.Repository.Providers.Web
                 return data;
             });
         }
+
         /// <summary>
         /// 入院登记
         /// </summary>

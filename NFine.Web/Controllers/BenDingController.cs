@@ -748,9 +748,8 @@ namespace NFine.Web.Controllers
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
                 var userBase =await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var login = BaseConnect.Connect();
-                if (login == 1)
-                {
+                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+        
                     param.Operators = param.UserId;
                   
                     await _residentMedicalInsurance.HospitalizationRegister(param, userBase);
@@ -763,15 +762,10 @@ namespace NFine.Web.Controllers
                         EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                         State = "0",
                     };
-                
                     string inputInpatientInfoJson =
                         JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
                     List<InpatientInfoDto> inputInpatientInfoData = await _webServiceBasicService.GetInpatientInfo(userBase, inputInpatientInfoJson);
-                }
-                else
-                {
-                    y.AddErrorMessage("登陆失败!!!");
-                }
+             
             });
             return Json(resultData);
         }
@@ -785,17 +779,8 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-              
-                var login = BaseConnect.Connect();
-                if (login == 1)
-                {
-
-                    await _residentMedicalInsurance.HospitalizationModify(param);
-                }
-                else
-                {
-                    y.AddErrorMessage("登陆失败!!!");
-                }
+                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId});
+                await _residentMedicalInsurance.HospitalizationModify(param);
             });
             return Json(resultData);
         }
@@ -816,12 +801,8 @@ namespace NFine.Web.Controllers
                 }
                 else
                 {
-                    var login = MedicalInsuranceDll.ConnectAppServer_cxjb(data.MedicalInsuranceAccount, data.MedicalInsurancePwd); ;
-                    if (login != 1)
-                    {
-                        throw new Exception("医保连接失败!!!");
-                    }
-                    
+                    await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+
                 }
 
             });

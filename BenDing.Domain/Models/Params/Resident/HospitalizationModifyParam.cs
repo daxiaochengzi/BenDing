@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using BenDing.Domain.Models.Params.UI;
 
 namespace BenDing.Domain.Models.Params.Resident
 {
     [XmlRootAttribute("ROW", IsNullable = false)]
-    public class HospitalizationModifyParam
+    public class HospitalizationModifyParam: UiInIParam
     {
         /// <summary>
         /// 医保住院号

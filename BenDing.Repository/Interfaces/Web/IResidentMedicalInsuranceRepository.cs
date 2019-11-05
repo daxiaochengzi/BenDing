@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.Web;
 
 namespace BenDing.Repository.Interfaces.Web
 {
@@ -33,5 +34,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         Task HospitalizationModify(HospitalizationModifyParam param);
+
+        Task Login(QueryHospitalOperatorParam param);
     }
 }
