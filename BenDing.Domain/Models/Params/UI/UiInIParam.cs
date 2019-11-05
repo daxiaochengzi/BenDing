@@ -20,5 +20,8 @@ namespace BenDing.Domain.Models.Params.UI
         [XmlIgnore]
         [JsonIgnore]
         public string UserId { get; set; }
+        
+        
+
     }
 }

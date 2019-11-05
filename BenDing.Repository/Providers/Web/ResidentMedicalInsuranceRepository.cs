@@ -141,7 +141,7 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task HospitalizationModify(HospitalizationModifyParam param)
+        public async Task HospitalizationModify(HospitalizationModifyParam param, UserInfoDto user)
         {
             await Task.Run(async () =>
            {
@@ -149,9 +149,21 @@ namespace BenDing.Repository.Providers.Web
                if (xmlStr)
                {
                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB003");
-                   if (result != 1)
+                   if (result == 1)
                    {
-                       throw new Exception("居民修改入院登记失败!!!");
+                       var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
+                       var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(param);
+                       var saveXmlData = new SaveXmlData();
+                       saveXmlData.OrganizationCode = user.OrganizationCode;
+                       saveXmlData.AuthCode = user.AuthCode;
+                       saveXmlData.BusinessId = param.BusinessId;
+                       saveXmlData.TransactionId = param.TransactionId.ToString("N");
+                       saveXmlData.MedicalInsuranceBackNum = "CXJB002";
+                       saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
+                       saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                       saveXmlData.MedicalInsuranceCode = "21";
+                       saveXmlData.UserId = user.UserId;
+                       await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), param.UserId);
                    }
 
                }

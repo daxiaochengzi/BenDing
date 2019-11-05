@@ -164,13 +164,9 @@ namespace BenDing.Repository.Providers.Web
                     querySql+= whereSql+" order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.rows + " ROWS ONLY;";
                 }
                 string executeSql = countSql+ whereSql+";"+ querySql;
-                //var data = await _sqlConnection.QueryAsync<QueryCatalogDto>(querySql, null);
-                //if (data != null && data.Count() > 0)
-                //{
-                //    dataList = data.ToList();
-                //}
+              
                 var result = await _sqlConnection.QueryMultipleAsync(executeSql);
-                 //dataList = result.Read<QueryCatalogDto>().ToList();
+              
                 int totalPageCount = result.Read<int>().FirstOrDefault();
                  dataList = (from t in result.Read<QueryCatalogDto>()
 

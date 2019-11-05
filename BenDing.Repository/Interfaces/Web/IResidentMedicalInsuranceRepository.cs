@@ -33,7 +33,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task HospitalizationModify(HospitalizationModifyParam param);
+        Task HospitalizationModify(HospitalizationModifyParam param, UserInfoDto user);
 
         Task Login(QueryHospitalOperatorParam param);
     }

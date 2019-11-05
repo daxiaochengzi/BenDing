@@ -109,6 +109,7 @@
     <Compile Include="Models\Params\UI\SingleResidentInfoDownloadUIParam.cs" />
     <Compile Include="Models\Params\UI\TabelIni.cs" />
     <Compile Include="Models\Params\UI\UiICD10Param.cs" />
+    <Compile Include="Models\Params\UI\UiInIDataParam.cs" />
     <Compile Include="Models\Params\UI\UiInIParam.cs" />
     <Compile Include="Models\Params\Web\CatalogParam.cs" />
     <Compile Include="Models\Params\Web\DeleteMedicalInsuranceParam.cs" />

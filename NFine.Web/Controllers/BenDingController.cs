@@ -521,8 +521,6 @@ namespace NFine.Web.Controllers
 
             }), JsonRequestBehavior.AllowGet);
         }
-        
-
         #endregion
         #region 医保对码
         /// <summary>
@@ -678,7 +676,6 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
-
         #endregion
         #region 居民医保
         /// <summary>
@@ -779,8 +776,9 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
+                var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId});
-                await _residentMedicalInsurance.HospitalizationModify(param);
+                await _residentMedicalInsurance.HospitalizationModify(param, verificationCode);
             });
             return Json(resultData);
         }

@@ -430,7 +430,7 @@ namespace BenDing.Repository.Providers.Web
                 {
                         whereSql = $@" where not exists(select b.HisFixedEncoding from  [dbo].[ThreeCataloguePairCode] as b 
                                 where b.OrganizationCode='{param.OrganizationCode}' and b.HisFixedEncoding=a.FixedEncoding and b.IsDelete=0 )";
-                        querySql = @"select a.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
+                        querySql = @"select  a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
                                 a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding
                                  from [dbo].[HospitalThreeCatalogue]  as a ";
                         countSql = @"select COUNT(*) from[dbo].[HospitalThreeCatalogue] as a ";
@@ -440,7 +440,7 @@ namespace BenDing.Repository.Providers.Web
                 else if(param.State == 2)
                 {
                     querySql =
-                            $@"select a.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
+                            $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
                              a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
                              c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,b.CreateTime as PairCodeTime,c.ProjectLevel,c.ProjectCodeType
                              from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
@@ -458,7 +458,7 @@ namespace BenDing.Repository.Providers.Web
                 else if (param.State == 0)
                 {
                     querySql =
-                        $@"select a.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
+                        $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
                             a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
                             c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,b.CreateTime as PairCodeTime,c.ProjectLevel,c.ProjectCodeType
                              from [dbo].[HospitalThreeCatalogue]  as a  left join (select * from [dbo].[ThreeCataloguePairCode] where OrganizationCode ='{param.OrganizationCode}'  and IsDelete=0) as b

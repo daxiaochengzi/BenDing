@@ -10,7 +10,7 @@ namespace BenDing.Domain.Models.Dto.Resident
     {  /// <summary>
         /// Id
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         /// <summary>
         /// his固定编码
         /// </summary>

@@ -10,7 +10,7 @@ using BenDing.Domain.Models.Params.UI;
 namespace BenDing.Domain.Models.Params.Resident
 {
     [XmlRootAttribute("ROW", IsNullable = false)]
-    public class HospitalizationModifyParam: UiInIParam
+    public class HospitalizationModifyParam: UiInIDataParam
     {
         /// <summary>
         /// 医保住院号
