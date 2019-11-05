@@ -82,12 +82,12 @@ namespace NFine.Web.Controllers
         /// 测试
         /// </summary>
         /// <returns></returns>
-        public ActionResult Test(string Id)
-        {
-            //@ViewBag.bid
-            ViewBag.bid = Id;
-            return View();
-        }
+        //public ActionResult Test(string Id)
+        //{
+        //    //@ViewBag.bid
+        //    ViewBag.bid = Id;
+        //    //return View();
+        //}
         /// <summary>
         /// 获取登陆信息
         /// </summary>
@@ -533,22 +533,33 @@ namespace NFine.Web.Controllers
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> QueryCatalog(QueryCatalogUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            //var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            //{
+            //    var queryData = await _baseHelpRepository.QueryCatalog(param);
+            //    var data = new
+            //    {
+            //        rows = queryData.Values.FirstOrDefault(),
+            //        //总页数
+            //        total = queryData.Keys.FirstOrDefault()>0?Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault()/param.rows))+1):0, 
+            //        //当前页
+            //        page = param.page,
+            //        //总记录数
+            //        records = queryData.Keys.FirstOrDefault()
+            //    };
+            //    y.Data = data; 
+            //});
+            var queryData = await _baseHelpRepository.QueryCatalog(param);
+            var data = new
             {
-                var queryData = await _baseHelpRepository.QueryCatalog(param);
-                var data = new
-                {
-                    rows = queryData.Values.FirstOrDefault(),
-                    //总页数
-                    total = queryData.Keys.FirstOrDefault()>0?Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault()/param.rows))+1):0, 
-                    //当前页
-                    page = param.page,
-                    //总记录数
-                    records = queryData.Keys.FirstOrDefault()
-                };
-                y.Data = data; 
-            });
-            return Json(resultData,JsonRequestBehavior.AllowGet);
+                rows = queryData.Values.FirstOrDefault(),
+                //总页数
+                total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.rows)) + 1) : 0,
+                //当前页
+                page = param.page,
+                //总记录数
+                records = queryData.Keys.FirstOrDefault()
+            };
+            return Json(data, JsonRequestBehavior.AllowGet);
         }
         /// <summary>
       /// 医保中心项目查询
