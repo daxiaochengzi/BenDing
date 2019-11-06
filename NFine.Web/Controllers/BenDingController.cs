@@ -196,7 +196,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> QueryICD10(QueryICD10UiParam param)
+        public async Task<ActionResult> QueryIcd10(QueryICD10UiParam param)
         {
             return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
@@ -530,7 +530,7 @@ namespace NFine.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                string error = string.Empty;
+                string error;
                 foreach (var key in ModelState.Keys)
                 {
                     var state = ModelState[key];
@@ -759,7 +759,7 @@ namespace NFine.Web.Controllers
                     };
                     string inputInpatientInfoJson =
                         JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
-                    List<InpatientInfoDto> inputInpatientInfoData = await _webServiceBasicService.GetInpatientInfo(userBase, inputInpatientInfoJson);
+                    await _webServiceBasicService.GetInpatientInfo(userBase, inputInpatientInfoJson);
              
             });
             return Json(resultData);

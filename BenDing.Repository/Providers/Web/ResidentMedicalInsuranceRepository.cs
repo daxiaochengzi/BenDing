@@ -161,7 +161,7 @@ namespace BenDing.Repository.Providers.Web
                        saveXmlData.MedicalInsuranceBackNum = "CXJB002";
                        saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
                        saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-                       saveXmlData.MedicalInsuranceCode = "21";
+                       saveXmlData.MedicalInsuranceCode = "23";
                        saveXmlData.UserId = user.UserId;
                        await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), param.UserId);
                        var paramStr = "";
