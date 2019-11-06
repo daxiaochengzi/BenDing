@@ -673,11 +673,11 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult MedicalDirectoryCodePair(string bid, string empid)
+        public ActionResult MedicalDirectoryCodePair(MedicalDirectoryCodePairUiParam param)
         {
 
-            ViewBag.bid = bid;
-            ViewBag.empid = empid;
+            //ViewBag.bid = bid;
+            //ViewBag.empid = empid;
             return View();
         }
         
