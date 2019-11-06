@@ -655,6 +655,19 @@ namespace NFine.Web.Controllers
             };
             return Json(data, JsonRequestBehavior.AllowGet);
         }
+
+        /// <summary>
+        /// 目录对码页面
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult MedicalDirectoryPairCode(QueryProjectUiParam param)
+        {
+            //参数可查询医保中心目录
+
+
+            return View();
+        }
+
         /// <summary>
         /// 三大目录对码信息回写至基层系统
         /// </summary>

@@ -30,30 +30,30 @@
                                 </ul>
                             </div>
                         </td>
-                        <th class="formTitle" style="padding-left: 12px;">中心目录编码</th>
+                        <th class="formTitle" style="padding-left: 12px;">目录编码</th>
                         <td style="padding-left: 12px;">
                             <div class="input-group">
-                                <input id="txt_keyword1" type="text" class="form-control" placeholder="请输入中心目录编码" style="width: 300px;">
+                                <input id="txt_code" type="text" class="form-control" placeholder="请输入目录编码">
                             </div>
                         </td>
-                        <th class="formTitle" style="padding-left: 12px;">中心目录名称</th>
+                        <th class="formTitle" style="padding-left: 12px;">目录名称</th>
                         <td style="padding-left: 12px;">
                             <div class="input-group">
-                                <input id="txt_keyword2" type="text" class="form-control" placeholder="请输入中心目录名称" style="width: 300px;">
+                                <input id="txt_name" type="text" class="form-control" placeholder="请输入目录名称">
                             </div>
                         </td>
                     </tr>
                 </table>
             </div>
             <div class="toolbar">
-                <div class="btn-group">
+                <div class="btn-group" id="btn_search">
                     <a class="btn btn-default">查询</a>
                 </div>
-                <div class="btn-group">
+                <div class="btn-group" id="btn_reset">
                     <a class="btn btn-default">重置</a>
                 </div>
                 <div class="btn-group">
-                    <a id="NF-add" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_add()"><i class="fa fa-plus"></i>更新目录</a>
+                    <a id="NF-add" authorize="yes" class="btn btn-primary" onclick="btn_update()"><i class="fa fa-plus"></i>更新目录</a>
                 </div>
             </div>
         </div>
@@ -66,11 +66,19 @@
 
 <script>
     $(function () {
+        
+        $("#txt_condition .dropdown-menu li").click(function () {
+            var text = $(this).find('a').html();
+            var value = $(this).find('a').attr('data-value');
+            $("#txt_condition .dropdown-text").html(text).attr('data-value', value)
+        });
         var userId = $('#empid').val();
+
         gridList3(userId);
     })
+
     //HIS基层三大目录
-    function gridList() {
+    function gridList(userId) {
         var $gridList = $("#gridList");
         $gridList.dataGrid({
             url: "/BenDing/QueryCatalog",
@@ -117,7 +125,7 @@
         //});
     }
     //医保中心三大目录
-    function gridList2() {
+    function gridList2(userId) {
         var $gridList = $("#gridList");
         $gridList.dataGrid({
             url: "/BenDing/QueryProjectDownload",
@@ -169,18 +177,23 @@
     }
     //目录对照管理 前面部分是HIS，后部分是医保中心数据
     function gridList3(userId) {
+       
         var $gridList = $("#gridList");
+        var queryJson = {
+            UserId: userId
+        };
+        var param = "?UserId=" + queryJson.UserId;
+
         $gridList.dataGrid({
-            url: "/BenDing/DirectoryComparisonManagement?UserId=" + userId,
+            url: "/BenDing/DirectoryComparisonManagement" + param,
             height: $(window).height() - 128,
             colModel: [
                 {
-                    label: '对码', name: "DirectoryCode", index: 'DirectoryCode', width: 80, align: "center", sortable: false, edittype: "button", sortable: false,
-                    formatter: function (rows) {
-                        return '<a id="NF-add" class="btn btn-primary dropdown-text" onclick="btn_add(\'' + rows.DirectoryCode + '\')"><i class="fa fa-plus"></i></a>';
+                    label: '对码', name: 'DirectoryName', index: 'DirectoryName', width: 80, align: "center", sortable: false, edittype: "button", sortable: false,
+                    formatter: function (index) {
+                        return '<a id="NF-add" class="btn btn-default" onclick="btn_modulebutton(\'' + index+'\')"><i class="fa fa-plus"></i></a>';
                     }
                 },
-                //{ label: "主键", name: "DirectoryCode", hidden: true, key: true },
                 { label: '目录编码', name: 'DirectoryCode', width: 300, align: 'left' },
                 { label: '目录名称', name: 'DirectoryName', width: 300, align: 'left' },
                 { label: '助记码', name: 'MnemonicCode', width: 300, align: 'left' },
@@ -209,16 +222,32 @@
             autoScroll: true,
             viewrecords: true
         });
+
+        $("#btn_search").click(function () {
+            $gridList.jqGrid('setGridParam', {
+                postData: {
+                    DirectoryCategoryCode: $("#txt_condition").find('.dropdown-text').attr('data-value'),
+                    State: "0",//$("#txt_condition").find('.dropdown-text').attr('data-value'),
+                    DirectoryName: $("#txt_name").val(),
+                    DirectoryCode: $("#txt_code").val(),
+                   }
+            }).trigger('reloadGrid');
+        });
+
+
     }
-    function btn_modulebutton() {
-        var keyValue = $("#gridList").jqGridRowValue().F_Id;
-        $.modalOpen({
-            id: "modulebutton",
+    //对码
+    function btn_modulebutton(DirectoryName) {
+        //var type = $("#txt_condition").find('.dropdown-text').attr('data-value');
+        var layer = layui.layer;
+        layer.open({
+            type: 2,
+            area: ['1200px', '600px'],
+            fixed: false, //不固定
             title: "药品对照",
-            url: "/SystemManage/ModuleButton/Index?moduleId=" + keyValue,
-            width: "950px",
-            height: "600px",
-            btn: null,
+            maxmin: false,
+            shade: [0.8, '#DDDDDD'],
+            content: "/BenDing/MedicalDirectoryPairCode?ProjectName=" + DirectoryName
         });
     }
 
