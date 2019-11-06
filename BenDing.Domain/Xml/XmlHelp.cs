@@ -13,13 +13,13 @@ using Newtonsoft.Json;
 
 namespace BenDing.Domain.Xml
 {
-  public static class XmlHelp
+    public static class XmlHelp
     {/// <summary>
-    /// 转换为xml
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="t"></param>
-    /// <returns></returns>
+     /// 转换为xml
+     /// </summary>
+     /// <typeparam name="T"></typeparam>
+     /// <param name="t"></param>
+     /// <returns></returns>
         public static string ToXml<T>(T t)
         {
             string tStr = string.Empty;
@@ -54,7 +54,7 @@ namespace BenDing.Domain.Xml
                         str += "<" + name + ">";
                         var rowstr = XmlRows(value);
                         if (!string.IsNullOrWhiteSpace(rowstr))
-                        str += rowstr;
+                            str += rowstr;
                         str += "</" + name + ">";
 
                     }
@@ -62,7 +62,7 @@ namespace BenDing.Domain.Xml
                 tStr += str.ToUpper();
             }
             return tStr;
-          
+
         }
         public static string ToUnXml<T>(T t)
         {
@@ -160,10 +160,10 @@ namespace BenDing.Domain.Xml
         {
             // var strXml = ToXml(t);
             var strXmls = XmlSerializeHelper.XmlSerialize(t);
-           
-           
-           
-           
+
+
+
+
             bool result = false;
             if (string.IsNullOrWhiteSpace(strXmls))
             {
@@ -182,10 +182,10 @@ namespace BenDing.Domain.Xml
                 xmlDoc.AppendChild(xmlSM);
                 //添加一个名为Gen的根节点
                 XmlElement xml = xmlDoc.CreateElement("", "ROW", "");
-                string strXml= xmlDocXml.SelectSingleNode("ROW").InnerXml.ToString();
+                string strXml = xmlDocXml.SelectSingleNode("ROW").InnerXml.ToString();
                 xml.InnerXml = strXml;
                 xmlDoc.AppendChild(xml);
-               
+
                 string pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\RequestParams.xml";
                 if (File.Exists(pathXml))
                 {
@@ -252,10 +252,10 @@ namespace BenDing.Domain.Xml
             }
             catch (Exception ex)
             {
-                 throw new  Exception(ex.Message);
-               // return null;
+                throw new Exception(ex.Message);
+                // return null;
             }
-        } 
+        }
         // <summary>
         // 实体转换为model
         // </summary>
@@ -294,14 +294,14 @@ namespace BenDing.Domain.Xml
 
         public static string DeSerializerModelStr(string rowsName)
         {
-            
+
             string resultData = null;
             var result = new ValidXmlDto();
             string pathXml = null;
             pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\ResponseParams.xml";
             XmlDocument doc = new XmlDocument();
             doc.Load(pathXml);
-          
+
             XmlNode po_fhzNode = doc.SelectSingleNode("/ROW/PO_FHZ");
             result.PO_FHZ = po_fhzNode.InnerText;
             XmlNode po_msgNode = doc.SelectSingleNode("/ROW/PO_MSG");
@@ -309,8 +309,8 @@ namespace BenDing.Domain.Xml
             if (result.PO_FHZ == "1")
             {
                 var pO_RDXXNode = doc.SelectSingleNode("/ROW/" + rowsName);
-                string strIni= "xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'";
-                resultData = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" + "<ROWDATA "+ strIni + ">" + pO_RDXXNode.InnerXml + "</ROWDATA>";
+                string strIni = "xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'";
+                resultData = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" + "<ROWDATA " + strIni + ">" + pO_RDXXNode.InnerXml + "</ROWDATA>";
 
             }
             else
@@ -371,7 +371,7 @@ namespace BenDing.Domain.Xml
         /// </summary>
         /// <param name="rowsObject"></param>
         /// <returns></returns>
-        public  static string  XmlRows(dynamic rowsObject )
+        public static string XmlRows(dynamic rowsObject)
         {
             string str = null;
             var count = rowsObject.Count;
@@ -399,14 +399,14 @@ namespace BenDing.Domain.Xml
                             rowsStr += "<" + rowName + ">" + rowValue.ToString() + "</" + rowName + ">";
                         }
 
-                      
-                       
+
+
                     }
                     rowsStr += "</Row>";
                     str += rowsStr;
                 }
 
-               
+
             }
             return str;
         }
@@ -471,7 +471,7 @@ namespace BenDing.Domain.Xml
             result.PO_MSG = po_msgNode.InnerText;
             if (result.PO_FHZ == "1")
             {
-                var pO_RDXXNode = doc.SelectNodes("/ROW/"+ rowsName + "/ROW");
+                var pO_RDXXNode = doc.SelectNodes("/ROW/" + rowsName + "/ROW");
                 result.IsRows = pO_RDXXNode.Count > 1 ? true : false;
             }
             return result;
@@ -485,7 +485,7 @@ namespace BenDing.Domain.Xml
         //public static IdentificationSpecialQueryDto IdentificationSpecialQueryDeSerializerModel(IdentificationSpecialQueryDto t)
         //{
         //    var result = new IdentificationSpecialQueryDto();
-           
+
         //    string pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "RequestParams.xml";
         //    XmlDocument doc = new XmlDocument();
         //    doc.Load(pathXml);
@@ -518,14 +518,13 @@ namespace BenDing.Domain.Xml
         //    }
         //    return result;
         //}
-        public static T DeSerializerModelXmlNode<T>(T t,XmlNode xmlNode)
+        public static T DeSerializerModelXmlNode<T>(T t, XmlNode xmlNode)
         {
-               
-                string jsonTextc = JsonConvert.SerializeXmlNode(xmlNode);
-                var resultData = JsonConvert.DeserializeObject<T>(jsonTextc);
-                return resultData;
+
+            string jsonTextc = JsonConvert.SerializeXmlNode(xmlNode);
+            var resultData = JsonConvert.DeserializeObject<T>(jsonTextc);
+            return resultData;
 
         }
     }
 }
-              

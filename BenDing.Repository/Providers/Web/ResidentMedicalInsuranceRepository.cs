@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
@@ -76,7 +77,6 @@ namespace BenDing.Repository.Providers.Web
                 return data;
             });
         }
-
         /// <summary>
         /// 入院登记
         /// </summary>
@@ -232,6 +232,47 @@ namespace BenDing.Repository.Providers.Web
                 return data;
             });
 
+        }
+        /// <summary>
+        /// 处方上传
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task PrescriptionUpload(PrescriptionUploadUiParam param, UserInfoDto user)
+        {
+            await Task.Run(async () =>
+            {
+                var inIParam = await GetPrescriptionUploadParam(param, user);
+                var xmlStr = XmlHelp.SaveXml(inIParam);
+            });
+        }
+        /// <summary>
+        /// 获取处方上传入参
+        /// </summary>
+        /// <returns></returns>
+        private async Task<PrescriptionUploadParam> GetPrescriptionUploadParam(PrescriptionUploadUiParam param, UserInfoDto user)
+        {
+            return await Task.Run(async () =>
+            {
+                var resultData = new PrescriptionUploadParam();
+                resultData.MedicalInsuranceHospitalizationNo = "123";
+                resultData.Operators = "111";
+                var rowDataList = new List<PrescriptionUploadRowParam>();
+                rowDataList.Add(new PrescriptionUploadRowParam()
+                {
+                    ColNum = 1,
+                    DirectoryCode = "666"
+
+                });
+                rowDataList.Add(new PrescriptionUploadRowParam()
+                {
+                    ColNum = 2,
+                    DirectoryCode = "777"
+
+                });
+                resultData.RowDataList = rowDataList;
+                return resultData;
+            });
         }
     }
 }
