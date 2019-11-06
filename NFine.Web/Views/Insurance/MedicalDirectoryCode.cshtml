@@ -8,11 +8,11 @@
     <input type="hidden" id="empid" value="@ViewBag.empid" />
     <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
         <ul class="nav nav-tabs">
-            <li><a href="#">HIS端目录</a></li>
-            <li><a href="javascript:void()">医保端目录</a></li>
-            <li class="active"><a href="javascript:void()">目录对照管理</a></li>
-            <li><a href="javascript:void()">中心端目录对照结果查询</a></li>
-            <li><a href="javascript:void()">异地诊疗材料对照</a></li>
+            <li class="active"><a href="javascript:;">HIS端目录</a></li>
+            <li><a href="javascript:;">医保端目录</a></li>
+            <li><a href="javascript:;">目录对照管理</a></li>
+            @*<li><a href="javascript:void()">中心端目录对照结果查询</a></li>*@
+            @*<li><a href="javascript:void()">异地诊疗材料对照</a></li>*@
         </ul>
         <div class="topPanel">
             <div class="search">
@@ -72,26 +72,65 @@
             var value = $(this).find('a').attr('data-value');
             $("#txt_condition .dropdown-text").html(text).attr('data-value', value)
         });
-        var userId = $('#empid').val();
 
-        gridList3(userId);
+        var userId = $('#empid').val();
+        gridList(userId);
+
+        //点击li加载界面  
+        $("ul.nav li").click(function () {
+            var current = $(this);
+            current.addClass("active").siblings().removeClass("active");
+
+            if (current.index() == 0) {
+                $("#gridList").setGridParam({
+                    url: '/BenDing/QueryCatalog',
+                    postData: { 'DirectoryName': $("#txt_name").val(), 'DirectoryCode': $("#txt_code").val(), 'UserId': $('#empid').val() },
+                    datatype: 'json',
+                    page: 1
+                }).trigger('reloadGrid');
+            }
+            if (current.index()==1) {
+                $("#gridList").setGridParam({
+                    url: '/BenDing/QueryProjectDownload',
+                    postData: { 'ProjectName': $("#txt_name").val(), 'ProjectCode': $("#txt_code").val(), 'UserId': $('#empid').val() },
+                    datatype: 'json',
+                    page: 1
+                }).trigger('reloadGrid');
+            }
+            if (current.index()==2) {
+                $("#gridList").setGridParam({
+                    url: '/BenDing/DirectoryComparisonManagement',
+                    postData: { 'DirectoryName': $("#txt_name").val(), 'DirectoryCode': $("#txt_code").val(), 'UserId': $('#empid').val() },
+                    datatype: 'json',
+                    page: 1
+                }).trigger('reloadGrid');
+            }
+            return false;
+        }); 
+       
     })
 
     //HIS基层三大目录
-    function gridList(userId) {
+    function gridList() {
         var $gridList = $("#gridList");
-        $gridList.dataGrid({
-            url: "/BenDing/QueryCatalog",
+        var params = {
+            'ProjectName': $("#txt_name").val()
+            , 'ProjectCode': $("#txt_code").val()
+            , 'UserId': $('#empid').val()
+        };
+        $gridList.jqGrid({
+            url: '/BenDing/QueryCatalog',
+            postData: params,
+            datatype: "json",
+            mtype: "get",
             height: $(window).height() - 128,
             colModel: [
-                //{ label: "主键", name: "Id", hidden: true, key: true },
-                //{ label: 'ID', name: 'Id', width: 300, align: 'left'},
-                { label: '医保目录编码', name: 'DirectoryCode', width: 300, align: 'left'},
-                { label: '医保目录名称', name: 'DirectoryName', width: 300, align: 'left'},
+                { label: '医保目录编码', name: 'DirectoryCode', width: 300, align: 'left' },
+                { label: '医保目录名称', name: 'DirectoryName', width: 300, align: 'left' },
                 { label: '单位', name: 'Unit', width: 100, align: 'left' },
-                { label: '规格', name: 'Specification', width: 100, align: 'left'},
-                { label: '剂型', name: 'Formulation', width: 100, align: 'left'},
-                { label: '生产厂家', name: 'ManufacturerName', width: 200, align: 'left'},
+                { label: '规格', name: 'Specification', width: 100, align: 'left' },
+                { label: '剂型', name: 'Formulation', width: 100, align: 'left' },
+                { label: '生产厂家', name: 'ManufacturerName', width: 200, align: 'left' },
                 { label: '目录类别名称', name: 'DirectoryCategoryName', width: 100, align: 'left' },
                 { label: '助记码', name: 'MnemonicCode', width: 300, align: 'left' },
                 { label: '备注', name: 'Remark', width: 100, align: 'left' },
@@ -101,12 +140,11 @@
                 }
             ],
             pager: "#gridPager",
-            sortname: 'DirectoryCreateTime desc',
+            rowList: [10, 30, 50, 100],
             shrinkToFit: false,
             autoScroll: true,
-            viewrecords: true
+            viewrecords: true,
         });
-    
 
         //$("#time_horizon a.btn-default").click(function () {
         //    $("#time_horizon a.btn-default").removeClass("active");
@@ -125,19 +163,16 @@
         //});
     }
     //医保中心三大目录
-    function gridList2(userId) {
+    function gridList2() {
         var $gridList = $("#gridList");
-        var queryJson = {
-            UserId: userId,
-            ProjectName: projectName
-        };
-        var param = "?UserId=" + queryJson.UserId + "&ProjectName=" + queryJson.ProjectName;
-        $gridList.dataGrid({
-            url: "/BenDing/QueryProjectDownload",
-            queryParams: param,
+        var params = { 'ProjectName': $("#txt_name").val(), 'ProjectCode': $("#txt_code").val(), 'UserId': $('#empid').val() };
+        $gridList.jqGrid({
+            url: '/BenDing/QueryProjectDownload',
+            postData: params,
+            datatype: "json",
+            mtype: "get",
             height: $(window).height() - 128,
             colModel: [
-                //{ label: 'ID', name: 'Id', width: 300, align: 'left' },
                 { label: '收费项目编码', name: 'ProjectCode', width: 300, align: 'left' },
                 { label: '收费项目名称', name: 'ProjectName', width: 300, align: 'left' },
                 { label: '分类代码', name: 'ProjectCodeType', width: 300, align: 'left' },
@@ -158,13 +193,11 @@
                 }
             ],
             pager: "#gridPager",
-            //sortname: 'NewUpdateTime desc',
+            rowList: [10, 30, 50, 100],
             shrinkToFit: false,
             autoScroll: true,
-            viewrecords: true
+            viewrecords: true,
         });
-
-
         //$("#time_horizon a.btn-default").click(function () {
         //    $("#time_horizon a.btn-default").removeClass("active");
         //    $(this).addClass("active");
@@ -182,20 +215,20 @@
         //});
     }
     //目录对照管理 前面部分是HIS，后部分是医保中心数据
-    function gridList3(userId) {
+    function gridList3() {
         var $gridList = $("#gridList");
-        var param = {
-            UserId: userId
-        };
-        $gridList.dataGrid({
-            url: "/BenDing/DirectoryComparisonManagement",
-            queryParams: param,
+        var params = { 'DirectoryName': $("#txt_name").val(), 'DirectoryCode': $("#txt_code").val(), 'UserId': $('#empid').val() };
+        $gridList.jqGrid({
+            url: '/BenDing/DirectoryComparisonManagement',
+            postData: params,
+            datatype: "json",
+            mtype: "get",
             height: $(window).height() - 128,
             colModel: [
                 {
                     label: '对码', name: 'DirectoryName', index: 'DirectoryName', width: 80, align: "center", sortable: false, edittype: "button", sortable: false,
                     formatter: function (index) {
-                        return '<a id="NF-add" class="btn btn-default" onclick="btn_modulebutton(\'' + index+'\')"><i class="fa fa-plus"></i></a>';
+                        return '<a id="NF-add" class="btn btn-default" onclick="btn_modulebutton(\'' + index + '\')"><i class="fa fa-plus"></i></a>';
                     }
                 },
                 { label: '目录编码', name: 'DirectoryCode', width: 300, align: 'left' },
@@ -221,12 +254,11 @@
                 }
             ],
             pager: "#gridPager",
-            sortname: 'PairCodeTime desc',
+            rowList: [10, 30, 50, 100],
             shrinkToFit: false,
             autoScroll: true,
-            viewrecords: true
+            viewrecords: true,
         });
-
         $("#btn_search").click(function () {
             $gridList.jqGrid('setGridParam', {
                 postData: {
@@ -234,12 +266,10 @@
                     State: "0",//$("#txt_condition").find('.dropdown-text').attr('data-value'),
                     DirectoryName: $("#txt_name").val(),
                     DirectoryCode: $("#txt_code").val(),
-                    UserId: $('#empid').val()
+                    //UserId: $('#empid').val()
                    }
             }).trigger('reloadGrid');
         });
-
-
     }
     //对码
     function btn_modulebutton(DirectoryName) {
