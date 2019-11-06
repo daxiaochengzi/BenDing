@@ -687,8 +687,6 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
-        
-        
         #endregion
         #region 居民医保
         /// <summary>
@@ -814,19 +812,33 @@ namespace NFine.Web.Controllers
             return Json(resultData);
         }
         /// <summary>
+        /// 处方上传
+        /// </summary>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> PrescriptionUpload(PrescriptionUploadUiParam param)
+        {  
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                await _residentMedicalInsurance.PrescriptionUpload(param, userBase);
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
         /// 医保连接
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> HospitalizationRegister(QueryHospitalOperatorParam param)
-        {  
+        {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
 
                 var data = await _dataBaseSqlServerService.QueryHospitalOperator(param);
                 if (string.IsNullOrWhiteSpace(data.MedicalInsuranceAccount))
                 {
-                   throw new Exception("当前用户未授权,医保账户信息,请重新授权!!!");
+                    throw new Exception("当前用户未授权,医保账户信息,请重新授权!!!");
                 }
                 else
                 {
@@ -837,6 +849,7 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
+
         #endregion
     }
 }
