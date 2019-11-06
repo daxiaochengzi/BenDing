@@ -659,12 +659,13 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 目录对码页面
         /// </summary>
+        /// <param name="param"></param>
         /// <returns></returns>
-        public ActionResult MedicalDirectoryPairCode(QueryProjectUiParam param)
+        public ActionResult MedicalDirectoryPairCode(MedicalDirectoryCodePairUiParam param)
         {
             //参数可查询医保中心目录
-
-
+            ViewBag.projectName = param.ProjectName;
+            ViewBag.userId = param.UserId;
             return View();
         }
 
@@ -686,18 +687,7 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public ActionResult MedicalDirectoryPairCode(MedicalDirectoryCodePairUiParam param)
-        {
-
-            //ViewBag.bid = bid;
-            //ViewBag.empid = empid;
-            return View();
-        }
+        
         
         #endregion
         #region 居民医保

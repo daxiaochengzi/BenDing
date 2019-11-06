@@ -32,7 +32,7 @@
                         <th class="formTitle" style="padding-left: 12px;">目录名称</th>
                         <td style="padding-left: 12px;">
                             <div class="input-group">
-                                <input id="txt_name" type="text" class="form-control" placeholder="请输入目录名称">
+                                <input id="txt_name" type="text" class="form-control" placeholder="请输入目录名称" value="@ViewBag.ProjectName">
                             </div>
                         </td>
                     </tr>
@@ -60,14 +60,22 @@
             $("#txt_condition .dropdown-text").html(text).attr('data-value', value)
         });
         var userId = $('#empid').val();
-        gridList2(userId);
+        var projectName = $('#txt_name').val();
+        gridList(userId, projectName);
     })
 
     //医保中心三大目录
-    function gridList2(userId) {
+    function gridList(userId, projectName) {
         var $gridList = $("#gridList");
+        var queryJson = {
+            UserId: userId,
+            ProjectName: projectName
+        };
+        var param = "?UserId=" + queryJson.UserId + "&ProjectName=" + queryJson.ProjectName;
+
         $gridList.dataGrid({
             url: "/BenDing/QueryProjectDownload",
+            queryParams: param,
             height: $(window).height() - 128,
             colModel: [
                 //{ label: 'ID', name: 'Id', width: 300, align: 'left' },

@@ -127,8 +127,14 @@
     //医保中心三大目录
     function gridList2(userId) {
         var $gridList = $("#gridList");
+        var queryJson = {
+            UserId: userId,
+            ProjectName: projectName
+        };
+        var param = "?UserId=" + queryJson.UserId + "&ProjectName=" + queryJson.ProjectName;
         $gridList.dataGrid({
             url: "/BenDing/QueryProjectDownload",
+            queryParams: param,
             height: $(window).height() - 128,
             colModel: [
                 //{ label: 'ID', name: 'Id', width: 300, align: 'left' },
@@ -152,7 +158,7 @@
                 }
             ],
             pager: "#gridPager",
-            sortname: 'NewUpdateTime desc',
+            //sortname: 'NewUpdateTime desc',
             shrinkToFit: false,
             autoScroll: true,
             viewrecords: true
@@ -177,15 +183,13 @@
     }
     //目录对照管理 前面部分是HIS，后部分是医保中心数据
     function gridList3(userId) {
-       
         var $gridList = $("#gridList");
-        var queryJson = {
+        var param = {
             UserId: userId
         };
-        var param = "?UserId=" + queryJson.UserId;
-
         $gridList.dataGrid({
-            url: "/BenDing/DirectoryComparisonManagement" + param,
+            url: "/BenDing/DirectoryComparisonManagement",
+            queryParams: param,
             height: $(window).height() - 128,
             colModel: [
                 {
@@ -230,6 +234,7 @@
                     State: "0",//$("#txt_condition").find('.dropdown-text').attr('data-value'),
                     DirectoryName: $("#txt_name").val(),
                     DirectoryCode: $("#txt_code").val(),
+                    UserId: $('#empid').val()
                    }
             }).trigger('reloadGrid');
         });
@@ -239,6 +244,7 @@
     //对码
     function btn_modulebutton(DirectoryName) {
         //var type = $("#txt_condition").find('.dropdown-text').attr('data-value');
+        var userId = $('#empid').val();
         var layer = layui.layer;
         layer.open({
             type: 2,
@@ -247,7 +253,7 @@
             title: "药品对照",
             maxmin: false,
             shade: [0.8, '#DDDDDD'],
-            content: "/BenDing/MedicalDirectoryPairCode?ProjectName=" + DirectoryName
+            content: "/BenDing/MedicalDirectoryPairCode?UserId=" + userId + "&ProjectName=" + DirectoryName
         });
     }
 
