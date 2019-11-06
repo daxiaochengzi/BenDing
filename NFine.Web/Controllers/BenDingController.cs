@@ -686,7 +686,12 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult MedicalDirectoryCodePair(MedicalDirectoryCodePairUiParam param)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public ActionResult MedicalDirectoryPairCode(MedicalDirectoryCodePairUiParam param)
         {
 
             //ViewBag.bid = bid;
