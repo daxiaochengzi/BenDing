@@ -7,7 +7,7 @@ using BenDing.Domain.Models.Dto.Base;
 
 namespace BenDing.Domain.Models.Params.Web
 {
-   public class QueryCatalogUiParam
+   public class QueryCatalogUiParam: PaginationUserDto
     {/// <summary>
      /// 目录编码
      /// </summary>
@@ -22,9 +22,7 @@ namespace BenDing.Domain.Models.Params.Web
         /// </summary>
         public string DirectoryCategoryCode { get; set; }
 
-        public  int Limit { get; set; }
-
-        public int  Page { get; set; }
+      
 
     }
 }
