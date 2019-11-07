@@ -539,9 +539,9 @@ namespace NFine.Web.Controllers
                     total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.Limit)) + 1) : 0,
                     //当前页
                     page = param.Page,
-                     records = queryData.Keys.FirstOrDefault()
+                    records = queryData.Keys.FirstOrDefault()
                 };
-
+                y.Data = data;
 
             });
             return Json(resultData, JsonRequestBehavior.AllowGet) ;
