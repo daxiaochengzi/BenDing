@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.Web;
 
 namespace BenDing.Repository.Interfaces.Web
@@ -27,7 +28,18 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         Task<QueryHospitalOperatorDto> QueryHospitalOperator(QueryHospitalOperatorParam param);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
 
         Task AddHospitalOperator(AddHospitalOperatorParam param);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task<OrganizationGrade> QueryHospitalOrganizationGrade(string param);
     }
 }

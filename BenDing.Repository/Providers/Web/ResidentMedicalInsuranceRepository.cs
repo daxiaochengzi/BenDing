@@ -276,5 +276,37 @@ namespace BenDing.Repository.Providers.Web
                 return resultData;
             });
         }
+        /// <summary>
+        ///处方上传数据金额验证
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        private async Task<bool> PrescriptionDataUnitPriceValidation(List<PrescriptionUploadRowParam> param, UserInfoDto user)
+        {
+            return await Task.Run(async () =>
+            {
+               //获取医院等级
+              var grade = await  _iSystemManageRepository.QueryHospitalOrganizationGrade(user.OrganizationCode);
+                //var resultData = new PrescriptionUploadParam();
+                //resultData.MedicalInsuranceHospitalizationNo = "123";
+                //resultData.Operators = "111";
+                //var rowDataList = new List<PrescriptionUploadRowParam>();
+                //rowDataList.Add(new PrescriptionUploadRowParam()
+                //{
+                //    ColNum = 1,
+                //    DirectoryCode = "666"
+
+                //});
+                //rowDataList.Add(new PrescriptionUploadRowParam()
+                //{
+                //    ColNum = 2,
+                //    DirectoryCode = "777"
+
+                //});
+                //resultData.RowDataList = rowDataList;
+                return false;
+            });
+        }
     }
 }
