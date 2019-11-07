@@ -35,7 +35,8 @@ namespace NFine.Web.Controllers
                 ContentEncoding = contentEncoding,
                 ContentType = contentType,
                 JsonRequestBehavior = behavior,
-                FormateStr = "yyyy-MM-dd HH:mm:ss"
+                FormateStr = "yyyy-MM-dd HH:mm:ss",
+               
             };
         }
         /// <summary>
@@ -95,17 +96,25 @@ namespace NFine.Web.Controllers
                 if (ContentEncoding != null)
                 {
                     response.ContentEncoding = ContentEncoding;
+                  
                 }
                 if (Data != null)
                 {
-                    JavaScriptSerializer serializer = new JavaScriptSerializer();
-                    string jsonstring = serializer.Serialize(Data);
-                    //string hashOldPassword = @"\\/Date\((\param+)\+\param+\)\\/";
-                    string p = @"\\/Date\(\d+\)\\/";
-                    MatchEvaluator matchEvaluator = new MatchEvaluator(ConvertJsonDateToDateString);
-                    Regex reg = new Regex(p);
-                    jsonstring = reg.Replace(jsonstring, matchEvaluator);
-                    response.Write(jsonstring);
+                    string jsonstring = JsonConvert.SerializeObject(Data, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
+                        DateFormatString = "yyyy-MM-dd HH:mm:ss"
+                    });
+                    //JavaScriptSerializer serializer = new JavaScriptSerializer();
+
+                    //string jsonstring = serializer.Serialize(Data);
+                 
+                    ////string hashOldPassword = @"\\/Date\((\param+)\+\param+\)\\/";
+                    //string p = @"\\/Date\(\d+\)\\/";
+                    //MatchEvaluator matchEvaluator = new MatchEvaluator(ConvertJsonDateToDateString);
+                    //Regex reg = new Regex(p);
+                    //jsonstring = reg.Replace(jsonstring, matchEvaluator);
+                    //response.Write(jsonstring);
                 }
             }
 
