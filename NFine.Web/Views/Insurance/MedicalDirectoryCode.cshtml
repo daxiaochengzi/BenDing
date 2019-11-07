@@ -1,4 +1,6 @@
-﻿@{
+﻿GBHV$
+#
+WE#$'(IO@{
     ViewBag.Title = "医保目录对码";
     Layout = "~/Views/Shared/_Admission.cshtml";
 }
@@ -65,6 +67,8 @@
 </form>
 
 <script>
+
+    function initGridList() {}
     $(function () {
         
         $("#txt_condition .dropdown-menu li").click(function () {
@@ -73,113 +77,144 @@
             $("#txt_condition .dropdown-text").html(text).attr('data-value', value)
         });
         //初始化列表
-        initGridList();
-        //点击li加载界面  
-        $("ul.nav li").click(function () {
-            var userId = $('#empid').val();
-            var current = $(this);
-            current.addClass("active").siblings().removeClass("active");
-            var name = $("#txt_name").val();
-            var code = $("#txt_code").val();
-            if (current.index() == 0) {
-                var url = '/BenDing/QueryCatalog';
-                var params = { 'DirectoryName': name, 'DirectoryCode': code, 'UserId': userId };
-                var colModel = [
-                    { label: '医保目录编码', name: 'DirectoryCode', width: 300, align: 'left' },
-                    { label: '医保目录名称', name: 'DirectoryName', width: 300, align: 'left' },
-                    { label: '单位', name: 'Unit', width: 100, align: 'left' },
-                    { label: '规格', name: 'Specification', width: 100, align: 'left' },
-                    { label: '剂型', name: 'Formulation', width: 100, align: 'left' },
-                    { label: '生产厂家', name: 'ManufacturerName', width: 200, align: 'left' },
-                    { label: '目录类别名称', name: 'DirectoryCategoryName', width: 100, align: 'left' },
-                    { label: '助记码', name: 'MnemonicCode', width: 300, align: 'left' },
-                    { label: '备注', name: 'Remark', width: 100, align: 'left' },
-                    {
-                        label: '创建时间', name: 'DirectoryCreateTime',
-                        formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
-                    }
-                ];
-                gridList(url, params, colModel)
-                $("#gridList").setGridParam({
-                    url: url,
-                    postData: params,
-                    datatype: 'json',
-                    page: 1
-                }).trigger('reloadGrid');
-            }
-            if (current.index() == 1) {
-                var url = '/BenDing/QueryProjectDownload';
-                var params = { 'ProjectName': name, 'ProjectCode': code, 'UserId':  userId };
-                var colModel = [
-                    { label: '收费项目编码', name: 'ProjectCode', width: 300, align: 'left' },
-                    { label: '收费项目名称', name: 'ProjectName', width: 300, align: 'left' },
-                    { label: '分类代码', name: 'ProjectCodeType', width: 100, align: 'left' },
-                    { label: '收费项目等级', name: 'ProjectLevel', width: 100, align: 'left' },
-                    { label: '单位', name: 'Unit', width: 100, align: 'left' },
-                    { label: '拼音助记码', name: 'MnemonicCode', width: 300, align: 'left' },
-                    { label: '剂型', name: 'Formulation', width: 100, align: 'left' },
-                    { label: '限制用药标志', name: 'RestrictionSign', width: 100, align: 'left' },
-                    { label: '生产厂家', name: 'Manufacturer', width: 200, align: 'left' },
-                    { label: '药品准字号', name: 'QuasiFontSize', width: 100, align: 'left' },
-                    { label: '规格', name: 'Specification', width: 100, align: 'left' },
-                    { label: '备注', name: 'Remark', width: 100, align: 'left' },
-                    { label: '新码标志', name: 'NewCodeMark', width: 100, align: 'left' },
-                    { label: '限制支付范围', name: 'LimitPaymentScope', width: 100, align: 'left' },
-                    {
-                        label: '变更日期', name: 'NewUpdateTime',
-                        formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
-                    }
-                ];
-                gridList(url, params, colModel)
-                $("#gridList").setGridParam({
-                    url: url,
-                    postData: params,
-                    datatype: 'json',
-                    page: 1
-                }).trigger('reloadGrid');
-            }
-            if (current.index() == 2) {
-                var url = '/BenDing/DirectoryComparisonManagement';
-                var params = { 'DirectoryName': name, 'DirectoryCode': code, 'UserId': userId };
-                var colModel = [
-                    {
-                        label: '对码', name: 'DirectoryName', index: 'DirectoryName', width: 80, align: "center", sortable: false, edittype: "button", sortable: false,
-                        formatter: function (index) {
-                            return '<a id="NF-add" class="btn btn-default" onclick="btn_modulebutton(\'' + index + '\')"><i class="fa fa-plus"></i></a>';
-                        }
-                    },
-                    { label: '目录编码', name: 'DirectoryCode', width: 300, align: 'left' },
-                    { label: '目录名称', name: 'DirectoryName', width: 300, align: 'left' },
-                    { label: '助记码', name: 'MnemonicCode', width: 300, align: 'left' },
-                    { label: '目录类别名称', name: 'DirectoryCategoryName', width: 100, align: 'left' },
-                    { label: '单位', name: 'Unit', width: 100, align: 'left' },
-                    { label: '规格', name: 'Specification', width: 100, align: 'left' },
-                    { label: '剂型', name: 'Formulation', width: 100, align: 'left' },
-                    { label: '生产厂家', name: 'ManufacturerName', width: 200, align: 'left' },
+        //initGridList();
+        layui.use('table', function () {
+            var table = layui.table;
 
-                    { label: '医保项目编码', name: 'ProjectCode', width: 300, align: 'left' },
-                    { label: '医保项目名称', name: 'ProjectName', width: 300, align: 'left' },
-                    { label: '医保限制使用范围', name: 'LimitPaymentScope', width: 100, align: 'left' },
-                    { label: '医保准字号', name: 'QuasiFontSize', width: 100, align: 'left' },
-                    { label: '医保类别', name: 'ProjectCodeType', width: 100, align: 'left' },
-                    { label: '医保报销比例', name: 'ProjectLevel', width: 100, align: 'left' },
-                    { label: '医保备注', name: 'Remark', width: 100, align: 'left' },
-                    { label: '对码操作人员', name: 'PairCodeUser', width: 100, align: 'left' },
-                    {
-                        label: '对码时间', name: 'PairCodeTime',
-                        formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
-                    }
-                ]
-                gridList(url, params, colModel)
-                $("#gridList").setGridParam({
-                    url: url,
-                    postData: params,
-                    datatype: 'json',
-                    page: 1
-                }).trigger('reloadGrid');
-            }
-            return false;
-        }); 
+            //第一个实例
+            table.render({
+                elem: '#gridList'
+                , height: $(window).height() - 128
+                , url: '/BenDing/QueryCatalog' //数据接口
+                , parseData: function (res) { //res 即为原始返回的数据
+                    return {
+                        "code": res.Code, //解析接口状态
+                        "msg": res.Message, //解析提示文本
+                        "count": res.Data.count, //解析数据长度
+                        "data": res.Data.data //解析数据列表
+                    };
+                }
+                , page: true //开启分页
+                , cols: [[ //表头
+                    { field: 'DirectoryCode', title: '医保目录编码', width: 300, sort: true, fixed: 'left' }
+                    , { field: 'DirectoryName', title: '医保目录名称', width: 300 }
+                    , { field: 'Unit', title: '单位', width: 100, sort: true }
+                    , { field: 'Specification', title: '规格', width: 100 }
+                    , { field: 'Formulation', title: '剂型', width: 100 }
+                    , { field: 'ManufacturerName', title: '生产厂家', width: 100, sort: true }
+                    , { field: 'DirectoryCategoryName', title: '目录类别名称', width: 100, sort: true }
+                    , { field: 'MnemonicCode', title: '助记码', width: 100 }
+                    , { field: 'Remark', title: '备注', sort: true }
+                ]]
+            });
+
+        });
+        //点击li加载界面  
+        //$("ul.nav li").click(function () {
+        //    var userId = $('#empid').val();
+        //    var current = $(this);
+        //    current.addClass("active").siblings().removeClass("active");
+        //    var name = $("#txt_name").val();
+        //    var code = $("#txt_code").val();
+        //    if (current.index() == 0) {
+        //        var url = '/BenDing/QueryCatalog';
+        //        var params = { 'DirectoryName': name, 'DirectoryCode': code, 'UserId': userId };
+        //        var colModel = [
+        //            { label: '医保目录编码', name: 'DirectoryCode', width: 300, align: 'left' },
+        //            { label: '医保目录名称', name: 'DirectoryName', width: 300, align: 'left' },
+        //            { label: '单位', name: 'Unit', width: 100, align: 'left' },
+        //            { label: '规格', name: 'Specification', width: 100, align: 'left' },
+        //            { label: '剂型', name: 'Formulation', width: 100, align: 'left' },
+        //            { label: '生产厂家', name: 'ManufacturerName', width: 200, align: 'left' },
+        //            { label: '目录类别名称', name: 'DirectoryCategoryName', width: 100, align: 'left' },
+        //            { label: '助记码', name: 'MnemonicCode', width: 300, align: 'left' },
+        //            { label: '备注', name: 'Remark', width: 100, align: 'left' },
+        //            {
+        //                label: '创建时间', name: 'DirectoryCreateTime',
+        //                formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
+        //            }
+        //        ];
+        //        gridList(url, params, colModel)
+        //        $("#gridList").setGridParam({
+        //            url: url,
+        //            postData: params,
+        //            datatype: 'json',
+        //            page: 1
+        //        }).trigger('reloadGrid');
+        //    }
+        //    if (current.index() == 1) {
+        //        var url = '/BenDing/QueryProjectDownload';
+        //        var params = { 'ProjectName': name, 'ProjectCode': code, 'UserId':  userId };
+        //        var colModel = [
+        //            { label: '收费项目编码', name: 'ProjectCode', width: 300, align: 'left' },
+        //            { label: '收费项目名称', name: 'ProjectName', width: 300, align: 'left' },
+        //            { label: '分类代码', name: 'ProjectCodeType', width: 100, align: 'left' },
+        //            { label: '收费项目等级', name: 'ProjectLevel', width: 100, align: 'left' },
+        //            { label: '单位', name: 'Unit', width: 100, align: 'left' },
+        //            { label: '拼音助记码', name: 'MnemonicCode', width: 300, align: 'left' },
+        //            { label: '剂型', name: 'Formulation', width: 100, align: 'left' },
+        //            { label: '限制用药标志', name: 'RestrictionSign', width: 100, align: 'left' },
+        //            { label: '生产厂家', name: 'Manufacturer', width: 200, align: 'left' },
+        //            { label: '药品准字号', name: 'QuasiFontSize', width: 100, align: 'left' },
+        //            { label: '规格', name: 'Specification', width: 100, align: 'left' },
+        //            { label: '备注', name: 'Remark', width: 100, align: 'left' },
+        //            { label: '新码标志', name: 'NewCodeMark', width: 100, align: 'left' },
+        //            { label: '限制支付范围', name: 'LimitPaymentScope', width: 100, align: 'left' },
+        //            {
+        //                label: '变更日期', name: 'NewUpdateTime',
+        //                formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
+        //            }
+        //        ];
+        //        gridList(url, params, colModel)
+        //        $("#gridList").setGridParam({
+        //            url: url,
+        //            postData: params,
+        //            datatype: 'json',
+        //            page: 1
+        //        }).trigger('reloadGrid');
+        //    }
+        //    if (current.index() == 2) {
+        //        var url = '/BenDing/DirectoryComparisonManagement';
+        //        var params = { 'DirectoryName': name, 'DirectoryCode': code, 'UserId': userId };
+        //        var colModel = [
+        //            {
+        //                label: '对码', name: 'DirectoryName', index: 'DirectoryName', width: 80, align: "center", sortable: false, edittype: "button", sortable: false,
+        //                formatter: function (index) {
+        //                    return '<a id="NF-add" class="btn btn-default" onclick="btn_modulebutton(\'' + index + '\')"><i class="fa fa-plus"></i></a>';
+        //                }
+        //            },
+        //            { label: '目录编码', name: 'DirectoryCode', width: 300, align: 'left' },
+        //            { label: '目录名称', name: 'DirectoryName', width: 300, align: 'left' },
+        //            { label: '助记码', name: 'MnemonicCode', width: 300, align: 'left' },
+        //            { label: '目录类别名称', name: 'DirectoryCategoryName', width: 100, align: 'left' },
+        //            { label: '单位', name: 'Unit', width: 100, align: 'left' },
+        //            { label: '规格', name: 'Specification', width: 100, align: 'left' },
+        //            { label: '剂型', name: 'Formulation', width: 100, align: 'left' },
+        //            { label: '生产厂家', name: 'ManufacturerName', width: 200, align: 'left' },
+
+        //            { label: '医保项目编码', name: 'ProjectCode', width: 300, align: 'left' },
+        //            { label: '医保项目名称', name: 'ProjectName', width: 300, align: 'left' },
+        //            { label: '医保限制使用范围', name: 'LimitPaymentScope', width: 100, align: 'left' },
+        //            { label: '医保准字号', name: 'QuasiFontSize', width: 100, align: 'left' },
+        //            { label: '医保类别', name: 'ProjectCodeType', width: 100, align: 'left' },
+        //            { label: '医保报销比例', name: 'ProjectLevel', width: 100, align: 'left' },
+        //            { label: '医保备注', name: 'Remark', width: 100, align: 'left' },
+        //            { label: '对码操作人员', name: 'PairCodeUser', width: 100, align: 'left' },
+        //            {
+        //                label: '对码时间', name: 'PairCodeTime',
+        //                formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
+        //            }
+        //        ]
+        //        gridList(url, params, colModel)
+        //        $("#gridList").setGridParam({
+        //            url: url,
+        //            postData: params,
+        //            datatype: 'json',
+        //            page: 1
+        //        }).trigger('reloadGrid');
+        //    }
+        //    return false;
+        //}); 
        
     })
     function gridList(url, params, colModel) {
@@ -213,52 +248,52 @@
     }
 
     //HIS基层三大目录
-    function initGridList() {
-        var $gridList = $("#gridList");
-        var params = {
-            'ProjectName': $("#txt_name").val(),
-            'ProjectCode': $("#txt_code").val(),
-            'UserId': $('#empid').val()
-        };
-        $gridList.jqGrid({
-            url: '/BenDing/QueryCatalog',
-            postData: params,
-            datatype: "json",
-            mtype: "get",
-            height: $(window).height() - 128,
-            colModel: [
-                { label: '医保目录编码', name: 'DirectoryCode', width: 300, align: 'left' },
-                { label: '医保目录名称', name: 'DirectoryName', width: 300, align: 'left' },
-                { label: '单位', name: 'Unit', width: 100, align: 'left' },
-                { label: '规格', name: 'Specification', width: 100, align: 'left' },
-                { label: '剂型', name: 'Formulation', width: 100, align: 'left' },
-                { label: '生产厂家', name: 'ManufacturerName', width: 200, align: 'left' },
-                { label: '目录类别名称', name: 'DirectoryCategoryName', width: 100, align: 'left' },
-                { label: '助记码', name: 'MnemonicCode', width: 300, align: 'left' },
-                { label: '备注', name: 'Remark', width: 100, align: 'left' },
-                {
-                    label: '创建时间', name: 'DirectoryCreateTime',
-                    formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
-                }
-            ],
-            pager: "#gridPager",
-            rowList: [10, 30, 50, 100],
-            shrinkToFit: true,
-            autoScroll: true,
-            viewrecords: true,
-        });
+    //function initGridList() {
+    //    var $gridList = $("#gridList");
+    //    var params = {
+    //        'ProjectName': $("#txt_name").val(),
+    //        'ProjectCode': $("#txt_code").val(),
+    //        'UserId': $('#empid').val()
+    //    };
+    //    $gridList.jqGrid({
+    //        url: '/BenDing/QueryCatalog',
+    //        postData: params,
+    //        datatype: "json",
+    //        mtype: "get",
+    //        height: $(window).height() - 128,
+    //        colModel: [
+    //            { label: '医保目录编码', name: 'DirectoryCode', width: 300, align: 'left' },
+    //            { label: '医保目录名称', name: 'DirectoryName', width: 300, align: 'left' },
+    //            { label: '单位', name: 'Unit', width: 100, align: 'left' },
+    //            { label: '规格', name: 'Specification', width: 100, align: 'left' },
+    //            { label: '剂型', name: 'Formulation', width: 100, align: 'left' },
+    //            { label: '生产厂家', name: 'ManufacturerName', width: 200, align: 'left' },
+    //            { label: '目录类别名称', name: 'DirectoryCategoryName', width: 100, align: 'left' },
+    //            { label: '助记码', name: 'MnemonicCode', width: 300, align: 'left' },
+    //            { label: '备注', name: 'Remark', width: 100, align: 'left' },
+    //            {
+    //                label: '创建时间', name: 'DirectoryCreateTime',
+    //                formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
+    //            }
+    //        ],
+    //        pager: "#gridPager",
+    //        rowList: [10, 30, 50, 100],
+    //        shrinkToFit: true,
+    //        autoScroll: true,
+    //        viewrecords: true,
+    //    });
         
-        //$("#btn_search").click(function () {
-        //    var timeType = $("#time_horizon a.active").attr('data-value');
-        //    var queryJson = {
-        //        keyword: $("#txt_keyword").val(),
-        //        timeType: $("#time_horizon a.active").attr('data-value'),
-        //    }
-        //    $gridList.jqGrid('setGridParam', {
-        //        postData: { queryJson: JSON.stringify(queryJson) },
-        //    }).trigger('reloadGrid');
-        //});
-    }
+    //    //$("#btn_search").click(function () {
+    //    //    var timeType = $("#time_horizon a.active").attr('data-value');
+    //    //    var queryJson = {
+    //    //        keyword: $("#txt_keyword").val(),
+    //    //        timeType: $("#time_horizon a.active").attr('data-value'),
+    //    //    }
+    //    //    $gridList.jqGrid('setGridParam', {
+    //    //        postData: { queryJson: JSON.stringify(queryJson) },
+    //    //    }).trigger('reloadGrid');
+    //    //});
+    //}
     //对码
     function btn_modulebutton(DirectoryName) {
         //var type = $("#txt_condition").find('.dropdown-text').attr('data-value');
