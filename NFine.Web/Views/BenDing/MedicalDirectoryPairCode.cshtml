@@ -42,6 +42,9 @@
                 <div class="btn-group" id="btn_search">
                     <a class="btn btn-default">查询</a>
                 </div>
+                <div class="btn-group" id="btn_clean">
+                    <a class="btn btn-default">清除</a>
+                </div>
             </div>
         </div>
         <div class="gridPanel">
@@ -59,51 +62,85 @@
             var value = $(this).find('a').attr('data-value');
             $("#txt_condition .dropdown-text").html(text).attr('data-value', value)
         });
-        var userId = $('#empid').val();
-        var projectName = $('#txt_name').val();
-        gridList(userId, projectName);
+        
+        opGrid.loadGrid();
+        //$("#gridList").setGridParam({ datatype: 'json', page: 1 }).trigger('reloadGrid');
+        
     })
 
-    //医保中心三大目录
-    function gridList(userId, projectName) {
-        var $gridList = $("#gridList");
-        var queryJson = {
-            UserId: userId,
-            ProjectName: projectName
-        };
-        var param = "?UserId=" + queryJson.UserId + "&ProjectName=" + queryJson.ProjectName;
-
-        $gridList.dataGrid({
-            url: "/BenDing/QueryProjectDownload",
-            queryParams: param,
-            height: $(window).height() - 128,
-            colModel: [
-                //{ label: 'ID', name: 'Id', width: 300, align: 'left' },
-                { label: '收费项目编码', name: 'ProjectCode', width: 300, align: 'left' },
-                { label: '收费项目名称', name: 'ProjectName', width: 300, align: 'left' },
-                { label: '分类代码', name: 'ProjectCodeType', width: 300, align: 'left' },
-                { label: '收费项目等级', name: 'ProjectLevel', width: 100, align: 'left' },
-                { label: '单位', name: 'Unit', width: 100, align: 'left' },
-                { label: '拼音助记码', name: 'MnemonicCode', width: 300, align: 'left' },
-                { label: '剂型', name: 'Formulation', width: 100, align: 'left' },
-                { label: '限制用药标志', name: 'RestrictionSign', width: 100, align: 'left' },
-                { label: '生产厂家', name: 'Manufacturer', width: 200, align: 'left' },
-                { label: '药品准字号', name: 'QuasiFontSize', width: 100, align: 'left' },
-                { label: '规格', name: 'Specification', width: 100, align: 'left' },
-                { label: '备注', name: 'Remark', width: 100, align: 'left' },
-                { label: '新码标志', name: 'NewCodeMark', width: 100, align: 'left' },
-                { label: '限制支付范围', name: 'LimitPaymentScope', width: 100, align: 'left' },
-                {
-                    label: '变更日期', name: 'NewUpdateTime',
-                    formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
-                }
-            ],
-            pager: "#gridPager",
-            sortname: 'NewUpdateTime desc',
-            shrinkToFit: false,
-            autoScroll: true,
-            viewrecords: true
-        });
+    var opGrid = {
+        //组装查询的条件参数
+        getParam: function () {
+            //组装查询的条件参数
+            var params = {
+                'ProjectName': $("#txt_name").val()
+                , 'ProjectCode': $("#txt_code").val()
+                , 'UserId': $('#empid').val()
+            };
+            return params;
+        },
+        loadGrid: function () {
+            $("#gridList").jqGrid({
+                url: '/BenDing/QueryProjectDownload',
+                postData: opGrid.getParam(),
+                datatype: "json",
+                mtype: "get",
+                height: $(window).height() - 128,
+                colModel: [
+                    {
+                        label: '对码', name: 'ProjectCode', index: 'ProjectCode', width: 80, align: "center", sortable: false, edittype: "button", sortable: false,
+                        formatter: function (index) {
+                            return '<a id="NF-add" class="btn btn-default" onclick="btn_modulebutton(\'' + index + '\')"><i class="fa fa-plus"></i></a>';
+                        }
+                    },
+                    //{ label: 'ID', name: 'Id', width: 300, align: 'left' },
+                    { label: '收费项目编码', name: 'ProjectCode', width: 300, align: 'left' },
+                    { label: '收费项目名称', name: 'ProjectName', width: 300, align: 'left' },
+                    { label: '分类代码', name: 'ProjectCodeType', width: 300, align: 'left' },
+                    { label: '收费项目等级', name: 'ProjectLevel', width: 100, align: 'left' },
+                    { label: '单位', name: 'Unit', width: 100, align: 'left' },
+                    { label: '拼音助记码', name: 'MnemonicCode', width: 300, align: 'left' },
+                    { label: '剂型', name: 'Formulation', width: 100, align: 'left' },
+                    { label: '限制用药标志', name: 'RestrictionSign', width: 100, align: 'left' },
+                    { label: '生产厂家', name: 'Manufacturer', width: 200, align: 'left' },
+                    { label: '药品准字号', name: 'QuasiFontSize', width: 100, align: 'left' },
+                    { label: '规格', name: 'Specification', width: 100, align: 'left' },
+                    { label: '备注', name: 'Remark', width: 100, align: 'left' },
+                    { label: '新码标志', name: 'NewCodeMark', width: 100, align: 'left' },
+                    { label: '限制支付范围', name: 'LimitPaymentScope', width: 100, align: 'left' },
+                    {
+                        label: '变更日期', name: 'NewUpdateTime',
+                        formatter: "date", formatoptions: { srcformat: 'Y-m-d H:i:s', newformat: 'Y-m-d H:i:s' }
+                    }
+                ],
+                pager: "#gridPager",
+                rowList: [10, 30, 50, 100],
+                shrinkToFit: false,
+                autoScroll: true,
+                viewrecords: true,
+            })
+        },
+        
     }
+    
+
+    //医保中心三大目录
+
+    $("#btn_search").click(function () {
+        var userId = $('#empid').val();
+        var $gridList = $("#gridList");
+        $gridList.jqGrid('setGridParam', {
+            postData: {
+                UserId: userId,
+                ProjectName: $("#txt_name").val(),
+                ProjectCode: $("#txt_code").val(),
+                //ProjectCodeType: $('#empid').val()
+            }
+        }).trigger('reloadGrid');
+    });
+
+    $("#btn_clean").click(function () {
+        $("#txt_name").removeAttr('value');
+    });
 
 </script>

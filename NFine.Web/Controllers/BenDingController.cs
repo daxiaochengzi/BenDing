@@ -660,7 +660,7 @@ namespace NFine.Web.Controllers
         {
             //参数可查询医保中心目录
             ViewBag.projectName = param.ProjectName;
-            ViewBag.userId = param.UserId;
+            ViewBag.empid = param.UserId;
             return View();
         }
 
