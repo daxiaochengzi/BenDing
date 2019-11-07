@@ -70,6 +70,10 @@ namespace NFine.Web
 
         [JsonProperty("redirect")]
         public string RedirectUrl { get; set; }
+        /// <summary>
+        /// 合计
+        /// </summary>
+        public Int64 count { get; set; }
 
 
         [JsonProperty("reloadpage")]
