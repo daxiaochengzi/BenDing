@@ -535,12 +535,12 @@ namespace NFine.Web.Controllers
                 var data = new
                 {
 
-                    rows = queryData.Values.FirstOrDefault(),
+                    data = queryData.Values.FirstOrDefault(),
                     //总页数
-                    total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.Limit)) + 1) : 0,
+                    //total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.Limit)) + 1) : 0,
                     //当前页
-                    page = param.Page,
-                    records = queryData.Keys.FirstOrDefault()
+                    //page = param.Page,
+                    count = queryData.Keys.FirstOrDefault()
                 };
                 y.Data = data;
 
