@@ -24,6 +24,7 @@ namespace NFine.Web.Controllers
         private IDataBaseHelpRepository _baseHelpRepository;
         private IWebServiceBasicService _webServiceBasicService;
         private IBaseSqlServerRepository _dataBaseSqlServerService;
+        private ISystemManageRepository _systemManage;
         private IResidentMedicalInsuranceRepository _residentMedicalInsurance;
         /// <summary>
         /// 
@@ -35,13 +36,15 @@ namespace NFine.Web.Controllers
         public BenDingController(IResidentMedicalInsuranceRepository insuranceRepository,
             IWebServiceBasicService iWebServiceBasicService,
             IBaseSqlServerRepository iDataBaseSqlServerService,
-            IDataBaseHelpRepository iBaseHelpRepository
+            IDataBaseHelpRepository iBaseHelpRepository,
+            ISystemManageRepository iManageRepository
             )
         {
             _webServiceBasicService = iWebServiceBasicService;
             _dataBaseSqlServerService = iDataBaseSqlServerService;
             _residentMedicalInsurance = insuranceRepository;
             _baseHelpRepository = iBaseHelpRepository;
+            _systemManage = iManageRepository;
         }
         #region 基层接口
         // [HttpGet]
@@ -98,7 +101,7 @@ namespace NFine.Web.Controllers
             return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
 
-                var data = await _dataBaseSqlServerService.QueryHospitalOperator(param);
+                var data = await _systemManage.QueryHospitalOperator(param);
                 if (string.IsNullOrWhiteSpace(data.HisUserAccount))
                 {
                     throw new Exception("当前用户未授权,基层账户信息,请重新授权!!!");
@@ -433,53 +436,7 @@ namespace NFine.Web.Controllers
 
           }), JsonRequestBehavior.AllowGet);
         }
-        /// <summary>
-        /// 添加医保账户与基层his账户
-        /// </summary>
-        /// <returns></returns>
-        [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> AddHospitalOperator(AddHospitalOperatorParam Param)
-        {
-            return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-                {
-                    if (Param.IsHis)
-                    {
-                        if (string.IsNullOrWhiteSpace(Param.ManufacturerNumber))
-                        {
-                            throw new Exception("厂商编号不能为空!!!");
-                        }
-                        var inputParam = new UserInfoParam()
-                        {
-                            UserName = Param.UserAccount,
-                            Pwd = Param.UserPwd,
-                            ManufacturerNumber = Param.ManufacturerNumber,
-                        };
-                        string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
-                        var verificationCode = await _webServiceBasicService.GetVerificationCode("01", inputParamJson);
-                        if (verificationCode != null)
-                        {
-                            Param.OrganizationCode = verificationCode.OrganizationCode;
-                            Param.HisUserName = verificationCode.UserName;
-                        }
-
-                        await _dataBaseSqlServerService.AddHospitalOperator(Param);
-                    }
-                    else
-                    {
-                        var login = MedicalInsuranceDll.ConnectAppServer_cxjb(Param.UserAccount, Param.UserPwd);
-                        if (login != 1)
-                        {
-                            throw new Exception("医保登陆失败,请核对账户与密码!!!");
-                        }
-                        else
-                        {
-                            await _dataBaseSqlServerService.AddHospitalOperator(Param);
-                        }
-                    }
-
-
-                }));
-        }
+      
         /// <summary>
         /// 医保信息回写至基层系统
         /// </summary>
@@ -558,7 +515,7 @@ namespace NFine.Web.Controllers
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
                 var queryData = await _baseHelpRepository.QueryProjectDownload(param);
-                var list = queryData.Values.FirstOrDefault();
+               
 
                 var data = new
                 {
@@ -794,7 +751,7 @@ namespace NFine.Web.Controllers
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
 
-                var data = await _dataBaseSqlServerService.QueryHospitalOperator(param);
+                var data = await _systemManage.QueryHospitalOperator(param);
                 if (string.IsNullOrWhiteSpace(data.MedicalInsuranceAccount))
                 {
                     throw new Exception("当前用户未授权,医保账户信息,请重新授权!!!");

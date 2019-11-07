@@ -51,14 +51,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
         Task<Int32> SingleResidentInfoDownload(UserInfoDto user, List<SingleResidentInfoDto> param);
 
-        Task AddHospitalOperator(AddHospitalOperatorParam param);
 
-        /// <summary>
-        /// 操作员登陆信息查询
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        Task<QueryHospitalOperatorDto> QueryHospitalOperator(QueryHospitalOperatorParam param);
 
         /// <summary>
         /// 医保对码
@@ -75,16 +68,17 @@ namespace BenDing.Repository.Interfaces.Web
 
         Task<Dictionary<int, List<DirectoryComparisonManagementDto>>> DirectoryComparisonManagement(
             DirectoryComparisonManagementUiParam param);
-        /// <summary>
-        /// 获取所有的操作人员
-        /// </summary>
-        /// <returns></returns>
-        Task<List<QueryHospitalOperatorAll>> QueryHospitalOperatorAll();
+      
 
          Task<List<QueryThreeCataloguePairCodeUploadDto>> ThreeCataloguePairCodeUpload(
             string organizationCode);
-
+        /// <summary>
+        /// 三大目录对码
+        /// </summary>
+        /// <param name="organizationCode"></param>
+        /// <returns></returns>
         Task<int> UpdateThreeCataloguePairCodeUpload(string organizationCode);
+        
     }
 
 }

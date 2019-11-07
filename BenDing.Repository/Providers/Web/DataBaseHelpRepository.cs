@@ -226,10 +226,10 @@ namespace BenDing.Repository.Providers.Web
                 {
                     whereSql += "  and ProjectName like '" + param.ProjectName + "%'";
                 }
-                if (param.rows != 0 && param.page > 0)
+                if (param.Limit != 0 && param.Page > 0)
                 {
-                    var skipCount = param.rows * (param.page - 1);
-                    querySql += whereSql + " order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.rows + " ROWS ONLY;";
+                    var skipCount = param.Limit * (param.Page - 1);
+                    querySql += whereSql + " order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.Limit + " ROWS ONLY;";
                 }
                 string executeSql = countSql + whereSql + ";" + querySql;
 

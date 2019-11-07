@@ -44,10 +44,11 @@ namespace NFine.Web
             #endregion
             #region Repository
             container.RegisterType<IResidentMedicalInsuranceRepository, ResidentMedicalInsuranceRepository>();
-            
             container.RegisterType<IBaseSqlServerRepository, BaseSqlServerRepository>();
             container.RegisterType<IWebBasicRepository, WebBasicRepository>();
             container.RegisterType<IDataBaseHelpRepository, DataBaseHelpRepository>();
+            container.RegisterType<ISystemManageRepository, SystemManageRepository>();
+            
             //
             #endregion
 

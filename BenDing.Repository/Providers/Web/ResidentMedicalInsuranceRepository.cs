@@ -18,12 +18,14 @@ namespace BenDing.Repository.Providers.Web
     {
         private IDataBaseHelpRepository _baseHelpRepository;
         private IBaseSqlServerRepository _baseSqlServerRepository;
+        private ISystemManageRepository _iSystemManageRepository;
         private IWebBasicRepository _webServiceBasic;
 
         public ResidentMedicalInsuranceRepository(
             IDataBaseHelpRepository iDataBaseHelpRepository,
             IWebBasicRepository webBasicRepository,
-            IBaseSqlServerRepository baseSqlServerRepository
+            IBaseSqlServerRepository baseSqlServerRepository,
+            ISystemManageRepository iSystemManageRepository
             )
         {
             _baseHelpRepository = iDataBaseHelpRepository;
@@ -34,7 +36,7 @@ namespace BenDing.Repository.Providers.Web
         {
              await Task.Run(async () =>
              {
-                 var userInfo = await _baseSqlServerRepository.QueryHospitalOperator(param);
+                 var userInfo = await _iSystemManageRepository.QueryHospitalOperator(param);
 
                 var result = MedicalInsuranceDll.ConnectAppServer_cxjb(userInfo.MedicalInsuranceAccount, userInfo.MedicalInsurancePwd);
 

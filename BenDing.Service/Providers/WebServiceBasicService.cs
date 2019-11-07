@@ -17,11 +17,17 @@ namespace BenDing.Service.Providers
         private IDataBaseHelpRepository _dataBaseHelpService;
         private IBaseSqlServerRepository _baseSqlServer;
         private IWebBasicRepository _webServiceBasic;
-        public WebServiceBasicService(IWebBasicRepository iWebServiceBasic, IDataBaseHelpRepository dataBase, IBaseSqlServerRepository iBaseSqlServerRepository)
+        private ISystemManageRepository _iSystemManageRepository;
+        public WebServiceBasicService(IWebBasicRepository iWebServiceBasic, 
+            IDataBaseHelpRepository dataBase, 
+            IBaseSqlServerRepository iBaseSqlServerRepository,
+            ISystemManageRepository iSystemManageRepository
+            )
         {
             _webServiceBasic = iWebServiceBasic;
             _dataBaseHelpService = dataBase;
             _baseSqlServer = iBaseSqlServerRepository;
+            _iSystemManageRepository = iSystemManageRepository;
         }
         /// <summary>
         /// 获取验证码
@@ -373,7 +379,7 @@ namespace BenDing.Service.Providers
 
         public async Task<UserInfoDto> GetUserBaseInfo(string param)
         {
-            var data = await _baseSqlServer.QueryHospitalOperator(new QueryHospitalOperatorParam() { UserId = param });
+            var data = await _iSystemManageRepository.QueryHospitalOperator(new QueryHospitalOperatorParam() { UserId = param });
             if (string.IsNullOrWhiteSpace(data.HisUserAccount))
             {
                 throw new Exception("当前用户未授权,基层账户信息,请重新授权!!!");
