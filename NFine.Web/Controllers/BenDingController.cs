@@ -531,20 +531,17 @@ namespace NFine.Web.Controllers
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
                 var queryData = await _baseHelpRepository.QueryCatalog(param);
-                //var data = new
-                //{
-               
-                //    //rows = queryData.Values.FirstOrDefault(),
-                //    ////总页数
-                //    //total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.rows)) + 1) : 0,
-                //    ////当前页
-                //    //page = param.page,
-                //    //总记录数
-                //    // records = queryData.Keys.FirstOrDefault()
-                //};
-                y.Data = queryData.Values.FirstOrDefault();
-                y.count = queryData.Keys.FirstOrDefault();
-                y.Code = 0;
+                var data = new
+                {
+
+                    rows = queryData.Values.FirstOrDefault(),
+                    //总页数
+                    total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.Limit)) + 1) : 0,
+                    //当前页
+                    page = param.Page,
+                     records = queryData.Keys.FirstOrDefault()
+                };
+
 
             });
             return Json(resultData, JsonRequestBehavior.AllowGet) ;
