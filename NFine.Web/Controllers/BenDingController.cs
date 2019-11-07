@@ -545,6 +545,7 @@ namespace NFine.Web.Controllers
                 y.Data = data;
 
             });
+           
             return Json(resultData, JsonRequestBehavior.AllowGet);
 
         }
