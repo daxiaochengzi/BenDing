@@ -544,11 +544,11 @@ namespace NFine.Web.Controllers
                 //};
                 y.Data = queryData.Values.FirstOrDefault();
                 y.count = queryData.Keys.FirstOrDefault();
+                y.Code = 0;
 
             });
-
-            
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+            return Json(resultData, JsonRequestBehavior.AllowGet) ;
+           
         }
         /// <summary>
       /// 医保中心项目查询
