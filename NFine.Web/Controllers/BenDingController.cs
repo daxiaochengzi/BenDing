@@ -25,13 +25,13 @@ namespace NFine.Web.Controllers
         private IWebServiceBasicService _webServiceBasicService;
         private IBaseSqlServerRepository _dataBaseSqlServerService;
         private IResidentMedicalInsuranceRepository _residentMedicalInsurance;
-       /// <summary>
-       /// 
-       /// </summary>
-       /// <param name="insuranceRepository"></param>
-       /// <param name="iWebServiceBasicService"></param>
-       /// <param name="iDataBaseSqlServerService"></param>
-       /// <param name="iBaseHelpRepository"></param>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="insuranceRepository"></param>
+        /// <param name="iWebServiceBasicService"></param>
+        /// <param name="iDataBaseSqlServerService"></param>
+        /// <param name="iBaseHelpRepository"></param>
         public BenDingController(IResidentMedicalInsuranceRepository insuranceRepository,
             IWebServiceBasicService iWebServiceBasicService,
             IBaseSqlServerRepository iDataBaseSqlServerService,
@@ -97,7 +97,7 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                
+
                 var data = await _dataBaseSqlServerService.QueryHospitalOperator(param);
                 if (string.IsNullOrWhiteSpace(data.HisUserAccount))
                 {
@@ -117,7 +117,7 @@ namespace NFine.Web.Controllers
                 }
 
             }), JsonRequestBehavior.AllowGet);
-            
+
         }
         /// <summary>
         /// 获取三大目录
@@ -147,7 +147,7 @@ namespace NFine.Web.Controllers
                     }
                 }
 
-             
+
 
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
@@ -270,7 +270,7 @@ namespace NFine.Web.Controllers
         /// 获取住院病人
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpPost]  
+        [System.Web.Mvc.HttpPost]
         public async Task<ActionResult> GetInpatientInfo(InpatientInfoUiParam param)
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
@@ -291,7 +291,7 @@ namespace NFine.Web.Controllers
                    OrganizationCode = verificationCode.OrganizationCode,
                    IdCardNo = param.IdCardNo,
                    StartTime = param.StartTime,
-                   EndTime =DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                   EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                    State = "0"
                };
 
@@ -477,7 +477,7 @@ namespace NFine.Web.Controllers
                         }
                     }
 
-                   
+
                 }));
         }
         /// <summary>
@@ -492,8 +492,9 @@ namespace NFine.Web.Controllers
             {
                 var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var dataInfo = new ResidentUserInfoParam()
-                { IdentityMark = "1",
-                  InformationNumber = "512501195802085180"
+                {
+                    IdentityMark = "1",
+                    InformationNumber = "512501195802085180"
                 };
                 var strXmls = XmlSerializeHelper.XmlSerialize(dataInfo);
                 var data = new SaveXmlData();
@@ -544,14 +545,14 @@ namespace NFine.Web.Controllers
                 y.Data = data;
 
             });
-            return Json(resultData, JsonRequestBehavior.AllowGet) ;
-           
+            return Json(resultData, JsonRequestBehavior.AllowGet);
+
         }
         /// <summary>
-      /// 医保中心项目查询
-      /// </summary>
-      /// <param name="param"></param>
-      /// <returns></returns>
+        /// 医保中心项目查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> QueryProjectDownload(QueryProjectUiParam param)
         {
@@ -564,10 +565,10 @@ namespace NFine.Web.Controllers
                     if (state.Errors.Any())
                     {
                         error = state.Errors.First().ErrorMessage;
-                         throw new Exception(error);
+                        throw new Exception(error);
                     }
                 }
-                
+
             }
 
             var queryData = await _baseHelpRepository.QueryProjectDownload(param);
@@ -670,10 +671,10 @@ namespace NFine.Web.Controllers
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
                 var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
- 
+
                 var data = await _webServiceBasicService.ThreeCataloguePairCodeUpload(verificationCode);
-                
-                y.Data = "["+data+"] 条回写成功!!!";
+
+                y.Data = "[" + data + "] 条回写成功!!!";
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
@@ -710,13 +711,13 @@ namespace NFine.Web.Controllers
                 if (login == 1)
                 {
                     var userBase = await _residentMedicalInsurance.ProjectDownload(new ResidentProjectDownloadParam());
-                   
-                    if (userBase.Row!=null && userBase.Row.Any())
+
+                    if (userBase.Row != null && userBase.Row.Any())
                     {
-                       
+
                         await _baseHelpRepository.ProjectDownload(new UserInfoDto() { UserId = "E075AC49FCE443778F897CF839F3B924" }, userBase.Row);
                         y.Data = userBase;
-                    } 
+                    }
                 }
                 else
                 {
@@ -738,25 +739,25 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var userBase =await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-        
-                    param.Operators = param.UserId;
-                  
-                    await _residentMedicalInsurance.HospitalizationRegister(param, userBase);
-                    var inputInpatientInfo = new InpatientInfoParam()
-                    {
-                        AuthCode = userBase.AuthCode,
-                        OrganizationCode = userBase.OrganizationCode,
-                        IdCardNo = param.IdCardNo,
-                        StartTime = param.StartTime,
-                        EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                        State = "0",
-                    };
-                    string inputInpatientInfoJson =
-                        JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
-                    await _webServiceBasicService.GetInpatientInfo(userBase, inputInpatientInfoJson);
-             
+
+                param.Operators = param.UserId;
+
+                await _residentMedicalInsurance.HospitalizationRegister(param, userBase);
+                var inputInpatientInfo = new InpatientInfoParam()
+                {
+                    AuthCode = userBase.AuthCode,
+                    OrganizationCode = userBase.OrganizationCode,
+                    IdCardNo = param.IdCardNo,
+                    StartTime = param.StartTime,
+                    EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    State = "0",
+                };
+                string inputInpatientInfoJson =
+                    JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
+                await _webServiceBasicService.GetInpatientInfo(userBase, inputInpatientInfoJson);
+
             });
             return Json(resultData);
         }
@@ -774,9 +775,9 @@ namespace NFine.Web.Controllers
                 var queryData = await _baseHelpRepository.QueryMedicalInsurance(userBase, param.BusinessId);
                 if (!string.IsNullOrWhiteSpace(queryData.AdmissionInfoJson))
                 {
-                  var data=  JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailDto>(queryData.AdmissionInfoJson);
-                   data.Id = queryData.Id;
-                   y.Data = data;
+                    var data = JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailDto>(queryData.AdmissionInfoJson);
+                    data.Id = queryData.Id;
+                    y.Data = data;
                 }
 
 
@@ -795,7 +796,7 @@ namespace NFine.Web.Controllers
             {  //his登陆
                 var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //医保登陆
-                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId});
+                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //医保修改
                 await _residentMedicalInsurance.HospitalizationModify(param, verificationCode);
             });
@@ -807,7 +808,7 @@ namespace NFine.Web.Controllers
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> PrescriptionUpload(PrescriptionUploadUiParam param)
-        {  
+        {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
                 var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
