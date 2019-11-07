@@ -536,10 +536,7 @@ namespace NFine.Web.Controllers
                 {
 
                     data = queryData.Values.FirstOrDefault(),
-                    //总页数
-                    //total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.Limit)) + 1) : 0,
-                    //当前页
-                    //page = param.Page,
+            
                     count = queryData.Keys.FirstOrDefault()
                 };
                 y.Data = data;
@@ -557,35 +554,20 @@ namespace NFine.Web.Controllers
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> QueryProjectDownload(QueryProjectUiParam param)
         {
-            if (!ModelState.IsValid)
+
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                string error = string.Empty;
-                foreach (var key in ModelState.Keys)
+                var queryData = await _baseHelpRepository.QueryProjectDownload(param);
+                var list = queryData.Values.FirstOrDefault();
+
+                var data = new
                 {
-                    var state = ModelState[key];
-                    if (state.Errors.Any())
-                    {
-                        error = state.Errors.First().ErrorMessage;
-                        throw new Exception(error);
-                    }
-                }
-
-            }
-
-            var queryData = await _baseHelpRepository.QueryProjectDownload(param);
-            var list = queryData.Values.FirstOrDefault();
-
-            var data = new
-            {
-                rows = list,
-                //总页数
-                total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.rows)) + 1) : 0,
-                //当前页
-                page = param.page,
-                //总记录数
-                records = queryData.Keys.FirstOrDefault()
-            };
-            return Json(data, JsonRequestBehavior.AllowGet);
+                    data = queryData.Values.FirstOrDefault(),
+                    count = queryData.Keys.FirstOrDefault()
+                };
+                y.Data = data;
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
         }
         /// <summary>
         /// 医保对码
@@ -615,37 +597,22 @@ namespace NFine.Web.Controllers
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> DirectoryComparisonManagement(DirectoryComparisonManagementUiParam param)
         {
-            if (!ModelState.IsValid)
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                string error = string.Empty;
-                foreach (var key in ModelState.Keys)
+
+                var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                param.OrganizationCode = verificationCode.OrganizationCode;
+
+                var queryData = await _dataBaseSqlServerService.DirectoryComparisonManagement(param);
+             
+                var data = new
                 {
-                    var state = ModelState[key];
-                    if (state.Errors.Any())
-                    {
-                        error = state.Errors.First().ErrorMessage;
-                        throw new Exception(error);
-                    }
-                }
-
-            }
-
-            var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-            param.OrganizationCode = verificationCode.OrganizationCode;
-
-            var queryData = await _dataBaseSqlServerService.DirectoryComparisonManagement(param);
-            var list = queryData.Values.FirstOrDefault();
-            var data = new
-            {
-                rows = list,
-                //总页数
-                total = queryData.Keys.FirstOrDefault() > 0 ? Convert.ToInt64(Math.Floor(Convert.ToDecimal(queryData.Keys.FirstOrDefault() / param.Limit)) + 1) : 0,
-                //当前页
-                page = param.Page,
-                //总记录数
-                records = queryData.Keys.FirstOrDefault()
-            };
-            return Json(data, JsonRequestBehavior.AllowGet);
+                    data = queryData.Values.FirstOrDefault(),
+                    count = queryData.Keys.FirstOrDefault()
+                };
+                y.Data = data;
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
