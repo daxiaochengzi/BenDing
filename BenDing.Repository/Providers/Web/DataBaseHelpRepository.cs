@@ -195,8 +195,8 @@ namespace BenDing.Repository.Providers.Web
                 string querySql = @"
                              select [Id],[ProjectCode],[ProjectName],[ProjectCodeType],Unit,MnemonicCode,Formulation,ProjectLevel,
                              Manufacturer,QuasiFontSize,Specification,Remark,NewCodeMark,NewUpdateTime from [dbo].[MedicalInsuranceProject] 
-                             where  [CreateUserId] is not null";
-                string countSql = @"select count(*) from [dbo].[MedicalInsuranceProject] where  [CreateUserId] is not null";
+                             where  IsDelete=0";
+                string countSql = @"select count(*) from [dbo].[MedicalInsuranceProject] where  IsDelete=0";
                 string whereSql = "";
                 if (!string.IsNullOrWhiteSpace(param.ProjectCodeType))
                 {   //西药
