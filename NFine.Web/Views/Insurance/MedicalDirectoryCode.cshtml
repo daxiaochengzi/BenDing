@@ -268,7 +268,8 @@
                 }
                 , page: true //开启分页
                 , cols: [[ //表头
-                    { field: 'DirectoryCode', title: '目录编码', width: 310,fixed: 'left' }
+                    { type: 'numbers', fixed: 'left'  }
+                    , { field: 'DirectoryCode', title: '目录编码', width: 310}
                     , { field: 'DirectoryName', title: '目录名称', width: 300 ,sort: true }
                     , { field: 'MnemonicCode', title: '助记码', width: 300 }
                     , { field: 'DirectoryCategoryName', title: '目录类别', width: 100, sort: true }
@@ -295,7 +296,8 @@
                 }
                 , page: true
                 , cols: [[
-                    {field: 'ProjectCode', title: '医保项目编码', width: 160, sort: true, fixed: 'left'}
+                    { type: 'numbers', fixed: 'left' }
+                    , {field: 'ProjectCode', title: '医保项目编码', width: 160, sort: true}
                     , { field: 'ProjectName', title: '医保项目名称', width: 160, sort: true}
                     , { field: 'MnemonicCode', title: '助记码', width: 300, sort: true}
                     , { field: 'ProjectCodeType', title: '医保类别', width: 100 }
@@ -331,7 +333,7 @@
                 }
                 ,page: true
                 , cols: [[
-                    { type: 'checkbox', fixed: 'left'}
+                    { type: 'numbers', fixed: 'left' }
                     , { field: 'ID', title: '对码', toolbar: '#tableBtn', width: 100, align: 'center'}
                     , { field: 'DirectoryCode', title: '医院目录编码', width: 310, sort: true}
                     , { field: 'DirectoryName', title: '医院目录名称', width: 300, sort: true }
@@ -358,16 +360,20 @@
             table.on('tool(LAY-pair-content-list)', function (obj) {
                 var data = obj.data;
                 if (obj.event === 'pairCode') {
-                    //layer.msg('ID：' + data.id + ' 的查看操作');
+                    var ProjectName = data.DirectoryName;
+                    var ProjectCode = data.DirectoryCode;
+                    var params = "?UserId=" + $("#empid").val() + "&ProjectName=" + ProjectName +"&ProjectCode=" + ProjectCode;
+                    console.log(data)
                     //iframe层-父子操作
                     layer.open({
                         type: 2,
-                        area: ['700px', '450px'],
+                        area: ['1200px', '600px'],
                         fixed: false, //不固定
-                        maxmin: true,
-                        content: '/BenDing/MedicalDirectoryPairCode'
+                        maxmin: false,
+                        content: '/BenDing/MedicalDirectoryPairCode' + params
                     });
                 } else if (obj.event === 'updatePairCode') {
+                    //layer.msg('ID：' + data.id + ' 的查看操作');
                     layer.confirm('真的要重新对码吗?', function (index) {
                         obj.del();
                         layer.close(index);
@@ -395,9 +401,9 @@
 
 <script type="text/html" id="tableBtn">
     {{#  if(d.Id == null){ }}
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="pairCode"><i class="layui-icon layui-icon-edit"></i>未对码</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="pairCode">未对码</a>
     {{#  } else { }}
-    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="updatePairCode"><i class="layui-icon layui-icon-edit"></i>已对码</a>
+    <a class="layui-btn layui-btn-xs" lay-event="updatePairCode">已对码</a>
     {{#  }}}
 </script>
 

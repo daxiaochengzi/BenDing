@@ -580,7 +580,8 @@ namespace NFine.Web.Controllers
         public ActionResult MedicalDirectoryPairCode(MedicalDirectoryCodePairUiParam param)
         {
             //参数可查询医保中心目录
-            ViewBag.projectName = param.ProjectName;
+            ViewBag.ProjectName = param.ProjectName;
+            ViewBag.ProjectCode = param.ProjectCode;
             ViewBag.empid = param.UserId;
             return View();
         }
