@@ -43,6 +43,6 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task PrescriptionUpload(PrescriptionUploadUiParam param, UserInfoDto user);
+        Task<bool> PrescriptionUpload(PrescriptionUploadUiParam param, UserInfoDto user);
     }
 }

@@ -240,12 +240,35 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task PrescriptionUpload(PrescriptionUploadUiParam param, UserInfoDto user)
+        public async Task<bool> PrescriptionUpload(PrescriptionUploadUiParam param, UserInfoDto user)
         {
-            await Task.Run(async () =>
+            return await Task.Run(async () =>
             {
-                var inIParam = await GetPrescriptionUploadParam(param, user);
-                var xmlStr = XmlHelp.SaveXml(inIParam);
+                //处方上传解决方案
+                //1.判断是id上传还是单个用户上传
+                //3.获取医院等级判断金额是否符合要求
+                //4.数据上传
+                //4.1 id上传
+                //4.1.2 获取医院等级判断金额是否符合要求
+                //4.1.3 数据上传
+                //4.1.3.1 数据上传失败,数据回写到日志
+                //4.1.3.2 数据上传成功,数据回写至基层
+                //4.2   单个病人整体上传
+                //4.2.2 获取医院等级判断金额是否符合要求
+                //4.2.3 数据上传
+                //4.2.3.1 数据上传失败,数据回写到日志
+                var resultData = true;
+                //1.判断是id上传还是单个用户上传
+                if (param.DataIdList != null && param.DataIdList.Any() == true)
+                {
+                    var queryParam = new InpatientInfoDetailQueryParam();
+                    queryParam.HospitalizationNumber = "5107262000020191101001";
+                    await _baseSqlServerRepository.InpatientInfoDetailQuery(queryParam);
+                }
+
+                //var inIParam = await GetPrescriptionUploadParam(param, user);
+                //var xmlStr = XmlHelp.SaveXml(inIParam);
+                return resultData;
             });
         }
         /// <summary>
@@ -310,3 +333,4 @@ namespace BenDing.Repository.Providers.Web
         }
     }
 }
+
