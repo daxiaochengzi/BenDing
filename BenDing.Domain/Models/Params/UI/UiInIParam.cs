@@ -20,7 +20,10 @@ namespace BenDing.Domain.Models.Params.UI
         [XmlIgnore]
         [JsonIgnore]
         public string UserId { get; set; }
-        
+        /// <summary>
+        /// 业务id
+        /// </summary>
+        public string BusinessId { get; set; }
         
 
     }

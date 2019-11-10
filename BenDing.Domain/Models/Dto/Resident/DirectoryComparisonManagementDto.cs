@@ -31,6 +31,10 @@ namespace BenDing.Domain.Models.Dto.Resident
 
         public string MnemonicCode { get; set; }
         /// <summary>
+        /// 目录类别编码
+        /// </summary>
+        public string DirectoryCategoryCode { get; set; }
+        /// <summary>
         /// 目录类别名称
         /// </summary>
 

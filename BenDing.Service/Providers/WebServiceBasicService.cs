@@ -236,7 +236,7 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<List<InpatientInfoDetailDto>> GetInpatientInfoDetail(UserInfoDto user, InpatientInfoDetailParam param)
+        public async Task<List<InpatientInfoDetailDto>> GetInpatientInfoDetail(UserInfoDto user, InpatientInfoDetailParam param, string businessId)
         {
             var result = new List<InpatientInfoDetailDto>();
 

@@ -358,7 +358,7 @@ namespace NFine.Web.Controllers
                         EndTime = "2020-04-27 11:09:00",
                         State = "0"
                     };
-                    var data = await _webServiceBasicService.GetInpatientInfoDetail(verificationCode, InpatientInfoDetail);
+                    var data = await _webServiceBasicService.GetInpatientInfoDetail(verificationCode, InpatientInfoDetail,param.BusinessId);
                     y.Data = data;
 
                 }
@@ -547,7 +547,7 @@ namespace NFine.Web.Controllers
             return Json(resultData);
         }
         /// <summary>
-        ///对照目录中心管理
+        ///对照目录中心管理 改改
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>

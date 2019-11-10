@@ -57,8 +57,8 @@ namespace BenDing.Service.Interfaces
         /// 获取住院病人明细
         /// </summary>
         /// <param name="param"></param>
-        /// <returns></returns>
-        Task<List<InpatientInfoDetailDto>> GetInpatientInfoDetail(UserInfoDto user, Domain.Models.Params.Web.InpatientInfoDetailParam param);
+        /// <returns></returns>string businessId
+        Task<List<InpatientInfoDetailDto>> GetInpatientInfoDetail(UserInfoDto user, InpatientInfoDetailParam param, string businessId);
         /// <summary>
         /// 医保信息保存
         /// </summary>

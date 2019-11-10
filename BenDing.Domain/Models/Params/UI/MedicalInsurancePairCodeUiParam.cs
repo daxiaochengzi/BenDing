@@ -10,29 +10,30 @@ namespace BenDing.Domain.Models.Params.UI
 {
    public class MedicalInsurancePairCodeUiParam
     {
+       
         /// <summary>
         /// 目录类型
         /// </summary>
-       public  string DirectoryType { get; set; }
-       /// <summary>
-       /// 医保项目编号
-       /// </summary>
-       public  string MedicalInsuranceDirectoryCode { get; set; }
+        public string DirectoryCategoryCode { get; set; }
+        /// <summary>
+        /// 医保项目编号
+        /// </summary>
+        public string ProjectCode { get; set; }
         /// <summary>
         /// his项目编号
         /// </summary>
-        public string HisDirectoryCode { get; set; }
+        public string DirectoryCode { get; set; }
         /// <summary>
         /// 对码Id
         /// </summary>
-        public  Guid? PairCodeId { get; set; }
-        /// <summary>
-        /// 医保项目等级
-        /// </summary>
-        public ProjectLevel ProjectLevel { get; set; }
-        /// <summary>
-        /// 医保项目目录
-        /// </summary>
-        public ProjectCodeType ProjectCodeType  { get; set; }
-}
+        public Guid? PairCodeId { get; set; }
+        ///// <summary>
+        ///// 医保项目等级
+        ///// </summary>
+        //public ProjectLevel ProjectLevel { get; set; }
+        ///// <summary>
+        ///// 医保项目目录
+        ///// </summary>
+        //public ProjectCodeType ProjectCodeType { get; set; }
+    }
 }

@@ -152,73 +152,34 @@ namespace BenDing.Repository.Providers.Web
                 return data;
             }
         }
-        /// <summary>
-        /// 住院明细查询
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task<List<OutpatientDetailQuery>> InpatientInfoDetailQuery(InpatientInfoDetailQueryParam param)
+        public async Task<List<QueryInpatientInfoDetailDto>> InpatientInfoDetailQuery(InpatientInfoDetailQueryParam param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
-                var resultData = new List<OutpatientDetailQuery>();
+                var resultData = new List<QueryInpatientInfoDetailDto>();
                 _sqlConnection.Open();
 
-                string strSql = @"SELECT [Id]
-                                      ,[住院号]
-                                      ,[费用明细ID]
-                                      ,[项目名称]
-                                      ,[项目编码]
-                                      ,[项目类别名称]
-                                      ,[项目类别编码]
-                                      ,[单位]
-                                      ,[剂型]
-                                      ,[规格]
-                                      ,[单价]
-                                      ,[数量]
-                                      ,[金额]
-                                      ,[用量]
-                                      ,[用法]
-                                      ,[用药天数]
-                                      ,[医院计价单位]
-                                      ,[是否进口药品]
-                                      ,[药品产地]
-                                      ,[处方号]
-                                      ,[费用单据类型]
-                                      ,[开单科室名称]
-                                      ,[开单科室编码]
-                                      ,[开单医生姓名]
-                                      ,[开单医生编码]
-                                      ,[开单时间]
-                                      ,[执行科室名称]
-                                      ,[执行科室编码]
-                                      ,[执行医生姓名]
-                                      ,[执行医生编码]
-                                      ,[执行时间]
-                                      ,[处方医师]
-                                      ,[经办人]
-                                      ,[执业医师证号]
-                                      ,[费用冲销ID]
-                                      ,[OrganizationCode]
-                                      ,[机构名称]
-                                      ,[费用时间]
-                                      ,[CreateTime]
-                                      ,[CreateUserId]
-                              FROM [dbo].[住院费用] where ";
+                string strSql = @"select * from [dbo].[HospitalizationFee]  where  IsDelete=0 ";
                 if (param.IdList != null && param.IdList.Any())
                 {
                     var idlist = ListToStr(param.IdList);
-                    strSql += $@" 费用明细ID in('{idlist}')";
+                    strSql += $@" and Id in('{idlist}')";
                 }
-                else
+                if (!string.IsNullOrWhiteSpace(param.HospitalizationNumber))
                 {
-                    strSql += $@" 住院号 ='{param.HospitalizationNumber}'";
+                    strSql += $@" and HospitalizationNo ='{param.HospitalizationNumber}'";
                 }
-                var data = await _sqlConnection.QueryAsync<OutpatientDetailQuery>(strSql);
+
+                var data = await _sqlConnection.QueryAsync<QueryInpatientInfoDetailDto>(strSql);
                 _sqlConnection.Close();
-                return data.Count() > 0 ? data.ToList() : resultData;
+                if (data != null && data.Count() > 0)
+                {
+                    data = data.ToList();
+                }
+                return resultData;
             }
         }
+
         /// <summary>
         /// 单病种下载
         /// </summary>
@@ -300,10 +261,10 @@ namespace BenDing.Repository.Providers.Web
                             foreach (var items in insertParam)
                             {
                                 insertSql += $@"insert into [dbo].[ThreeCataloguePairCode]
-                                           ([Id],[OrganizationCode],[OrganizationName],[DirectoryType],[State],[MedicalInsuranceDirectoryCode],
-                                            [HisFixedEncoding],[CreateTime],[IsDelete],[CreateUserId],[ProjectLevel],[ProjectCodeType],[UploadState],[DirectoryCode]) values (
-                                           '{Guid.NewGuid()}','{param.OrganizationCode}','{param.OrganizationName}','{items.DirectoryType}',0,'{items.MedicalInsuranceDirectoryCode}',
-                                             '{BitConverter.ToInt64(Guid.Parse(items.HisDirectoryCode).ToByteArray(), 0)}',GETDATE(),0,'{param.UserId}',{Convert.ToInt32(items.ProjectLevel)},{Convert.ToInt32(items.ProjectCodeType)},0,'{items.HisDirectoryCode}') ";
+                                           ([Id],[OrganizationCode],[OrganizationName],[DirectoryCategoryCode],[State],[ProjectCode],
+                                            [FixedEncoding],[CreateTime],[IsDelete],[CreateUserId],[UploadState],[DirectoryCode]) values (
+                                           '{Guid.NewGuid()}','{param.OrganizationCode}','{param.OrganizationName}','{items.DirectoryCategoryCode}',0,'{items.ProjectCode}',
+                                             '{BitConverter.ToInt64(Guid.Parse(items.DirectoryCode).ToByteArray(), 0)}',GETDATE(),0,'{param.UserId}',0,'{items.DirectoryCategoryCode}') ";
 
                             }
                             await _sqlConnection.ExecuteAsync(insertSql, null, transaction);

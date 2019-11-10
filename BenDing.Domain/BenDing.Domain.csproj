@@ -48,6 +48,7 @@
     <Compile Include="Models\Dto\Base\PaginationDto.cs" />
     <Compile Include="Models\Dto\Base\PaginationUserDto.cs" />
     <Compile Include="Models\Dto\Resident\DirectoryComparisonManagementDto.cs" />
+    <Compile Include="Models\Dto\Resident\QueryMedicalInsurancePairCodeDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentHospitalizationRegisterDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentProjectDownloadDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentProjectDownloadRow.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="Models\Dto\Web\QueryHospitalOperatorAll.cs" />
     <Compile Include="Models\Dto\Web\QueryHospitalOperatorDto.cs" />
     <Compile Include="Models\Dto\Web\QueryICD10InfoDto.cs" />
+    <Compile Include="Models\Dto\Web\QueryInpatientInfoDetailDto.cs" />
     <Compile Include="Models\Dto\Web\QueryMedicalInsuranceDetailDto.cs" />
     <Compile Include="Models\Dto\Web\QueryMedicalInsuranceDto.cs" />
     <Compile Include="Models\Dto\Web\ThreeCataloguePairCodeUploadDto.cs" />

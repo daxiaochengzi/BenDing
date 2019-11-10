@@ -286,8 +286,8 @@ namespace BenDing.Repository.Providers.Web
         {
             return await Task.Run(async () =>
             {
-               //获取医院等级
-              var grade = await  _iSystemManageRepository.QueryHospitalOrganizationGrade(user.OrganizationCode);
+                //获取医院等级
+                var grade = await _iSystemManageRepository.QueryHospitalOrganizationGrade(user.OrganizationCode);
                 //var resultData = new PrescriptionUploadParam();
                 //resultData.MedicalInsuranceHospitalizationNo = "123";
                 //resultData.Operators = "111";
