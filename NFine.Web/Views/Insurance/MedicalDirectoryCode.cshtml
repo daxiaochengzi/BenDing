@@ -8,12 +8,7 @@
         padding-bottom: 15px;
         height: auto;
     }
-    .layui-card-header {
-        position: relative;
-    }
-    .layui-card-header-auto .layui-form-item:last-child {
-        margin-bottom: 0;
-    }
+
     .layui-form-label-nw {
         float: left;
         display: block;
@@ -27,6 +22,7 @@
 </style>
 
 <div class="layui-tab layui-tab-card">
+    <input type="hidden" id="empid" value="@ViewBag.empid" />
     <ul class="layui-tab-title">
         <li class="layui-this">医院目录</li>
         <li>医保目录</li>
@@ -42,10 +38,10 @@
                         <div class="layui-input-inline">
                             <select name="DirectoryCategoryCode">
                                 <option value="">请选择类别</option>
-                                <option value="1">药品</option>
-                                <option value="2">诊疗</option>
-                                <option value="3">服务</option>
-                                <option value="4">材料</option>
+                                <option value="1">中药</option>
+                                <option value="2">西药</option>
+                                <option value="3">诊疗</option>
+                                <option value="4">耗材</option>
                             </select>
                             <div class="layui-unselect layui-form-select">
                                 <div class="layui-select-title">
@@ -54,10 +50,10 @@
                                 </div>
                                 <dl class="layui-anim layui-anim-upbit">
                                     <dd lay-value="" class="layui-select-tips">请选择类别</dd>
-                                    <dd lay-value="1" class="">药品</dd>
-                                    <dd lay-value="2" class="">诊疗</dd>
-                                    <dd lay-value="3" class="">服务</dd>
-                                    <dd lay-value="4" class="">材料</dd>
+                                    <dd lay-value="1" class="">中药</dd>
+                                    <dd lay-value="2" class="">西药</dd>
+                                    <dd lay-value="3" class="">诊疗</dd>
+                                    <dd lay-value="4" class="">耗材</dd>
                                 </dl>
                             </div>
                         </div>
@@ -74,7 +70,6 @@
                             <input type="text" name="DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
                         </div>
                     </div>
-
                     <div class="layui-inline">
                         <button class="layui-btn" lay-submit="" lay-filter="LAY-app-contlist-search">查询</button>
                     </div>
@@ -89,9 +84,132 @@
             <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
         </div>
         <div class="layui-tab-item">
+            <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="yibao-content-list">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">目录类别</label>
+                        <div class="layui-input-inline">
+                            <select name="ProjectCodeType">
+                                <option value="">请选择类别</option>
+                                <option value="1">药品</option>
+                                <option value="2">诊疗项目</option>
+                                <option value="3">服务设施</option>
+                                <option value="4">材料</option>
+                            </select>
+                            <div class="layui-unselect layui-form-select">
+                                <div class="layui-select-title">
+                                    <input type="text" placeholder="请选择标签" value="" readonly="" class="layui-input layui-unselect">
+                                    <i class="layui-edge"></i>
+                                </div>
+                                <dl class="layui-anim layui-anim-upbit">
+                                    <dd lay-value="" class="layui-select-tips">请选择类别</dd>
+                                    <dd lay-value="1" class="">药品</dd>
+                                    <dd lay-value="2" class="">诊疗项目</dd>
+                                    <dd lay-value="3" class="">服务设施</dd>
+                                    <dd lay-value="4" class="">材料</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">目录编码</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="ProjectCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">目录名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="ProjectName" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn" lay-submit="" lay-filter="LAY-yibao-content-list">查询</button>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layui-btn-list" data-type="cleanSearch">清除</button>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layui-btn-list" data-type="updateSearch">更新目录</button>
+                    </div>
+                </div>
+            </div>
             <table id="LAY-yibao-content-list" lay-filter="LAY-yibao-content-list"></table>
         </div>
         <div class="layui-tab-item">
+            <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="LAY-pair-content-list">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">目录类别</label>
+                        <div class="layui-input-inline">
+                            <select name="DirectoryCategoryCode">
+                                <option value="">请选择类别</option>
+                                <option value="1">中药</option>
+                                <option value="2">西药</option>
+                                <option value="3">诊疗</option>
+                                <option value="4">耗材</option>
+                            </select>
+                            <div class="layui-unselect layui-form-select">
+                                <div class="layui-select-title">
+                                    <input type="text" placeholder="请选择标签" value="" readonly="" class="layui-input layui-unselect">
+                                    <i class="layui-edge"></i>
+                                </div>
+                                <dl class="layui-anim layui-anim-upbit">
+                                    <dd lay-value="" class="layui-select-tips">请选择类别</dd>
+                                    <dd lay-value="1" class="">中药</dd>
+                                    <dd lay-value="2" class="">西药</dd>
+                                    <dd lay-value="3" class="">诊疗</dd>
+                                    <dd lay-value="4" class="">耗材</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">目录编码</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="DirectoryCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">目录名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">关联状态</label>
+                        <div class="layui-input-inline">
+                            <select name="State">
+                                <option value="">请选择状态</option>
+                                <option value="0">未对照</option>
+                                <option value="1">待上传</option>
+                                <option value="2">已对照</option>
+                            </select>
+                            <div class="layui-unselect layui-form-select">
+                                <div class="layui-select-title">
+                                    <input type="text" placeholder="请选择标签" value="" readonly="" class="layui-input layui-unselect">
+                                    <i class="layui-edge"></i>
+                                </div>
+                                <dl class="layui-anim layui-anim-upbit">
+                                    <dd lay-value="" class="layui-select-tips">请选择状态</dd>
+                                    <dd lay-value="0" class="">未对照</dd>
+                                    <dd lay-value="1" class="">待上传</dd>
+                                    <dd lay-value="2" class="">已对照</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn" lay-submit="" lay-filter="LAY-pair-content-list">查询</button>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layui-btn-list" data-type="cleanSearch">清除</button>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layui-btn-list" data-type="updateSearch">更新目录</button>
+                    </div>
+                </div>
+            </div>
             <table id="LAY-pair-content-list" lay-filter="LAY-pair-content-list"></table>
         </div>
     </div>
@@ -108,12 +226,30 @@
                 , form = layui.form;
 
             form.render(null, 'app-content-list');
+            form.render(null, 'yibao-content-list');
+            form.render(null, 'LAY-pair-content-list');
 
             //监听搜索
             form.on('submit(LAY-app-contlist-search)', function (data) {
                 var field = data.field;
                 //执行重载
                 table.reload('LAY-app-content-list', {
+                    where: field
+                });
+            });
+            //监听搜索
+            form.on('submit(LAY-yibao-content-list)', function (data) {
+                var field = data.field;
+                //执行重载
+                table.reload('LAY-yibao-content-list', {
+                    where: field
+                });
+            });
+            //监听搜索
+            form.on('submit(LAY-pair-content-list)', function (data) {
+                var field = data.field;
+                //执行重载
+                table.reload('LAY-pair-content-list', {
                     where: field
                 });
             });
@@ -132,7 +268,8 @@
                 }
                 , page: true //开启分页
                 , cols: [[ //表头
-                    { field: 'DirectoryCode', title: '目录编码', width: 310,fixed: 'left' }
+                    { type: 'numbers', fixed: 'left'  }
+                    , { field: 'DirectoryCode', title: '目录编码', width: 310}
                     , { field: 'DirectoryName', title: '目录名称', width: 300 ,sort: true }
                     , { field: 'MnemonicCode', title: '助记码', width: 300 }
                     , { field: 'DirectoryCategoryName', title: '目录类别', width: 100, sort: true }
@@ -144,11 +281,48 @@
                     , { field: 'Remark', title: '备注' }
                 ]]
             });
+            //医保目录
+            table.render({
+                elem: '#LAY-yibao-content-list'
+                , height: $(window).height() - 128
+                , url: '/BenDing/QueryProjectDownload' //数据接口
+                , parseData: function (res) { //res 即为原始返回的数据
+                    return {
+                        "code": res.Code, //解析接口状态
+                        "msg": res.Message, //解析提示文本
+                        "count": res.Data.count, //解析数据长度
+                        "data": res.Data.data //解析数据列表
+                    };
+                }
+                , page: true
+                , cols: [[
+                    { type: 'numbers', fixed: 'left' }
+                    , {field: 'ProjectCode', title: '医保项目编码', width: 160, sort: true}
+                    , { field: 'ProjectName', title: '医保项目名称', width: 160, sort: true}
+                    , { field: 'MnemonicCode', title: '助记码', width: 300, sort: true}
+                    , { field: 'ProjectCodeType', title: '医保类别', width: 100 }
+                    , { field: 'ProjectLevel', title: '医保报销比例', width: 160 }
+                    , { field: 'QuasiFontSize', title: '药品准字号', width: 100 }
+                    , { field: 'Unit', title: '单位', width: 100 }
+                    , { field: 'Specification', title: '规格', width: 100 }
+                    , { field: 'Formulation', title: '剂型', width: 160 }
+                    , { field: 'RestrictionSign', title: '限制用药标志', width: 100 }
+                    , { field: 'Manufacturer', title: '生产厂家', width: 300, sort: true }
+                    , { field: 'NewCodeMark', title: '新码标志', width: 100 }
+                    , { field: 'LimitPaymentScope', title: '限制支付范围', width: 100 }
+                    , { field: 'NewUpdateTime', title: '变更日期', width: 160 }
+                    , { field: 'Remark', title: '医保备注', width: 100 }
+
+                ]]
+                //,skin: 'line'
+            });
+
             //对码管理
             table.render({
                 elem: '#LAY-pair-content-list'
                 , height: $(window).height() - 128
                 , url: '/BenDing/DirectoryComparisonManagement' //数据接口
+                , where: { UserId: $("#empid").val() }
                 , parseData: function (res) { //res 即为原始返回的数据
                     return {
                         "code": res.Code, //解析接口状态
@@ -158,8 +332,10 @@
                     };
                 }
                 ,page: true
-                ,cols: [[
-                    { field: 'DirectoryCode', title: '医院目录编码', width: 310, sort: true, fixed: 'left'}
+                , cols: [[
+                    { type: 'numbers', fixed: 'left' }
+                    , { field: 'ID', title: '对码', toolbar: '#tableBtn', width: 100, align: 'center'}
+                    , { field: 'DirectoryCode', title: '医院目录编码', width: 310, sort: true}
                     , { field: 'DirectoryName', title: '医院目录名称', width: 300, sort: true }
                     , { field: 'MnemonicCode', title: '助记码', width: 300 }
                     , { field: 'DirectoryCategoryName', title: '医院目录类别', width: 100, sort: true }
@@ -180,6 +356,33 @@
                 //,skin: 'line'
             });
 
+            //监听工具条
+            table.on('tool(LAY-pair-content-list)', function (obj) {
+                var data = obj.data;
+                if (obj.event === 'pairCode') {
+                    var ProjectName = data.DirectoryName;
+                    var ProjectCode = data.DirectoryCode;
+                    var params = "?UserId=" + $("#empid").val() + "&ProjectName=" + ProjectName +"&ProjectCode=" + ProjectCode;
+                    console.log(data)
+                    //iframe层-父子操作
+                    layer.open({
+                        type: 2,
+                        area: ['1200px', '600px'],
+                        fixed: false, //不固定
+                        maxmin: false,
+                        content: '/BenDing/MedicalDirectoryPairCode' + params
+                    });
+                } else if (obj.event === 'updatePairCode') {
+                    //layer.msg('ID：' + data.id + ' 的查看操作');
+                    layer.confirm('真的要重新对码吗?', function (index) {
+                        obj.del();
+                        layer.close(index);
+                    });
+                } else if (obj.event === 'edit') {
+                    layer.alert('编辑行：<br>' + JSON.stringify(data))
+                }
+            });
+
             $('.layui-btn.layui-btn-list').on('click', function () {
                 var type = $(this).data('type');
                 active[type] ? active[type].call(this) : '';
@@ -191,5 +394,16 @@
             }
 
         });
+        
+
     })
 </script>
+
+<script type="text/html" id="tableBtn">
+    {{#  if(d.Id == null){ }}
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="pairCode">未对码</a>
+    {{#  } else { }}
+    <a class="layui-btn layui-btn-xs" lay-event="updatePairCode">已对码</a>
+    {{#  }}}
+</script>
+
