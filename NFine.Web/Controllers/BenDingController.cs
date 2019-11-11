@@ -542,7 +542,7 @@ namespace NFine.Web.Controllers
                 {
                     param.OrganizationCode = userBase.OrganizationCode;
                     param.OrganizationName = userBase.OrganizationName;
-                    //await _dataBaseSqlServerService.MedicalInsurancePairCode(param);
+                    await _dataBaseSqlServerService.MedicalInsurancePairCode(param);
                     y.Data = param;
                 }
             });
