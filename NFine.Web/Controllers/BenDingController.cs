@@ -532,6 +532,11 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
+                if (param.PairCodeList == null)
+                {
+                    throw new Exception("对码数据不能为空");
+                }
+
                 var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 if (userBase != null && string.IsNullOrWhiteSpace(userBase.OrganizationCode) == false)
                 {
@@ -540,7 +545,7 @@ namespace NFine.Web.Controllers
                     await _dataBaseSqlServerService.MedicalInsurancePairCode(param);
                 }
             });
-            return Json(resultData);
+            return Json(resultData,JsonRequestBehavior.AllowGet);
         }
         /// <summary>
         ///对照目录中心管理 

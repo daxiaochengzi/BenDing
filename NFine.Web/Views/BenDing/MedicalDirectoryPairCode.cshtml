@@ -9,6 +9,7 @@
         <input class="layui-input" name="id" id="demoReload" autocomplete="off">
     </div>
     <button class="layui-btn" data-type="reload">搜索</button>
+    <button onclick="login_buttons()" type="button"><span>登录1</span></button>
 </div>
 
 <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table> 
@@ -69,4 +70,39 @@
             active[type] ? active[type].call(this) : '';
         });
     });
+    //var persons = [
+    //    {
+    //        "DirectoryCode": "001",
+    //        "DirectoryCategoryCode": "zhangsan"
+    //      }
+    //]; 
+    //var PairCodeUiParam = {};
+    //PairCodeUiParam.DirectoryCode = "123";
+    //PairCodeUiParam.DirectoryCategoryCode = "123";
+    //PairCodeUiParam.ProjectCode = "123";
+    //PairCodeUiParam.PairCodeId = "";
+    var MedicalInsurancePairCodeUiParam =
+    {
+        "DirectoryCode": "001",
+        "DirectoryCategoryCode": "zhangsan"
+    }
+    var PairCodeList = []; //对码数据
+    PairCodeList.push(MedicalInsurancePairCodeUiParam);
+ 
+   
+
+    function login_buttons() {
+        $.ajax({
+            type: "post",
+            url: "/BenDing/MedicalInsurancePairCode",
+            data: JSON.stringify({ UserId: "123", OrganizationName: "333", PairCodeList: PairCodeList }),
+            dataType: "json",
+            contentType: 'application/json', 
+            success: function (data) {
+                    
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });  
+    }
 </script>
