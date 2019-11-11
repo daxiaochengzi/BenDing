@@ -299,8 +299,8 @@ namespace BenDing.Repository.Providers.Web
                 var resultData = new Dictionary<int, List<DirectoryComparisonManagementDto>>();
                 if (param.State == 1)
                 {
-                    whereSql = $@" where not exists(select b.HisFixedEncoding from  [dbo].[ThreeCataloguePairCode] as b 
-                                where b.OrganizationCode='{param.OrganizationCode}' and b.HisFixedEncoding=a.FixedEncoding and b.IsDelete=0 )";
+                    whereSql = $@" where not exists(select b.FixedEncoding from  [dbo].[ThreeCataloguePairCode] as b 
+                                where b.OrganizationCode='{param.OrganizationCode}' and b.FixedEncoding=a.FixedEncoding and b.IsDelete=0 )";
                     querySql = @"select a.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
                                 a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding
                                  from [dbo].[HospitalThreeCatalogue]  as a ";
@@ -315,13 +315,13 @@ namespace BenDing.Repository.Providers.Web
                              a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
                              c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,b.CreateTime as PairCodeTime,c.ProjectLevel,c.ProjectCodeType
                              from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
-                             on b.[HisFixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
-                             on b.MedicalInsuranceDirectoryCode=c.ProjectCode
+                             on b.[FixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
+                             on b.ProjectCode=c.ProjectCode
                              where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0 ";
                     countSql = $@"select COUNT(*)
                              from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
-                             on b.[HisFixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
-                             on b.MedicalInsuranceDirectoryCode=c.ProjectCode
+                             on b.[FixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
+                             on b.ProjectCode=c.ProjectCode
                              where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0 ";
 
 
@@ -333,13 +333,13 @@ namespace BenDing.Repository.Providers.Web
                             a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
                             c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,b.CreateTime as PairCodeTime,c.ProjectLevel,c.ProjectCodeType
                              from [dbo].[HospitalThreeCatalogue]  as a  left join (select * from [dbo].[ThreeCataloguePairCode] where OrganizationCode ='{param.OrganizationCode}'  and IsDelete=0) as b
-                             on b.[HisFixedEncoding]=a.FixedEncoding left join [dbo].[MedicalInsuranceProject] as c
-                             on b.MedicalInsuranceDirectoryCode=c.ProjectCode
+                             on b.[FixedEncoding]=a.FixedEncoding left join [dbo].[MedicalInsuranceProject] as c
+                             on b.ProjectCode=c.ProjectCode
                              where a.IsDelete='0' ";
                     countSql = $@"select COUNT(*)
                               from [dbo].[HospitalThreeCatalogue]  as a  left join  (select * from [dbo].[ThreeCataloguePairCode] where OrganizationCode ='{param.OrganizationCode}'  and IsDelete=0) as b
-                             on b.[HisFixedEncoding]=a.FixedEncoding left join [dbo].[MedicalInsuranceProject] as c
-                             on b.MedicalInsuranceDirectoryCode=c.ProjectCode
+                             on b.[FixedEncoding]=a.FixedEncoding left join [dbo].[MedicalInsuranceProject] as c
+                             on b.ProjectCode=c.ProjectCode
                              where a.IsDelete='0' ";
 
 

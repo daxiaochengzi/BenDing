@@ -325,7 +325,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetInpatientInfoDetail(UiInIParam param)
+        public async Task<ActionResult> GetInpatientInfoDetail(GetInpatientInfoDetailParam param)
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
@@ -547,7 +547,7 @@ namespace NFine.Web.Controllers
             return Json(resultData);
         }
         /// <summary>
-        ///对照目录中心管理 改改
+        ///对照目录中心管理 
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
