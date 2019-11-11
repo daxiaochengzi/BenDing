@@ -239,44 +239,46 @@ namespace BenDing.Repository.Providers.Web
 
                 if (param.PairCodeList.Any())
                 {
-                    IDbTransaction transaction = _sqlConnection.BeginTransaction();
-                    try
+                    string updateSql = "";
+                    var pairCodeIdList = param.PairCodeList.Where(c => c.PairCodeId != null).Select(d => d.PairCodeId.ToString()).ToList();
+                    var updateId = ListToStr(pairCodeIdList);
+                    //更新对码
+                    if (pairCodeIdList.Any())
                     {
-                        string updateSql = "";
-                        var pairCodeIdList = param.PairCodeList.Where(c => c.PairCodeId != null).Select(d => d.PairCodeId.ToString()).ToList();
-                        var updateId = ListToStr(pairCodeIdList);
-                        //更新对码
-                        if (pairCodeIdList.Any())
-                        {
-                            updateSql += $@"update [dbo].[ThreeCataloguePairCode] set [IsDelete]=1,
+                        updateSql += $@"update [dbo].[ThreeCataloguePairCode] set [IsDelete]=1,
                              [DeleteUserId]='{param.UserId}',DeleteTime=GETDATE() where [Id] in ({updateId});";
-                            await _sqlConnection.ExecuteAsync(updateSql, null, transaction);
+                        await _sqlConnection.ExecuteAsync(updateSql, null);
 
-                        }
-                        var insertParam = param.PairCodeList.ToList();
-                        string insertSql = "";
-                        //新增对码
-                        if (insertParam.Any())
+                    }
+                    var insertParam = param.PairCodeList.ToList();
+                    string insertSql = "";
+                    //新增对码
+                    if (insertParam.Any())
+                    {
+                        foreach (var items in insertParam)
                         {
-                            foreach (var items in insertParam)
-                            {
-                                insertSql += $@"insert into [dbo].[ThreeCataloguePairCode]
+                            insertSql += $@"insert into [dbo].[ThreeCataloguePairCode]
                                            ([Id],[OrganizationCode],[OrganizationName],[DirectoryCategoryCode],[State],[ProjectCode],
                                             [FixedEncoding],[CreateTime],[IsDelete],[CreateUserId],[UploadState],[DirectoryCode]) values (
                                            '{Guid.NewGuid()}','{param.OrganizationCode}','{param.OrganizationName}','{items.DirectoryCategoryCode}',0,'{items.ProjectCode}',
                                            '{BitConverter.ToInt64(Guid.Parse(items.DirectoryCode).ToByteArray(), 0)}',GETDATE(),0,'{param.UserId}',0,'{items.DirectoryCode}') ";
 
-                            }
-                            await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
                         }
-                        transaction.Commit();
+                        await _sqlConnection.ExecuteAsync(insertSql, null);
+                    }
 
-                    }
-                    catch (Exception e)
-                    {
-                        transaction.Rollback();
-                        throw new Exception(e.Message);
-                    }
+                    //IDbTransaction transaction = _sqlConnection.BeginTransaction();
+                    //try
+                    //{
+
+                    //    transaction.Commit();
+
+                    //}
+                    //catch (Exception e)
+                    //{
+                    //    transaction.Rollback();
+                    //    throw new Exception(e.Message);
+                    //}
                 }
                 _sqlConnection.Close();
 
