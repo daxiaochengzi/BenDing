@@ -2,25 +2,95 @@
     ViewBag.Title = "医保目录对码";
     Layout = "~/Views/Shared/_Base.cshtml";
 }
+<style>
+    .layui-card-header.layui-card-header-auto {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        height: auto;
+    }
 
+</style>
 <div class="demoTable">
-    搜索ID：
-    <div class="layui-inline">
-        <input class="layui-input" name="id" id="demoReload" autocomplete="off">
+    <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="search-iframe-content">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">目录类别</label>
+                <div class="layui-input-inline">
+                    <select name="ProjectCodeType">
+                        <option value="">请选择类别</option>
+                        <option value="1">药品</option>
+                        <option value="2">诊疗项目</option>
+                        <option value="3">服务设施</option>
+                        <option value="4">材料</option>
+                    </select>
+                    <div class="layui-unselect layui-form-select">
+                        <div class="layui-select-title">
+                            <input type="text" placeholder="请选择标签" value="" readonly="" class="layui-input layui-unselect">
+                            <i class="layui-edge"></i>
+                        </div>
+                        <dl class="layui-anim layui-anim-upbit">
+                            <dd lay-value="" class="layui-select-tips">请选择类别</dd>
+                            <dd lay-value="1" class="">药品</dd>
+                            <dd lay-value="2" class="">诊疗项目</dd>
+                            <dd lay-value="3" class="">服务设施</dd>
+                            <dd lay-value="4" class="">材料</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">目录编码</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="ProjectCode" name="ProjectCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">目录名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="ProjectName" name="ProjectName" value="@ViewBag.DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">助 记 码 </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="MnemonicCode" name="MnemonicCode" placeholder="请输入助记码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn" lay-submit="" lay-filter="search-iframe-content" data-type="reload">查询</button>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn" data-type="cleanSearch">清除</button>
+            </div>
+            <input type="hidden" id="empid" value="@ViewBag.empid" />
+            <input type="hidden" id="DirectoryCode" value="@ViewBag.DirectoryCode" />
+            <input type="hidden" id="DirectoryCategoryCode" value="@ViewBag.DirectoryCategoryCode" />
+            
+        </div>
     </div>
-    <button class="layui-btn" data-type="reload">搜索</button>
+
 </div>
 
-<table class="layui-hide" id="LAY_table_user" lay-filter="user"></table> 
+<table class="layui-hide" id="yibao-iframe-content-table" lay-filter="yibao-iframe-content-table"></table> 
 
 <script>
-    layui.use('table', function () {
-        var table = layui.table;
+    layui.use(['table','form'], function () {
+        var $ = layui.$
+            , table = layui.table
+            , form = layui.form;
+        form.render(null, 'search-iframe-content');
 
         //方法级渲染
         table.render({
-            elem: '#LAY_table_user'
+            elem: '#yibao-iframe-content-table'
             , url: '/BenDing/QueryProjectDownload' //数据接口
+            , where: {
+                UserId: $("#empid").val() //必传参数
+                , ProjectName: $("#ProjectName").val()
+                , ProjectCodeType: $("#ProjectCodeType").val()
+                , ProjectCode: $("#ProjectCode").val()
+                , MnemonicCode: $("#MnemonicCode").val()
+            }
             , parseData: function (res) { //res 即为原始返回的数据
                 return {
                     "code": res.Code, //解析接口状态
@@ -30,35 +100,110 @@
                 };
             }
             , cols: [[
-                { checkbox: true, fixed: true }
-                , { field: 'id', title: 'ID', width: 80, sort: true, fixed: true }
-                , { field: 'username', title: '用户名', width: 80 }
-                , { field: 'sex', title: '性别', width: 80, sort: true }
-                , { field: 'city', title: '城市', width: 80 }
-                , { field: 'sign', title: '签名' }
-                , { field: 'experience', title: '积分', sort: true, width: 80 }
-                , { field: 'score', title: '评分', sort: true, width: 80 }
-                , { field: 'classify', title: '职业', width: 80 }
-                , { field: 'wealth', title: '财富', sort: true, width: 135 }
+                { type: 'numbers', fixed: 'left' }
+                , { title: '对码', toolbar: '#tableCodeBtn', width: 100 ,align: 'center', fixed: true }
+                , { field: 'PairCodeId', title: '对码ID', hidden : true }
+                , { field: 'ProjectCode', title: '医保项目编码', width: 160, sort: true }
+                , { field: 'ProjectName', title: '医保项目名称', width: 160, sort: true }
+                , { field: 'MnemonicCode', title: '助记码', width: 300, sort: true }
+                , { field: 'ProjectCodeType', title: '医保类别', width: 100 }
+                , { field: 'ProjectLevel', title: '医保报销比例', width: 160 }
+                , { field: 'QuasiFontSize', title: '药品准字号', width: 100 }
+                , { field: 'Unit', title: '单位', width: 100 }
+                , { field: 'Specification', title: '规格', width: 100 }
+                , { field: 'Formulation', title: '剂型', width: 160 }
+                , { field: 'RestrictionSign', title: '限制用药标志', width: 100 }
+                , { field: 'Manufacturer', title: '生产厂家', width: 300, sort: true }
+                , { field: 'NewCodeMark', title: '新码标志', width: 100 }
+                , { field: 'LimitPaymentScope', title: '限制支付范围', width: 100 }
+                , { field: 'NewUpdateTime', title: '变更日期', width: 160 }
+                , { field: 'Remark', title: '医保备注', width: 100 }
             ]]
-            , id: 'testReload'
+            , height: $(window).height() - 128
+            , id: 'iframe-content-list'
             , page: true
-            , height: 310
         });
 
+        //监听搜索
+        form.on('submit(search-iframe-content)', function (data) {
+            var field = data.field;
+            //执行重载
+            table.reload('yibao-iframe-content-table', {
+                where: field
+            });
+        });
+
+        //监听工具条
+        table.on('tool(yibao-iframe-content-table)', function (obj) {
+            var data = obj.data;
+            var UserId = $("#empid").val();
+            //获取HIS编码DirectoryCode            
+            var DirectoryCode = $("#DirectoryCode").val();
+            //医院目录类别
+            var DirectoryCategoryCode = $("#DirectoryCategoryCode").val();
+            //医保编码
+            var ProjectCode = data.ProjectCode;
+            //已对码ID
+            var PairCodeId = ""
+            if (data.PairCodeId !== undefined)
+            {
+                PairCodeId = data.PairCodeId;
+            }
+            var MedicalInsurancePairCodeUiParam = {
+                DirectoryCode: DirectoryCode,
+                DirectoryCategoryCode: DirectoryCategoryCode,
+                ProjectCode: ProjectCode,
+                PairCodeId: PairCodeId
+            };
+            var PairCodeList = []; //对码数据
+            PairCodeList.push(MedicalInsurancePairCodeUiParam);
+            var sendData = { "PairCodeList": PairCodeList, "UserId": UserId };
+            if (obj.event === 'pairCodeTo') {
+                $.ajax({
+                    url: '/BenDing/MedicalInsurancePairCode',
+                    type: 'post',
+                    data: sendData,
+                    dataType: "json",
+                    success: function (data) {
+
+                        console.log(data);
+
+                        //if (data.status == 'error') {
+                        //    layer.msg(data.msg, { icon: 5 });//失败的表情
+                        //    return;
+                        //} else {
+                        //    layer.msg(data.msg, {
+                        //        icon: 6,//成功的表情
+                        //        time: 100000 //1秒关闭（如果不配置，默认是3秒）
+                        //    }, function () {
+                        //        location.reload();
+                        //    });
+                        //}
+                    },
+                    complete: function () {
+                        layer.close(this.layerIndex);
+                    },
+                });
+            } else {
+                layer.msg('数据不一致，请查证！');
+            }
+            return false;
+        });
+
+        
         var $ = layui.$, active = {
             reload: function () {
-                var demoReload = $('#demoReload');
-
                 //执行重载
-                table.reload('testReload', {
+                table.reload('iframe-content-list', {
                     page: {
                         curr: 1 //重新从第 1 页开始
                     }
                     , where: {
-                        key: {
-                            id: demoReload.val()
-                        }
+                        UserId: $("#empid").val() //必传参数
+                        , ProjectName: $("#ProjectName").val()
+                        , ProjectCodeType: $("#ProjectCodeType").val()
+                        , ProjectCode: $("#ProjectCode").val()
+                        , MnemonicCode: $("#MnemonicCode").val()
                     }
                 }, 'data');
             }
@@ -66,7 +211,13 @@
 
         $('.demoTable .layui-btn').on('click', function () {
             var type = $(this).data('type');
+            layer.msg(type);
             active[type] ? active[type].call(this) : '';
         });
     });
+</script>
+
+
+<script type="text/html" id="tableCodeBtn">
+    <a class="layui-btn layui-btn-xs" lay-event="pairCodeTo"><i class="layui-icon layui-icon-add-1"></i></a>
 </script>
