@@ -14,7 +14,7 @@ namespace BenDing.Domain.Models.Params.UI
        /// </summary>
 
        public List<MedicalInsurancePairCodeUiParam> PairCodeList { get; set; } = null;
-       public List<string> StringList { get; set; } = null;
+    
         /// <summary>
         /// 用户id
         /// </summary>

@@ -546,7 +546,7 @@ namespace NFine.Web.Controllers
                     y.Data = param;
                 }
             });
-            return Json(resultData,JsonRequestBehavior.AllowGet);
+            return Json(resultData);
         }
         /// <summary>
         ///对照目录中心管理 
@@ -558,12 +558,9 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-
                 var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 param.OrganizationCode = verificationCode.OrganizationCode;
-
                 var queryData = await _dataBaseSqlServerService.DirectoryComparisonManagement(param);
-             
                 var data = new
                 {
                     data = queryData.Values.FirstOrDefault(),
