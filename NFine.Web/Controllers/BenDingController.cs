@@ -436,7 +436,6 @@ namespace NFine.Web.Controllers
 
           }), JsonRequestBehavior.AllowGet);
         }
-      
         /// <summary>
         /// 医保信息回写至基层系统
         /// </summary>
@@ -491,9 +490,7 @@ namespace NFine.Web.Controllers
                 var queryData = await _baseHelpRepository.QueryCatalog(param);
                 var data = new
                 {
-
                     data = queryData.Values.FirstOrDefault(),
-            
                     count = queryData.Keys.FirstOrDefault()
                 };
                 y.Data = data;
@@ -511,7 +508,6 @@ namespace NFine.Web.Controllers
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> QueryProjectDownload(QueryProjectUiParam param)
         {
-
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
                 var queryData = await _baseHelpRepository.QueryProjectDownload(param);
@@ -732,15 +728,15 @@ namespace NFine.Web.Controllers
         /// 处方上传
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> PrescriptionUpload(PrescriptionUploadUiParam param)
+        [System.Web.Mvc.HttpPost]
+        public async Task<ActionResult> PrescriptionUpload([FromBody]PrescriptionUploadUiParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
                 var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 await _residentMedicalInsurance.PrescriptionUpload(param, userBase);
             });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+            return Json(resultData);
         }
         /// <summary>
         /// 医保连接

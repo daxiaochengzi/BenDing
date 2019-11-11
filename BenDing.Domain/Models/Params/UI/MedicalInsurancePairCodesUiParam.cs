@@ -9,8 +9,10 @@ namespace BenDing.Domain.Models.Params.UI
 {
    public class MedicalInsurancePairCodesUiParam
     {/// <summary>
-    /// 对码数据
-    /// </summary>
+     /// 对码数据
+     /// </summary>
+        [Display(Name = "对码数据")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
         public List<MedicalInsurancePairCodeUiParam> PairCodeList { get; set; }
         /// <summary>
         /// 用户id
