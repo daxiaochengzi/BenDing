@@ -530,7 +530,7 @@ namespace NFine.Web.Controllers
         [System.Web.Mvc.HttpPost]
         public async Task<ActionResult> MedicalInsurancePairCode([FromBody]MedicalInsurancePairCodesUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
                 if (param.PairCodeList == null)
                 {
@@ -542,7 +542,8 @@ namespace NFine.Web.Controllers
                 {
                     param.OrganizationCode = userBase.OrganizationCode;
                     param.OrganizationName = userBase.OrganizationName;
-                    await _dataBaseSqlServerService.MedicalInsurancePairCode(param);
+                    //await _dataBaseSqlServerService.MedicalInsurancePairCode(param);
+                    y.Data = param;
                 }
             });
             return Json(resultData,JsonRequestBehavior.AllowGet);
@@ -581,8 +582,9 @@ namespace NFine.Web.Controllers
         public ActionResult MedicalDirectoryPairCode(MedicalDirectoryCodePairUiParam param)
         {
             //参数可查询医保中心目录
-            ViewBag.ProjectName = param.ProjectName;
-            ViewBag.ProjectCode = param.ProjectCode;
+            ViewBag.DirectoryName = param.ProjectName;
+            ViewBag.DirectoryCode = param.ProjectCode;
+            ViewBag.DirectoryCategoryCode = param.ProjectCodeType;
             ViewBag.empid = param.UserId;
             return View();
         }

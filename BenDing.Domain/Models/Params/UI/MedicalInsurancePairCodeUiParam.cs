@@ -10,7 +10,7 @@ namespace BenDing.Domain.Models.Params.UI
 {
    public class MedicalInsurancePairCodeUiParam
     {
-       
+
         /// <summary>
         /// 目录类型
         /// </summary>

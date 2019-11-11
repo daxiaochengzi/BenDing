@@ -142,7 +142,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label-nw">目录类别</label>
                         <div class="layui-input-inline">
-                            <select name="DirectoryCategoryCode">
+                            <select id="DirectoryCategoryCode" name="DirectoryCategoryCode">
                                 <option value="">请选择类别</option>
                                 <option value="1">中药</option>
                                 <option value="2">西药</option>
@@ -181,9 +181,8 @@
                         <div class="layui-input-inline">
                             <select name="State">
                                 <option value="">请选择状态</option>
-                                <option value="0">未对照</option>
-                                <option value="1">待上传</option>
-                                <option value="2">已对照</option>
+                                <option value="1">未对码</option>
+                                <option value="2">已对码</option>
                             </select>
                             <div class="layui-unselect layui-form-select">
                                 <div class="layui-select-title">
@@ -192,9 +191,8 @@
                                 </div>
                                 <dl class="layui-anim layui-anim-upbit">
                                     <dd lay-value="" class="layui-select-tips">请选择状态</dd>
-                                    <dd lay-value="0" class="">未对照</dd>
-                                    <dd lay-value="1" class="">待上传</dd>
-                                    <dd lay-value="2" class="">已对照</dd>
+                                    <dd lay-value="1" class="">未对码</dd>
+                                    <dd lay-value="2" class="">已对码</dd>
                                 </dl>
                             </div>
                         </div>
@@ -360,14 +358,18 @@
             table.on('tool(LAY-pair-content-list)', function (obj) {
                 var data = obj.data;
                 if (obj.event === 'pairCode') {
-                    var ProjectName = data.DirectoryName;
-                    var ProjectCode = data.DirectoryCode;
-                    var params = "?UserId=" + $("#empid").val() + "&ProjectName=" + ProjectName +"&ProjectCode=" + ProjectCode;
-                    console.log(data)
+                    var DirectoryName = data.DirectoryName;
+                    var DirectoryCode = data.DirectoryCode;
+                    var DirectoryCategoryCode = $("#DirectoryCategoryCode").val();
+                    var params = "?UserId=" + $("#empid").val() + "&ProjectName=" + DirectoryName
+                        + "&ProjectCode=" + DirectoryCode + "&ProjectCodeType=" + DirectoryCategoryCode;
                     //iframe层-父子操作
                     layer.open({
+                        id:'medicalDirectoryPairCode',
                         type: 2,
-                        area: ['1200px', '600px'],
+                        title: '对码信息',
+                        shadeClose: true, //点击遮罩关闭层
+                        area: ['1200px', '660px'],
                         fixed: false, //不固定
                         maxmin: false,
                         content: '/BenDing/MedicalDirectoryPairCode' + params
@@ -382,6 +384,13 @@
                     layer.alert('编辑行：<br>' + JSON.stringify(data))
                 }
             });
+
+            table.on('row(LAY-pair-content-list)', function (obj) {
+                //获取当前行的所有兄弟姐妹元素，把他们的background-color样式清除，然后再给当前行设置颜色。
+                $(obj.tr).siblings().css("background-color", "");
+                obj.tr.css("background-color", "#FFFFCC");
+            });
+
 
             $('.layui-btn.layui-btn-list').on('click', function () {
                 var type = $(this).data('type');
