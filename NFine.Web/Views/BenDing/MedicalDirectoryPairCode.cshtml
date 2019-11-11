@@ -157,7 +157,7 @@
             };
             var PairCodeList = []; //对码数据
             PairCodeList.push(MedicalInsurancePairCodeUiParam);
-            var sendData = { "PairCodeList": PairCodeList, "UserId": UserId };
+            var sendData = { PairCodeList: PairCodeList, UserId:UserId };
             if (obj.event === 'pairCodeTo') {
                 $.ajax({
                     url: '/BenDing/MedicalInsurancePairCode',
