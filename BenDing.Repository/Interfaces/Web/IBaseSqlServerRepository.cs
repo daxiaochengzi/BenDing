@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 
@@ -56,7 +57,13 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         Task MedicalInsurancePairCode(MedicalInsurancePairCodesUiParam param);
-
+        /// <summary>
+        /// 医保对码查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+       Task<List<QueryMedicalInsurancePairCodeDto>> QueryMedicalInsurancePairCode(
+            QueryMedicalInsurancePairCodeParam param);
         /// <summary>
         /// 目录对照管理
         /// </summary>

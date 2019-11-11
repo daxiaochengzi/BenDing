@@ -37,5 +37,16 @@ namespace BenDing.Domain.Xml
             }
             return decode;
         }
+        /// <summary>
+        /// 根据GUID获取19位的唯一数字序列  
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static string GuidToStr(string param)
+        {
+          return  BitConverter.ToInt64(Guid.Parse(param).ToByteArray(), 0).ToString();
+        }
+
+       
     }
 }

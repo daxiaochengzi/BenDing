@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
+using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Repository.Interfaces.Web;
@@ -163,23 +164,30 @@ namespace BenDing.Repository.Providers.Web
                 if (param.IdList != null && param.IdList.Any())
                 {
                     var idlist = ListToStr(param.IdList);
-                    strSql += $@" and Id in('{idlist}')";
+                    strSql += $@" and Id in({idlist})";
                 }
-                if (!string.IsNullOrWhiteSpace(param.HospitalizationNumber))
+                else
                 {
-                    strSql += $@" and HospitalizationNo ='{param.HospitalizationNumber}'";
+                    if (!string.IsNullOrWhiteSpace(param.BusinessId))
+                    {
+                        strSql += $@" and HospitalizationNo ='select top 1 HospitalizationNo from [dbo].[Inpatient] where BusinessId='{param.BusinessId}' and IsDelete=0'";
+                    }
+                    else
+                    {
+                         throw  new Exception("业务号不能为空!!!");
+                    }
                 }
+                
 
                 var data = await _sqlConnection.QueryAsync<QueryInpatientInfoDetailDto>(strSql);
                 _sqlConnection.Close();
                 if (data != null && data.Count() > 0)
                 {
-                    data = data.ToList();
+                    resultData = data.ToList();
                 }
                 return resultData;
             }
         }
-
         /// <summary>
         /// 单病种下载
         /// </summary>
@@ -280,6 +288,38 @@ namespace BenDing.Repository.Providers.Web
                 }
                 _sqlConnection.Close();
 
+            }
+        }
+        /// <summary>
+        /// 医保对码查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<List<QueryMedicalInsurancePairCodeDto>> QueryMedicalInsurancePairCode(QueryMedicalInsurancePairCodeParam param)
+        {
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+                var resultData = new List<QueryMedicalInsurancePairCodeDto>();
+                _sqlConnection.Open();
+
+                if (param.DirectoryCodeList.Any())
+                {
+                    var updateId = ListToStr(param.DirectoryCodeList);
+                    string sqlStr = $@"
+                            select a.FixedEncoding,a.DirectoryCode,b.ProjectCode,b.ProjectCodeType,
+                            b.ProjectName,b.ProjectLevel,b.Formulation,b.Specification,b.Unit,
+                            b.OneBlock,b.TwoBlock,b.ThreeBlock,b.FourBlock
+                            from [dbo].[ThreeCataloguePairCode] as   a
+                            inner join [dbo].[MedicalInsuranceProject] as b on b.ProjectCode=a.ProjectCode
+                            where a.OrganizationCode='{param.OrganizationCode}' and a.[DirectoryCode] in({updateId}) and a.IsDelete=0  and b.IsDelete=0";
+                  var data=  await _sqlConnection.QueryAsync<QueryMedicalInsurancePairCodeDto>(sqlStr);
+                    if (data != null && data.Any() == true)
+                    {
+                        resultData = data.ToList();
+                    }
+                }
+                _sqlConnection.Close();
+                return resultData;
             }
         }
         /// <summary>

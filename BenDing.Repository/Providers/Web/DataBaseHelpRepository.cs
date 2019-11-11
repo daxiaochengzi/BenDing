@@ -990,6 +990,12 @@ namespace BenDing.Repository.Providers.Web
                 return result;
             }
         }
+        /// <summary>
+        /// 获取更新最新时间
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public async Task<Int32> ProjectDownloadTimeMax(UserInfoDto user, List<ResidentProjectDownloadRowDataRowDto> param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))

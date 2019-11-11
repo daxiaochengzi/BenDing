@@ -10,8 +10,8 @@ namespace BenDing.Domain.Models.Params.Web
     /// </summary>
         public List<string> IdList { get; set; } 
         /// <summary>
-        /// 住院号
+        /// 业务号
         /// </summary>
-        public string HospitalizationNumber { get; set; }
+        public string BusinessId { get; set; }
     }
 }
