@@ -301,7 +301,7 @@ namespace BenDing.Repository.Providers.Web
                 {
                     whereSql = $@" where not exists(select b.FixedEncoding from  [dbo].[ThreeCataloguePairCode] as b 
                                 where b.OrganizationCode='{param.OrganizationCode}' and b.FixedEncoding=a.FixedEncoding and b.IsDelete=0 )";
-                    querySql = @"select a.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
+                    querySql = @"select  a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
                                 a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding
                                  from [dbo].[HospitalThreeCatalogue]  as a ";
                     countSql = @"select COUNT(*) from[dbo].[HospitalThreeCatalogue] as a ";
@@ -392,7 +392,6 @@ namespace BenDing.Repository.Providers.Web
                                 }).ToList();
                 resultData.Add(totalPageCount, dataList);
                 _sqlConnection.Close();
-
                 return resultData;
 
             }
