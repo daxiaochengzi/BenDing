@@ -160,10 +160,6 @@ namespace BenDing.Domain.Xml
         {
             // var strXml = ToXml(t);
             var strXmls = XmlSerializeHelper.XmlSerialize(t);
-
-
-
-
             bool result = false;
             if (string.IsNullOrWhiteSpace(strXmls))
             {
@@ -256,13 +252,14 @@ namespace BenDing.Domain.Xml
                 // return null;
             }
         }
-        // <summary>
-        // 实体转换为model
-        // </summary>
-        // <typeparam name = "T" ></ typeparam >
-        // < param name="t"></param>
-        // <returns></returns>
-        public static T DeSerializerModel<T>(T t)
+        /// <summary>
+        /// 实体转换为model
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="IsAbnormal"></param>
+        /// <returns></returns>
+        public static T DeSerializerModel<T>(T t,bool IsAbnormal)
         {
             var result = t;
             string pathXml = null;
@@ -274,19 +271,19 @@ namespace BenDing.Domain.Xml
             valid.PO_FHZ = po_fhzNode.InnerText;
             XmlNode po_msgNode = doc.SelectSingleNode("/ROW/PO_MSG");
             valid.PO_MSG = po_msgNode.InnerText;
-            if (valid.PO_FHZ == "1")
+            if (IsAbnormal == false)
             {
-                string jsonText = JsonConvert.SerializeXmlNode(doc);
-                var resultData = JsonConvert.DeserializeObject<ResultData>(jsonText);
-                if (resultData?.Row != null && resultData.Row.ToString() != "")
+                if (valid.PO_FHZ != "1")
                 {
-                    var jsonStr = JsonConvert.SerializeObject(resultData.Row);
-                    result = JsonConvert.DeserializeObject<T>(jsonStr);
+                    throw new SystemException(valid.PO_MSG);
                 }
             }
-            else
+            string jsonText = JsonConvert.SerializeXmlNode(doc);
+            var resultData = JsonConvert.DeserializeObject<ResultData>(jsonText);
+            if (resultData?.Row != null && resultData.Row.ToString() != "")
             {
-                throw new SystemException(valid.PO_MSG);
+                var jsonStr = JsonConvert.SerializeObject(resultData.Row);
+                result = JsonConvert.DeserializeObject<T>(jsonStr);
             }
 
             return result;

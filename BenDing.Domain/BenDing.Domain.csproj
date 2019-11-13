@@ -48,11 +48,13 @@
     <Compile Include="Models\Dto\Base\PaginationDto.cs" />
     <Compile Include="Models\Dto\Base\PaginationUserDto.cs" />
     <Compile Include="Models\Dto\Resident\DirectoryComparisonManagementDto.cs" />
+    <Compile Include="Models\Dto\Resident\PrescriptionUploadDto.cs" />
     <Compile Include="Models\Dto\Resident\QueryMedicalInsurancePairCodeDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentHospitalizationRegisterDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentProjectDownloadDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentProjectDownloadRow.cs" />
     <Compile Include="Models\Dto\Resident\ResidentUserInfoDto.cs" />
+    <Compile Include="Models\Dto\Resident\RetrunPrescriptionUploadDto.cs" />
     <Compile Include="Models\Dto\Web\AddHospitalOperatorParam.cs" />
     <Compile Include="Models\Dto\Web\HospitalThreeCatalogueCodeDto.cs" />
     <Compile Include="Models\Dto\Web\QueryCatalogDto.cs" />
@@ -68,6 +70,7 @@
     <Compile Include="Models\Enums\ProjectCodeType.cs" />
     <Compile Include="Models\Enums\ProjectLevel.cs" />
     <Compile Include="Models\Params\Base\BaseUiIniParam.cs" />
+    <Compile Include="Models\Params\Resident\AddProjectBatchParam.cs" />
     <Compile Include="Models\Params\Resident\HospitalizationModifyParam.cs" />
     <Compile Include="Models\Params\Resident\PrescriptionUploadParam.cs" />
     <Compile Include="Models\Params\Resident\QueryMedicalInsurancePairCodeParam.cs" />
@@ -146,6 +149,7 @@
     <Compile Include="Models\Params\Web\SaveXmlData.cs" />
     <Compile Include="Models\Params\Web\SingleResidentInfQueryUiParam.cs" />
     <Compile Include="Models\Params\Web\UiCatalogParam.cs" />
+    <Compile Include="Models\Params\Web\UpdateHospitalizationFeeParam.cs" />
     <Compile Include="Models\Params\Web\UpdateMedicalInsuranceResidentInfoParam.cs" />
     <Compile Include="Models\Params\Web\UserInfoParam.cs" />
     <Compile Include="Models\Params\Web\XmlData.cs" />

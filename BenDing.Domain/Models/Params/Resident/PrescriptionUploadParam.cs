@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace BenDing.Domain.Models.Params.Resident
@@ -165,5 +166,10 @@ namespace BenDing.Domain.Models.Params.Resident
         /// </summary>
         [XmlElementAttribute("AKC586", IsNullable = false)]
         public string LimitApprovalRemark { get; set; }
+        /// <summary>
+        /// id
+        /// </summary>
+        [XmlIgnore]
+        public  Guid  Id { get; set; }
     }
 }

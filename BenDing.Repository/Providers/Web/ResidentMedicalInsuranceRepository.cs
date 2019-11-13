@@ -41,13 +41,7 @@ namespace BenDing.Repository.Providers.Web
                 var userInfo = await _iSystemManageRepository.QueryHospitalOperator(param);
 
                 var result = MedicalInsuranceDll.ConnectAppServer_cxjb(userInfo.MedicalInsuranceAccount, userInfo.MedicalInsurancePwd);
-
-                if (result == 1)
-                {
-                    var data = XmlHelp.DeSerializerModel(new IniDto());
-
-                }
-
+                var data = XmlHelp.DeSerializerModel(new IniDto(), true);
             });
         }
         /// <summary>
@@ -64,15 +58,7 @@ namespace BenDing.Repository.Providers.Web
                 if (xmlStr)
                 {
                     int result = MedicalInsuranceDll.CallService_cxjb("CXJB001");
-                    if (result == 1)
-                    {
-                        data = XmlHelp.DeSerializerModel(new ResidentUserInfoDto());
-
-                    }
-                    else
-                    {
-                        throw new Exception("居民个人基础资料执行失败!!!");
-                    }
+                    data = XmlHelp.DeSerializerModel(new ResidentUserInfoDto(), true);
 
                 }
 
@@ -109,7 +95,7 @@ namespace BenDing.Repository.Providers.Web
                     int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
                     if (result == 1)
                     {
-                        var data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto());
+                        var data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto(), true);
                         saveData.MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo;
                         saveData.MedicalInsuranceYearBalance = Convert.ToDecimal(data.MedicalInsuranceYearBalance);
                         //更新医保信息
@@ -127,17 +113,15 @@ namespace BenDing.Repository.Providers.Web
                         saveXmlData.UserId = user.UserId;
                         //存基层
                         await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), param.UserId);
-                       //存中间库
+                        //存中间库
                         await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
                     }
                     else
                     {
-                        throw new Exception("居民入院登记执行失败!!!");
+                        XmlHelp.DeSerializerModel(new IniDto(), true);
                     }
 
                 }
-
-
             });
 
         }
@@ -243,7 +227,7 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<bool> PrescriptionUpload(PrescriptionUploadUiParam param, UserInfoDto user)
+        public async Task<RetrunPrescriptionUploadDto> PrescriptionUpload(PrescriptionUploadUiParam param, UserInfoDto user)
         {
             return await Task.Run(async () =>
             {
@@ -255,12 +239,12 @@ namespace BenDing.Repository.Providers.Web
                 //4.1.2 获取医院等级判断金额是否符合要求
                 //4.1.3 数据上传
                 //4.1.3.1 数据上传失败,数据回写到日志
-                //4.1.3.2 数据上传成功,数据回写至基层
+                //4.1.3.2 数据上传成功,保存批次号，数据回写至基层
                 //4.2   单个病人整体上传
                 //4.2.2 获取医院等级判断金额是否符合要求
                 //4.2.3 数据上传
                 //4.2.3.1 数据上传失败,数据回写到日志
-                var resultData = true;
+                var resultData = new RetrunPrescriptionUploadDto();
 
                 //1.判断是id上传还是单个用户上传
                 if (param.DataIdList != null && param.DataIdList.Any())
@@ -277,20 +261,97 @@ namespace BenDing.Repository.Providers.Web
                             OrganizationCode = user.OrganizationCode,
                         };
                         //获取医保对码数据
-                        var queryPairCode = await _baseSqlServerRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
+                        var queryPairCode =
+                            await _baseSqlServerRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
                         //处方上传数据金额验证
-                        var validData = await PrescriptionDataUnitPriceValidation(queryData,queryPairCode,user);
-
+                        var validData = await PrescriptionDataUnitPriceValidation(queryData, queryPairCode, user);
                         var validDataList = validData.Values.FirstOrDefault();
                         //错误提示信息
                         var validDataMsg = validData.Keys.FirstOrDefault();
+                        if (!string.IsNullOrWhiteSpace(validDataMsg))
+                        {
+                            resultData.Msg += validDataMsg;
+                        }
                         //获取处方上传入参
-                        await GetPrescriptionUploadParam(validDataList, queryPairCode, user, param.InsuranceType);
+                        var paramIni = await GetPrescriptionUploadParam(validDataList, queryPairCode, user, param.InsuranceType);
+                        int num = paramIni.RowDataList.Count;
+                        int a = 0;
+                        var count = Convert.ToInt32(num / 50) + ((num % 50) > 0 ? 1 : 0);
+                        var idList = new List<Guid>();
+                        while (a < count)
+                        {//排除已上传数据
+                            var rowDataListAll = paramIni.RowDataList.Where(d => idList.Contains(d.Id)).OrderBy(c => c).ToList();
+                            var sendList = rowDataListAll.Take(50).ToList();
+                            var uploadData = await PrescriptionUploadData(paramIni, param.BusinessId, user);
+                            if (uploadData.Code != "1")
+                            {
+                                resultData.Msg += uploadData.Msg;
+                            }
+                            else
+                            {
+                                var sendIdList = sendList.Select(s => s.Id).ToList();
+                                //更新数据上传状态
+                                await _baseSqlServerRepository.UpdateHospitalizationFee(
+                                    new UpdateHospitalizationFeeParam() {IdList = sendIdList});
+                                idList.AddRange(sendIdList);
+                                //获取总行数
+                                resultData.Num += sendList.Count();
+                            }
+                        }
+
                     }
                 }
-             
-                //var xmlStr = XmlHelp.SaveXml(inIParam);
+
+
                 return resultData;
+            });
+        }
+        /// <summary>
+        /// 处方数据上传
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        private async Task<PrescriptionUploadDto> PrescriptionUploadData(PrescriptionUploadParam param, string businessId, UserInfoDto user)
+        {
+            return await Task.Run(async () =>
+            {
+
+                var data = new PrescriptionUploadDto();
+
+                var xmlStr = XmlHelp.SaveXml(param);
+                if (xmlStr)
+                {
+                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB004");
+                    data = XmlHelp.DeSerializerModel(new PrescriptionUploadDto(), false);
+                    if (data.Msg == "1")
+                    {   //添加批次
+                        var projectBatchParam = new AddProjectBatchParam()
+                        {
+                            BatchNumber = data.ProjectBatch,
+                            BusinessId = businessId,
+                            UserId = user.UserId,
+                            Id = Guid.NewGuid()
+                        };
+                        await _baseSqlServerRepository.AddProjectBatch(projectBatchParam);
+                        //保存至基层
+                        var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(xmlStr);
+                        var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
+                        var saveXmlData = new SaveXmlData();
+                        saveXmlData.OrganizationCode = user.OrganizationCode;
+                        saveXmlData.AuthCode = user.AuthCode;
+                        saveXmlData.BusinessId = businessId;
+                        saveXmlData.TransactionId = projectBatchParam.Id.ToString("N");
+                        saveXmlData.MedicalInsuranceBackNum = "CXJB004";
+                        saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
+                        saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                        saveXmlData.MedicalInsuranceCode = "31";
+                        saveXmlData.UserId = user.UserId;
+                        await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), user.UserId);
+                    }
+
+                }
+
+                return data;
             });
         }
         /// <summary>
@@ -298,18 +359,18 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <returns></returns>
         private async Task<PrescriptionUploadParam> GetPrescriptionUploadParam(List<QueryInpatientInfoDetailDto> param,
-            List<QueryMedicalInsurancePairCodeDto> pairCodeList, UserInfoDto user,string insuranceType)
+            List<QueryMedicalInsurancePairCodeDto> pairCodeList, UserInfoDto user, string insuranceType)
         {
             return await Task.Run(async () =>
             {
                 var resultData = new PrescriptionUploadParam();
                 resultData.MedicalInsuranceHospitalizationNo = param.FirstOrDefault()?.HospitalizationNo.ToString();
                 resultData.Operators = CommonHelp.GuidToStr(user.UserId);
-                var rowDataList=new List<PrescriptionUploadRowParam>(); 
+                var rowDataList = new List<PrescriptionUploadRowParam>();
                 foreach (var item in param)
                 {
                     var pairCodeData = pairCodeList.FirstOrDefault(c => c.DirectoryCode == item.CostItemCode);
-                  
+
                     if (pairCodeData != null)
                     {
                         string residentSelfPayProportion = "";
@@ -341,14 +402,15 @@ namespace BenDing.Repository.Providers.Web
                             Amount = item.Amount,
                             ResidentSelfPayProportion = residentSelfPayProportion,//自付金额计算
                             Formulation = pairCodeData.Formulation,
-                            Dosage= item.Dosage,
-                            UseFrequency="0",
+                            Dosage = item.Dosage,
+                            UseFrequency = "0",
                             Usage = item.Usage,
                             Specification = item.Specification,
                             Unit = item.Unit,
                             UseDays = "0",
                             Remark = "",
                             DoctorJobNumber = item.BillDoctorIdFixedEncoding,
+                            Id = item.Id
                         };
                         //是否现在使用药品
                         if (pairCodeData.RestrictionSign == "1")
@@ -362,14 +424,12 @@ namespace BenDing.Repository.Providers.Web
                         rowDataList.Add(rowData);
                     }
 
-                    
+
                 }
-               
                 resultData.RowDataList = rowDataList;
                 return resultData;
             });
         }
-
         ///  <summary>
         /// 处方上传数据金额验证
         ///  </summary>
@@ -398,14 +458,13 @@ namespace BenDing.Repository.Providers.Web
                     {
                         queryAmount = queryData.FourBlock;
                     }
-
                     if (Convert.ToDecimal(item.Amount) < queryAmount)
                     {
                         dataList.Add(item);
                     }
                     else
                     {
-                        msg += item.CostItemName+",";
+                        msg += item.CostItemName + ",";
                     }
 
                 }

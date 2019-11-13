@@ -24,7 +24,7 @@ namespace BenDing.Repository.Providers.Web
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="conStr"></param> 
+        /// <param name="conStr"></param>   
         public DataBaseHelpRepository()
         {
             string conStr = ConfigurationManager.ConnectionStrings["NFineDbContext"].ToString();

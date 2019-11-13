@@ -153,6 +153,11 @@ namespace BenDing.Repository.Providers.Web
                 return data;
             }
         }
+       /// <summary>
+       /// 住院病人明细查询
+       /// </summary>
+       /// <param name="param"></param>
+       /// <returns></returns>
         public async Task<List<QueryInpatientInfoDetailDto>> InpatientInfoDetailQuery(InpatientInfoDetailQueryParam param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
@@ -216,23 +221,7 @@ namespace BenDing.Repository.Providers.Web
                 return result;
             }
         }
-        public async Task<SingleResidentInfoDto> SingleResidentInfoQuery(SingleResidentInfQueryUiParam param)
-        {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-
-            {
-                var resultData = new SingleResidentInfoDto();
-                _sqlConnection.Open();
-                string strSql = $@" select top 1
-                       [Id],[SpecialDiseasesCode],[Name],[ProjectCode]
-                       from [dbo].[SingleResidentInfo]
-                       where IsDelete=0 and SpecialDiseasesCode='{param.SpecialDiseasesCode}'";
-                var data = await _sqlConnection.QueryFirstOrDefaultAsync<SingleResidentInfoDto>(strSql);
-                _sqlConnection.Close();
-                return data != null ? data : resultData;
-            }
-        }
-       
+     
         /// <summary>
         /// 医保对码
         /// </summary>
@@ -438,7 +427,11 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
-
+        /// <summary>
+        /// 三大目录查询
+        /// </summary>
+        /// <param name="organizationCode"></param>
+        /// <returns></returns>
         public async Task<List<QueryThreeCataloguePairCodeUploadDto>> ThreeCataloguePairCodeUpload(string organizationCode)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
@@ -482,7 +475,51 @@ namespace BenDing.Repository.Providers.Web
 
             return resultData;
         }
+        /// <summary>
+        /// 添加批次号
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<int> AddProjectBatch(AddProjectBatchParam param)
+        {
+            int resultData = 0;
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
 
+                _sqlConnection.Open();
+                string querySql = $@"insert into [dbo].[ProjectBatch](Id,BusinessId,CreateTime,CreateUserId)
+                                values('{param.Id}','{param.BusinessId}',getdate(),'{param.UserId}')";
+                resultData = await _sqlConnection.ExecuteAsync(querySql);
+
+                _sqlConnection.Close();
+
+            }
+
+            return resultData;
+        }
+        /// <summary>
+        /// 处方上传数据更新
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<int> UpdateHospitalizationFee(UpdateHospitalizationFeeParam param)
+        {
+            int resultData = 0;
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+
+                _sqlConnection.Open();
+                var updateId = ListToStr(param.IdList.Select(c=>c.ToString()).ToList());
+                string querySql = $@"update  [dbo].[HospitalizationFee] set [UploadMark]=1 where id in({updateId}) and Isdelete=0)";
+                resultData = await _sqlConnection.ExecuteAsync(querySql);
+
+                _sqlConnection.Close();
+
+            }
+
+            return resultData;
+        }
+        
         private string ListToStr(List<string> param)
         {
             string result = null;
