@@ -42,11 +42,10 @@ namespace BenDing.Repository.Providers.Web
 
                 var result = MedicalInsuranceDll.ConnectAppServer_cxjb(userInfo.MedicalInsuranceAccount, userInfo.MedicalInsurancePwd);
 
-                if (result == 1)
-                {
+               
                     var data = XmlHelp.DeSerializerModel(new IniDto());
 
-                }
+               
 
             });
         }
@@ -71,7 +70,7 @@ namespace BenDing.Repository.Providers.Web
                     }
                     else
                     {
-                        throw new Exception("居民个人基础资料执行失败!!!");
+                        data = XmlHelp.DeSerializerModel(new ResidentUserInfoDto());
                     }
 
                 }

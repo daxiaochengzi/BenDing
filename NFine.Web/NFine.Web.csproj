@@ -297,9 +297,10 @@
     <Content Include="Content\js\highcharts\themes\gray.js" />
     <Content Include="Content\js\highcharts\themes\grid.js" />
     <Content Include="Content\js\highcharts\themes\skies.js" />
-    <Content Include="Content\js\html5shiv\html5shiv-printshiv.min.js" />
-    <Content Include="Content\js\html5shiv\html5shiv.min.js" />
-    <Content Include="Content\js\html5shiv\placeholders.min.js" />
+    <Content Include="Content\js\html5\html5shiv-printshiv.min.js" />
+    <Content Include="Content\js\html5\html5shiv.min.js" />
+    <Content Include="Content\js\html5\placeholders.min.js" />
+    <Content Include="Content\js\html5\respond.min.js" />
     <Content Include="Content\js\index.js" />
     <Content Include="Content\js\indextab.js" />
     <Content Include="Content\js\framework-ui.js" />
@@ -425,6 +426,7 @@
     <Content Include="Content\js\layui\lay\modules\tree.js" />
     <Content Include="Content\js\layui\lay\modules\upload.js" />
     <Content Include="Content\js\layui\lay\modules\util.js" />
+    <Content Include="Content\js\layui\plugin\contlist.js" />
     <Content Include="Content\js\loading\pace.min.js" />
     <Content Include="Content\js\md5\jquery.md5.js" />
     <Content Include="Content\js\qrcode\jquery.qrcode.js" />
@@ -792,6 +794,7 @@
     <Content Include="Views\Insurance\MedicalDirectoryCode.cshtml" />
     <Content Include="Views\BenDing\MedicalDirectoryPairCode.cshtml" />
     <Content Include="Views\Shared\_Base.cshtml" />
+    <Content Include="Views\Insurance\AdmissionRegistration - 复制.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

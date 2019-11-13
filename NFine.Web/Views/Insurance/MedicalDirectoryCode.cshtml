@@ -214,14 +214,15 @@
 </div>
 
 <script>
-
-    $(function () {
-        layui.use('element').use(['table'], function () {
+    (function () {
+        layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate'], function () {
             var $ = layui.$
-                , view = layui.view
+                //Tab的切换功能，切换事件监听等，需要依赖element模块
+                , element = layui.element 
+                , form = layui.form
+                , layer = layui.layer
                 , table = layui.table
-                , element = layui.element //Tab的切换功能，切换事件监听等，需要依赖element模块
-                , form = layui.form;
+                , laydate = layui.laydate;
 
             form.render(null, 'app-content-list');
             form.render(null, 'yibao-content-list');
@@ -314,7 +315,6 @@
                 ]]
                 //,skin: 'line'
             });
-
             //对码管理
             table.render({
                 elem: '#LAY-pair-content-list'
@@ -353,7 +353,6 @@
                 ]]
                 //,skin: 'line'
             });
-
             //监听工具条
             table.on('tool(LAY-pair-content-list)', function (obj) {
                 var data = obj.data;
@@ -391,7 +390,6 @@
                 obj.tr.css("background-color", "#FFFFCC");
             });
 
-
             $('.layui-btn.layui-btn-list').on('click', function () {
                 var type = $(this).data('type');
                 active[type] ? active[type].call(this) : '';
@@ -402,10 +400,8 @@
                 }
             }
 
-        });
-        
-
-    })
+        })
+    })();
 </script>
 
 <script type="text/html" id="tableBtn">
