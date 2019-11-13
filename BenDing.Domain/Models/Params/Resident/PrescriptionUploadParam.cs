@@ -47,10 +47,10 @@ namespace BenDing.Domain.Models.Params.Resident
         [XmlElementAttribute("AKC222", IsNullable = false)]
         public string ProjectCode { get; set; }
         /// <summary>
-        /// 院内目录编码 len(20)
+        /// 院内目录固定编码 len(20)
         /// </summary>
         [XmlElementAttribute("AKC515", IsNullable = false)]
-        public string DirectoryCode { get; set; }
+        public string FixedEncoding { get; set; }
         /// <summary>
         /// 开处方日期 (yyyy-MM-dd HH:mm:ss)
         /// </summary>
@@ -89,7 +89,7 @@ namespace BenDing.Domain.Models.Params.Resident
         public string Quantity { get; set; }
 
         /// <summary>
-        /// 金额   (12,4)
+        /// 金额  (12,4)每条费用明细的数据校验为传入的金额（四舍五入到两位小数）和传入的单价*传入的数量（四舍五入到两位小数）必须相等，检查不等的会提示报错
         /// </summary>
         [XmlElementAttribute("AKC227", IsNullable = false)]
         public string Amount { get; set; }
@@ -141,10 +141,10 @@ namespace BenDing.Domain.Models.Params.Resident
         [XmlElementAttribute("AAE013", IsNullable = false)]
         public string Remark { get; set; }
         /// <summary>
-        /// 医生
+        /// 医生工号
         /// </summary>
         [XmlElementAttribute("CKC691", IsNullable = false)]
-        public  string Doctor  { get; set; }
+        public  string DoctorJobNumber  { get; set; }
         /// <summary>
         /// 限制审批标志
         /// </summary>

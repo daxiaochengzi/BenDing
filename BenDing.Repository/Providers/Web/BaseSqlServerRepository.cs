@@ -170,7 +170,7 @@ namespace BenDing.Repository.Providers.Web
                 {
                     if (!string.IsNullOrWhiteSpace(param.BusinessId))
                     {
-                        strSql += $@" and HospitalizationNo ='select top 1 HospitalizationNo from [dbo].[Inpatient] where BusinessId='{param.BusinessId}' and IsDelete=0'";
+                        strSql += $@" and HospitalizationNo ='(select top 1 HospitalizationNo from [dbo].[Inpatient] where BusinessId='{param.BusinessId}' and IsDelete=0')";
                     }
                     else
                     {
@@ -308,10 +308,12 @@ namespace BenDing.Repository.Providers.Web
                     string sqlStr = $@"
                             select a.FixedEncoding,a.DirectoryCode,b.ProjectCode,b.ProjectCodeType,
                             b.ProjectName,b.ProjectLevel,b.Formulation,b.Specification,b.Unit,
-                            b.OneBlock,b.TwoBlock,b.ThreeBlock,b.FourBlock
+                            b.OneBlock,b.TwoBlock,b.ThreeBlock,b.FourBlock,b.Manufacturer,b.LimitPaymentScope,b.NewCodeMark,
+                            b.ResidentOutpatientBlock,b.ResidentOutpatientSign,b.ResidentSelfPayProportion,b.WorkersSelfPayProportion
                             from [dbo].[ThreeCataloguePairCode] as   a
                             inner join [dbo].[MedicalInsuranceProject] as b on b.ProjectCode=a.ProjectCode
-                            where a.OrganizationCode='{param.OrganizationCode}' and a.[DirectoryCode] in({updateId}) and a.IsDelete=0  and b.IsDelete=0";
+                            where a.OrganizationCode='{param.OrganizationCode}' and a.[DirectoryCode] in({updateId})
+                              and a.IsDelete=0  and b.IsDelete=0 and b.EffectiveSign=1";
                   var data=  await _sqlConnection.QueryAsync<QueryMedicalInsurancePairCodeDto>(sqlStr);
                     if (data != null && data.Any() == true)
                     {

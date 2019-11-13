@@ -46,7 +46,13 @@ namespace BenDing.Domain.Xml
         {
           return  BitConverter.ToInt64(Guid.Parse(param).ToByteArray(), 0).ToString();
         }
+       
+        public static string FormatDateTime(string param)
+        {
+            return Convert.ToDateTime(param).ToString("yyyy-MM-dd HH:mm:ss");
+        }
 
+        
        
     }
 }

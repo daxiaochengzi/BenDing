@@ -246,8 +246,8 @@ namespace BenDing.Service.Providers
 
             if (result.Any())
             {
-                //await _dataBaseHelpService.GetInpatientInfoDetailDto(user, result);
-                //var msg = "获取住院号【" + resultFirst.住院号 + "】，业务ID【" + param.业务ID + "】的时间段内的住院费用成功，共" + result.Count +
+                await _dataBaseHelpService.GetInpatientInfoDetailDto(user, result);
+              //  var msg = "获取住院号【" + resultFirst.住院号 + "】，业务ID【" + param.业务ID + "】的时间段内的住院费用成功，共" + result.Count +
                 //          "条记录";
             }
             return result;

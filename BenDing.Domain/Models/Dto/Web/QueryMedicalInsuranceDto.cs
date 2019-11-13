@@ -22,5 +22,9 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 医保住院号
         /// </summary>
         public  string MedicalInsuranceHospitalizationNo { get; set; }
+        /// <summary>
+        /// 医保类型
+        /// </summary>
+        public  int InsuranceType { get; set; }
     }
 }

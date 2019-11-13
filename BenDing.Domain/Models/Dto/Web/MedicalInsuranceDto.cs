@@ -46,5 +46,9 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 是否为修改
         /// </summary>
         public  bool IsModify { get; set; }
+        /// <summary>
+        /// 医保类别
+        /// </summary>
+        public  int InsuranceType { get; set; }
     }
 }

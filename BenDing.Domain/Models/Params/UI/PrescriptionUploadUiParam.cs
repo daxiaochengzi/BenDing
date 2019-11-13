@@ -18,6 +18,12 @@ namespace BenDing.Domain.Models.Params.UI
         /// 数据id
         /// </summary>
         public List<string> DataIdList { get; set; }
+        /// <summary>
+        /// 医保类别
+        /// </summary>
+        [Display(Name = "医保类别")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        public string InsuranceType { get; set; }
 
     }
 }

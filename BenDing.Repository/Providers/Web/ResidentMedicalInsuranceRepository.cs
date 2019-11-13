@@ -112,7 +112,6 @@ namespace BenDing.Repository.Providers.Web
                         saveData.MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo;
                         saveData.MedicalInsuranceYearBalance = Convert.ToDecimal(data.MedicalInsuranceYearBalance);
                         //更新医保信息
-
                         var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(paramIni);
                         var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
                         var saveXmlData = new SaveXmlData();
@@ -125,7 +124,9 @@ namespace BenDing.Repository.Providers.Web
                         saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                         saveXmlData.MedicalInsuranceCode = "21";
                         saveXmlData.UserId = user.UserId;
+                        //存基层
                         await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), param.UserId);
+                       //存中间库
                         await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
                     }
                     else
@@ -261,10 +262,11 @@ namespace BenDing.Repository.Providers.Web
                 var resultData = true;
 
                 //1.判断是id上传还是单个用户上传
-                if (param.DataIdList != null && param.DataIdList.Any() == true)
+                if (param.DataIdList != null && param.DataIdList.Any())
                 {
                     var queryParam = new InpatientInfoDetailQueryParam();
                     queryParam.IdList = param.DataIdList;
+                    //获取病人明细
                     var queryData = await _baseSqlServerRepository.InpatientInfoDetailQuery(queryParam);
                     if (queryData.Any())
                     {
@@ -282,7 +284,7 @@ namespace BenDing.Repository.Providers.Web
                         //错误提示信息
                         var validDataMsg = validData.Keys.FirstOrDefault();
                         //获取处方上传入参
-                        var iniParam = await GetPrescriptionUploadParam(validDataList, queryPairCode, user);
+                        await GetPrescriptionUploadParam(validDataList, queryPairCode, user, param.InsuranceType);
                     }
                 }
              
@@ -294,27 +296,86 @@ namespace BenDing.Repository.Providers.Web
         /// 获取处方上传入参
         /// </summary>
         /// <returns></returns>
-        private async Task<PrescriptionUploadParam> GetPrescriptionUploadParam(List<QueryInpatientInfoDetailDto> param, List<QueryMedicalInsurancePairCodeDto> pairCode, UserInfoDto user)
+        private async Task<PrescriptionUploadParam> GetPrescriptionUploadParam(List<QueryInpatientInfoDetailDto> param,
+            List<QueryMedicalInsurancePairCodeDto> pairCodeList, UserInfoDto user,string insuranceType)
         {
             return await Task.Run(async () =>
             {
                 var resultData = new PrescriptionUploadParam();
                 resultData.MedicalInsuranceHospitalizationNo = param.FirstOrDefault()?.HospitalizationNo.ToString();
                 resultData.Operators = CommonHelp.GuidToStr(user.UserId);
-                var rowDataList = param.Select(c => new PrescriptionUploadRowParam
+                var rowDataList=new List<PrescriptionUploadRowParam>(); 
+                foreach (var item in param)
                 {
+                    var pairCodeData = pairCodeList.FirstOrDefault(c => c.DirectoryCode == item.CostItemCode);
+                  
+                    if (pairCodeData != null)
+                    {
+                        string residentSelfPayProportion = "";
+                        if (insuranceType == "342")//居民
+                        {
+                            residentSelfPayProportion =
+                                (Convert.ToDecimal(item.Amount) * pairCodeData.ResidentSelfPayProportion).ToString();
+                        }
+                        if (insuranceType == "310")//职工
+                        {
+                            residentSelfPayProportion =
+                                (Convert.ToDecimal(item.Amount) * pairCodeData.WorkersSelfPayProportion).ToString();
+                        }
 
-                }).ToList();
+                        var rowData = new PrescriptionUploadRowParam()
+                        {
+                            ColNum = 0,
+                            PrescriptionNum = item.RecipeCodeFixedEncoding,
+                            PrescriptionSort = item.DataSort.ToString(),
+                            ProjectCode = pairCodeData.ProjectCode,
+                            FixedEncoding = pairCodeData.FixedEncoding,
+                            DirectoryDate = CommonHelp.FormatDateTime(item.BillTime),
+                            DirectorySettlementDate = CommonHelp.FormatDateTime(item.OperateTime),
+                            ProjectCodeType = pairCodeData.ProjectCodeType,
+                            ProjectName = pairCodeData.ProjectName,
+                            ProjectLevel = pairCodeData.ProjectLevel,
+                            UnitPrice = item.UnitPrice,
+                            Quantity = item.Quantity,
+                            Amount = item.Amount,
+                            ResidentSelfPayProportion = residentSelfPayProportion,//自付金额计算
+                            Formulation = pairCodeData.Formulation,
+                            Dosage= item.Dosage,
+                            UseFrequency="0",
+                            Usage = item.Usage,
+                            Specification = item.Specification,
+                            Unit = item.Unit,
+                            UseDays = "0",
+                            Remark = "",
+                            DoctorJobNumber = item.BillDoctorIdFixedEncoding,
+                        };
+                        //是否现在使用药品
+                        if (pairCodeData.RestrictionSign == "1")
+                        {
+                            rowData.LimitApprovalDate = CommonHelp.FormatDateTime(item.OperateTime);
+                            rowData.LimitApprovalUser = rowData.DoctorJobNumber;
+                            rowData.LimitApprovalMark = "1";
+                            rowData.LimitApprovalRemark = item.BillDoctorIdFixedEncoding;
+                        }
+
+                        rowDataList.Add(rowData);
+                    }
+
+                    
+                }
+               
                 resultData.RowDataList = rowDataList;
                 return resultData;
             });
         }
-        /// <summary>
-        ///处方上传数据金额验证
-        /// </summary>
-        /// <param name="param"></param>
+
+        ///  <summary>
+        /// 处方上传数据金额验证
+        ///  </summary>
+        ///  <param name="param"></param>
+        /// <param name="pairCode"></param>
         /// <param name="user"></param>
-        /// <returns></returns>
+        ///  <returns></returns>
         private async Task<Dictionary<string, List<QueryInpatientInfoDetailDto>>> PrescriptionDataUnitPriceValidation(List<QueryInpatientInfoDetailDto> param, List<QueryMedicalInsurancePairCodeDto> pairCode, UserInfoDto user)
         {
             return await Task.Run(async () =>
@@ -332,7 +393,11 @@ namespace BenDing.Repository.Providers.Web
                     if (grade == OrganizationGrade.二级乙等) queryAmount = queryData.OneBlock;
                     if (grade == OrganizationGrade.二级甲等) queryAmount = queryData.TwoBlock;
                     if (grade == OrganizationGrade.三级乙等) queryAmount = queryData.ThreeBlock;
-                    if (grade == OrganizationGrade.三级甲等) queryAmount = queryData.FourBlock;
+                    if (grade == OrganizationGrade.三级甲等)
+                    {
+                        queryAmount = queryData.FourBlock;
+                    }
+
                     if (Convert.ToDecimal(item.Amount) < queryAmount)
                     {
                         dataList.Add(item);
@@ -344,7 +409,7 @@ namespace BenDing.Repository.Providers.Web
 
                 }
 
-                msg = msg != null ? msg + "金额超出限制等级" : msg;
+                msg = msg != null ? msg + "金额超出限制等级" : null;
                 resultData.Add(msg, dataList);
                 return resultData;
             });
