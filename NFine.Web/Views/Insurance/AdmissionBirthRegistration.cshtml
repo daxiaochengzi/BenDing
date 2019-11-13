@@ -1,5 +1,4 @@
 ﻿@{
-    ViewBag.Title = "医保入院登记";
     Layout = "~/Views/Shared/_Base.cshtml";
 }
 <style>
@@ -53,8 +52,8 @@
                         </button>
                     </div>
                 </div>
-                
-                
+
+
                 <!--主体部分-->
                 <div class="layui-form-item">
                     <div class="layui-inline">
@@ -144,7 +143,7 @@
                 </div>
             </div>
 
-            <div class="layui-card-body" lay-size="sm" >
+            <div class="layui-card-body" lay-size="sm">
                 <!--诊断部分-->
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
                     <legend>诊断列表</legend>
@@ -226,7 +225,7 @@
                     data: {
                         "UserId": UserId,
                         "BusinessId": BusinessId,
-                        "IdCardNo": IdCardNo, 
+                        "IdCardNo": IdCardNo,
                         "StartTime": StartTime,
                         //"IdentityMark": IdentityMark
                     },

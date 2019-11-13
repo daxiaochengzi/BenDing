@@ -1,5 +1,4 @@
 ﻿@{
-    ViewBag.Title = "医保入院登记";
     Layout = "~/Views/Shared/_Base.cshtml";
 }
 <style>
@@ -53,103 +52,13 @@
                         </button>
                     </div>
                 </div>
-                
-                
-                <!--主体部分-->
-                <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">住院编号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="HospitalizationNo" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">个人编号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="PersonalCoding" @*lay-verify="required|number"*@ autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">身份证号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="IdCardNo" @*lay-verify="required|number"*@ autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">患者姓名</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="PatientName" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">入院日期</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="AdmissionDate" id="AdmissionDate" @*lay-verify="date"*@ placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">住院科室</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="DepartmentName" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">床位号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="AdmissionBed" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">险种类型</label>
-                        <div class="layui-input-inline">
-                            <select name="InsuranceType" @*lay-verify="required"*@>
-                                <option value="">请选择险种类型</option>
-                                <option value="310">城镇职工</option>
-                                <option value="342">城乡居民</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">医疗类别</label>
-                        <div class="layui-input-inline">
-                            <select name="MedicalCategory" @*lay-verify="required"*@>
-                                <option value="">请选择医疗类别</option>
-                                <option value="11">11-普通入院</option>
-                                <option value="14">14-大病门诊</option>
-                                <option value="15">15-大病住院</option>
-                                <option value="22">22-急诊入院</option>
-                                <option value="23">23-市内转院住院</option>
-                                <option value="41">41-病理剖宫产</option>
-                                <option value="71">71-顺产</option>
-                                <option value="72">72-剖宫产</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">胎儿数</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="FetusNumber" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">户口性质</label>
-                        <div class="layui-input-inline">
-                            <select name="InsuranceType" @*lay-verify="required"*@>
-                                <option value="">请选择户口性质</option>
-                                <option value="10">城镇户口</option>
-                                <option value="20">农业户口</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <div class="layui-card-body" lay-size="sm" >
-                <!--诊断部分-->
+            <div class="layui-card-body" lay-size="sm">
+                <!--处方项目列表-->
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-                    <legend>诊断列表</legend>
+                    <legend>处方项目列表</legend>
                 </fieldset>
-                <!--诊断列表-->
                 <table id="LAY-table-data-id" class="layui-table" lay-size="sm" lay-filter="EditListTable">
                     <thead>
                         <tr>
@@ -165,8 +74,8 @@
             </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button type="submit" class="layui-btn layui-btn-radius" lay-submit="" lay-filter="demo1">登记</button>
-                    <button type="button" class="layui-btn layui-btn-radius" id="LAY-component-form-getval">取消</button>
+                    <button type="submit" class="layui-btn layui-btn-radius" lay-submit="" lay-filter="demo1">上传清单</button>
+                    <button type="button" class="layui-btn layui-btn-radius" id="LAY-component-form-getval">关闭</button>
                 </div>
             </div>
         </form>
@@ -210,9 +119,9 @@
             */
             form.render(null, 'LAY-form-render'); //更新 lay-filter="LAY-form-render" 所在容器内的全部表单状态
             //执行一个laydate实例
-            laydate.render({elem: '#AdmissionDate1'});
+            laydate.render({ elem: '#AdmissionDate1' });
             //指定入院日期
-            laydate.render({elem: '#AdmissionDate'});
+            laydate.render({ elem: '#AdmissionDate' });
 
             form.on('submit(LAY-form-search)', function (data) {
                 var IdCardNo = $("#IdCardNo").val();
@@ -226,7 +135,7 @@
                     data: {
                         "UserId": UserId,
                         "BusinessId": BusinessId,
-                        "IdCardNo": IdCardNo, 
+                        "IdCardNo": IdCardNo,
                         "StartTime": StartTime,
                         //"IdentityMark": IdentityMark
                     },
@@ -240,7 +149,7 @@
                         } else {
                             var jsonData = data.Data;
                             console.log(jsonData)
-                            layer.alert("用户名或密码错误",{ title: '登录失败' });
+                            layer.alert("用户名或密码错误", { title: '登录失败' });
                         }
                     }
                 });
