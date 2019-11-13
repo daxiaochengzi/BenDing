@@ -69,6 +69,18 @@ namespace NFine.Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 住院清单上传,2.2.4.	处方项目传输
+        /// </summary>
+        /// <param name="empid"></param>
+        /// <returns></returns>
+        public ActionResult HospitalizationExpensesManagement(string empid)
+        {
+            ViewBag.empid = empid;
+            ViewBag.title = "住院清单上传";
+            return View();
+        }
+
 
     }
 }

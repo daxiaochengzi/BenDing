@@ -795,6 +795,8 @@
     <Content Include="Views\BenDing\MedicalDirectoryPairCode.cshtml" />
     <Content Include="Views\Shared\_Base.cshtml" />
     <Content Include="Views\Insurance\AdmissionRegistration - 复制.cshtml" />
+    <Content Include="Views\Insurance\AdmissionRegistrationUpdate - 复制.cshtml" />
+    <Content Include="Views\Insurance\HospitalizationExpensesManagement.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
