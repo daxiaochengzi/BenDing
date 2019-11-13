@@ -32,6 +32,7 @@ namespace BenDing.Repository.Providers.Web
             _baseHelpRepository = iDataBaseHelpRepository;
             _webServiceBasic = webBasicRepository;
             _baseSqlServerRepository = baseSqlServerRepository;
+            _iSystemManageRepository = iSystemManageRepository;
         }
         public async Task Login(QueryHospitalOperatorParam param)
         {
