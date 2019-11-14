@@ -295,17 +295,17 @@ namespace NFine.Web.Controllers
                     .GetInpatientInfo(verificationCode, inputInpatientInfoJson, false);
                 if (inputInpatientInfoData.Any())
                 {//获取医保个人信息
-                    await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                    var userBase = new ResidentUserInfoDto();
-                    userBase = await _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
-                    {
-                        IdentityMark = "1",
-                        InformationNumber = param.IdCardNo,
-                    });
+                //    await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                //    var userBase = new ResidentUserInfoDto();
+                //    userBase = await _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
+                //    {
+                //        IdentityMark = "1",
+                //        InformationNumber = param.IdCardNo,
+                //    });
                     var data = inputInpatientInfoData.FirstOrDefault(c => c.BusinessId == param.BusinessId);
                     if (data != null)
                     {
-                        data.MedicalInsuranceResidentInfo = userBase;
+                       
                         var diagnosisData = new List<InpatientDiagnosisDto> ();
                         diagnosisData.Add(new InpatientDiagnosisDto()
                         {
