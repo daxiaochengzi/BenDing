@@ -294,14 +294,7 @@ namespace NFine.Web.Controllers
                 var inputInpatientInfoData = await _webServiceBasicService
                     .GetInpatientInfo(verificationCode, inputInpatientInfoJson, false);
                 if (inputInpatientInfoData.Any())
-                {//获取医保个人信息
-                //    await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                //    var userBase = new ResidentUserInfoDto();
-                //    userBase = await _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
-                //    {
-                //        IdentityMark = "1",
-                //        InformationNumber = param.IdCardNo,
-                //    });
+                {
                     var data = inputInpatientInfoData.FirstOrDefault(c => c.BusinessId == param.BusinessId);
                     if (data != null)
                     {
@@ -313,12 +306,17 @@ namespace NFine.Web.Controllers
                             DiagnosisCode = data.AdmissionMainDiagnosisIcd10,
                             IsMainDiagnosis = true
                         });
-                        diagnosisData.Add(new InpatientDiagnosisDto()
+                        if (!string.IsNullOrWhiteSpace(data.LeaveHospitalMainDiagnosisIcd10))
                         {
-                            DiagnosisName = data.LeaveHospitalMainDiagnosis,
-                            DiagnosisCode = data.LeaveHospitalMainDiagnosisIcd10,
-                            IsMainDiagnosis =false
-                        });
+                            diagnosisData.Add(new InpatientDiagnosisDto()
+                            {
+                                DiagnosisName = data.LeaveHospitalMainDiagnosis,
+                                DiagnosisCode = data.LeaveHospitalMainDiagnosisIcd10,
+                                IsMainDiagnosis = false
+                            });
+                        }
+
+                        
                         y.Data = diagnosisData;
                     }
                 }
@@ -574,7 +572,6 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
-
         /// <summary>
         /// 目录对码页面
         /// </summary>

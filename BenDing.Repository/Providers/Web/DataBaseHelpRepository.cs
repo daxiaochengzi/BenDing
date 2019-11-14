@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
+using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
@@ -604,7 +605,7 @@ namespace BenDing.Repository.Providers.Web
 
                 string querySql = $@"
                              select Id,[CostItemCode] as DirectoryCode,[CostItemName] as DirectoryName,[CostItemCategoryCode] as DirectoryCategoryCode,
-                             Quantity,UnitPrice,Amount,BillTime,RecipeCode,BillDepartment,OperateDoctorName from [dbo].[HospitalizationFee] 
+                             Quantity,UnitPrice,Amount,BillTime,RecipeCode,BillDepartment,OperateDoctorName,OrganizationCode from [dbo].[HospitalizationFee] 
                              where HospitalizationNo=(select top 1 a.HospitalizationNo from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
                 string countSql = $@"select COUNT(*) from [dbo].[HospitalizationFee] 
                               where HospitalizationNo=(select top 1 a.HospitalizationNo from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
@@ -616,11 +617,45 @@ namespace BenDing.Repository.Providers.Web
                 }
                 string executeSql = countSql + whereSql + ";" + querySql;
                 var result = await _sqlConnection.QueryMultipleAsync(executeSql);
-                
                 int totalPageCount = result.Read<int>().FirstOrDefault();
                 dataList = (from t in result.Read<QueryHospitalizationFeeDto>()
                     select t).ToList();
-               // _baseSqlServerRepository
+                if (dataList.Any())
+                {
+                    var directoryCodeList = dataList.Select(c => c.DirectoryCode).ToList();
+                    var queryPairCodeParam = new QueryMedicalInsurancePairCodeParam()
+                    {
+                        DirectoryCodeList = directoryCodeList,
+                        OrganizationCode = dataList.Select(d=>d.OrganizationCode).FirstOrDefault()
+                    };
+                   var pairCodeData= await _baseSqlServerRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
+                    if (pairCodeData != null)
+                    {
+                        var dataListNew = dataList.Select(c => new QueryHospitalizationFeeDto
+                        {
+                            Id = c.Id,
+                            Amount = c.Amount,
+                            BillTime = c.BillTime,
+                            BillDepartment = c.BillDepartment,
+                            DirectoryCode = c.DirectoryCode,
+                            DirectoryName = c.DirectoryName,
+                            DirectoryCategoryCode = c.DirectoryCategoryCode,
+                            UnitPrice = c.UnitPrice,
+                            UploadUserName = c.UploadUserName,
+                            Quantity = c.Quantity,
+                            RecipeCode = c.RecipeCode,
+                            Specification = c.Specification,
+                            OperateDoctorName = c.OperateDoctorName,
+                            UploadMark = c.UploadMark,
+                            AdjustmentNumber = c.AdjustmentNumber,
+
+
+
+                        });
+                    }
+                }
+
+                
                 _sqlConnection.Close();
                 return resultData;
 

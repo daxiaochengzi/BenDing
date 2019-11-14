@@ -93,6 +93,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 调整值
         /// </summary>
         public decimal AdjustmentNumber { get; set; }
+        public  string OrganizationCode { get; set; }
 
     }
 }
