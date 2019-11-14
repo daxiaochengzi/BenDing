@@ -47,50 +47,6 @@ namespace NFine.Web.Controllers
             _systemManage = iManageRepository;
         }
         #region 基层接口
-        // [HttpGet]
-        // public string Data( string dd)
-        //{
-
-        //    return _webServiceBasicService.TestIf().ToString();
-
-        //    //return Ok();
-
-        //}
-        ///// <summary>
-        ///// 获取基础人员信息
-        ///// </summary>
-        ///// <returns></returns>
-        //[System.Web.Mvc.HttpGet]
-        //public async Task<ActionResult> GetUserBaseInfos()
-        //{
-        //    var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
-        //     {
-        //         var userBase = await GetUserBaseInfo();
-        //         y.Data = userBase;
-
-        //     });
-        //    return Json(resultData, JsonRequestBehavior.AllowGet);
-        //}
-        //[HttpGet]
-        //public ApiJsonResultData GetUserBaseInfoss(string dd)
-        //{
-        //    return new ApiJsonResultData().RunWithTry(y =>
-        //    {
-
-        //        y.Data = dd;
-
-        //    });
-        //}
-        /// <summary>
-        /// 测试
-        /// </summary>
-        /// <returns></returns>
-        //public ActionResult Test(string Id)
-        //{
-        //    //@ViewBag.bid
-        //    ViewBag.bid = Id;
-        //    //return View();
-        //}
         /// <summary>
         /// 获取登陆信息
         /// </summary>
@@ -279,15 +235,6 @@ namespace NFine.Web.Controllers
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
            {
                var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-               //var inputInpatientInfo = new InpatientInfoParam()
-               //{
-               //    AuthCode = verificationCode.AuthCode,
-               //    OrganizationCode = verificationCode.OrganizationCode,
-               //    IdCardNo = "512501195802085180",
-               //    StartTime = "2018-04-27 11:09:00",
-               //    EndTime = "2020-04-27 11:09:00",
-               //    State = "0"
-               //};
                var inputInpatientInfo = new InpatientInfoParam()
                {
                    AuthCode = verificationCode.AuthCode,
