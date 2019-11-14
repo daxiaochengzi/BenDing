@@ -7,7 +7,17 @@ using System.Threading.Tasks;
 namespace BenDing.Domain.Models.Params.Web
 {
    public class UpdateHospitalizationFeeParam
-    {
-        public List<Guid> IdList { get; set; }
+    {   /// <summary>
+    /// id
+    /// </summary>
+        public Guid Id { get; set; }
+        /// <summary>
+        /// 项目批次号
+        /// </summary>
+        public  string BatchNumber { get; set; }
+        /// <summary>
+        /// 交易Id
+        /// </summary>
+        public  string TransactionId { get; set; }
     }
 }

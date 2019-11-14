@@ -502,16 +502,30 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<int> UpdateHospitalizationFee(UpdateHospitalizationFeeParam param)
+        public async Task<int> UpdateHospitalizationFee(List<UpdateHospitalizationFeeParam> param, UserInfoDto user)
         {
             int resultData = 0;
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
 
                 _sqlConnection.Open();
-                var updateId = ListToStr(param.IdList.Select(c=>c.ToString()).ToList());
-                string querySql = $@"update  [dbo].[HospitalizationFee] set [UploadMark]=1 where id in({updateId}) and Isdelete=0)";
-                resultData = await _sqlConnection.ExecuteAsync(querySql);
+               // var updateId = ListToStr(param.IdList.Select(c=>c.ToString()).ToList());
+
+                if (param.Any())
+                {
+                    string querySql = null;
+                    foreach (var item in param)
+                    {
+                        querySql += $@" update [dbo].[HospitalizationFee] set [UploadMark]=1,ProjectBatchNumber='{item.BatchNumber}',
+                               TransactionId='{item.TransactionId}',UploadUserId='{user.UserId}',UploadUserName='{user.UserName}',UploadTime=GETDATE()
+                               where id='{item.Id}' and Isdelete=0;";
+                    }
+
+                  
+                    resultData = await _sqlConnection.ExecuteAsync(querySql);
+                }
+
+
 
                 _sqlConnection.Close();
 

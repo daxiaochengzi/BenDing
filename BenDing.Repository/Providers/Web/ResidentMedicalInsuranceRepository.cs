@@ -291,8 +291,7 @@ namespace BenDing.Repository.Providers.Web
                             {
                                 var sendIdList = sendList.Select(s => s.Id).ToList();
                                 //更新数据上传状态
-                                await _baseSqlServerRepository.UpdateHospitalizationFee(
-                                    new UpdateHospitalizationFeeParam() {IdList = sendIdList});
+                               
                                 idList.AddRange(sendIdList);
                                 //获取总行数
                                 resultData.Num += sendList.Count();
@@ -324,15 +323,17 @@ namespace BenDing.Repository.Providers.Web
                     int result = MedicalInsuranceDll.CallService_cxjb("CXJB004");
                     data = XmlHelp.DeSerializerModel(new PrescriptionUploadDto(), false);
                     if (data.Msg == "1")
-                    {   //添加批次
-                        var projectBatchParam = new AddProjectBatchParam()
+                    {   //交易码
+                        var transactionId = Guid.NewGuid().ToString("N");
+                        //添加批次
+                        var updateFeeParam = param.RowDataList.Select(d => new UpdateHospitalizationFeeParam
                         {
+                            Id = d.Id,
                             BatchNumber = data.ProjectBatch,
-                            BusinessId = businessId,
-                            UserId = user.UserId,
-                            Id = Guid.NewGuid()
-                        };
-                        await _baseSqlServerRepository.AddProjectBatch(projectBatchParam);
+                            TransactionId= transactionId,
+
+                          }).ToList();
+                        await _baseSqlServerRepository.UpdateHospitalizationFee(updateFeeParam, user);
                         //保存至基层
                         var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(xmlStr);
                         var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
@@ -340,7 +341,7 @@ namespace BenDing.Repository.Providers.Web
                         saveXmlData.OrganizationCode = user.OrganizationCode;
                         saveXmlData.AuthCode = user.AuthCode;
                         saveXmlData.BusinessId = businessId;
-                        saveXmlData.TransactionId = projectBatchParam.Id.ToString("N");
+                        saveXmlData.TransactionId = transactionId;
                         saveXmlData.MedicalInsuranceBackNum = "CXJB004";
                         saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
                         saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
@@ -372,17 +373,15 @@ namespace BenDing.Repository.Providers.Web
                     var pairCodeData = pairCodeList.FirstOrDefault(c => c.DirectoryCode == item.CostItemCode);
 
                     if (pairCodeData != null)
-                    {
+                    {//自付金额
                         string residentSelfPayProportion = "";
-                        if (insuranceType == "342")//居民
+                        if (insuranceType == "342")//居民   
                         {
-                            residentSelfPayProportion =
-                                (Convert.ToDecimal(item.Amount) * pairCodeData.ResidentSelfPayProportion).ToString();
+                            residentSelfPayProportion = Convert.ToDouble(Convert.ToDecimal(item.Amount) * pairCodeData.ResidentSelfPayProportion).ToString();
                         }
                         if (insuranceType == "310")//职工
                         {
-                            residentSelfPayProportion =
-                                (Convert.ToDecimal(item.Amount) * pairCodeData.WorkersSelfPayProportion).ToString();
+                            residentSelfPayProportion =Convert.ToDouble(Convert.ToDecimal(item.Amount) * pairCodeData.WorkersSelfPayProportion).ToString();
                         }
 
                         var rowData = new PrescriptionUploadRowParam()

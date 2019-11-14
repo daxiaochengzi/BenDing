@@ -213,16 +213,21 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="infoParam"></param>
         /// <returns></returns>
-        public async Task<List<InpatientInfoDto>> GetInpatientInfo(UserInfoDto user, string infoParam)
+        public async Task<List<InpatientInfoDto>> GetInpatientInfo(UserInfoDto user, string infoParam,bool isSave)
         {
             List<InpatientInfoDto> result;
             var init = new InpatientInfoDto();
             var data = await _webServiceBasic.HIS_InterfaceListAsync("10", infoParam, user.UserId);
             result = GetResultData(init, data);
-            //if (result.Any())
-            //{
-            //    await _dataBaseHelpService.GetInpatientInfo(user, result);
-            //}
+            if (result.Any())
+            {
+                if (isSave == true)
+                {
+                    await _dataBaseHelpService.GetInpatientInfo(user, result);
+                }
+
+               
+            }
 
             return result;
         }

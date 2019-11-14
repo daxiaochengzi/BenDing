@@ -83,8 +83,13 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
         Task<int> UpdateThreeCataloguePairCodeUpload(string organizationCode);
 
-        Task<int> AddProjectBatch(AddProjectBatchParam param);
-        Task<int> UpdateHospitalizationFee(UpdateHospitalizationFeeParam param);
+        //Task<int> AddProjectBatch(AddProjectBatchParam param);
+        /// <summary>
+        /// 更新批次号
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task<int> UpdateHospitalizationFee(List<UpdateHospitalizationFeeParam> param, UserInfoDto user);
 
 
     }

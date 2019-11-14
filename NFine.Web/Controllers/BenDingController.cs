@@ -301,7 +301,7 @@ namespace NFine.Web.Controllers
                string inputInpatientInfoJson =
                    JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
                var inputInpatientInfoData = await _webServiceBasicService
-                   .GetInpatientInfo(verificationCode, inputInpatientInfoJson);
+                   .GetInpatientInfo(verificationCode, inputInpatientInfoJson,false);
                if (inputInpatientInfoData.Any())
                {//获取医保个人信息
                    await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
@@ -319,6 +319,63 @@ namespace NFine.Web.Controllers
                    }
                }
            }));
+        }
+        /// <summary>
+        /// 获取病人诊断
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpPost]
+        public async Task<ActionResult> GetInpatientDiagnosis(InpatientInfoUiParam param)
+        {
+            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+            {
+                var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                
+                var inputInpatientInfo = new InpatientInfoParam()
+                {
+                    AuthCode = verificationCode.AuthCode,
+                    OrganizationCode = verificationCode.OrganizationCode,
+                    IdCardNo = param.IdCardNo,
+                    StartTime = param.StartTime,
+                    EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    State = "0"
+                };
+
+                string inputInpatientInfoJson =
+                    JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
+                var inputInpatientInfoData = await _webServiceBasicService
+                    .GetInpatientInfo(verificationCode, inputInpatientInfoJson, false);
+                if (inputInpatientInfoData.Any())
+                {//获取医保个人信息
+                    await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                    var userBase = new ResidentUserInfoDto();
+                    userBase = await _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
+                    {
+                        IdentityMark = "1",
+                        InformationNumber = param.IdCardNo,
+                    });
+                    var data = inputInpatientInfoData.FirstOrDefault(c => c.BusinessId == param.BusinessId);
+                    if (data != null)
+                    {
+                        data.MedicalInsuranceResidentInfo = userBase;
+                        var diagnosisData = new List<InpatientDiagnosisDto> ();
+                        diagnosisData.Add(new InpatientDiagnosisDto()
+                        {
+                            DiagnosisName = data.AdmissionMainDiagnosis,
+                            DiagnosisCode = data.AdmissionMainDiagnosisIcd10,
+                            IsMainDiagnosis = true
+                        });
+                        diagnosisData.Add(new InpatientDiagnosisDto()
+                        {
+                            DiagnosisName = data.LeaveHospitalMainDiagnosis,
+                            DiagnosisCode = data.LeaveHospitalMainDiagnosisIcd10,
+                            IsMainDiagnosis =false
+                        });
+                        y.Data = diagnosisData;
+                    }
+                }
+            }));
         }
         /// <summary>
         /// 获取住院病人明细费用
@@ -344,7 +401,7 @@ namespace NFine.Web.Controllers
                     };
                     string inputInpatientInfoJson =
                         JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
-                    inpatientInList = await _webServiceBasicService.GetInpatientInfo(verificationCode, inputInpatientInfoJson);
+                    inpatientInList = await _webServiceBasicService.GetInpatientInfo(verificationCode, inputInpatientInfoJson,true);
                 }
                 if (inpatientInList.Any())
                 {
@@ -682,7 +739,7 @@ namespace NFine.Web.Controllers
                 };
                 string inputInpatientInfoJson =
                     JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
-                await _webServiceBasicService.GetInpatientInfo(userBase, inputInpatientInfoJson);
+                await _webServiceBasicService.GetInpatientInfo(userBase, inputInpatientInfoJson,true);
 
             });
             return Json(resultData);

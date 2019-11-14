@@ -21,7 +21,7 @@ namespace BenDing.Service.Interfaces
         /// </summary>
         /// <param name="infoParam"></param>
         /// <returns></returns>
-        Task<List<InpatientInfoDto>> GetInpatientInfo(UserInfoDto user, string infoParam);
+        Task<List<InpatientInfoDto>> GetInpatientInfo(UserInfoDto user, string infoParam, bool isSave);
         /// <summary>
         /// 获取机构
         /// </summary>

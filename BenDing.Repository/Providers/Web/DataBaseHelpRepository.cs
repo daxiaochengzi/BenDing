@@ -20,13 +20,15 @@ namespace BenDing.Repository.Providers.Web
 {
     public class DataBaseHelpRepository : IDataBaseHelpRepository
     {
+        private IBaseSqlServerRepository _baseSqlServerRepository;
         private string _connectionString;
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="conStr"></param>   
-        public DataBaseHelpRepository()
+        public DataBaseHelpRepository(IBaseSqlServerRepository iBaseSqlServerRepository)
         {
+            _baseSqlServerRepository = iBaseSqlServerRepository;
             string conStr = ConfigurationManager.ConnectionStrings["NFineDbContext"].ToString();
             _connectionString = !string.IsNullOrWhiteSpace(conStr) ? conStr : throw new ArgumentNullException(nameof(conStr));
 
@@ -172,6 +174,7 @@ namespace BenDing.Repository.Providers.Web
                  dataList = (from t in result.Read<QueryCatalogDto>()
 
                     select t).ToList();
+             
                 resultData.Add(totalPageCount,dataList);
                 _sqlConnection.Close();
 
@@ -541,7 +544,7 @@ namespace BenDing.Repository.Providers.Web
                         }
                         else
                         {
-                            paramNew = param;
+                            paramNew = param.OrderBy(d=>d.BillTime).ToList();
                         }
 
                         string insertSql = "";
@@ -549,19 +552,20 @@ namespace BenDing.Repository.Providers.Web
                         foreach (var item in paramNew)
                         {
                             sort++;
+                            var businessTime = item.BillTime.Substring(0, 10) + " 00:00:00.000";
                             string str = $@"INSERT INTO [dbo].[HospitalizationFee](
                                id,[HospitalizationNo] ,[CostDetailId] ,[CostItemName],[CostItemCode] ,[CostItemCategoryName] ,[CostItemCategoryCode]
                                ,[Unit] ,[Formulation] ,[Specification] ,[UnitPrice],[Quantity],[Amount] ,[Dosage] ,[Usage] ,[MedicateDays]
 		                       ,[HospitalPricingUnit] ,[IsImportedDrugs] ,[DrugProducingArea] ,[RecipeCode]  ,[CostDocumentType] ,[BillDepartment]
 			                   ,[BillDepartmentId] ,[BillDoctorName],[BillDoctorId] ,[BillTime] ,[OperateDepartmentName],[OperateDepartmentId]
                                ,[OperateDoctorName] ,[OperateDoctorId],[OperateTime] ,[PrescriptionDoctor] ,[Operators],[PracticeDoctorNumber]
-                               ,[CostWriteOffId],[OrganizationCode],[OrganizationName] ,[CreateTime] ,[IsDelete],[DeleteTime],CreateUserId,DataSort,UploadMark,RecipeCodeFixedEncoding,BillDoctorIdFixedEncoding)
+                               ,[CostWriteOffId],[OrganizationCode],[OrganizationName] ,[CreateTime] ,[IsDelete],[DeleteTime],CreateUserId,DataSort,UploadMark,RecipeCodeFixedEncoding,BillDoctorIdFixedEncoding,BusinessTime)
                            VALUES('{Guid.NewGuid()}','{item.HospitalizationNo}','{item.CostDetailId}','{item.CostItemName}','{item.CostItemCode}','{item.CostItemCategoryName}','{item.CostItemCategoryCode}'
                                  ,'{item.Unit}','{item.Formulation}','{item.Specification}',{item.UnitPrice},{item.Quantity},{item.Amount},'{item.Dosage}','{item.Usage}','{item.MedicateDays}',
                                  '{item.HospitalPricingUnit}','{item.IsImportedDrugs}','{item.DrugProducingArea}','{item.RecipeCode}','{item.CostDocumentType}','{item.BillDepartment}'
                                  ,'{item.BillDepartmentId}','{item.BillDoctorName}','{item.BillDoctorId}','{item.BillTime}','{item.OperateDepartmentName}','{item.OperateDepartmentId}'
                                  ,'{item.OperateDoctorName}','{item.OperateDoctorId}','{item.OperateTime}','{item.PrescriptionDoctor}','{item.Operators}','{item.PracticeDoctorNumber}'
-                                 ,'{item.CostWriteOffId}','{item.OrganizationCode}','{item.OrganizationName}',GETDATE(),0,null,'{user.UserId}',{sort},0,'{CommonHelp.GuidToStr(item.RecipeCode)}','{CommonHelp.GuidToStr(item.BillDoctorId)}'
+                                 ,'{item.CostWriteOffId}','{item.OrganizationCode}','{item.OrganizationName}',GETDATE(),0,null,'{user.UserId}',{sort},0,'{CommonHelp.GuidToStr(item.RecipeCode)}','{CommonHelp.GuidToStr(item.BillDoctorId)}','{businessTime}'
                                  );";
                             insertSql += str;
                         }
@@ -584,6 +588,45 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
+        /// <summary>
+        /// 住院清单查询
+        /// </summary>
+       
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<Dictionary<int, List<QueryHospitalizationFeeDto>>> QueryHospitalizationFee(QueryHospitalizationFeeUiParam param)
+        {
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+                var dataList = new List<QueryHospitalizationFeeDto>();
+                var resultData = new Dictionary<int, List<QueryHospitalizationFeeDto>>();
+                _sqlConnection.Open();
+
+                string querySql = $@"
+                             select Id,[CostItemCode] as DirectoryCode,[CostItemName] as DirectoryName,[CostItemCategoryCode] as DirectoryCategoryCode,
+                             Quantity,UnitPrice,Amount,BillTime,RecipeCode,BillDepartment,OperateDoctorName from [dbo].[HospitalizationFee] 
+                             where HospitalizationNo=(select top 1 a.HospitalizationNo from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
+                string countSql = $@"select COUNT(*) from [dbo].[HospitalizationFee] 
+                              where HospitalizationNo=(select top 1 a.HospitalizationNo from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
+                string whereSql = "";
+                if (param.Limit != 0 && param.Page > 0)
+                {
+                    var skipCount = param.Limit * (param.Page - 1);
+                    querySql += whereSql + " order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.Limit + " ROWS ONLY;";
+                }
+                string executeSql = countSql + whereSql + ";" + querySql;
+                var result = await _sqlConnection.QueryMultipleAsync(executeSql);
+                
+                int totalPageCount = result.Read<int>().FirstOrDefault();
+                dataList = (from t in result.Read<QueryHospitalizationFeeDto>()
+                    select t).ToList();
+               // _baseSqlServerRepository
+                _sqlConnection.Close();
+                return resultData;
+
+            }
+        }
+        
         public async Task<int> UpdateInpatientInfoDetail(UpdateInpatientInfoDetail param)
         {
             int count = 0;
