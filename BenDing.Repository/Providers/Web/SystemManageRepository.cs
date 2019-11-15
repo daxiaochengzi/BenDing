@@ -121,7 +121,7 @@ namespace BenDing.Repository.Providers.Web
                 _sqlConnection.Open();
                 string sqlStr;
                 string querySql =
-                    $"select   OrganizationGrade from [dbo].[HospitalOrganizationGrade] where IsDelete=0 and HospitalId=''";
+                    $"select   OrganizationGrade from [dbo].[HospitalOrganizationGrade] where IsDelete=0 and HospitalId='{param}'";
 
 
                 resultData= (OrganizationGrade)await _sqlConnection.QueryFirstAsync<int>(querySql) ;

@@ -26,6 +26,7 @@ namespace NFine.Web.Controllers
         private IBaseSqlServerRepository _dataBaseSqlServerService;
         private ISystemManageRepository _systemManage;
         private IResidentMedicalInsuranceRepository _residentMedicalInsurance;
+        private IResidentMedicalInsuranceService _residentService;
         /// <summary>
         /// 
         /// </summary>
@@ -37,7 +38,8 @@ namespace NFine.Web.Controllers
             IWebServiceBasicService iWebServiceBasicService,
             IBaseSqlServerRepository iDataBaseSqlServerService,
             IDataBaseHelpRepository iBaseHelpRepository,
-            ISystemManageRepository iManageRepository
+            ISystemManageRepository iManageRepository,
+            IResidentMedicalInsuranceService IresidentService
             )
         {
             _webServiceBasicService = iWebServiceBasicService;
@@ -45,6 +47,7 @@ namespace NFine.Web.Controllers
             _residentMedicalInsurance = insuranceRepository;
             _baseHelpRepository = iBaseHelpRepository;
             _systemManage = iManageRepository;
+            _residentService = IresidentService;
         }
         #region 基层接口
         /// <summary>
@@ -339,9 +342,9 @@ namespace NFine.Web.Controllers
                     {
                         AuthCode = verificationCode.AuthCode,
                         OrganizationCode = verificationCode.OrganizationCode,
-                        IdCardNo = "511523198701122345",
-                        StartTime = "2019-04-27 11:09:00",
-                        EndTime = "2020-04-27 11:09:00",
+                        IdCardNo = "512527196604306139",
+                        StartTime = "2019-11-01 14:41:00",
+                        EndTime = "2020-12-01 11:09:00",
                         State = "0"
                     };
                     string inputInpatientInfoJson =
@@ -634,25 +637,10 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var login = 1;
-                if (login == 1)
-                {
-                    var userBase = await _residentMedicalInsurance.ProjectDownload(new ResidentProjectDownloadParam());
-
-                    if (userBase.Row != null && userBase.Row.Any())
-                    {
-
-                        await _baseHelpRepository.ProjectDownload(new UserInfoDto() { UserId = "E075AC49FCE443778F897CF839F3B924" }, userBase.Row);
-                        y.Data = userBase;
-                    }
-                }
-                else
-                {
-                    y.AddErrorMessage("登陆失败!!!");
-                }
-
-
-
+                //医保登陆
+                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                var data = await _residentService.ProjectDownload(new ResidentProjectDownloadParam());
+                y.Data = data;
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
@@ -755,6 +743,26 @@ namespace NFine.Web.Controllers
                 await _residentMedicalInsurance.PrescriptionUpload(param, userBase);
             });
             return Json(resultData);
+        }
+        /// <summary>
+        /// 住院清单查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> QueryHospitalizationFee(QueryHospitalizationFeeUiParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+                var queryData = await _baseHelpRepository.QueryHospitalizationFee(param);
+                var data = new
+                {
+                    data = queryData.Values.FirstOrDefault(),
+                    count = queryData.Keys.FirstOrDefault()
+                };
+                y.Data = data;
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
         }
         /// <summary>
         /// 医保连接

@@ -51,8 +51,17 @@ namespace BenDing.Domain.Xml
         {
             return Convert.ToDateTime(param).ToString("yyyy-MM-dd HH:mm:ss");
         }
+        /// <summary>
+        /// 四舍五入到2位
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static decimal ValueToDouble(decimal param)
+        {
+           return Math.Round(param, 1, MidpointRounding.AwayFromZero);
 
-        
-       
+
+        }
+
     }
 }

@@ -56,17 +56,17 @@ namespace BenDing.Domain.Models.Dto.Web
             /// 单价
             /// </summary>
             [JsonProperty(PropertyName = "单价")]
-            public string UnitPrice { get; set; }
+            public decimal UnitPrice { get; set; }
             /// <summary>
             /// 数量
             /// </summary>
             [JsonProperty(PropertyName = "数量")]
-            public string Quantity { get; set; }
+            public decimal Quantity { get; set; }
             /// <summary>
             /// 金额
             /// </summary>
             [JsonProperty(PropertyName = "金额")]
-            public string Amount { get; set; }
+            public decimal Amount { get; set; }
             /// <summary>
             /// 用量
             /// </summary>

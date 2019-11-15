@@ -22,14 +22,16 @@ namespace BenDing.Repository.Providers.Web
     public class DataBaseHelpRepository : IDataBaseHelpRepository
     {
         private IBaseSqlServerRepository _baseSqlServerRepository;
+        private ISystemManageRepository _iSystemManageRepository;
         private string _connectionString;
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="conStr"></param>   
-        public DataBaseHelpRepository(IBaseSqlServerRepository iBaseSqlServerRepository)
+        public DataBaseHelpRepository(IBaseSqlServerRepository iBaseSqlServerRepository, ISystemManageRepository ImanageRepository)
         {
             _baseSqlServerRepository = iBaseSqlServerRepository;
+            _iSystemManageRepository = ImanageRepository;
             string conStr = ConfigurationManager.ConnectionStrings["NFineDbContext"].ToString();
             _connectionString = !string.IsNullOrWhiteSpace(conStr) ? conStr : throw new ArgumentNullException(nameof(conStr));
 
@@ -165,23 +167,23 @@ namespace BenDing.Repository.Providers.Web
                 if (param.Limit != 0 && param.Page > 0)
                 {
                     var skipCount = param.Limit * (param.Page - 1);
-                    querySql+= whereSql+" order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.Limit + " ROWS ONLY;";
+                    querySql += whereSql + " order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.Limit + " ROWS ONLY;";
                 }
-                string executeSql = countSql+ whereSql+";"+ querySql;
-              
-                var result = await _sqlConnection.QueryMultipleAsync(executeSql);
-              
-                int totalPageCount = result.Read<int>().FirstOrDefault();
-                 dataList = (from t in result.Read<QueryCatalogDto>()
+                string executeSql = countSql + whereSql + ";" + querySql;
 
-                    select t).ToList();
-             
-                resultData.Add(totalPageCount,dataList);
+                var result = await _sqlConnection.QueryMultipleAsync(executeSql);
+
+                int totalPageCount = result.Read<int>().FirstOrDefault();
+                dataList = (from t in result.Read<QueryCatalogDto>()
+
+                            select t).ToList();
+
+                resultData.Add(totalPageCount, dataList);
                 _sqlConnection.Close();
 
             }
-           
-           
+
+
             return resultData;
 
         }
@@ -239,7 +241,7 @@ namespace BenDing.Repository.Providers.Web
                 string executeSql = countSql + whereSql + ";" + querySql;
 
                 var result = await _sqlConnection.QueryMultipleAsync(executeSql);
-              
+
                 int totalPageCount = result.Read<int>().FirstOrDefault();
                 dataList = (from t in result.Read<ResidentProjectDownloadRow>()
                             select t).ToList();
@@ -257,7 +259,7 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<int> DeleteCatalog(UserInfoDto user,int param)
+        public async Task<int> DeleteCatalog(UserInfoDto user, int param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
@@ -545,7 +547,7 @@ namespace BenDing.Repository.Providers.Web
                         }
                         else
                         {
-                            paramNew = param.OrderBy(d=>d.BillTime).ToList();
+                            paramNew = param.OrderBy(d => d.BillTime).ToList();
                         }
 
                         string insertSql = "";
@@ -592,7 +594,6 @@ namespace BenDing.Repository.Providers.Web
         /// <summary>
         /// 住院清单查询
         /// </summary>
-       
         /// <param name="param"></param>
         /// <returns></returns>
         public async Task<Dictionary<int, List<QueryHospitalizationFeeDto>>> QueryHospitalizationFee(QueryHospitalizationFeeUiParam param)
@@ -600,6 +601,7 @@ namespace BenDing.Repository.Providers.Web
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
                 var dataList = new List<QueryHospitalizationFeeDto>();
+                var dataListNew = new List<QueryHospitalizationFeeDto>();
                 var resultData = new Dictionary<int, List<QueryHospitalizationFeeDto>>();
                 _sqlConnection.Open();
 
@@ -619,49 +621,72 @@ namespace BenDing.Repository.Providers.Web
                 var result = await _sqlConnection.QueryMultipleAsync(executeSql);
                 int totalPageCount = result.Read<int>().FirstOrDefault();
                 dataList = (from t in result.Read<QueryHospitalizationFeeDto>()
-                    select t).ToList();
+                            select t).ToList();
                 if (dataList.Any())
                 {
+                    var organizationCode = dataList.Select(d => d.OrganizationCode).FirstOrDefault();
                     var directoryCodeList = dataList.Select(c => c.DirectoryCode).ToList();
                     var queryPairCodeParam = new QueryMedicalInsurancePairCodeParam()
                     {
                         DirectoryCodeList = directoryCodeList,
-                        OrganizationCode = dataList.Select(d=>d.OrganizationCode).FirstOrDefault()
+                        OrganizationCode = organizationCode
                     };
-                   var pairCodeData= await _baseSqlServerRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
+                    //获取医保对码数据
+                    var pairCodeData = await _baseSqlServerRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
+                    //获取医院登记
+                    var gradeData = await _iSystemManageRepository.QueryHospitalOrganizationGrade(organizationCode);
+                    //获取入院病人登记信息
+                    var residentInfoData = await _baseSqlServerRepository.QueryMedicalInsuranceResidentInfo(
+                             new QueryMedicalInsuranceResidentInfoParam() { BusinessId = param.BusinessId });
                     if (pairCodeData != null)
                     {
-                        var dataListNew = dataList.Select(c => new QueryHospitalizationFeeDto
+                        foreach (var c in dataList)
                         {
-                            Id = c.Id,
-                            Amount = c.Amount,
-                            BillTime = c.BillTime,
-                            BillDepartment = c.BillDepartment,
-                            DirectoryCode = c.DirectoryCode,
-                            DirectoryName = c.DirectoryName,
-                            DirectoryCategoryCode = c.DirectoryCategoryCode,
-                            UnitPrice = c.UnitPrice,
-                            UploadUserName = c.UploadUserName,
-                            Quantity = c.Quantity,
-                            RecipeCode = c.RecipeCode,
-                            Specification = c.Specification,
-                            OperateDoctorName = c.OperateDoctorName,
-                            UploadMark = c.UploadMark,
-                            AdjustmentNumber = c.AdjustmentNumber,
+                            var itemPairCode = pairCodeData
+                                   .FirstOrDefault(d => d.DirectoryCode == c.DirectoryCode);
+                            var item = new QueryHospitalizationFeeDto
+                            {
+                                Id = c.Id,
+                                Amount = c.Amount,
+                                BillTime = c.BillTime,
+                                BillDepartment = c.BillDepartment,
+                                DirectoryCode = c.DirectoryCode,
+                                DirectoryName = c.DirectoryName,
+                                DirectoryCategoryCode = c.DirectoryCategoryCode,
+                                UnitPrice = c.UnitPrice,
+                                UploadUserName = c.UploadUserName,
+                                Quantity = c.Quantity,
+                                RecipeCode = c.RecipeCode,
+                                Specification = c.Specification,
+                                OperateDoctorName = c.OperateDoctorName,
+                                UploadMark = c.UploadMark,
+                                AdjustmentDifferenceValue = c.AdjustmentDifferenceValue,
+                                BlockPrice = itemPairCode != null ? GetBlockPrice(itemPairCode, gradeData) : 0,
+                                ProjectCode = itemPairCode?.ProjectCode,
+                                ProjectCodeType = itemPairCode?.ProjectCodeType,
+                                ProjectLevel = itemPairCode?.ProjectCodeType,
+                                SelfPayProportion= (itemPairCode != null && residentInfoData != null)?GetSelfPayProportion(itemPairCode, residentInfoData) :0,
+                                UploadAmount=c.UploadAmount
+                            };
+                            dataListNew.Add(item);
+
+                        }
 
 
 
-                        });
+
                     }
                 }
-
-                
+                {
+                    dataListNew = dataList;
+                }
                 _sqlConnection.Close();
+                resultData.Add(totalPageCount, dataListNew);
                 return resultData;
 
             }
         }
-        
+
         public async Task<int> UpdateInpatientInfoDetail(UpdateInpatientInfoDetail param)
         {
             int count = 0;
@@ -823,13 +848,13 @@ namespace BenDing.Repository.Providers.Web
             {
                 _sqlConnection.Open();
                 string insertSql = null;
-                if (!string.IsNullOrWhiteSpace(param.MedicalInsuranceHospitalizationNo) && param.IsModify==false)
+                if (!string.IsNullOrWhiteSpace(param.MedicalInsuranceHospitalizationNo) && param.IsModify == false)
                 {
                     insertSql = $@"update [dbo].[MedicalInsurance] set [MedicalInsuranceYearBalance]=0,
                     [MedicalInsuranceHospitalizationNo]='{param.MedicalInsuranceHospitalizationNo}',[Isdelete]=0,
                     where [Id]='{param.Id}' and [Isdelete]=1 and OrganizationCode='{user.OrganizationCode}'";
                 }
-                else if(param.IsModify)
+                else if (param.IsModify)
                 {
                     insertSql = $@"update [dbo].[MedicalInsurance] set [MedicalInsuranceYearBalance]=0,
                     AdmissionInfoJson='{param.AdmissionInfoJson}'
@@ -862,7 +887,7 @@ namespace BenDing.Repository.Providers.Web
                                 a.HisHospitalizationId=b.BusinessId
                                 where a.IsDelete=0 and b.IsDelete=0
                                 and b.BusinessId='{businessId}' and a.OrganizationCode='{user.OrganizationCode}'";
-               var data=  await _sqlConnection.QueryFirstAsync<QueryMedicalInsuranceDto>(querySql);
+                var data = await _sqlConnection.QueryFirstAsync<QueryMedicalInsuranceDto>(querySql);
                 if (data != null) resultData = data;
                 _sqlConnection.Close();
                 return resultData;
@@ -1044,7 +1069,7 @@ namespace BenDing.Repository.Providers.Web
                     string deleteSql = "delete [dbo].[MedicalInsuranceProject] where ProjectCode in (" + projectCodeList + ")";
                     await _sqlConnection.ExecuteAsync(deleteSql);
 
-                   
+
                     //20191024023636736DateTime.Now.ToString("yyyyMMddhhmmssfff")
                     string insertSql = null;
                     foreach (var item in param)
@@ -1128,6 +1153,28 @@ namespace BenDing.Repository.Providers.Web
         {
             //byte[] buffer = Guid.NewGuid().ToByteArray();
             return BitConverter.ToInt64(Guid.NewGuid().ToByteArray(), 0);
+        }
+
+        private decimal GetBlockPrice(QueryMedicalInsurancePairCodeDto param, OrganizationGrade grade)
+        {
+            decimal resultData = 0;
+            if (grade == OrganizationGrade.二级乙等以下) resultData = param.ZeroBlock;
+            if (grade == OrganizationGrade.二级乙等) resultData = param.OneBlock;
+            if (grade == OrganizationGrade.二级甲等) resultData = param.TwoBlock;
+            if (grade == OrganizationGrade.三级乙等) resultData = param.ThreeBlock;
+            if (grade == OrganizationGrade.三级甲等) resultData = param.FourBlock;
+
+            return resultData;
+        }
+
+        private decimal GetSelfPayProportion(QueryMedicalInsurancePairCodeDto param, MedicalInsuranceResidentInfoDto residentInfo)
+        {
+            decimal resultData = 0;
+            //居民
+            if (residentInfo.InsuranceType == "342") resultData = param.ResidentSelfPayProportion;
+            //职工
+            if (residentInfo.InsuranceType == "310") resultData = param.WorkersSelfPayProportion;
+            return resultData;
         }
     }
 }

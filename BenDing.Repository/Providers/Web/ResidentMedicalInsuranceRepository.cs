@@ -217,11 +217,36 @@ namespace BenDing.Repository.Providers.Web
                 //{
                 //    throw new Exception("居民项目下载执行失败!!!");
                 //}
-
+              
                 return data;
             });
 
         }
+        /// <summary>
+        /// 项目下载总条数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<Int64> ProjectDownloadCount(ResidentProjectDownloadParam param)
+        {
+            return await Task.Run(async () =>
+            {
+                Int64 resultData = 0;
+                var xmlStr = XmlHelp.SaveXml(param);
+                if (xmlStr)
+                {
+                   
+                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB019");
+                    if (result == 1)
+                    {
+                      var data=  XmlHelp.DeSerializerModel(new ProjectDownloadCountDto(), true);
+                        resultData = data.Count;
+                    }
+                }
+                return resultData;
+            });
+        }
+
         /// <summary>
         /// 处方上传
         /// </summary>
@@ -331,8 +356,9 @@ namespace BenDing.Repository.Providers.Web
                             Id = d.Id,
                             BatchNumber = data.ProjectBatch,
                             TransactionId= transactionId,
+                            UploadAmount=d.Amount
 
-                          }).ToList();
+                        }).ToList();
                         await _baseSqlServerRepository.UpdateHospitalizationFee(updateFeeParam, user);
                         //保存至基层
                         var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(xmlStr);
@@ -374,14 +400,14 @@ namespace BenDing.Repository.Providers.Web
 
                     if (pairCodeData != null)
                     {//自付金额
-                        string residentSelfPayProportion = "";
+                        decimal residentSelfPayProportion = 0;
                         if (insuranceType == "342")//居民   
                         {
-                            residentSelfPayProportion = Convert.ToDouble(Convert.ToDecimal(item.Amount) * pairCodeData.ResidentSelfPayProportion).ToString();
+                            residentSelfPayProportion = CommonHelp.ValueToDouble((item.Amount + item.AdjustmentDifferenceValue) * pairCodeData.ResidentSelfPayProportion);
                         }
                         if (insuranceType == "310")//职工
                         {
-                            residentSelfPayProportion =Convert.ToDouble(Convert.ToDecimal(item.Amount) * pairCodeData.WorkersSelfPayProportion).ToString();
+                            residentSelfPayProportion = CommonHelp.ValueToDouble((item.Amount + item.AdjustmentDifferenceValue) * pairCodeData.WorkersSelfPayProportion);
                         }
 
                         var rowData = new PrescriptionUploadRowParam()
@@ -457,7 +483,7 @@ namespace BenDing.Repository.Providers.Web
                     {
                         queryAmount = queryData.FourBlock;
                     }
-                    if (Convert.ToDecimal(item.Amount) < queryAmount)
+                    if (item.Amount < queryAmount)
                     {
                         dataList.Add(item);
                     }

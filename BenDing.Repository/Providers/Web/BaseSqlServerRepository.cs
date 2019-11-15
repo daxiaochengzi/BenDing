@@ -97,27 +97,28 @@ namespace BenDing.Repository.Providers.Web
             {
                 var resultData = new MedicalInsuranceResidentInfoDto();
                 _sqlConnection.Open();
-                string strSql = @" select   [DataAllId]
-                      ,[ContentJson]
-                      ,[DataType]
-                      ,[DataId]
-                      ,[BusinessId]
-                      ,[IdCard]
-                      ,[OrgCode]
-                      ,[CreateUserId]
-                      ,[CreateTime]
-                      ,[DeleteTime]
-                      ,[DeleteUserId] from [dbo].[MedicalInsuranceResidentInfo] where";
+                string strSql = @" SELECT [Id]
+                              ,[HisHospitalizationId]
+                              ,[InsuranceNo]
+                              ,[MedicalInsuranceYearBalance]
+                              ,[MedicalInsuranceHospitalizationNo]
+                              ,[SelfPayFee]
+                              ,[AdmissionInfoJson]
+                              ,[ReimbursementExpenses]
+                              ,[OtherInfo]
+                              ,[OrganizationCode]
+                              ,[OrganizationName]
+                              ,[InsuranceType]
+                            FROM [dbo].[MedicalInsurance]
+                            where  IsDelete=0";
 
-                strSql += $" IsDelete={param.IsDelete}";
+             
                 if (!string.IsNullOrWhiteSpace(param.DataId))
-                    strSql += $" and DataId='{param.DataId}'";
+                    strSql += $" and Id='{param.DataId}'";
                 if (!string.IsNullOrWhiteSpace(param.BusinessId))
-                    strSql += $" and BusinessId='{param.BusinessId}'";
+                    strSql += $" and HisHospitalizationId='{param.BusinessId}'";
                 if (!string.IsNullOrWhiteSpace(param.OrgCode))
                     strSql += $" and OrgCode='{param.OrgCode}'";
-                if (!string.IsNullOrWhiteSpace(param.IdCard))
-                    strSql += $" and IdCard='{param.IdCard}'";
                 var data = await _sqlConnection.QueryFirstOrDefaultAsync<MedicalInsuranceResidentInfoDto>(strSql);
                 _sqlConnection.Close();
                 return data != null ? data : resultData;
@@ -153,11 +154,11 @@ namespace BenDing.Repository.Providers.Web
                 return data;
             }
         }
-       /// <summary>
-       /// 住院病人明细查询
-       /// </summary>
-       /// <param name="param"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// 住院病人明细查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public async Task<List<QueryInpatientInfoDetailDto>> InpatientInfoDetailQuery(InpatientInfoDetailQueryParam param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
@@ -179,10 +180,10 @@ namespace BenDing.Repository.Providers.Web
                     }
                     else
                     {
-                         throw  new Exception("业务号不能为空!!!");
+                        throw new Exception("业务号不能为空!!!");
                     }
                 }
-                
+
 
                 var data = await _sqlConnection.QueryAsync<QueryInpatientInfoDetailDto>(strSql);
                 _sqlConnection.Close();
@@ -221,7 +222,6 @@ namespace BenDing.Repository.Providers.Web
                 return result;
             }
         }
-     
         /// <summary>
         /// 医保对码
         /// </summary>
@@ -303,7 +303,7 @@ namespace BenDing.Repository.Providers.Web
                             inner join [dbo].[MedicalInsuranceProject] as b on b.ProjectCode=a.ProjectCode
                             where a.OrganizationCode='{param.OrganizationCode}' and a.[DirectoryCode] in({updateId})
                               and a.IsDelete=0  and b.IsDelete=0 and b.EffectiveSign=1";
-                  var data=  await _sqlConnection.QueryAsync<QueryMedicalInsurancePairCodeDto>(sqlStr);
+                    var data = await _sqlConnection.QueryAsync<QueryMedicalInsurancePairCodeDto>(sqlStr);
                     if (data != null && data.Any() == true)
                     {
                         resultData = data.ToList();
@@ -476,28 +476,6 @@ namespace BenDing.Repository.Providers.Web
             return resultData;
         }
         /// <summary>
-        /// 添加批次号
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task<int> AddProjectBatch(AddProjectBatchParam param)
-        {
-            int resultData = 0;
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-            {
-
-                _sqlConnection.Open();
-                string querySql = $@"insert into [dbo].[ProjectBatch](Id,BusinessId,CreateTime,CreateUserId)
-                                values('{param.Id}','{param.BusinessId}',getdate(),'{param.UserId}')";
-                resultData = await _sqlConnection.ExecuteAsync(querySql);
-
-                _sqlConnection.Close();
-
-            }
-
-            return resultData;
-        }
-        /// <summary>
         /// 处方上传数据更新
         /// </summary>
         /// <param name="param"></param>
@@ -509,31 +487,26 @@ namespace BenDing.Repository.Providers.Web
             {
 
                 _sqlConnection.Open();
-               // var updateId = ListToStr(param.IdList.Select(c=>c.ToString()).ToList());
+                // var updateId = ListToStr(param.IdList.Select(c=>c.ToString()).ToList());
 
                 if (param.Any())
                 {
                     string querySql = null;
                     foreach (var item in param)
                     {
-                        querySql += $@" update [dbo].[HospitalizationFee] set [UploadMark]=1,ProjectBatchNumber='{item.BatchNumber}',
+                        querySql += $@" update [dbo].[HospitalizationFee] set [UploadMark]=1,ProjectBatchNumber='{item.BatchNumber}',UploadAmount={item.UploadAmount},
                                TransactionId='{item.TransactionId}',UploadUserId='{user.UserId}',UploadUserName='{user.UserName}',UploadTime=GETDATE()
-                               where id='{item.Id}' and Isdelete=0;";
+                               where id='{item.Id}' and IsDelete=0;";
                     }
 
-                  
                     resultData = await _sqlConnection.ExecuteAsync(querySql);
                 }
-
-
-
                 _sqlConnection.Close();
 
             }
 
             return resultData;
         }
-        
         private string ListToStr(List<string> param)
         {
             string result = null;

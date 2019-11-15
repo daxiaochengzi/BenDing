@@ -80,6 +80,14 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         Task GetInpatientInfoDetailDto(UserInfoDto user, List<InpatientInfoDetailDto> param);
+        /// <summary>
+        /// 住院清单查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+
+         Task<Dictionary<int, List<QueryHospitalizationFeeDto>>> QueryHospitalizationFee(
+            QueryHospitalizationFeeUiParam param);
 
         /// <summary>
         /// ICD10Time 

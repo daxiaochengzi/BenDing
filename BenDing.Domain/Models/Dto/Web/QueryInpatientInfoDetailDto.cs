@@ -31,5 +31,11 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 开单医生固定编码
         /// </summary>
         public string BillDoctorIdFixedEncoding { get; set; }
+        /// <summary>
+        /// 调整差值
+        /// </summary>
+        public  decimal AdjustmentDifferenceValue { get; set; }
+
+
     }
 }

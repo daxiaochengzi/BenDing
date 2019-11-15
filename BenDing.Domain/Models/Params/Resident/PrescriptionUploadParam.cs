@@ -82,24 +82,24 @@ namespace BenDing.Domain.Models.Params.Resident
         /// 单价   (12,4)
         /// </summary>
         [XmlElementAttribute("AKC225", IsNullable = false)]
-        public string UnitPrice { get; set; }
+        public decimal UnitPrice { get; set; }
         /// <summary>
         /// 数量   (12,4)
         /// </summary>
         [XmlElementAttribute("AKC226", IsNullable = false)]
-        public string Quantity { get; set; }
+        public decimal Quantity { get; set; }
 
         /// <summary>
         /// 金额  (12,4)每条费用明细的数据校验为传入的金额（四舍五入到两位小数）和传入的单价*传入的数量（四舍五入到两位小数）必须相等，检查不等的会提示报错
         /// </summary>
         [XmlElementAttribute("AKC227", IsNullable = false)]
-        public string Amount { get; set; }
+        public decimal Amount { get; set; }
         /// <summary>
         /// 居民自付金额 (12,2)
         /// </summary>
         [XmlElementAttribute("AKC228", IsNullable = false)]
         
-        public string ResidentSelfPayProportion { get; set; }
+        public decimal ResidentSelfPayProportion { get; set; }
         /// <summary>
         /// 剂型
         /// </summary>

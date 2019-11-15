@@ -257,9 +257,9 @@ namespace BenDing.Domain.Xml
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="t"></param>
-        /// <param name="IsAbnormal"></param>
+        /// <param name="isAbnormal">是否抛出异常</param>
         /// <returns></returns>
-        public static T DeSerializerModel<T>(T t,bool IsAbnormal)
+        public static T DeSerializerModel<T>(T t,bool isAbnormal)
         {
             var result = t;
             string pathXml = null;
@@ -271,7 +271,7 @@ namespace BenDing.Domain.Xml
             valid.PO_FHZ = po_fhzNode.InnerText;
             XmlNode po_msgNode = doc.SelectSingleNode("/ROW/PO_MSG");
             valid.PO_MSG = po_msgNode.InnerText;
-            if (IsAbnormal == false)
+            if (isAbnormal == false)
             {
                 if (valid.PO_FHZ != "1")
                 {
