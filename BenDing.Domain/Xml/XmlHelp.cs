@@ -265,11 +265,16 @@ namespace BenDing.Domain.Xml
             string pathXml = null;
             var valid = new ValidXmlDto();
             pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\ResponseParams.xml";
+            if (!System.IO.File.Exists(pathXml))
+            {
+                
+                throw new SystemException("ResponseParams文件不存在!!!");
+            }
             XmlDocument doc = new XmlDocument();
             doc.Load(pathXml);
-            XmlNode po_fhzNode = doc.SelectSingleNode("/ROW/PO_FHZ");
+            XmlNode po_fhzNode = doc.SelectSingleNode("/row/po_fhz");
             valid.PO_FHZ = po_fhzNode.InnerText;
-            XmlNode po_msgNode = doc.SelectSingleNode("/ROW/PO_MSG");
+            XmlNode po_msgNode = doc.SelectSingleNode("/row/po_msg");
             valid.PO_MSG = po_msgNode.InnerText;
             if (isAbnormal == false)
             {
@@ -299,9 +304,9 @@ namespace BenDing.Domain.Xml
             XmlDocument doc = new XmlDocument();
             doc.Load(pathXml);
 
-            XmlNode po_fhzNode = doc.SelectSingleNode("/ROW/PO_FHZ");
+            XmlNode po_fhzNode = doc.SelectSingleNode("/row/po_fhz");
             result.PO_FHZ = po_fhzNode.InnerText;
-            XmlNode po_msgNode = doc.SelectSingleNode("/ROW/PO_MSG");
+            XmlNode po_msgNode = doc.SelectSingleNode("/row/po_msg");
             result.PO_MSG = po_msgNode.InnerText;
             if (result.PO_FHZ == "1")
             {
