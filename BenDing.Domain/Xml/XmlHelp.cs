@@ -272,9 +272,9 @@ namespace BenDing.Domain.Xml
             }
             XmlDocument doc = new XmlDocument();
             doc.Load(pathXml);
-            XmlNode po_fhzNode = doc.SelectSingleNode("/row/po_fhz");
+            XmlNode po_fhzNode = doc.SelectSingleNode("/ROW/PO_FHZ");
             valid.PO_FHZ = po_fhzNode.InnerText;
-            XmlNode po_msgNode = doc.SelectSingleNode("/row/po_msg");
+            XmlNode po_msgNode = doc.SelectSingleNode("/ROW/PO_MSG");
             valid.PO_MSG = po_msgNode.InnerText;
             if (isAbnormal == false)
             {
@@ -304,9 +304,9 @@ namespace BenDing.Domain.Xml
             XmlDocument doc = new XmlDocument();
             doc.Load(pathXml);
 
-            XmlNode po_fhzNode = doc.SelectSingleNode("/row/po_fhz");
+            XmlNode po_fhzNode = doc.SelectSingleNode("/ROW/PO_FHZ");
             result.PO_FHZ = po_fhzNode.InnerText;
-            XmlNode po_msgNode = doc.SelectSingleNode("/row/po_msg");
+            XmlNode po_msgNode = doc.SelectSingleNode("/ROW/PO_MSG");
             result.PO_MSG = po_msgNode.InnerText;
             if (result.PO_FHZ == "1")
             {

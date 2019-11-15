@@ -198,9 +198,21 @@ namespace BenDing.Repository.Providers.Web
             {
                 var data = new ResidentProjectDownloadDto();
 
-                string strXml = XmlHelp.DeSerializerModelStr("ROWDATA");
 
-                data = XmlHelp.DeSerializer<ResidentProjectDownloadDto>(strXml);
+                var xmlStr = XmlHelp.SaveXml(param);
+                if (xmlStr)
+                {
+
+                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB019");
+                    if (result == 1)
+                    {
+                         data = XmlHelp.DeSerializerModel(new ResidentProjectDownloadDto(), true);
+                      
+                    }
+                }
+                //string strXml = XmlHelp.DeSerializerModelStr("ROWDATA");
+
+                //data = XmlHelp.DeSerializer<ResidentProjectDownloadDto>(strXml);
                 // data = XmlHelp.DeSerializerModel(new ResidentProjectDownloadDto());
                 //var xmlStr = XmlHelp.SaveXml(param);
                 //if (xmlStr)
@@ -240,7 +252,7 @@ namespace BenDing.Repository.Providers.Web
                     if (result == 1)
                     {
                       var data=  XmlHelp.DeSerializerModel(new ProjectDownloadCountDto(), true);
-                        resultData = data.Count;
+                        resultData = data.PO_CNT;
                     }
                 }
                 return resultData;

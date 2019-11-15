@@ -14,7 +14,7 @@ namespace BenDing.Domain.Models.Dto.Resident
     /// 总条数
     /// </summary>
         [XmlElementAttribute("PO_CNT", IsNullable = false)]
-        public Int64 Count { get; set; }
+        public Int64 PO_CNT { get; set; } 
     } 
     
 }

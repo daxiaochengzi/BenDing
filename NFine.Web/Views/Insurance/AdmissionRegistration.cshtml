@@ -352,13 +352,32 @@
                 resArray: 'Data',
                 count: 10,
                 done: function (item) {
+                    var data = layui.table.cache.listReload;
+                    console.log(data)
+                    console.log(data.length)
                     //alert(JSON.stringify(item))
-                    //追加到listReload上
-                    var tr = " <tr>" +
-                        "  <td>" + item.DiseaseName + "</td>" +
-                        "  <td>" + item.DiseaseCoding + "</td>" +
-                        "  </tr>";
-                    $(".layui-table-body .layui-table").append(tr);
+                    var tr = "<tr data-index='0' class=''>"+
+                             "<td data-field='0' align = 'center' class='layui-table-col-special' >" +
+                             "  <div class='layui-table-cell laytable-cell-numbers'>1</div>" +
+                             "</td> " +
+                             "<td data - field='DiagnosisName' data-edit='text' align = 'center' class='' > " +
+                             "  <div class='layui-table-cell' > 肺部感染</div > " +
+                             "</td> " +
+                             "<td data-field='DiagnosisCode' data-edit='text' align = 'center' class='' > " +
+                             "  <div class='layui-table-cell' > J98.414</div > " +
+                             "</td> " +
+                             "<td data-field='IsMainDiagnosis' align = 'center' data-content='true' class='' > " +
+                             "  <div class='layui-table-cell' > " +
+                             "      <input type='checkbox' name='MainDiagnosis'  class='layui-btn-xs' value='true' lay-skin='switch' lay-text='是|否'  lay-filter='diagnosticMain' checked=''> " +
+                             "   </div>" +
+                             "</td>" +
+                             "<td data-field='4' align='center' data-off='true' class='layui-table-col-special'>" +
+                             "  <div class='layui-table-cell'>" +
+                             "      <a class='layui-btn layui-btn-danger layui-btn-xs' lay-event='del'>删除</a>" +
+                             "  </div>" +
+                             "</td>" +
+                         "</tr>";
+                    $(".layui-table-body .layui-table tbody").append(tr);
                 }
             })
 
