@@ -1071,17 +1071,19 @@ namespace BenDing.Repository.Providers.Web
 
 
                     //20191024023636736DateTime.Now.ToString("yyyyMMddhhmmssfff")
+                    
                     string insertSql = null;
                     foreach (var item in param)
                     {
-                        insertSql += $@"INSERT INTO [dbo].[MedicalInsuranceProject]
+                        var projectName = FilteSqlStr(item.ProjectName);
+                         insertSql += $@"INSERT INTO [dbo].[MedicalInsuranceProject]
                            (id,[ProjectCode],[ProjectName] ,[ProjectCodeType] ,[ProjectLevel],[WorkersSelfPayProportion]
                            ,[Unit],[MnemonicCode] ,[Formulation],[ResidentSelfPayProportion],[RestrictionSign]
                            ,[ZeroBlock],[OneBlock],[TwoBlock],[ThreeBlock],[FourBlock],[EffectiveSign],[ResidentOutpatientSign]
                            ,[ResidentOutpatientBlock],[Manufacturer] ,[QuasiFontSize] ,[Specification],[Remark],[NewCodeMark]
                            ,[NewUpdateTime],[StartTime] ,[EndTime],[LimitPaymentScope],[CreateTime],[CreateUserId]
                            )
-                          VALUES('{Guid.NewGuid()}','{item.ProjectCode}','{item.ProjectName}','{item.ProjectCodeType}','{item.ProjectLevel}','{item.WorkersSelfPayProportion}'
+                          VALUES('{Guid.NewGuid()}','{item.ProjectCode}','{projectName}','{item.ProjectCodeType}','{item.ProjectLevel}','{item.WorkersSelfPayProportion}'
                                   ,'{item.Unit}','{item.MnemonicCode}', '{item.Formulation}','{item.ResidentSelfPayProportion}','{item.RestrictionSign}'
                                   ,'{item.ZeroBlock}','{item.OneBlock}','{item.TwoBlock}','{item.ThreeBlock}','{item.FourBlock}','{item.EffectiveSign}','{item.ResidentOutpatientSign}'
                                   ,'{item.ResidentOutpatientBlock}','{item.Manufacturer}','{item.QuasiFontSize}','{item.Specification}','{item.Remark}','{item.NewCodeMark}'
@@ -1175,6 +1177,21 @@ namespace BenDing.Repository.Providers.Web
             //职工
             if (residentInfo.InsuranceType == "310") resultData = param.WorkersSelfPayProportion;
             return resultData;
+        }
+        public  string FilteSqlStr(string Str)
+        {
+           
+            Str = Str.Replace("'", "");
+            Str = Str.Replace("\"", "");
+            Str = Str.Replace("&", "&amp");
+            Str = Str.Replace("<", "&lt");
+            Str = Str.Replace(">", "&gt");
+
+            Str = Str.Replace("delete", "");
+            Str = Str.Replace("update", "");
+            Str = Str.Replace("insert", "");
+
+            return Str;
         }
     }
 }
