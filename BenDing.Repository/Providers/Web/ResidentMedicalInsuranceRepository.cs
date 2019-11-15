@@ -197,38 +197,19 @@ namespace BenDing.Repository.Providers.Web
             return await Task.Run(async () =>
             {
                 var data = new ResidentProjectDownloadDto();
-
-
                 var xmlStr = XmlHelp.SaveXml(param);
+               
                 if (xmlStr)
                 {
-
                     int result = MedicalInsuranceDll.CallService_cxjb("CXJB019");
                     if (result == 1)
                     {
-                         data = XmlHelp.DeSerializerModel(new ResidentProjectDownloadDto(), true);
-                      
+                        string strXml = XmlHelp.DeSerializerModelStr("ROWDATA");
+                        data = XmlHelp.DeSerializer<ResidentProjectDownloadDto>(strXml);
+
                     }
                 }
-                //string strXml = XmlHelp.DeSerializerModelStr("ROWDATA");
-
-                //data = XmlHelp.DeSerializer<ResidentProjectDownloadDto>(strXml);
-                // data = XmlHelp.DeSerializerModel(new ResidentProjectDownloadDto());
-                //var xmlStr = XmlHelp.SaveXml(param);
-                //if (xmlStr)
-                //{
-                //    int result = MedicalInsuranceDll.CallService_cxjb("CXJB019");
-                //    if (result == 1)
-                //    {
-                //        data = XmlHelp.DeSerializerModel(new ResidentProjectDownloadDto());
-
-                //    }
-
-                //}
-                //else
-                //{
-                //    throw new Exception("居民项目下载执行失败!!!");
-                //}
+                
               
                 return data;
             });

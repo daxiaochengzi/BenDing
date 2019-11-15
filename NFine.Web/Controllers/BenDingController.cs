@@ -638,7 +638,7 @@ namespace NFine.Web.Controllers
             {
                 //医保登陆
                 await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                var data = await _residentService.ProjectDownload(new ResidentProjectDownloadParam());
+                var data = await _residentService.ProjectDownload(param);
                 y.Data = data;
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);

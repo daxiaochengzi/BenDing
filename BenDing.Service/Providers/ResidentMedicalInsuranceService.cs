@@ -52,15 +52,13 @@ namespace BenDing.Service.Providers
         public async Task<string> ProjectDownload(ResidentProjectDownloadParam param)
         {
             ResidentProjectDownloadDto data;
+          
             string resultData = "";
             param.QueryType = 1;
-            param.Limit = 499;
-            param.UpdateTime = "19900101";
-            param.Page = 1;
-            var count= await _residentMedicalInsurance.ProjectDownloadCount(param);
+            var count = await _residentMedicalInsurance.ProjectDownloadCount(param);
             var cnt = Convert.ToInt32(count / param.Limit) + ((count % param.Limit) > 0 ? 1 : 0);
             param.QueryType = 2;
-            Int64 allNum =0;
+            Int64 allNum = 0;
             var i = 0;
             while (i < cnt)
             {
@@ -69,11 +67,11 @@ namespace BenDing.Service.Providers
                 if (data != null && data.Row.Any())
                 {
                     allNum += data.Row.Count;
-                    await _baseHelpRepository.ProjectDownload(new UserInfoDto() { UserId = param.UserId}, data.Row);
+                    await _baseHelpRepository.ProjectDownload(new UserInfoDto() { UserId = param.UserId }, data.Row);
                 }
                 i = i + param.Page;
             }
-            resultData= "下载成功共" + allNum + "条记录";
+            resultData = "下载成功共" + allNum + "条记录";
             return resultData;
         }
 

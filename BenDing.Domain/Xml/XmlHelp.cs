@@ -158,7 +158,7 @@ namespace BenDing.Domain.Xml
 
         public static bool SaveXml<T>(T t)
         {
-            // var strXml = ToXml(t);
+           
             var strXmls = XmlSerializeHelper.XmlSerialize(t);
             bool result = false;
             if (string.IsNullOrWhiteSpace(strXmls))
@@ -267,7 +267,6 @@ namespace BenDing.Domain.Xml
             pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\ResponseParams.xml";
             if (!System.IO.File.Exists(pathXml))
             {
-                
                 throw new SystemException("ResponseParams文件不存在!!!");
             }
             XmlDocument doc = new XmlDocument();
@@ -303,7 +302,10 @@ namespace BenDing.Domain.Xml
             pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\ResponseParams.xml";
             XmlDocument doc = new XmlDocument();
             doc.Load(pathXml);
-
+            if (!System.IO.File.Exists(pathXml))
+            {
+                throw new SystemException("ResponseParams文件不存在!!!");
+            }
             XmlNode po_fhzNode = doc.SelectSingleNode("/ROW/PO_FHZ");
             result.PO_FHZ = po_fhzNode.InnerText;
             XmlNode po_msgNode = doc.SelectSingleNode("/ROW/PO_MSG");
