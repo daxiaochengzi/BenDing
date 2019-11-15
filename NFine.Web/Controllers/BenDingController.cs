@@ -711,6 +711,19 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
+
+        /// <summary>
+        /// ICD10诊断录入弹层
+        /// </summary>
+        /// <param name="UserId">操作员ID</param>
+        /// <returns></returns>
+        public ActionResult DiagnosisIframe(string UserId)
+        {
+            ViewBag.title = "录入ICD-10诊断";
+            ViewBag.empid = UserId;
+            return View();
+        }
+
         /// <summary>
         /// 居民入院登记修改
         /// </summary>

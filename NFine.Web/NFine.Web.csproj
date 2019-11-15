@@ -331,6 +331,7 @@
     <Content Include="Content\js\layui\css\modules\layer\default\loading-0.gif" />
     <Content Include="Content\js\layui\css\modules\layer\default\loading-1.gif" />
     <Content Include="Content\js\layui\css\modules\layer\default\loading-2.gif" />
+    <Content Include="Content\js\layui\css\modules\layuiAutocomplete.css" />
     <Content Include="Content\js\layui\font\iconfont.svg" />
     <Content Include="Content\js\layui\images\face\0.gif" />
     <Content Include="Content\js\layui\images\face\1.gif" />
@@ -426,7 +427,7 @@
     <Content Include="Content\js\layui\lay\modules\tree.js" />
     <Content Include="Content\js\layui\lay\modules\upload.js" />
     <Content Include="Content\js\layui\lay\modules\util.js" />
-    <Content Include="Content\js\layui\plugin\contlist.js" />
+    <Content Include="Content\js\layui\plugin\layAutoComplete.js" />
     <Content Include="Content\js\loading\pace.min.js" />
     <Content Include="Content\js\md5\jquery.md5.js" />
     <Content Include="Content\js\qrcode\jquery.qrcode.js" />
@@ -802,6 +803,7 @@
     <Content Include="Views\Insurance\HospitalPreSettle.cshtml" />
     <Content Include="Views\Insurance\LeaveHospitalSettlement.cshtml" />
     <Content Include="Views\Insurance\LeaveHospitalSettlementCancel.cshtml" />
+    <Content Include="Views\BenDing\DiagnosisIframe.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
