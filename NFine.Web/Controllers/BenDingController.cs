@@ -632,7 +632,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> ProjectDownload([FromBody]ResidentProjectDownloadParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>

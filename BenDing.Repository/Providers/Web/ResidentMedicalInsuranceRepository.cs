@@ -308,9 +308,9 @@ namespace BenDing.Repository.Providers.Web
                             var rowDataListAll = paramIni.RowDataList.Where(d => idList.Contains(d.Id)).OrderBy(c => c).ToList();
                             var sendList = rowDataListAll.Take(50).ToList();
                             var uploadData = await PrescriptionUploadData(paramIni, param.BusinessId, user);
-                            if (uploadData.Code != "1")
+                            if (uploadData.PO_FHZ != "1")
                             {
-                                resultData.Msg += uploadData.Msg;
+                                resultData.Msg += uploadData.PO_MSG;
                             }
                             else
                             {
@@ -347,7 +347,7 @@ namespace BenDing.Repository.Providers.Web
                 {
                     int result = MedicalInsuranceDll.CallService_cxjb("CXJB004");
                     data = XmlHelp.DeSerializerModel(new PrescriptionUploadDto(), false);
-                    if (data.Msg == "1")
+                    if (data.PO_FHZ == "1")
                     {   //交易码
                         var transactionId = Guid.NewGuid().ToString("N");
                         //添加批次
