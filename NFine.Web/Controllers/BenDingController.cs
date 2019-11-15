@@ -589,7 +589,6 @@ namespace NFine.Web.Controllers
             ViewBag.empid = param.UserId;
             return View();
         }
-
         /// <summary>
         /// 三大目录对码信息回写至基层系统
         /// </summary>
