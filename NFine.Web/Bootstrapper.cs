@@ -40,6 +40,7 @@ namespace NFine.Web
         {
             #region Service
             container.RegisterType<IWebServiceBasicService, WebServiceBasicService>();
+            container.RegisterType<IResidentMedicalInsuranceService, ResidentMedicalInsuranceService>();
 
             #endregion
             #region Repository

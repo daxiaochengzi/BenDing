@@ -378,13 +378,13 @@ namespace BenDing.Repository.Providers.Web
                 string strSql = $"select  [id],[DiseaseCoding],[DiseaseName] ,[MnemonicCode],[Remark] ,DiseaseId from [dbo].[ICD10]  where IsDelete=0";
                 string regexstr = @"[\u4e00-\u9fa5]";
 
-                if (Regex.IsMatch(param.SearchKey, regexstr))
+                if (Regex.IsMatch(param.Search, regexstr))
                 {
-                    strSql += " and DiseaseName like '" + param.SearchKey + "%'";
+                    strSql += " and DiseaseName like '" + param.Search + "%'";
                 }
                 else
                 {
-                    strSql += " and MnemonicCode like '" + param.SearchKey + "%'";
+                    strSql += " and MnemonicCode like '" + param.Search + "%'";
                 }
 
                 var data = await _sqlConnection.QueryAsync<QueryICD10InfoDto>(strSql);

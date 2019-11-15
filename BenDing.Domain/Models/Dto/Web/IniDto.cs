@@ -15,14 +15,14 @@ namespace BenDing.Domain.Models.Dto.Web
      /// 过程返回值(为1时正常，否则不正常)
      /// </summary>
         [JsonProperty(PropertyName = "PO_FHZ")]
-        [XmlElementAttribute("PO_FHZ")]
-        public string Code { get; set; }
+      
+        public string PO_FHZ { get; set; }
         /// <summary>
         /// 系统错误信息
         /// </summary>
         [JsonProperty(PropertyName = "PO_MSG")]
-        [XmlElementAttribute("PO_MSG")]
-        public string Msg { get; set; }
+       
+        public string PO_MSG { get; set; }
 
         
     }

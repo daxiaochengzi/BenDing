@@ -1,5 +1,4 @@
 ﻿@{
-    ViewBag.Title = "医保目录对码";
     Layout = "~/Views/Shared/_Base.cshtml";
 }
 <style>
@@ -21,15 +20,16 @@
 
 </style>
 
-<div class="layui-tab layui-tab-card">
-    <input type="hidden" id="empid" value="@ViewBag.empid" />
+
+
+<div class="layui-tab layui-tab-card layui-tab-brief" lay-filter="demo">
     <ul class="layui-tab-title">
         <li class="layui-this">医院目录</li>
         <li>医保目录</li>
         <li>对码管理</li>
     </ul>
-
-    <div class="layui-tab-content" style="height: 100px;">
+    <input type="hidden" id="empid" value="@ViewBag.empid" />
+    <div class="layui-tab-content">
         <div class="layui-tab-item layui-show">
             <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="app-content-list">
                 <div class="layui-form-item">
@@ -43,19 +43,6 @@
                                 <option value="3">诊疗</option>
                                 <option value="4">耗材</option>
                             </select>
-                            <div class="layui-unselect layui-form-select">
-                                <div class="layui-select-title">
-                                    <input type="text" placeholder="请选择标签" value="" readonly="" class="layui-input layui-unselect">
-                                    <i class="layui-edge"></i>
-                                </div>
-                                <dl class="layui-anim layui-anim-upbit">
-                                    <dd lay-value="" class="layui-select-tips">请选择类别</dd>
-                                    <dd lay-value="1" class="">中药</dd>
-                                    <dd lay-value="2" class="">西药</dd>
-                                    <dd lay-value="3" class="">诊疗</dd>
-                                    <dd lay-value="4" class="">耗材</dd>
-                                </dl>
-                            </div>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -72,12 +59,8 @@
                     </div>
                     <div class="layui-inline">
                         <button class="layui-btn" lay-submit="" lay-filter="LAY-app-contlist-search">查询</button>
-                    </div>
-                    <div class="layui-inline">
-                        <button class="layui-btn layui-btn-list" data-type="cleanSearch">清除</button>
-                    </div>
-                    <div class="layui-inline">
-                        <button class="layui-btn layui-btn-list" data-type="updateSearch">更新目录</button>
+                        <button class="layui-btn" data-type="cleanSearch">清除</button>
+                        <button class="layui-btn" data-type="updateSearch">更新目录</button>
                     </div>
                 </div>
             </div>
@@ -96,19 +79,6 @@
                                 <option value="3">服务设施</option>
                                 <option value="4">材料</option>
                             </select>
-                            <div class="layui-unselect layui-form-select">
-                                <div class="layui-select-title">
-                                    <input type="text" placeholder="请选择标签" value="" readonly="" class="layui-input layui-unselect">
-                                    <i class="layui-edge"></i>
-                                </div>
-                                <dl class="layui-anim layui-anim-upbit">
-                                    <dd lay-value="" class="layui-select-tips">请选择类别</dd>
-                                    <dd lay-value="1" class="">药品</dd>
-                                    <dd lay-value="2" class="">诊疗项目</dd>
-                                    <dd lay-value="3" class="">服务设施</dd>
-                                    <dd lay-value="4" class="">材料</dd>
-                                </dl>
-                            </div>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -125,12 +95,8 @@
                     </div>
                     <div class="layui-inline">
                         <button class="layui-btn" lay-submit="" lay-filter="LAY-yibao-content-list">查询</button>
-                    </div>
-                    <div class="layui-inline">
-                        <button class="layui-btn layui-btn-list" data-type="cleanSearch">清除</button>
-                    </div>
-                    <div class="layui-inline">
-                        <button class="layui-btn layui-btn-list" data-type="updateSearch">更新目录</button>
+                        <button class="layui-btn" data-type="cleanSearch">清除</button>
+                        <button class="layui-btn" data-type="updateSearch">更新目录</button>
                     </div>
                 </div>
             </div>
@@ -149,19 +115,6 @@
                                 <option value="3">诊疗</option>
                                 <option value="4">耗材</option>
                             </select>
-                            <div class="layui-unselect layui-form-select">
-                                <div class="layui-select-title">
-                                    <input type="text" placeholder="请选择标签" value="" readonly="" class="layui-input layui-unselect">
-                                    <i class="layui-edge"></i>
-                                </div>
-                                <dl class="layui-anim layui-anim-upbit">
-                                    <dd lay-value="" class="layui-select-tips">请选择类别</dd>
-                                    <dd lay-value="1" class="">中药</dd>
-                                    <dd lay-value="2" class="">西药</dd>
-                                    <dd lay-value="3" class="">诊疗</dd>
-                                    <dd lay-value="4" class="">耗材</dd>
-                                </dl>
-                            </div>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -184,31 +137,16 @@
                                 <option value="1">未对码</option>
                                 <option value="2">已对码</option>
                             </select>
-                            <div class="layui-unselect layui-form-select">
-                                <div class="layui-select-title">
-                                    <input type="text" placeholder="请选择标签" value="" readonly="" class="layui-input layui-unselect">
-                                    <i class="layui-edge"></i>
-                                </div>
-                                <dl class="layui-anim layui-anim-upbit">
-                                    <dd lay-value="" class="layui-select-tips">请选择状态</dd>
-                                    <dd lay-value="1" class="">未对码</dd>
-                                    <dd lay-value="2" class="">已对码</dd>
-                                </dl>
-                            </div>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <button class="layui-btn" lay-submit="" lay-filter="LAY-pair-content-list">查询</button>
-                    </div>
-                    <div class="layui-inline">
-                        <button class="layui-btn layui-btn-list" data-type="cleanSearch">清除</button>
-                    </div>
-                    <div class="layui-inline">
-                        <button class="layui-btn layui-btn-list" data-type="updateSearch">更新目录</button>
+                        <button class="layui-btn" data-type="cleanSearch">清除</button>
+                        <button class="layui-btn" data-type="updateSearch">更新目录</button>
                     </div>
                 </div>
             </div>
-            <table id="LAY-pair-content-list" lay-filter="LAY-pair-content-list"></table>
+            <table class="layui-hide" id="LAY-pair-content-list" lay-filter="LAY-pair-content-list"></table>
         </div>
     </div>
 </div>

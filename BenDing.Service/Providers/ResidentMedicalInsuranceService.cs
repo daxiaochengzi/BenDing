@@ -56,6 +56,7 @@ namespace BenDing.Service.Providers
             param.QueryType = 1;
             var count= await _residentMedicalInsurance.ProjectDownloadCount(param);
             var cnt = Convert.ToInt32(count / param.Limit) + ((count % param.Limit) > 0 ? 1 : 0);
+            param.QueryType = 2;
             Int64 allNum =0;
             var i = 0;
             while (i < cnt)

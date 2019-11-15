@@ -631,7 +631,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> ProjectDownload([FromBody]ResidentProjectDownloadParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
@@ -698,6 +698,19 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
+
+        /// <summary>
+        /// ICD10诊断录入弹层
+        /// </summary>
+        /// <param name="UserId">操作员ID</param>
+        /// <returns></returns>
+        public ActionResult DiagnosisIframe(string UserId)
+        {
+            ViewBag.title = "录入ICD-10诊断";
+            ViewBag.empid = UserId;
+            return View();
+        }
+
         /// <summary>
         /// 居民入院登记修改
         /// </summary>

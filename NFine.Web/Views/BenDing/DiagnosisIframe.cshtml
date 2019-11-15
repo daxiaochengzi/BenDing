@@ -1,0 +1,68 @@
+﻿@{
+    Layout = "~/Views/Shared/_Base.cshtml";
+}
+
+<link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
+<style>
+    .layui-card-header.layuibd-card-header-auto {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        height: auto;
+    }
+
+    .layuibd-card-header-auto i.layuibd-button-btn {
+        position: relative;
+        right: 0;
+        top: 0;
+        vertical-align: middle
+    }
+</style>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <form class="layui-form layui-form-pane" id="LAY-form" lay-filter="LAY-form-render">
+            <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
+            <div class="layui-card-header layuibd-card-header-auto">
+                <!--搜索部分-->
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">录入诊断</label>
+                        <div class="layui-input-inline" style="width:280px;">
+                            <input type="text" id="DiagnosisSearch" placeholder="请输入诊断名称/编码/助记码" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn" lay-submit="" lay-filter="LAY-form-search">
+                            <i class="layui-icon layui-icon-search layuibd-button-btn"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    layui.config({
+        base: '/Content/js/layui/plugin/' //假设这是test.js所在的目录
+    }).extend({ //设定模块别名
+        autocomplete: 'layAutoComplete'
+    });
+    layui.use(['form','autocomplete'], function () {
+        //var departmentList = [{ name: '北京市', pinyin: 'beijingshi' }, { name: '上海市', pinyin: 'shanghaishi' }, { name: '南京市', pinyin: 'nanjingshi' }, { name: '天津市', pinyin: 'tianjingshi' }, { name: '重庆市', pinyin: 'chongqingshi' }]
+        layui.autocomplete({
+            element: '#DiagnosisSearch',
+            num: 2,
+            display: 'DiseaseName', 
+            shortcut: 'MnemonicCode',
+            url: '/BenDing/QueryICD10', 
+            query: {},
+            resArray: 'Data',
+            count: 10, 
+            done: function (item) {
+                alert(JSON.stringify(item))
+            }
+        })
+    });
+</script>

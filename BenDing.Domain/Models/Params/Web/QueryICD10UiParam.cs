@@ -13,7 +13,7 @@ namespace BenDing.Domain.Models.Params.Web
      /// </summary>
         [Display(Name = "查询关键字")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
-        public string SearchKey { get; set; }
+        public string Search{ get; set; }
        
     }
 }
