@@ -65,7 +65,7 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// 居民医保自付比例
         /// </summary>
         [XmlElementAttribute("CKE899", IsNullable = false)]
-        public string ResidentSelfPayProportion { get; set; }
+        public decimal ResidentSelfPayProportion { get; set; }
         
         /// <summary>
         /// 限制用药标志
@@ -86,18 +86,18 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// 二档限价（二级甲等）
         /// </summary>
         [XmlElementAttribute("CKA579", IsNullable = false)]
-        public string TwoBlock { get; set; }
+        public decimal TwoBlock { get; set; }
         /// <summary>
         /// 三档限价（三级乙等）
         /// </summary>
         [XmlElementAttribute("CKA580", IsNullable = false)]
-        public string ThreeBlock { get; set; }
+        public decimal ThreeBlock { get; set; }
 
         /// <summary>
         /// 四档限价（三级甲等）
         /// </summary>
         [XmlElementAttribute("CKA560", IsNullable = false)]
-        public string FourBlock { get; set; }
+        public decimal FourBlock { get; set; }
         /// <summary>
         /// 有效标志
         /// </summary>
@@ -112,7 +112,7 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// 居民普通门诊报销限价
         /// </summary>
         [XmlElementAttribute("CKA601", IsNullable = false)]
-        public string ResidentOutpatientBlock { get; set; }
+        public decimal ResidentOutpatientBlock { get; set; }
         /// <summary>
         /// 生产厂家
         /// </summary>

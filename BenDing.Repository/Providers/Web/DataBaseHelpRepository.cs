@@ -1066,8 +1066,8 @@ namespace BenDing.Repository.Providers.Web
                 if (param.Any())
                 {
                     var projectCodeList = ListToStr(param.Select(c => c.ProjectCode).ToList());
-                    string deleteSql = "delete [dbo].[MedicalInsuranceProject] where ProjectCode in (" + projectCodeList + ")";
-                    await _sqlConnection.ExecuteAsync(deleteSql);
+                    //string deleteSql = "delete [dbo].[MedicalInsuranceProject] where ProjectCode in (" + projectCodeList + ")";
+                    //await _sqlConnection.ExecuteAsync(deleteSql);
 
 
                     //20191024023636736DateTime.Now.ToString("yyyyMMddhhmmssfff")
@@ -1083,10 +1083,10 @@ namespace BenDing.Repository.Providers.Web
                            ,[ResidentOutpatientBlock],[Manufacturer] ,[QuasiFontSize] ,[Specification],[Remark],[NewCodeMark]
                            ,[NewUpdateTime],[StartTime] ,[EndTime],[LimitPaymentScope],[CreateTime],[CreateUserId]
                            )
-                          VALUES('{Guid.NewGuid()}','{item.ProjectCode}','{projectName}','{item.ProjectCodeType}','{item.ProjectLevel}','{item.WorkersSelfPayProportion}'
-                                  ,'{item.Unit}','{item.MnemonicCode}', '{item.Formulation}','{item.ResidentSelfPayProportion}','{item.RestrictionSign}'
-                                  ,'{item.ZeroBlock}','{item.OneBlock}','{item.TwoBlock}','{item.ThreeBlock}','{item.FourBlock}','{item.EffectiveSign}','{item.ResidentOutpatientSign}'
-                                  ,'{item.ResidentOutpatientBlock}','{item.Manufacturer}','{item.QuasiFontSize}','{item.Specification}','{item.Remark}','{item.NewCodeMark}'
+                          VALUES('{Guid.NewGuid()}','{item.ProjectCode}','{projectName}','{item.ProjectCodeType}','{item.ProjectLevel}',{item.WorkersSelfPayProportion}
+                                  ,'{item.Unit}','{item.MnemonicCode}', '{item.Formulation}',{item.ResidentSelfPayProportion},'{item.RestrictionSign}'
+                                  ,{item.ZeroBlock},{item.OneBlock},{item.TwoBlock},{item.ThreeBlock},{item.FourBlock},'{item.EffectiveSign}','{item.ResidentOutpatientSign}'
+                                  ,{item.ResidentOutpatientBlock},'{item.Manufacturer}','{item.QuasiFontSize}','{item.Specification}','{item.Remark}','{item.NewCodeMark}'
                                   ,'{ DateTime.ParseExact(item.NewUpdateTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture).ToString("yyyy-MM-dd HH:mm:ss")}',
                                   NULL,NULL,'{item.LimitPaymentScope}',GETDATE(),'{user.UserId}'
                                );";

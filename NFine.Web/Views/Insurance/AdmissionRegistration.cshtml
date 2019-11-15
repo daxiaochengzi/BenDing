@@ -353,23 +353,26 @@
                 count: 10,
                 done: function (item) {
                     var data = layui.table.cache.listReload;
+                    var idx = data.length + 1;
                     console.log(data)
                     console.log(data.length)
+                    console.log(item)
                     //alert(JSON.stringify(item))
-                    var tr = "<tr data-index='0' class=''>"+
-                             "<td data-field='0' align = 'center' class='layui-table-col-special' >" +
-                             "  <div class='layui-table-cell laytable-cell-numbers'>1</div>" +
+                    var tr = "<tr data-index='" + idx+"' class=''>"+
+                             "<td data-field='0' align = 'center' class='layui-table-col-special'>" +
+                             "  <div class='layui-table-cell laytable-cell-numbers'>" + idx+"</div>" +
                              "</td> " +
-                             "<td data - field='DiagnosisName' data-edit='text' align = 'center' class='' > " +
-                             "  <div class='layui-table-cell' > 肺部感染</div > " +
+                             "<td data-field='DiagnosisName' data-edit='text' align = 'center' class='' > " +
+                             "  <div class='layui-table-cell'>" + item.DiseaseName+"</div > " +
                              "</td> " +
                              "<td data-field='DiagnosisCode' data-edit='text' align = 'center' class='' > " +
-                             "  <div class='layui-table-cell' > J98.414</div > " +
+                             "  <div class='layui-table-cell'>" + item.DiseaseCoding +"</div > " +
                              "</td> " +
                              "<td data-field='IsMainDiagnosis' align = 'center' data-content='true' class='' > " +
-                             "  <div class='layui-table-cell' > " +
-                             "      <input type='checkbox' name='MainDiagnosis'  class='layui-btn-xs' value='true' lay-skin='switch' lay-text='是|否'  lay-filter='diagnosticMain' checked=''> " +
-                             "   </div>" +
+                            "<div class='layui-table-cell'>" +
+                            "	<input type='checkbox' name='IsMainDiagnosis' value='false' lay-skin='switch'  class='layui-btn-xs' lay-text='是|否' lay-filter='diagnosticMain'>" +
+                            "	<div class='layui-unselect layui-form-switch' lay-skin='_switch'><em>否</em><i></i></div>" +
+                            "</div>" +
                              "</td>" +
                              "<td data-field='4' align='center' data-off='true' class='layui-table-col-special'>" +
                              "  <div class='layui-table-cell'>" +
@@ -410,5 +413,5 @@
 </script>
 <script type="text/html" id="switchMain">
     <!-- 主诊 -->
-    <input type="checkbox" name="MainDiagnosis" class="layui-btn-xs" value="{{d.IsMainDiagnosis}}" lay-skin="switch" lay-text="是|否" lay-filter="diagnosticMain" {{ d.IsMainDiagnosis == true ? 'checked' : '' }}>
+    <input type="checkbox" name="IsMainDiagnosis" class="layui-btn-xs" value="{{d.IsMainDiagnosis}}" lay-skin="switch" lay-text="是|否" lay-filter="diagnosticMain" {{ d.IsMainDiagnosis == true ? 'checked' : '' }}>
 </script>
