@@ -49,6 +49,7 @@
     <Compile Include="Models\Dto\Base\PaginationUserDto.cs" />
     <Compile Include="Models\Dto\Resident\DirectoryComparisonManagementDto.cs" />
     <Compile Include="Models\Dto\Resident\PrescriptionUploadDto.cs" />
+    <Compile Include="Models\Dto\Resident\ProjectDownloadCountDto.cs" />
     <Compile Include="Models\Dto\Resident\QueryMedicalInsurancePairCodeDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentHospitalizationRegisterDto.cs" />
     <Compile Include="Models\Dto\Resident\ResidentProjectDownloadDto.cs" />

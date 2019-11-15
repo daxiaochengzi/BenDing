@@ -25,13 +25,17 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
         public string ProjectCodeType { get; set; }
         /// <summary>
+        /// 医保上传金额
+        /// </summary>
+        public decimal UploadAmount { get; set; }
+        /// <summary>
         /// 项目等级
         /// </summary>
         public string ProjectLevel { get; set; }
         /// <summary>
         /// 自付比例
         /// </summary>
-        public string SelfPayProportion { get; set; }
+        public decimal SelfPayProportion { get; set; }
         /// <summary>
         /// 限制价格
         /// </summary>
@@ -90,9 +94,12 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
         public string OperateDoctorName { get; set; }
         /// <summary>
-        /// 调整值
+        /// 调整差值
         /// </summary>
-        public decimal AdjustmentNumber { get; set; }
+        public decimal AdjustmentDifferenceValue { get; set; }
+        /// <summary>
+        ///组织机构
+        /// </summary>
         public  string OrganizationCode { get; set; }
 
     }

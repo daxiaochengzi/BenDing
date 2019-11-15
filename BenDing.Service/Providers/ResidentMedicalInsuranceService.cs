@@ -15,14 +15,17 @@ namespace BenDing.Service.Providers
     {
         private IResidentMedicalInsuranceRepository _residentMedicalInsurance;
         private IWebBasicRepository _webServiceBasic;
+        private IDataBaseHelpRepository _baseHelpRepository;
 
         public ResidentMedicalInsuranceService(
             IResidentMedicalInsuranceRepository insuranceRepository,
-            IWebBasicRepository iWebServiceBasic
+            IWebBasicRepository iWebServiceBasic,
+            IDataBaseHelpRepository iBaseHelpRepository
             )
         {
             _residentMedicalInsurance = insuranceRepository;
             _webServiceBasic = iWebServiceBasic;
+            _baseHelpRepository = iBaseHelpRepository;
         }
         public async Task<ResidentUserInfoDto> GetUserInfo(ResidentUserInfoParam param)
         {
@@ -41,13 +44,33 @@ namespace BenDing.Service.Providers
 
            
         }
-
+        /// <summary>
+        /// 医保项目下载
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public async Task<string> ProjectDownload(ResidentProjectDownloadParam param)
         {
-            var resultData=new ResidentProjectDownloadDto();
-            resultData = await _residentMedicalInsurance.ProjectDownload(param);
-
-            return "123";
+            ResidentProjectDownloadDto data;
+            string resultData = "";
+            param.QueryType = 1;
+            var count= await _residentMedicalInsurance.ProjectDownloadCount(param);
+            var cnt = Convert.ToInt32(count / param.Limit) + ((count % param.Limit) > 0 ? 1 : 0);
+            Int64 allNum =0;
+            var i = 0;
+            while (i < cnt)
+            {
+                param.Page = i + param.Page;
+                data = await _residentMedicalInsurance.ProjectDownload(param);
+                if (data != null && data.Row.Any())
+                {
+                    allNum += data.Row.Count;
+                    await _baseHelpRepository.ProjectDownload(new UserInfoDto() { UserId = param.UserId}, data.Row);
+                }
+                i = i + param.Page;
+            }
+            resultData= "下载成功共" + allNum + "条记录";
+            return resultData;
         }
 
        

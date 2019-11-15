@@ -19,5 +19,9 @@ namespace BenDing.Domain.Models.Params.Web
         /// 交易Id
         /// </summary>
         public  string TransactionId { get; set; }
+        /// <summary>
+        /// 上传金额
+        /// </summary>
+        public decimal UploadAmount { get; set; }
     }
 }

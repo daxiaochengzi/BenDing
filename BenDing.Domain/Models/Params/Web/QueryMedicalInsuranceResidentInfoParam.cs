@@ -19,13 +19,6 @@ namespace BenDing.Domain.Models.Params.Web
         /// 组织机构
         /// </summary>
         public string OrgCode { get; set; }
-        /// <summary>
-        /// 是否删除
-        /// </summary>
-        public int IsDelete { get; set; }
-        /// <summary>
-        /// 身份证
-        /// </summary>
-        public  string IdCard { get; set; }
+        
     }
 }
