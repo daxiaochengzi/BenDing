@@ -64,13 +64,17 @@ namespace BenDing.Domain.Xml
 
         }
 
-        //public static decimal ValueToDecimal(string param)
-        //{
-        //    decimal resultData = 0;
+        public static decimal ValueToDecimal(string param)
+        {
+            decimal resultData = 0;
 
-        //    if string.IsNullOrWhiteSpace()
-        //    return
-        //}
+            if (!string.IsNullOrWhiteSpace(param))
+            {
+                resultData = Convert.ToDecimal(param);
+            }
+
+            return resultData;
+        }
 
     }
 }
