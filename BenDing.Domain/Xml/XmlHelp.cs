@@ -108,53 +108,7 @@ namespace BenDing.Domain.Xml
             return tStr;
 
         }
-        //public static bool SaveXml(string param)
-        //{
-        //    var strXml = param;
-        //    bool result = false;
-        //    if (string.IsNullOrWhiteSpace(strXml))
-        //    {
-        //        return result;
-        //    }
-        //    else
-        //    {
-        //        //创建XmlDocument对象
-        //        XmlDocument xmlDoc = new XmlDocument();
-        //        //XML的声明<?xml version="1.0" encoding="gb2312"?> 
-        //        XmlDeclaration xmlSM = xmlDoc.CreateXmlDeclaration("1.0", "GBK", null);
-        //        //追加xmldecl位置
-        //        xmlDoc.AppendChild(xmlSM);
-        //        //添加一个名为Gen的根节点
-        //        XmlElement xml = xmlDoc.CreateElement("", "ROW", "");
-        //        xml.InnerXml = strXml;
-        //        xmlDoc.AppendChild(xml);
-
-        //        string pathXml =null;
-        //        if (GetOSBit.Is64Bit())
-        //        {
-        //            pathXml = "C:\\Program Files (x86)\\Microsoft\\BenDingActiveSetup" + "\\RequestParams.xml";
-        //        }
-        //        else
-        //        {
-
-        //        }
-
-
-        //        if (File.Exists(pathXml))
-        //        {
-        //            File.Delete(pathXml);
-        //            xmlDoc.Save(pathXml);
-        //            result = true;
-        //        }
-        //        else
-        //        {
-        //            xmlDoc.Save(pathXml);
-        //            result = true;
-        //        }
-        //        return result;
-        //    }
-        //}
-
+    
 
         public static bool SaveXml<T>(T t)
         {

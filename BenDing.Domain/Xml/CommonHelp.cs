@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Dto.Resident;
 
 namespace BenDing.Domain.Xml
 {
@@ -62,6 +63,14 @@ namespace BenDing.Domain.Xml
 
 
         }
+
+        //public static decimal ValueToDecimal(string param)
+        //{
+        //    decimal resultData = 0;
+
+        //    if string.IsNullOrWhiteSpace()
+        //    return
+        //}
 
     }
 }

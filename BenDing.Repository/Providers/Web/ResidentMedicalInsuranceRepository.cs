@@ -198,7 +198,8 @@ namespace BenDing.Repository.Providers.Web
             {
                 var data = new ResidentProjectDownloadDto();
                 var xmlStr = XmlHelp.SaveXml(param);
-               
+
+            
                 if (xmlStr)
                 {
                     int result = MedicalInsuranceDll.CallService_cxjb("CXJB019");
@@ -209,8 +210,8 @@ namespace BenDing.Repository.Providers.Web
 
                     }
                 }
-                
-              
+
+
                 return data;
             });
 

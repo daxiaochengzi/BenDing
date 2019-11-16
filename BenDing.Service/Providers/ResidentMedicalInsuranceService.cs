@@ -54,6 +54,7 @@ namespace BenDing.Service.Providers
             ResidentProjectDownloadDto data;
           
             string resultData = "";
+
             param.QueryType = 1;
             var count = await _residentMedicalInsurance.ProjectDownloadCount(param);
             var cnt = Convert.ToInt32(count / param.Limit) + ((count % param.Limit) > 0 ? 1 : 0);
