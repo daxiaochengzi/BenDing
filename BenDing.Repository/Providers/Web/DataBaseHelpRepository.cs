@@ -713,16 +713,14 @@ namespace BenDing.Repository.Providers.Web
                 _sqlConnection.Open();
                 if (param.Any())
                 {
-                    IDbTransaction transaction = _sqlConnection.BeginTransaction();
-                    try
-                    {
+                  
 
                         var outpatientNum = ListToStr(param.Select(c => c.HospitalizationNo).ToList());
                         var businessId = ListToStr(param.Select(c => c.BusinessId).ToList());
                         string strSql =
                             $@"update  [dbo].[inpatient] set  [IsDelete] =1 ,DeleteTime=GETDATE(),DeleteUserId='{user.UserId}' where [IsDelete]=0  and [hospitalizationno] in ({outpatientNum})
-                                 and [businessid] in({businessId})";
-                        var num = await _sqlConnection.ExecuteAsync(strSql, null, transaction);
+                                 and [businessid] in({businessId})"; 
+                        var num = await _sqlConnection.ExecuteAsync(strSql, null);
                         string insertSql = "";
                         foreach (var item in param)
                         {
@@ -745,18 +743,12 @@ namespace BenDing.Repository.Providers.Web
                                               );";
                             insertSql += str;
                         }
-                        var nums = await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
-                        transaction.Commit();
-                        transaction.Dispose();
-                    }
-                    catch (Exception exception)
-                    {
-                        transaction.Dispose();
-                        transaction.Rollback();
-                        throw new Exception(exception.Message);
-                    }
+                        var nums = await _sqlConnection.ExecuteAsync(insertSql, null);
+                       
+                    
+                   
                 }
-
+                _sqlConnection.Close();
             }
         }
         /// <summary>
