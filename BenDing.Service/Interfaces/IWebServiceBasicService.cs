@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Params.UI;
 
 namespace BenDing.Service.Interfaces
 {
@@ -95,5 +96,8 @@ namespace BenDing.Service.Interfaces
         /// <param name="user"></param>
         /// <returns></returns>
         Task<int> ThreeCataloguePairCodeUpload(UserInfoDto user);
+
+        Task<QueryMedicalInsuranceDetailDto> QueryMedicalInsuranceDetail(
+            QueryMedicalInsuranceUiParam param);
     }
 }

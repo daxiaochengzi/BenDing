@@ -22,6 +22,7 @@ namespace NFine.Web.Controllers
                 //tokenHeader = tokenHeader.ToString().Substring("Bearer ".Length).Trim();
                 //TokenModel tm = JwtHelperb.SerializeJWT(tokenHeader);
                 //y.Data = tm;
+                throw  new  Exception("123123");
                 var ddd = new PaginationDto()
                 {
                     Limit = 2,

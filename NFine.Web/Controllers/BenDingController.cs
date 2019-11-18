@@ -685,15 +685,9 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var queryData = await _baseHelpRepository.QueryMedicalInsurance(userBase, param.BusinessId);
-                if (!string.IsNullOrWhiteSpace(queryData.AdmissionInfoJson))
-                {
-                    var data = JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailDto>(queryData.AdmissionInfoJson);
-                    data.Id = queryData.Id;
-                    y.Data = data;
-                }
-
+            
+                var data =  await _webServiceBasicService.QueryMedicalInsuranceDetail(param);
+                y.Data = data;
 
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
