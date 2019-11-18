@@ -22,18 +22,63 @@
             <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
             <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
             <div class="layui-card-header layuibd-card-header-auto">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                    <legend>病人基本信息</legend>
+                </fieldset>
                 <!--主体部分-->
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">个人编号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="PersonalCoding" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">身份证号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="IdCardNo" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">患者姓名</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="PatientName" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">性别</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="PatientSex" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">主诊医生</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="AdmissionDiagnosticDoctor" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">社保住院号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="MedicalInsuranceHospitalizationNo" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <!--可修改的住院信息-->
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                    <legend>住院信息</legend>
+                </fieldset>
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">住院编号</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="HospitalizationNo" autocomplete="off" class="layui-input">
+                            <input type="text" name="HisHospitalizationId" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">入院日期</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="AdmissionDate" id="AdmissionDate" @*lay-verify="date"*@ placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                            <input type="text" name="AdmissionDate" id="AdmissionDate" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -57,7 +102,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">户口性质</label>
                         <div class="layui-input-inline">
-                            <select name="InsuranceType" @*lay-verify="required"*@>
+                            <select name="HouseholdNature">
                                 <option value="">请选择户口性质</option>
                                 <option value="10">城镇户口</option>
                                 <option value="20">农业户口</option>
@@ -65,31 +110,30 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="layui-card-body" lay-size="sm">
                 <!--诊断部分-->
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
                     <legend>诊断列表</legend>
                 </fieldset>
+                <!--搜索部分-->
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">录入诊断</label>
+                        <div class="layui-input-inline" style="width:280px;">
+                            <input type="text" id="DiagnosisSearch" placeholder="请输入诊断名称/编码/助记码" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn" lay-submit lay-filter="LAY-diagnosis-search">
+                            <i class="layui-icon layui-icon-search"></i>
+                        </button>
+                    </div>
+                </div>
                 <!--诊断列表-->
-                <table id="LAY-table-data-id" class="layui-table" lay-size="sm" lay-filter="EditListTable">
-                    <thead>
-                        <tr>
-                            <th lay-data="{type:'numbers',align:'center', width:60}">序号</th>
-                            <th lay-data="{field:'UserId',align:'center', width:280}">诊断代码</th>
-                            <th lay-data="{field:'UserName',align:'center', width:280}">诊断名称</th>
-                            <th lay-data="{field:'Year',align:'center', width:120}">结果</th>
-                            <th lay-data="{field:'M01',align:'center', width:80}">主诊</th>
-                            <th lay-data="{align:'center', toolbar: '#handleBtn', fixed: 'right'}">操作</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-            <div class="layui-form-item">
-                <div class="layui-input-block">
-                    <button type="submit" class="layui-btn layui-btn-radius" lay-submit="" lay-filter="demo1">修改</button>
-                    <button type="button" class="layui-btn layui-btn-radius" id="LAY-component-form-getval">取消</button>
+                <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
+
+                <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
+                    <button type="submit" class="layui-btn layui-btn-radius" lay-submit lay-filter="update">修改登记</button>
+                    <button type="button" class="layui-btn layui-btn-radius" lay-filter="">取消登记</button>
                 </div>
             </div>
         </form>
@@ -99,39 +143,256 @@
 <script>
     (function () {
 
-        //加载列表的后端 url
-        var getListUrl = '';
-        var tableOptions = {
-            url: getListUrl, //请求地址
-            method: 'POST', //方式
-            id: 'listReload',
-            page: false,
-            where: { type: "all" }, 
-            response: { 
-            }
-        };
-        layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate'], function () {
+        layui.config({
+            base: '/Content/js/layui/plugin/' //假设这是test.js所在的目录
+        }).extend({ //设定模块别名
+            autocomplete: 'layAutoComplete'
+        });
+
+        layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'], function () {
             var $ = layui.$
+                //Tab的切换功能，切换事件监听等，需要依赖element模块
                 , element = layui.element
                 , form = layui.form
                 , layer = layui.layer
                 , table = layui.table
                 , laydate = layui.laydate;
-           
-            form.render(null, 'LAY-form-render'); 
+
+
+            form.render(null, 'LAY-form-render');
+            
+
             //指定入院日期
             laydate.render({ elem: '#AdmissionDate' });
 
-            //表初始化
-            var createTable = function () {
-                table.init('EditListTable', tableOptions); // table lay-filter
+            //form数据回显:数据回显到Form表单主体部分
+            var jsonToForm = function (jsonData, formId) {
+                var serializeArray = $("#" + formId).serializeArray();
+                for (var i = 0; i < serializeArray.length; i++) {
+                    var name = serializeArray[i].name;
+                    if (jsonData[name]) {
+                        var value = jsonData[name];
+                        $("[name='" + name + "']").val(value);
+                    }
+                    if (jsonData.MedicalInsuranceResidentInfo[name]) {
+                        var value = jsonData.MedicalInsuranceResidentInfo[name];
+                        $("[name='" + name + "']").val(value);
+                    }
+                }
             };
-            //表初始化
-            createTable();
-            
+            //主诊切换
+            form.on('switch(diagnosticMain)', function (obj) {
+                layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+            });
+            /**根据当前住院病人的业务ID查询,返回数据回显到下面表单里面*/
+            form.on('submit(LAY-form-search)', function (data) {
+                var params = {
+                    "IdCardNo": $("#IdCardNo").val() /*身份证号*/
+                    , "StartTime": $("#AdmissionDate1").val() /*查询开始日期，必传*/
+                    , "IdentityMark": $("#IdentityMark").val() /*身份标志，1:身份证,2:医保个人编码*/
+                    , "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
+                    , "UserId": $("#empid").val() /*授权操作人的ID*/
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '/BenDing/GetInpatientInfo',
+                    data: params,
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            //样式类名:墨绿深蓝风
+                            layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                        } else {
+                            var resData = data.Data;
+                            //查询之前，主体部分所有输入或选择框是禁用的，现在要去掉
+                            $(".layui-input-inline").each(function (i, e) {
+                                var itemInput = $(this).find("input");
+                                var itemSelect = $(this).find("select");
+                                if (itemInput.attr("disabled")) {
+                                    itemInput.removeAttr("disabled").removeClass("layui-disabled");
+                                }
+                                if (itemSelect.attr("disabled")) {
+                                    itemSelect.removeAttr("disabled");
+                                }
+                            });
+                            //查询返回的数据回显到主体部分
+                            jsonToForm(resData, "LAY-form");
+                            //诊断表初始化
+                            $.ajax({
+                                type: 'POST',
+                                url: '/BenDing/GetInpatientDiagnosis',
+                                data: params,
+                                dataType: "json",
+                                async: false,
+                                success: function (result) {
+                                    var oldData = result.Data;
+                                    tableIns.reload({
+                                        data: oldData, where: params, parseData: function (result) {
+                                            return {
+                                                "code": result.Code
+                                                , "msg": result.Message
+                                                , "data": result.Data
+                                            };
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    },
+                    complete: function () {
+                        form.render();
+                    },
+                });
+                return false;//阻止表单跳转
+            });
+            //数据表格实例化
+            var layTableId = "layTable";
+            var tableIns = table.render({
+                elem: '#dataTable',
+                id: layTableId,
+                page: false,
+                cols: [[
+                    { title: '序号', type: 'numbers', width: 80 },
+                    , { field: 'DiagnosisName', title: '诊断名称', width: 280 }
+                    , { field: 'DiagnosisCode', title: '诊断代码', width: 280 }
+                    , {
+                        field: 'IsMainDiagnosis', title: '主诊', width: 120, templet: function (d) {
+                            var html = ['<input type="checkbox" name="IsMainDiagnosis" lay-skin="switch" lay-text="是|否"'];
+                            html.push(d.IsMainDiagnosis == true ? 'checked' : '');
+                            html.push('/>');
+                            return html.join('');
+                        }
+                    }
+                    , {
+                        title: '操作', fixed: 'right', templet: function (d) {
+                            return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="' + d.Id + '"><i class="layui-icon layui-icon-delete"></i>移除</a>';
+                        }
+                    }
+                ]]
+            });
+            //录入诊断
+            layui.autocomplete({
+                element: '#DiagnosisSearch',
+                num: 2,
+                display: 'DiseaseName',
+                shortcut: 'MnemonicCode',
+                url: '/BenDing/QueryICD10',
+                query: {},
+                resArray: 'Data',
+                count: 10,
+                done: function (item) {
+                    var oldData = table.cache[layTableId];
+                    var newRow = {
+                        DiagnosisName: item.DiseaseName,
+                        DiagnosisCode: item.DiseaseCoding,
+                        IsMainDiagnosis: false,
+                        Id: item.Id
+                    };
+                    oldData.push(newRow);
+                    tableIns.reload({
+                        data: oldData
+                    });
+                }
+            });
+            //定义事件集合
+            var active = {
+                removeEmptyTableCache: function () {
+                    var oldData = table.cache[layTableId];
+                    for (var i = 0, row; i < oldData.length; i++) {
+                        row = oldData[i];
+                        if (!row || !row.Id) {
+                            oldData.splice(i, 1);    //删除一项
+                        }
+                        continue;
+                    }
+                    tableIns.reload({
+                        data: oldData
+                    });
+                },
+            };
+            //注册按钮事件
+            $('.layui-btn[data-type]').on('click', function () {
+                var type = $(this).data('type');
+                activeByType(type);
+            });
+            //激活事件
+            var activeByType = function (type, arg) {
+                if (arguments.length === 2) {
+                    active[type] ? active[type].call(this, arg) : '';
+                } else {
+                    active[type] ? active[type].call(this) : '';
+                }
+            }
+            //监听工具条
+            table.on('tool(dataTable)', function (obj) {
+                var data = obj.data, event = obj.event;
+                switch (event) {
+                    case "del":
+                        layer.confirm('真的删除行么？', function (index) {
+                            obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                            layer.close(index);
+                            activeByType('removeEmptyTableCache');
+                        });
+                        break;
+                }
+            });
+
+            //登记
+            form.on('submit(reg)', function (data) {
+                var field = data.field;
+                if (field.IdentityMark == 1) {
+                    //身份证号
+                    field.AfferentSign = field.IdCardNo
+                }
+                if (field.IdentityMark == 2) {
+                    //医保个人编码
+                    field.AfferentSign = field.PersonalCoding
+                }
+                //科室ID
+                field.InpatientDepartmentCode = field.InDepartmentId
+                //床位号
+                field.BedNumber = field.AdmissionBed
+                //经办人
+                field.Operators = field.UserId
+                //业务ID
+                field.BusinessId = field.BusinessId
+                //
+                field.StartTime = field.AdmissionDate
+                //field.username = "心姐"//修改
+                //诊断列表
+                var dataTable1 = table.cache[layTableId];
+                //console.log(dataTable1)
+                //入院主要诊断
+                field.AdmissionMainDiagnosisIcd10 = dataTable1[0].DiagnosisCode
+                field.AdmissionMainDiagnosis = dataTable1[0].DiagnosisName
+                console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+                $.ajax({
+                    type: 'POST',
+                    url: '/BenDing/HospitalizationRegister',
+                    async: false,
+                    data: field,
+                    success: function (data) {
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            //样式类名:墨绿深蓝风
+                            //layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                            layer.msg('登记失败\n' + errData, { time: 2000, icon: 5 })
+                        } else {
+                            var resData = data.Data;
+                            layer.msg('登记成功', {
+                                time: 1000, icon: 6, end: function () {
+                                    location.reload();
+                                }
+                            })
+                            console.log(resData);
+                        }
+                    }
+                });
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            });
         })
     })();
-</script>
-<script type="text/html" id="handleBtn">
-    <a class="layui-btn layui-btn-mini" lay-event="edit">编辑</a>
+
 </script> 

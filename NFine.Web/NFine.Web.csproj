@@ -794,15 +794,12 @@
     <Content Include="Views\Insurance\MedicalDirectoryCode.cshtml" />
     <Content Include="Views\BenDing\MedicalDirectoryPairCode.cshtml" />
     <Content Include="Views\Shared\_Base.cshtml" />
-    <Content Include="Views\Insurance\AdmissionRegistration - 复制.cshtml" />
-    <Content Include="Views\Insurance\AdmissionRegistrationUpdate - 复制.cshtml" />
     <Content Include="Views\Insurance\HospitalizationExpensesManagement.cshtml" />
     <Content Include="Views\Insurance\HospitalizationExpensesManagementReceive.cshtml" />
     <Content Include="Views\Insurance\AdmissionBirthRegistration.cshtml" />
     <Content Include="Views\Insurance\HospitalPreSettle.cshtml" />
     <Content Include="Views\Insurance\LeaveHospitalSettlement.cshtml" />
     <Content Include="Views\Insurance\LeaveHospitalSettlementCancel.cshtml" />
-    <Content Include="Views\BenDing\DiagnosisIframe.cshtml" />
     <Content Include="SwaggerUI\lib\.DS_Store" />
   </ItemGroup>
   <ItemGroup>
