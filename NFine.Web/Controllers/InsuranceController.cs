@@ -72,6 +72,7 @@ namespace NFine.Web.Controllers
                 BusinessId = bid
 
             }).Result;
+            ViewData.Add("data",data);
             ViewBag.title = "修改医保登记";
             return View();
         }
