@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using BenDing.Domain.Models.Params.UI;
+using BenDing.Service.Interfaces;
 
 namespace NFine.Web.Controllers
 { 
@@ -12,7 +14,11 @@ namespace NFine.Web.Controllers
     /// </summary>
     public class InsuranceController : AsyncController
     {
-       
+        private IWebServiceBasicService _webServiceBasic;
+        public InsuranceController(IWebServiceBasicService webServiceBasic)
+        {
+            _webServiceBasic = webServiceBasic;
+        }
 
         /// <summary>
         /// 读卡
@@ -60,6 +66,12 @@ namespace NFine.Web.Controllers
         {
             ViewBag.bid = bid;
             ViewBag.empid = empid;
+            var data = _webServiceBasic.QueryMedicalInsuranceDetail(new QueryMedicalInsuranceUiParam()
+            {
+                UserId = empid,
+                BusinessId = bid
+
+            }).Result;
             ViewBag.title = "修改医保登记";
             return View();
         }

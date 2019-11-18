@@ -148,6 +148,9 @@ namespace NFine.Web
             {
                 jsonResultEntry.Code = 1010;
                 Log.Error("日志记录:" + e.ToString());
+                Log.Info("日志记录:" + e.ToString());
+                Log.Warn("日志记录:" + e.ToString());
+            
                 jsonResultEntry.AddErrorMessage("系统错误:" + e.ToString());
                 //jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message : e.InnerException.InnerException == null ? e.InnerException.Message : e.InnerException.InnerException.Message));
 
@@ -177,6 +180,9 @@ namespace NFine.Web
             {
                 jsonResultEntry.Code = 1010;
                 Log.Error("日志记录:" + e.ToString());
+                Log.Info("日志记录:" + e.ToString());
+                Log.Warn("日志记录:" + e.ToString());
+
                 jsonResultEntry.AddErrorMessage("系统错误:" + e.ToString());
                 
             }
