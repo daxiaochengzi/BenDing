@@ -131,10 +131,13 @@ namespace NFine.Web
     /// </summary>
     public static class ApiJsonResultEntryExtensions
     {
-       
+        
+
         public static ApiJsonResultData RunWithTry(this ApiJsonResultData jsonResultEntry, Action<ApiJsonResultData> runMethod)
         {
-            
+
+
+            var log = LogFactory.GetLogger("ini".GetType().ToString());
 
             try
             {
@@ -145,12 +148,9 @@ namespace NFine.Web
             catch (Exception e)
             {
                 jsonResultEntry.Code = 1010;
-              
-            
-              
-            
-               // jsonResultEntry.AddErrorMessage("系统错误:" + e.ToString());
-               jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message : e.InnerException.InnerException == null ? e.InnerException.Message : e.InnerException.InnerException.Message));
+                log.Error(e.ToString());
+             
+                jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message : e.InnerException.InnerException == null ? e.InnerException.Message : e.InnerException.InnerException.Message));
 
             }
             
@@ -166,7 +166,7 @@ namespace NFine.Web
         /// <returns></returns>
         public static async Task<ApiJsonResultData> RunWithTryAsync(this ApiJsonResultData jsonResultEntry, Func<ApiJsonResultData, Task> runMethod)
         {
-            
+            var log = LogFactory.GetLogger("ini".GetType().ToString());
             try
             {
                 if (jsonResultEntry.Success)
@@ -177,14 +177,10 @@ namespace NFine.Web
             catch (Exception e)
             {
                 jsonResultEntry.Code = 1010;
-                
-
-                //jsonResultEntry.AddErrorMessage("系统错误:" + e.ToString());
+                log.Error(e.ToString());
                 jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message :
                                                     e.InnerException.InnerException == null ? e.InnerException.Message :
                                                     e.InnerException.InnerException.Message));
-
-
             }
             
 
