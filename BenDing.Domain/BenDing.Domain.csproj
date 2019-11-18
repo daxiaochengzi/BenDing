@@ -84,6 +84,7 @@
     <Compile Include="Models\Params\Resident\QueryMedicalInsurancePairCodeParam.cs" />
     <Compile Include="Models\Params\UI\AddHospitalOrganizationGradeUiParam.cs" />
     <Compile Include="Models\Params\UI\DirectoryComparisonManagementUiParam.cs" />
+    <Compile Include="Models\Params\UI\HospitalizationRegisterCancelUi.cs" />
     <Compile Include="Models\Params\UI\InpatientInfosUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalDirectoryCodePairUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalInsurancePairCodesUiParam.cs" />

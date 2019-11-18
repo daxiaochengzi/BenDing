@@ -148,8 +148,8 @@ namespace NFine.Web
             catch (Exception e)
             {
                 jsonResultEntry.Code = 1010;
+               
                 log.Error(e.ToString());
-             
                 jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message : e.InnerException.InnerException == null ? e.InnerException.Message : e.InnerException.InnerException.Message));
 
             }
@@ -172,8 +172,6 @@ namespace NFine.Web
                 if (jsonResultEntry.Success)
                     await runMethod(jsonResultEntry);
             }
-
-
             catch (Exception e)
             {
                 jsonResultEntry.Code = 1010;

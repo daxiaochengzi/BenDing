@@ -21,6 +21,7 @@ namespace NFine.Web.Controllers
     /// </summary>
     public class BenDingController : BaseAsyncController
     {
+        private IWebBasicRepository _webServiceBasic;
         private IDataBaseHelpRepository _baseHelpRepository;
         private IWebServiceBasicService _webServiceBasicService;
         private IBaseSqlServerRepository _dataBaseSqlServerService;
@@ -39,7 +40,8 @@ namespace NFine.Web.Controllers
             IBaseSqlServerRepository iDataBaseSqlServerService,
             IDataBaseHelpRepository iBaseHelpRepository,
             ISystemManageRepository iManageRepository,
-            IResidentMedicalInsuranceService IresidentService
+            IResidentMedicalInsuranceService IresidentService,
+            IWebBasicRepository webServiceBasic
             )
         {
             _webServiceBasicService = iWebServiceBasicService;
@@ -48,6 +50,7 @@ namespace NFine.Web.Controllers
             _baseHelpRepository = iBaseHelpRepository;
             _systemManage = iManageRepository;
             _residentService = IresidentService;
+            _webServiceBasic = webServiceBasic;
         }
         #region 基层接口
         /// <summary>
@@ -480,6 +483,38 @@ namespace NFine.Web.Controllers
 
             }), JsonRequestBehavior.AllowGet);
         }
+
+        /// <summary>
+        /// 基层入院登记取消
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> HospitalizationRegisterCancel(HospitalizationRegisterCancelUi param)
+        {
+            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+            {
+                var dd = new ResidentUserInfoParam();
+                dd.IdentityMark = "1";
+                dd.InformationNumber = "111";
+                   var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(dd);
+                var strXmlBackParam = XmlSerializeHelper.XmlSerialize(dd);
+                var saveXmlData = new SaveXmlData();
+                saveXmlData.OrganizationCode = userBase.OrganizationCode;
+                saveXmlData.AuthCode = userBase.AuthCode;
+                saveXmlData.BusinessId = param.businessId;
+                saveXmlData.TransactionId = param.businessId;
+                saveXmlData.MedicalInsuranceBackNum = "CXJB004";
+                saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
+                saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                saveXmlData.MedicalInsuranceCode = "22";
+                saveXmlData.UserId = param.UserId;
+                await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), userBase.UserId);
+
+            }), JsonRequestBehavior.AllowGet);
+        }
+
         #endregion
         #region 医保对码
         /// <summary>
