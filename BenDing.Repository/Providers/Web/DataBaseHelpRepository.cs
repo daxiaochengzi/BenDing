@@ -879,7 +879,7 @@ namespace BenDing.Repository.Providers.Web
                                 a.HisHospitalizationId=b.BusinessId
                                 where a.IsDelete=0 and b.IsDelete=0
                                 and b.BusinessId='{businessId}' and a.OrganizationCode='{user.OrganizationCode}'";
-                var data = await _sqlConnection.QueryFirstAsync<QueryMedicalInsuranceDto>(querySql);
+                var data = await _sqlConnection.QueryFirstOrDefaultAsync<QueryMedicalInsuranceDto>(querySql);
                 if (data != null) resultData = data;
                 _sqlConnection.Close();
                 return resultData;

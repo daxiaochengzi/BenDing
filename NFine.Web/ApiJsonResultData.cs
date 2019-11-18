@@ -4,10 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using log4net;
 using Newtonsoft.Json;
 using NFine.Code;
-[assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config", Watch = true)]
 
 
 namespace NFine.Web
@@ -133,7 +131,7 @@ namespace NFine.Web
     /// </summary>
     public static class ApiJsonResultEntryExtensions
     {
-        public static readonly ILog Log = LogManager.GetLogger("RollingLogFileAppender");
+       
         public static ApiJsonResultData RunWithTry(this ApiJsonResultData jsonResultEntry, Action<ApiJsonResultData> runMethod)
         {
             
@@ -147,12 +145,12 @@ namespace NFine.Web
             catch (Exception e)
             {
                 jsonResultEntry.Code = 1010;
-                Log.Error("日志记录:" + e.ToString());
-                Log.Info("日志记录:" + e.ToString());
-                Log.Warn("日志记录:" + e.ToString());
+              
             
-                jsonResultEntry.AddErrorMessage("系统错误:" + e.ToString());
-                //jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message : e.InnerException.InnerException == null ? e.InnerException.Message : e.InnerException.InnerException.Message));
+              
+            
+               // jsonResultEntry.AddErrorMessage("系统错误:" + e.ToString());
+               jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message : e.InnerException.InnerException == null ? e.InnerException.Message : e.InnerException.InnerException.Message));
 
             }
             
@@ -179,12 +177,14 @@ namespace NFine.Web
             catch (Exception e)
             {
                 jsonResultEntry.Code = 1010;
-                Log.Error("日志记录:" + e.ToString());
-                Log.Info("日志记录:" + e.ToString());
-                Log.Warn("日志记录:" + e.ToString());
-
-                jsonResultEntry.AddErrorMessage("系统错误:" + e.ToString());
                 
+
+                //jsonResultEntry.AddErrorMessage("系统错误:" + e.ToString());
+                jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message :
+                                                    e.InnerException.InnerException == null ? e.InnerException.Message :
+                                                    e.InnerException.InnerException.Message));
+
+
             }
             
 
