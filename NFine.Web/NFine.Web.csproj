@@ -726,6 +726,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\ReportManage\Views\Echarts\" />
+    <Folder Include="logs\" />
     <Folder Include="WebUI\" />
   </ItemGroup>
   <ItemGroup>
