@@ -435,17 +435,20 @@
                     async: false,
                     data: field,
                     success: function (data) {
-                        var jsonData = data.Data;
-                        console.log(jsonData);
-                        //if (data.code == '0') {
-                        //    layer.msg('文章保存成功', {
-                        //        time: 1000, icon: 6, end: function () {
-                        //            location.reload();
-                        //        }
-                        //    })
-                        //} else {
-                        //    layer.msg('文章保存失败', { time: 2000, icon: 5 })
-                        //}
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            //样式类名:墨绿深蓝风
+                            //layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                            layer.msg('登记失败\n' + errData, { time: 2000, icon: 5 })
+                        } else {
+                            var resData = data.Data;
+                            layer.msg('登记成功', {
+                                time: 1000, icon: 6, end: function () {
+                                    location.reload();
+                                }
+                            })
+                            console.log(resData);
+                        }
                     }
                 });
                 return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
