@@ -7,8 +7,8 @@ using System.Web.Http.Dispatcher;
 using System.Web.Routing;
 using Swagger.Net;
 
-[assembly: WebActivator.PreApplicationStartMethod(typeof(NFine.Web.App_Start.SwaggerNet), "PreStart")]
-[assembly: WebActivator.PostApplicationStartMethod(typeof(NFine.Web.App_Start.SwaggerNet), "PostStart")]
+//[assembly: WebActivator.PreApplicationStartMethod(typeof(NFine.Web.App_Start.SwaggerNet), "PreStart")]
+//[assembly: WebActivator.PostApplicationStartMethod(typeof(NFine.Web.App_Start.SwaggerNet), "PostStart")]
 namespace NFine.Web.App_Start 
 {
     public static class SwaggerNet 
@@ -17,7 +17,7 @@ namespace NFine.Web.App_Start
         {
             RouteTable.Routes.MapHttpRoute(
                 name: "SwaggerApi",
-                routeTemplate: "{controller}",
+                routeTemplate: "api/docs/{controller}",
                 defaults: new { swagger = true }
             );            
         }

@@ -18,7 +18,6 @@ namespace BenDing.Domain.Models.Dto.Base
         /// <summary>
         /// 当前页
         /// </summary>
-
         public int Page { get; set; }
     }
 }
