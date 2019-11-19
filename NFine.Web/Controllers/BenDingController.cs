@@ -503,8 +503,8 @@ namespace NFine.Web.Controllers
                 var saveXmlData = new SaveXmlData();
                 saveXmlData.OrganizationCode = userBase.OrganizationCode;
                 saveXmlData.AuthCode = userBase.AuthCode;
-                saveXmlData.BusinessId = param.businessId;
-                saveXmlData.TransactionId = param.businessId;
+                saveXmlData.BusinessId = param.BusinessId;
+                saveXmlData.TransactionId = param.BusinessId;
                 saveXmlData.MedicalInsuranceBackNum = "CXJB004";
                 saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
                 saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
@@ -688,11 +688,11 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
+
+
                 var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-
                 param.Operators = param.UserId;
-
                 await _residentMedicalInsurance.HospitalizationRegister(param, userBase);
                 var inputInpatientInfo = new InpatientInfoParam()
                 {
@@ -705,7 +705,7 @@ namespace NFine.Web.Controllers
                 };
                 string inputInpatientInfoJson =
                     JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
-                await _webServiceBasicService.GetInpatientInfo(userBase, inputInpatientInfoJson,true);
+                await _webServiceBasicService.GetInpatientInfo(userBase, inputInpatientInfoJson, true);
 
             });
             return Json(resultData);

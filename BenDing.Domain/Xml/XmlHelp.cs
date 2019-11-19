@@ -225,11 +225,28 @@ namespace BenDing.Domain.Xml
             }
             XmlDocument doc = new XmlDocument();
             doc.Load(pathXml);
-            XmlNode po_fhzNode = doc.SelectSingleNode("/ROW/PO_FHZ");
-            valid.PO_FHZ = po_fhzNode.InnerText;
-            XmlNode po_msgNode = doc.SelectSingleNode("/ROW/PO_MSG");
-            valid.PO_MSG = po_msgNode.InnerText;
-            if (isAbnormal == false)
+            var fhz = doc.SelectSingleNode("/ROW/PO_FHZ");
+            if (fhz != null)
+            {
+                valid.PO_FHZ = fhz.InnerText;
+            }
+            else
+            {
+                var fhzNew = doc.SelectSingleNode("/row/po_fhz");
+                valid.PO_FHZ = fhzNew.InnerText;
+            }
+            var msg = doc.SelectSingleNode("/ROW/PO_MSG");
+            if (msg != null)
+            {
+                valid.PO_MSG = msg.InnerText;
+            }
+            else
+            {
+                var msgNew = doc.SelectSingleNode("/row/po_msg");
+                valid.PO_MSG = msgNew.InnerText;
+            }
+
+            if (isAbnormal ==true)
             {
                 if (valid.PO_FHZ != "1")
                 {
@@ -251,7 +268,7 @@ namespace BenDing.Domain.Xml
         {
 
             string resultData = null;
-            var result = new ValidXmlDto();
+            var valid = new ValidXmlDto();
             string pathXml = null;
             pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\ResponseParams.xml";
             XmlDocument doc = new XmlDocument();
@@ -260,20 +277,36 @@ namespace BenDing.Domain.Xml
             {
                 throw new SystemException("ResponseParams文件不存在!!!");
             }
-            XmlNode po_fhzNode = doc.SelectSingleNode("/ROW/PO_FHZ");
-            result.PO_FHZ = po_fhzNode.InnerText;
-            XmlNode po_msgNode = doc.SelectSingleNode("/ROW/PO_MSG");
-            result.PO_MSG = po_msgNode.InnerText;
-            if (result.PO_FHZ == "1")
+            var fhz = doc.SelectSingleNode("/ROW/PO_FHZ");
+            if (fhz != null)
             {
-                var pO_RDXXNode = doc.SelectSingleNode("/ROW/" + rowsName);
+                valid.PO_FHZ = fhz.InnerText;
+            }
+            else
+            {
+                var fhzNew = doc.SelectSingleNode("/row/po_fhz");
+                valid.PO_FHZ = fhzNew.InnerText;
+            }
+            var msg = doc.SelectSingleNode("/ROW/PO_MSG");
+            if (msg != null)
+            {
+                valid.PO_MSG = msg.InnerText;
+            }
+            else
+            {
+                var msgNew = doc.SelectSingleNode("/row/po_msg");
+                valid.PO_MSG = msgNew.InnerText;
+            }
+            if (valid.PO_FHZ == "1")
+            {
+                var rowNode = doc.SelectSingleNode("/ROW/" + rowsName) ?? doc.SelectSingleNode("/row/" + rowsName);
                 string strIni = "xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'";
-                resultData = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" + "<ROWDATA " + strIni + ">" + pO_RDXXNode.InnerXml + "</ROWDATA>";
+                resultData = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" + "<ROWDATA " + strIni + ">" + rowNode.InnerXml + "</ROWDATA>";
 
             }
             else
             {
-                throw new SystemException(result.PO_MSG);
+                throw new SystemException(valid.PO_MSG);
             }
             return resultData;
         }
