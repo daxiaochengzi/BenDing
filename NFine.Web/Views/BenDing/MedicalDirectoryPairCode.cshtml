@@ -8,10 +8,13 @@
         padding-bottom: 15px;
         height: auto;
     }
+    .layui-table-body {
+        overflow-y: scroll;
+    }
 
 </style>
 <div class="demoTable">
-    <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="search-iframe-content">
+    <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="data-form">
         <div class="layui-form-item">
             <div class="layui-inline">
                 <label class="layui-form-label">目录类别</label>
@@ -22,7 +25,7 @@
                         <option value="2">诊疗项目</option>
                         <option value="3">服务设施</option>
                         <option value="4">材料</option>
-                    </select>                    
+                    </select>
                 </div>
             </div>
             <div class="layui-inline">
@@ -44,32 +47,28 @@
                 </div>
             </div>
             <div class="layui-inline">
-                <button class="layui-btn" lay-submit="" lay-filter="search-iframe-content" data-type="reload">查询</button>
-            </div>
-            <div class="layui-inline">
+                <button class="layui-btn" lay-submit lay-filter="dataSearch" data-type="dataSearch">查询</button>
                 <button class="layui-btn" data-type="cleanSearch">清除</button>
             </div>
             <input type="hidden" id="empid" value="@ViewBag.empid" />
             <input type="hidden" id="DirectoryCode" value="@ViewBag.DirectoryCode" />
             <input type="hidden" id="DirectoryCategoryCode" value="@ViewBag.DirectoryCategoryCode" />
-            
         </div>
     </div>
-
+    <table class="layui-hide" id="dataTable" lay-filter="dataTable"></table>
 </div>
 
-<table class="layui-hide" id="yibao-iframe-content-table" lay-filter="yibao-iframe-content-table"></table> 
 
 <script>
     layui.use(['table','form'], function () {
         var $ = layui.$
             , table = layui.table
             , form = layui.form;
-        form.render(null, 'search-iframe-content');
+        form.render(null, 'data-form');
 
         //方法级渲染
         table.render({
-            elem: '#yibao-iframe-content-table'
+            elem: '#dataTable'
             , url: '/BenDing/QueryProjectDownload' //数据接口
             , where: {
                 UserId: $("#empid").val() //必传参数
@@ -89,7 +88,7 @@
             , cols: [[
                 { type: 'numbers', fixed: 'left' }
                 , { title: '对码', toolbar: '#tableCodeBtn', width: 100 ,align: 'center', fixed: true }
-                , { field: 'PairCodeId', title: '对码ID', hidden : true }
+                , { field: 'PairCodeId', title: '对码ID', width: 160 }
                 , { field: 'ProjectCode', title: '医保项目编码', width: 160, sort: true }
                 , { field: 'ProjectName', title: '医保项目名称', width: 160, sort: true }
                 , { field: 'MnemonicCode', title: '助记码', width: 300, sort: true }
@@ -104,24 +103,23 @@
                 , { field: 'NewCodeMark', title: '新码标志', width: 100 }
                 , { field: 'LimitPaymentScope', title: '限制支付范围', width: 100 }
                 , { field: 'NewUpdateTime', title: '变更日期', width: 160 }
-                , { field: 'Remark', title: '医保备注', width: 100 }
             ]]
             , height: $(window).height() - 128
-            , id: 'iframe-content-list'
             , page: true
+            , id: 'dataTableId'
         });
 
         //监听搜索
-        form.on('submit(search-iframe-content)', function (data) {
+        form.on('submit(dataSearch)', function (data) {
             var field = data.field;
             //执行重载
-            table.reload('yibao-iframe-content-table', {
+            table.reload('dataTable', {
                 where: field
             });
         });
 
         //监听工具条
-        table.on('tool(yibao-iframe-content-table)', function (obj) {
+        table.on('tool(dataTable)', function (obj) {
             var data = obj.data;
             var UserId = $("#empid").val();
             //获取HIS编码DirectoryCode            
@@ -148,41 +146,42 @@
             if (obj.event === 'pairCodeTo') {
                 $.ajax({
                     url: '/BenDing/MedicalInsurancePairCode',
-                    type: 'post',
+                    type: 'POST',
                     data: JSON.stringify(sendData),
                     dataType: "json",
                     contentType: 'application/json',
                     success: function (data) {
-
-                        console.log(data);
-
-                        //if (data.status == 'error') {
-                        //    layer.msg(data.msg, { icon: 5 });//失败的表情
-                        //    return;
-                        //} else {
-                        //    layer.msg(data.msg, {
-                        //        icon: 6,//成功的表情
-                        //        time: 100000 //1秒关闭（如果不配置，默认是3秒）
-                        //    }, function () {
-                        //        location.reload();
-                        //    });
-                        //}
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            layer.msg('对码失败\n' + errData, { time: 2000, icon: 5 })
+                        } else {
+                            //var resData = data.Data;
+                            layer.msg('对码成功', {
+                                time: 2000, icon: 6, end: function () {
+                                    location.reload();
+                                }
+                            })
+                        }
                     },
                     complete: function () {
                         layer.close(this.layerIndex);
                     },
                 });
             } else {
-                layer.msg('数据不一致，请查证！');
+                layer.msg('数据不一致，请查证！', {
+                    time: 2000, icon: 6, end: function () {
+                        location.reload();
+                    }
+                });
             }
             return false;
         });
 
         
         var $ = layui.$, active = {
-            reload: function () {
+            dataSearch: function () {
                 //执行重载
-                table.reload('iframe-content-list', {
+                table.reload('dataTableId', {
                     page: {
                         curr: 1 //重新从第 1 页开始
                     }
@@ -199,7 +198,6 @@
 
         $('.demoTable .layui-btn').on('click', function () {
             var type = $(this).data('type');
-            layer.msg(type);
             active[type] ? active[type].call(this) : '';
         });
     });
