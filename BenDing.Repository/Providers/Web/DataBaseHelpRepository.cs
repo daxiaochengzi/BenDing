@@ -843,14 +843,14 @@ namespace BenDing.Repository.Providers.Web
                 string insertSql = null;
                 if (!string.IsNullOrWhiteSpace(param.MedicalInsuranceHospitalizationNo)==true && param.IsModify == false)
                 {
-                    insertSql = $@"update [dbo].[MedicalInsurance] set [MedicalInsuranceYearBalance]=0,
-                    [MedicalInsuranceHospitalizationNo]='{param.MedicalInsuranceHospitalizationNo}',[Isdelete]=0,InsuranceType='{param.InsuranceType}'
-                    where [Id]='{param.Id}' and [Isdelete]=1 and OrganizationCode='{user.OrganizationCode}'";
+                    insertSql = $@"update [dbo].[MedicalInsurance] set MedicalInsuranceYearBalance={param.MedicalInsuranceYearBalance},
+                    MedicalInsuranceHospitalizationNo='{param.MedicalInsuranceHospitalizationNo}',IsDelete=0,InsuranceType='{param.InsuranceType}'
+                    where [Id]='{param.Id}'";
                 }
                 else if (param.IsModify)
                 {
                     insertSql = $@"update [dbo].[MedicalInsurance] set [MedicalInsuranceYearBalance]=0,
-                    AdmissionInfoJson='{param.AdmissionInfoJson}',[Isdelete]=0,
+                    AdmissionInfoJson='{param.AdmissionInfoJson}',[IsDelete]=0,
                     where [Id]='{param.Id}' and OrganizationCode='{user.OrganizationCode}'";
                 }
                 else
