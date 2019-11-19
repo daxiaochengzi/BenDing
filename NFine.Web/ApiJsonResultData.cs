@@ -135,7 +135,7 @@ namespace NFine.Web
 
         public static ApiJsonResultData RunWithTry(this ApiJsonResultData jsonResultEntry, Action<ApiJsonResultData> runMethod)
         {
-
+            string Is_day ="[" +DateTime.Now.Date.ToString("yyyy-MM-dd HH:mm:ss")+"] ";
 
             var log = LogFactory.GetLogger("ini".GetType().ToString());
 
@@ -149,7 +149,7 @@ namespace NFine.Web
             {
                 jsonResultEntry.Code = 1010;
 
-                log.Error(e.ToString());
+                log.Error(Is_day+e.ToString());
                 jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message : e.InnerException.InnerException == null ? e.InnerException.Message : e.InnerException.InnerException.Message));
 
             }
@@ -166,6 +166,7 @@ namespace NFine.Web
         /// <returns></returns>
         public static async Task<ApiJsonResultData> RunWithTryAsync(this ApiJsonResultData jsonResultEntry, Func<ApiJsonResultData, Task> runMethod)
         {
+            string Is_day = "[" + DateTime.Now.Date.ToString("yyyy-MM-dd HH:mm:ss") + "] ";
             var log = LogFactory.GetLogger("ini".GetType().ToString());
             try
             {
@@ -175,7 +176,7 @@ namespace NFine.Web
             catch (Exception e)
             {
                 jsonResultEntry.Code = 1010;
-                log.Error(e.ToString());
+                log.Error(Is_day+e.ToString());
                 jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message :
                                                     e.InnerException.InnerException == null ? e.InnerException.Message :
                                                     e.InnerException.InnerException.Message));

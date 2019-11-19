@@ -841,16 +841,16 @@ namespace BenDing.Repository.Providers.Web
             {
                 _sqlConnection.Open();
                 string insertSql = null;
-                if (!string.IsNullOrWhiteSpace(param.MedicalInsuranceHospitalizationNo) && param.IsModify == false)
+                if (!string.IsNullOrWhiteSpace(param.MedicalInsuranceHospitalizationNo)==true && param.IsModify == false)
                 {
                     insertSql = $@"update [dbo].[MedicalInsurance] set [MedicalInsuranceYearBalance]=0,
-                    [MedicalInsuranceHospitalizationNo]='{param.MedicalInsuranceHospitalizationNo}',[Isdelete]=0,
+                    [MedicalInsuranceHospitalizationNo]='{param.MedicalInsuranceHospitalizationNo}',[Isdelete]=0,InsuranceType='{param.InsuranceType}'
                     where [Id]='{param.Id}' and [Isdelete]=1 and OrganizationCode='{user.OrganizationCode}'";
                 }
                 else if (param.IsModify)
                 {
                     insertSql = $@"update [dbo].[MedicalInsurance] set [MedicalInsuranceYearBalance]=0,
-                    AdmissionInfoJson='{param.AdmissionInfoJson}',[Isdelete]=0
+                    AdmissionInfoJson='{param.AdmissionInfoJson}',[Isdelete]=0,
                     where [Id]='{param.Id}' and OrganizationCode='{user.OrganizationCode}'";
                 }
                 else
@@ -879,7 +879,7 @@ namespace BenDing.Repository.Providers.Web
                 _sqlConnection.Open();
                 string querySql = $@"select a.[Id],a.[AdmissionInfoJson],a.HisHospitalizationId,a.MedicalInsuranceHospitalizationNo,a.InsuranceType from [dbo].[MedicalInsurance] as a
                                 inner join [dbo].[inpatient] as b on
-                                a.HisHospitalizationId=b.BusinessId
+                                a.HisHospitalizationId=b.FixedEncoding
                                 where a.IsDelete=0 and b.IsDelete=0
                                 and b.BusinessId='{businessId}' and a.OrganizationCode='{user.OrganizationCode}'";
                 var data = await _sqlConnection.QueryFirstOrDefaultAsync<QueryMedicalInsuranceDto>(querySql);

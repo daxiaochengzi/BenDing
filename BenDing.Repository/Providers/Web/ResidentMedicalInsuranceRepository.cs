@@ -88,6 +88,7 @@ namespace BenDing.Repository.Providers.Web
                         AdmissionInfoJson = JsonConvert.SerializeObject(param),
                         HisHospitalizationId = param.HospitalizationNo,
                         Id = Guid.NewGuid(),
+                        IsModify = false
                     };
                     //保存医保信息
                     await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
@@ -98,6 +99,7 @@ namespace BenDing.Repository.Providers.Web
                         var data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto(), true);
                         saveData.MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo;
                         saveData.MedicalInsuranceYearBalance = Convert.ToDecimal(data.MedicalInsuranceYearBalance);
+                        saveData.IsModify = false;
                         //更新医保信息
                         var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(paramIni);
                         var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
