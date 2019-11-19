@@ -306,9 +306,9 @@
                         type: 2,
                         title: '对码信息',
                         shadeClose: true, //点击遮罩关闭层
-                        area: ['1200px', '660px'],
+                        area: ['1080px', '540px'],
                         fixed: false, //不固定
-                        maxmin: false,
+                        maxmin: true,
                         content: '/BenDing/MedicalDirectoryPairCode' + params
                     });
                 } else if (obj.event === 'updatePairCode') {
@@ -317,8 +317,6 @@
                         obj.del();
                         layer.close(index);
                     });
-                } else if (obj.event === 'edit') {
-                    layer.alert('编辑行：<br>' + JSON.stringify(data))
                 }
             });
 
