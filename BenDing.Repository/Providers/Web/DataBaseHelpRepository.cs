@@ -16,6 +16,7 @@ using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using Dapper;
+using NFine.Code;
 
 namespace BenDing.Repository.Providers.Web
 {
@@ -849,7 +850,7 @@ namespace BenDing.Repository.Providers.Web
                 else if (param.IsModify)
                 {
                     insertSql = $@"update [dbo].[MedicalInsurance] set [MedicalInsuranceYearBalance]=0,
-                    AdmissionInfoJson='{param.AdmissionInfoJson}'
+                    AdmissionInfoJson='{param.AdmissionInfoJson}',[Isdelete]=0
                     where [Id]='{param.Id}' and OrganizationCode='{user.OrganizationCode}'";
                 }
                 else
@@ -863,6 +864,8 @@ namespace BenDing.Repository.Providers.Web
                     insertSql = $"delete [dbo].[MedicalInsurance] where [HisHospitalizationId]='{param.HisHospitalizationId}';" + insertSql;
 
                 }
+                var log = LogFactory.GetLogger("ini".GetType().ToString());
+                log.Debug(insertSql);
                 await _sqlConnection.ExecuteAsync(insertSql);
 
 

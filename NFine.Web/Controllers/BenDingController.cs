@@ -727,8 +727,6 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
-       
-
         /// <summary>
         /// 居民入院登记修改
         /// </summary>

@@ -72,6 +72,10 @@
       <Project>{4941fbd9-9c5c-46ce-93b4-a41bbbf09622}</Project>
       <Name>BenDing.Domain</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NFine.Code\NFine.Code.csproj">
+      <Project>{DB19CE03-C307-43FE-A209-08AA4AE10E21}</Project>
+      <Name>NFine.Code</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

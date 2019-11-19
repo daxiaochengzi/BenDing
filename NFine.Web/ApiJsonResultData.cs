@@ -12,7 +12,7 @@ namespace NFine.Web
 {
     public class ApiJsonResultData
     {
-        
+
         #region .ctor
         /// <summary>
         /// Initializes a new instance of the <see cref="JsonResultData" /> class.
@@ -20,7 +20,7 @@ namespace NFine.Web
         public ApiJsonResultData()
         {
             Messages = new string[0];
-           
+
             Success = true;
         }
 
@@ -72,7 +72,7 @@ namespace NFine.Web
 
         [JsonProperty("redirect")]
         public string RedirectUrl { get; set; }
-       
+
 
 
         [JsonProperty("reloadpage")]
@@ -127,11 +127,11 @@ namespace NFine.Web
         }
         #endregion
     }/// <summary>
-    /// 
-    /// </summary>
+     /// 
+     /// </summary>
     public static class ApiJsonResultEntryExtensions
     {
-        
+
 
         public static ApiJsonResultData RunWithTry(this ApiJsonResultData jsonResultEntry, Action<ApiJsonResultData> runMethod)
         {
@@ -148,12 +148,12 @@ namespace NFine.Web
             catch (Exception e)
             {
                 jsonResultEntry.Code = 1010;
-               
+
                 log.Error(e.ToString());
                 jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message : e.InnerException.InnerException == null ? e.InnerException.Message : e.InnerException.InnerException.Message));
 
             }
-            
+
             if (jsonResultEntry.Success) jsonResultEntry.Code = 0;
             return jsonResultEntry;
         }
@@ -180,7 +180,7 @@ namespace NFine.Web
                                                     e.InnerException.InnerException == null ? e.InnerException.Message :
                                                     e.InnerException.InnerException.Message));
             }
-            
+
 
             if (jsonResultEntry.Success) jsonResultEntry.Code = 0;
             return jsonResultEntry;
@@ -188,6 +188,6 @@ namespace NFine.Web
     }
 
 
-   
+
 
 }

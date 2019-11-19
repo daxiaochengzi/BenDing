@@ -44,6 +44,10 @@
     <Compile Include="01 Infrastructure\IDeleteAudited.cs" />
     <Compile Include="01 Infrastructure\IEntity.cs" />
     <Compile Include="01 Infrastructure\IModificationAudited.cs" />
+    <Compile Include="03 Entity\BenDingManage\HospitalLogEntity.cs" />
+    <Compile Include="03 Entity\BenDingManage\HospitalOperatorEntity.cs" />
+    <Compile Include="03 Entity\BenDingManage\InpatientEntity.cs" />
+    <Compile Include="03 Entity\BenDingManage\MedicalInsuranceEntity.cs" />
     <Compile Include="03 Entity\SystemManage\AreaEntity.cs" />
     <Compile Include="03 Entity\SystemManage\ModuleButtonEntity.cs" />
     <Compile Include="03 Entity\SystemManage\ModuleEntity.cs" />
@@ -67,6 +71,10 @@
     <Compile Include="04 IRepository\SystemSecurity\IDbBackupRepository.cs" />
     <Compile Include="04 IRepository\SystemSecurity\IFilterIPRepository.cs" />
     <Compile Include="04 IRepository\SystemSecurity\ILogRepository.cs" />
+    <Compile Include="BenDing\Infrastructure\IBenDingCreationAudited.cs" />
+    <Compile Include="BenDing\Infrastructure\IBenDingDeleteAudited.cs" />
+    <Compile Include="BenDing\Infrastructure\IBenDingEntity.cs" />
+    <Compile Include="BenDing\Infrastructure\IBenDingModificationAudited.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
