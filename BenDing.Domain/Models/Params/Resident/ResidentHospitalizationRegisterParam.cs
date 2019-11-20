@@ -57,8 +57,8 @@ namespace BenDing.Domain.Models.Params.Resident
         /// 入院主要诊断疾病ICD-10编码
         /// </summary>
         [XmlElementAttribute("PI_ICD10", IsNullable = false)]
-        [Display(Name = "入院主要诊断")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
+        //[Display(Name = "入院主要诊断")]
+        //[Required(ErrorMessage = "{0}不能为空!!!")]
         public string AdmissionMainDiagnosisIcd10 { get; set; }
         /// <summary>
         /// 入院诊断疾病ICD-10编码
@@ -74,8 +74,8 @@ namespace BenDing.Domain.Models.Params.Resident
         /// 入院诊断疾病名称
         /// </summary>
         [XmlElementAttribute("PI_RYZD", IsNullable = false)]
-        [Display(Name = "入院诊断疾病名称")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
+        //[Display(Name = "入院诊断疾病名称")]
+        //[Required(ErrorMessage = "{0}不能为空!!!")]
         public string AdmissionMainDiagnosis { get; set; }
         /// <summary>
         /// 住院科室编号 
@@ -103,9 +103,15 @@ namespace BenDing.Domain.Models.Params.Resident
         //[Display(Name = "经办人")]
         //[Required(ErrorMessage = "{0}不能为空!!!")]
         public string Operators { get; set; }
-      
-       
-    
+
+        /// <summary>
+        /// 诊断
+        /// </summary>
+        [XmlIgnoreAttribute]
+        public List<InpatientDiagnosisDto> DiagnosisList { get; set; } = null;
+
+
+
 
     }
 }

@@ -288,8 +288,9 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
+               
+
                 var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                
                 var inputInpatientInfo = new InpatientInfoParam()
                 {
                     AuthCode = verificationCode.AuthCode,
@@ -299,8 +300,6 @@ namespace NFine.Web.Controllers
                     EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                     State = "0"
                 };
-
-               
                 var infoData = new GetInpatientInfoParam()
                 {
                     User = verificationCode,
@@ -702,42 +701,58 @@ namespace NFine.Web.Controllers
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
 
+                if (param.DiagnosisList != null && param.DiagnosisList.Any())
+                {   //主诊断
+                    var mainDiagnosis = param.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == true);
+                    if (mainDiagnosis==null) throw new Exception("主诊断不能为空!!!");
+                    param.AdmissionMainDiagnosisIcd10 = mainDiagnosis.DiagnosisCode;
+                    param.AdmissionMainDiagnosis = mainDiagnosis.DiagnosisName;
+                    //次诊断
+                    var nextDiagnosis = param.DiagnosisList.Where(c => c.IsMainDiagnosis == false).ToList();
+                    int num = 1;
+                    foreach (var item in nextDiagnosis)
+                    {
+                        if (num == 1) param.DiagnosisIcd10Two = item.DiagnosisCode;
+                        if (num == 2) param.DiagnosisIcd10Three = item.DiagnosisCode;
+                        num++;
+                    }
+                    var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                    var inputInpatientInfo = new InpatientInfoParam()
+                    {
+                        AuthCode = userBase.AuthCode,
+                        OrganizationCode = userBase.OrganizationCode,
+                        IdCardNo = param.IdCardNo,
+                        StartTime = param.StartTime,
+                        EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                        State = "0",
+                    };
+                    var infoData = new GetInpatientInfoParam()
+                    {
+                        User = userBase,
+                        BusinessId = param.BusinessId,
+                        InfoParam = inputInpatientInfo,
+                        IsSave = false,
+                    };
+                    var inpatientData = await _webServiceBasicService.GetInpatientInfo(infoData);
+                    if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
+                    {
+                        await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                        param.Operators = param.UserId;
+                        await _residentMedicalInsurance.HospitalizationRegister(param, userBase);
+                    }
+                    else
+                    {
+                        infoData.IsSave = true;
+                        await _webServiceBasicService.GetInpatientInfo(infoData);
+                    }
 
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var inputInpatientInfo = new InpatientInfoParam()
-                {
-                    AuthCode = userBase.AuthCode,
-                    OrganizationCode = userBase.OrganizationCode,
-                    IdCardNo = param.IdCardNo,
-                    StartTime = param.StartTime,
-                    EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                    State = "0",
-                };
-                string inputInpatientInfoJson =JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
-                var infoData = new GetInpatientInfoParam()
-                {
-                    User = userBase,
-                    BusinessId = param.BusinessId,
-                    InfoParam = inputInpatientInfo,
-                    IsSave = false,
-                };
-                var inpatientData = await _webServiceBasicService.GetInpatientInfo(infoData);
-                if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
-                {
-                    await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                    param.Operators = param.UserId;
-                    await _residentMedicalInsurance.HospitalizationRegister(param, userBase);
                 }
                 else
                 {
-                    infoData.IsSave = true;
-                    await _webServiceBasicService.GetInpatientInfo(infoData);
+                    throw  new Exception("诊断不能为空!!!");
                 }
 
-            
-               
-              
-               // await _webServiceBasicService.GetInpatientInfo(userBase, inputInpatientInfoJson, true);
+
 
             });
             return Json(resultData);
@@ -840,7 +855,6 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
-
         #endregion
     }
 }
