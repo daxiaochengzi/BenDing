@@ -41,7 +41,11 @@ namespace BenDing.Repository.Providers.Web
                 var userInfo = await _iSystemManageRepository.QueryHospitalOperator(param);
 
                 var result = MedicalInsuranceDll.ConnectAppServer_cxjb(userInfo.MedicalInsuranceAccount, userInfo.MedicalInsurancePwd);
-                var data = XmlHelp.DeSerializerModel(new IniXmlDto(), true);
+                if (result != 1)
+                {
+                    var data = XmlHelp.DeSerializerModel(new IniXmlDto(), true);
+                }
+                
             });
         }
         /// <summary>
