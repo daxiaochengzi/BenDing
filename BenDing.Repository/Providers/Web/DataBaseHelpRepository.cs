@@ -1049,17 +1049,14 @@ namespace BenDing.Repository.Providers.Web
                 if (param.Any())
                 {
                     var projectCodeList = CommonHelp.ListToStr(param.Select(c => c.ProjectCode).ToList());
-                    //string deleteSql = "delete [dbo].[MedicalInsuranceProject] where ProjectCode in (" + projectCodeList + ")";
-                    //await _sqlConnection.ExecuteAsync(deleteSql);
-
-
-                    //20191024023636736DateTime.Now.ToString("yyyyMMddhhmmssfff")
-                    
+                    DateTime dtDate;
                     string insertSql = null;
                     foreach (var item in param)
-                    {
-                        var projectName = FilteSqlStr(item.ProjectName);
-                         insertSql += $@"INSERT INTO [dbo].[MedicalInsuranceProject]
+                    {//判断日期格式是否正确
+                        if (DateTime.TryParse(item.NewUpdateTime, out dtDate))
+                        {
+                            var projectName = FilteSqlStr(item.ProjectName);
+                            insertSql += $@"INSERT INTO [dbo].[MedicalInsuranceProject]
                            (id,[ProjectCode],[ProjectName] ,[ProjectCodeType] ,[ProjectLevel],[WorkersSelfPayProportion]
                            ,[Unit],[MnemonicCode] ,[Formulation],[ResidentSelfPayProportion],[RestrictionSign]
                            ,[ZeroBlock],[OneBlock],[TwoBlock],[ThreeBlock],[FourBlock],[EffectiveSign],[ResidentOutpatientSign]
@@ -1073,6 +1070,8 @@ namespace BenDing.Repository.Providers.Web
                                   ,'{ DateTime.ParseExact(item.NewUpdateTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture).ToString("yyyy-MM-dd HH:mm:ss")}',
                                   NULL,NULL,'{item.LimitPaymentScope}',GETDATE(),'{user.UserId}'
                                );";
+                        }
+                        
                     }
                     result = await _sqlConnection.ExecuteAsync(insertSql);
                 }
@@ -1085,35 +1084,14 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="user"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<Int32> ProjectDownloadTimeMax(UserInfoDto user, List<ResidentProjectDownloadRowDataRowDto> param)
+        public async Task<string> ProjectDownloadTimeMax()
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
-                int result = 0;
                 _sqlConnection.Open();
-                if (param.Any())
-                {
-                    string insertSql = null;
-                    //foreach (var item in param)
-                    //{
-                    //    insertSql += $@"INSERT INTO [dbo].[medical_insurance_project]
-                    //       (id,[project_code],[project_name] ,[project_code_type] ,[project_level],[workers_self_pay_proportion]
-                    //       ,[unit],[mnemonic_code] ,[formulation],[resident_self_pay_proportion],[restriction_sign]
-                    //       ,[zero_block],[one_block],[two_block],[three_block],[four_block],[effective_sign],[resident_outpatient_sign]
-                    //       ,[resident_outpatient_block],[manufacturer] ,[quasi_font_size] ,[specification],[remark],[new_code_mark]
-                    //       ,[new_update_time],[start_time] ,[end_time],[limit_payment_scope],[create_time],[CreateUserId]
-                    //       )
-                    //      VALUES('{Guid.NewGuid()}','{item.AKE001}','{item.AKE002}','{item.AKA063}','{item.AKA065}','{item.AKA069}'
-                    //              ,'{item.AKA067}','{item.AKA020}', '{item.AKA070}','{item.CKE899}','{item.AKA036}'
-                    //              ,'{item.CKA599}','{item.CKA578}','{item.CKA579}','{item.CKA580}','{item.CKA560}','{item.AAE100}','{item.CKE889}'
-                    //              ,'{item.CKA601}','{item.AKA098}','{item.CKA603}','{item.AKA074}','{item.AAE013}','{item.CKE897}'
-                    //              ,'{item.AAE036}','{item.AAE030}','{item.AAE031}','{item.CKE599}',GETDATE(),'{user.职员ID}'
-                    //           );";
-                    //}
-
-
-                    result = await _sqlConnection.ExecuteAsync(insertSql);
-                }
+                string insertSql = "select max(NewUpdateTime) from [dbo].[MedicalInsuranceProject]";
+                string result = await _sqlConnection.QueryFirstOrDefault(insertSql);
+                _sqlConnection.Close();
                 return result;
             }
         }

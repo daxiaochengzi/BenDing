@@ -55,7 +55,9 @@ namespace BenDing.Service.Providers
             var pageIni = param.Page;
             string resultData = "";
             param.QueryType = 1;
-            var count = await _residentMedicalInsurance.ProjectDownloadCount(param);
+            var updateTime=await  _baseHelpRepository.ProjectDownloadTimeMax();
+            if (string.IsNullOrWhiteSpace(updateTime)) param.UpdateTime =Convert.ToDateTime(updateTime).ToString("yyyyMMddHHmmss") ;
+             var count = await _residentMedicalInsurance.ProjectDownloadCount(param);
             var cnt = Convert.ToInt32(count / param.Limit) + ((count % param.Limit) > 0 ? 1 : 0);
             param.QueryType = 2;
             Int64 allNum = 0;
