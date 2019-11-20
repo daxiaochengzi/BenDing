@@ -131,8 +131,8 @@
                 <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
 
                 <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                    <button type="submit" class="layui-btn layui-btn-radius" lay-submit lay-filter="update">修改登记</button>
-                    <button type="button" class="layui-btn layui-btn-radius" lay-filter="">取消登记</button>
+                    <button type="submit" class="layui-btn layui-btn-radius" lay-submit lay-filter="updateRegister">修改登记</button>
+                    <button type="button" class="layui-btn layui-btn-radius" id="cancelRegister">取消登记</button>
                 </div>
             </div>
         </form>
@@ -175,7 +175,36 @@
                 //"endworkdate": endworkdate //这里在赋初始值时没效果, 也不报错
             });
 
+            //取消登记
+            $(document).on('click', '#cancelRegister', function () {
+                var params = {
+                    "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
+                    , "UserId": $("#empid").val() /*授权操作人的ID*/
+                }
+
+                $.ajax({
+                    url: '/BenDing/HospitalizationRegisterCancel',
+                    data: params,
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        console.log(data)
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            //样式类名:墨绿深蓝风
+                            layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                        } else {
+                            var resData = data.Data;
+                            layer.alert("取消成功", { skin: 'layui-layer-molv', icon: 6, title: '提示' });
+                        }
+                    }
+                });
+            });
         });
+
+        
+
+
     });
     
 
