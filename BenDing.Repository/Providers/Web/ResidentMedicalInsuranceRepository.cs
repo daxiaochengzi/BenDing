@@ -99,7 +99,7 @@ namespace BenDing.Repository.Providers.Web
                         var data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto(), true);
                         saveData.MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo;
                         saveData.MedicalInsuranceYearBalance = Convert.ToDecimal(data.MedicalInsuranceYearBalance);
-                        saveData.IsModify = false;
+                      
                         //更新医保信息
                         var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(paramIni);
                         var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
@@ -242,7 +242,6 @@ namespace BenDing.Repository.Providers.Web
                 return resultData;
             });
         }
-
         /// <summary>
         /// 处方上传
         /// </summary>
@@ -266,7 +265,6 @@ namespace BenDing.Repository.Providers.Web
                 //4.2.3 数据上传
                 //4.2.3.1 数据上传失败,数据回写到日志
                 var resultData = new RetrunPrescriptionUploadDto();
-
                 //1.判断是id上传还是单个用户上传
                 if (param.DataIdList != null && param.DataIdList.Any())
                 {
@@ -278,10 +276,11 @@ namespace BenDing.Repository.Providers.Web
                     {
                         var queryPairCodeParam = new QueryMedicalInsurancePairCodeParam()
                         {
-                            DirectoryCodeList = queryData.Select(d => d.CostItemCode).ToList(),
+                            DirectoryCodeList = queryData.Select(d => d.CostItemCode).Distinct().ToList(),
                             OrganizationCode = user.OrganizationCode,
                         };
                         //获取医保对码数据
+
                         var queryPairCode =
                             await _baseSqlServerRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
                         //处方上传数据金额验证
@@ -297,12 +296,14 @@ namespace BenDing.Repository.Providers.Web
                         var paramIni = await GetPrescriptionUploadParam(validDataList, queryPairCode, user, param.InsuranceType);
                         int num = paramIni.RowDataList.Count;
                         int a = 0;
-                        var count = Convert.ToInt32(num / 50) + ((num % 50) > 0 ? 1 : 0);
+                        int limit = 50;//限制条数
+                        var count = Convert.ToInt32(num / limit) + ((num % limit) > 0 ? 1 : 0);
                         var idList = new List<Guid>();
                         while (a < count)
                         {//排除已上传数据
-                            var rowDataListAll = paramIni.RowDataList.Where(d => idList.Contains(d.Id)).OrderBy(c => c).ToList();
-                            var sendList = rowDataListAll.Take(50).ToList();
+                           
+                            var rowDataListAll = paramIni.RowDataList.Where(d => !idList.Contains(d.Id)).OrderBy(c => c.PrescriptionSort).ToList();
+                            var sendList = rowDataListAll.Take(limit).ToList();
                             var uploadData = await PrescriptionUploadData(paramIni, param.BusinessId, user);
                             if (uploadData.PO_FHZ != "1")
                             {
@@ -312,17 +313,15 @@ namespace BenDing.Repository.Providers.Web
                             {
                                 var sendIdList = sendList.Select(s => s.Id).ToList();
                                 //更新数据上传状态
-                               
                                 idList.AddRange(sendIdList);
                                 //获取总行数
                                 resultData.Num += sendList.Count();
                             }
+                            a++;
                         }
 
                     }
                 }
-
-
                 return resultData;
             });
         }
@@ -341,7 +340,7 @@ namespace BenDing.Repository.Providers.Web
                 var xmlStr = XmlHelp.SaveXml(param);
                 if (xmlStr)
                 {
-                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB004");
+                    int result = 1; //MedicalInsuranceDll.CallService_cxjb("CXJB004");
                     data = XmlHelp.DeSerializerModel(new PrescriptionUploadDto(), false);
                     if (data.PO_FHZ == "1")
                     {   //交易码
@@ -369,7 +368,7 @@ namespace BenDing.Repository.Providers.Web
                         saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                         saveXmlData.MedicalInsuranceCode = "31";
                         saveXmlData.UserId = user.UserId;
-                        await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), user.UserId);
+                        //await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), user.UserId);
                     }
 
                 }
@@ -410,7 +409,7 @@ namespace BenDing.Repository.Providers.Web
                         {
                             ColNum = 0,
                             PrescriptionNum = item.RecipeCodeFixedEncoding,
-                            PrescriptionSort = item.DataSort.ToString(),
+                            PrescriptionSort = item.DataSort,
                             ProjectCode = pairCodeData.ProjectCode,
                             FixedEncoding = pairCodeData.FixedEncoding,
                             DirectoryDate = CommonHelp.FormatDateTime(item.BillTime),
@@ -466,7 +465,7 @@ namespace BenDing.Repository.Providers.Web
                 var dataList = new List<QueryInpatientInfoDetailDto>();
                 //获取医院等级
                 var grade = await _iSystemManageRepository.QueryHospitalOrganizationGrade(user.OrganizationCode);
-                string msg = null;
+                string msg = "";
                 foreach (var item in param)
                 {
                     var queryData = pairCode.FirstOrDefault(c => c.DirectoryCode == item.CostItemCode);
@@ -479,18 +478,28 @@ namespace BenDing.Repository.Providers.Web
                     {
                         queryAmount = queryData.FourBlock;
                     }
-                    if (item.Amount < queryAmount)
+                    //限价大于零判断
+                    if (queryAmount > 0)
                     {
-                        dataList.Add(item);
+                        if (item.Amount < queryAmount)
+                        {
+                            dataList.Add(item);
+                        }
+                        else
+                        {
+                            msg += item.CostItemName + ",";
+                        }
                     }
                     else
                     {
-                        msg += item.CostItemName + ",";
+                        dataList.Add(item);
                     }
+
+                    
 
                 }
 
-                msg = msg != null ? msg + "金额超出限制等级" : null;
+                msg = msg != "" ? msg + "金额超出限制等级" : "";
                 resultData.Add(msg, dataList);
                 return resultData;
             });

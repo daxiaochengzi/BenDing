@@ -76,7 +76,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// <summary>
         /// 费用日期
         /// </summary>
-        public  string BillTime { get; set; }
+        public  DateTime BillTime { get; set; }
         /// <summary>
         /// 操作员
         /// </summary>

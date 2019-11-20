@@ -41,7 +41,7 @@ namespace BenDing.Domain.Models.Params.Resident
         ///  处方序号
         /// </summary>
         [XmlElementAttribute("AKC584", IsNullable = false)]
-        public string PrescriptionSort { get; set; }
+        public int PrescriptionSort { get; set; }
         /// <summary>
         /// 项目编号
         /// </summary>

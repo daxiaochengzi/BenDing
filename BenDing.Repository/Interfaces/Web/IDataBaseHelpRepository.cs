@@ -111,7 +111,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task GetInpatientInfo(UserInfoDto user, List<InpatientInfoDto> param);
+        Task GetInpatientInfo(UserInfoDto user, InpatientInfoDto param);
         /// <summary>
         /// 医保信息保存
         /// </summary>

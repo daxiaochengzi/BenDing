@@ -139,6 +139,7 @@
     <Compile Include="Models\Params\Web\DeleteMedicalInsuranceParam.cs" />
     <Compile Include="Models\Params\Web\ExecuteSpParam.cs" />
     <Compile Include="Models\Params\Web\GetInpatientInfoDetailParam.cs" />
+    <Compile Include="Models\Params\Web\GetInpatientInfoParam.cs" />
     <Compile Include="Models\Params\Web\HospitalOrganizationGradeParam.cs" />
     <Compile Include="Models\Params\Web\ICD10InfoParam.cs" />
     <Compile Include="Models\Params\Web\InformationParam.cs" />

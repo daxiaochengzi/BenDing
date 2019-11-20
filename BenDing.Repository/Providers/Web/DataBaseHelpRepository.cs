@@ -329,7 +329,7 @@ namespace BenDing.Repository.Providers.Web
                     var paramNew = new List<ICD10InfoDto>();
                     //获取唯一编码
                     var catalogDtoIdList = param.Select(c => c.DiseaseId).ToList();
-                    var ids = ListToStr(catalogDtoIdList);
+                    var ids = CommonHelp.ListToStr(catalogDtoIdList);
                     string sqlstr = $"select DiseaseCoding  from [dbo].[ICD10]  where DiseaseCoding  in({ids}) and IsDelete=0";
                     var idListNew = await _sqlConnection.QueryAsync<string>(sqlstr);
                     //排除已有项目
@@ -419,8 +419,8 @@ namespace BenDing.Repository.Providers.Web
                     IDbTransaction transaction = _sqlConnection.BeginTransaction();
                     try
                     {
-                        var ywId = ListToStr(param.Select(c => c.业务ID).ToList());
-                        var outpatientNum = ListToStr(param.Select(c => c.门诊号).ToList());
+                        var ywId = CommonHelp.ListToStr(param.Select(c => c.业务ID).ToList());
+                        var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.门诊号).ToList());
                         string strSql =
                             $@"update [dbo].[outpatient] set  [IsDelete] =1 ,DeleteTime=GETDATE(),DeleteUserId='{user.UserId}' where [IsDelete]=0 and [businessid] in(" +
                             ywId + ") and [outpatientnumber] in(" + outpatientNum + ")";
@@ -474,7 +474,7 @@ namespace BenDing.Repository.Providers.Web
                     try
                     {
 
-                        var outpatientNum = ListToStr(param.Select(c => c.门诊号).ToList());
+                        var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.门诊号).ToList());
                         string strSql =
                             $@"update [dbo].[outpatientfee] set  [IsDelete] =1 ,DeleteTime=GETDATE(),DeleteUserId='{user.UserId}' where [IsDelete]=0 
                                 and [outpatientnumber] in(" + outpatientNum + ")";
@@ -531,7 +531,7 @@ namespace BenDing.Repository.Providers.Web
                     try
                     {
 
-                        var outpatientNum = ListToStr(param.Select(c => c.CostDetailId).ToList());
+                        var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.CostDetailId).ToList());
                         var paramFirst = param.FirstOrDefault();
                         string strSql =
                             $@" select [CostDetailId],[DataSort] from [dbo].[HospitalizationFee] where [HospitalizationNo]={paramFirst.HospitalizationNo}
@@ -701,31 +701,21 @@ namespace BenDing.Repository.Providers.Web
 
             return count;
         }
+
         /// <summary>
         /// 获取住院病人
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task GetInpatientInfo(UserInfoDto user, List<InpatientInfoDto> param)
+        public async Task GetInpatientInfo(UserInfoDto user, InpatientInfoDto param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
 
                 _sqlConnection.Open();
-                if (param.Any())
-                {
-                  
-
-                        var outpatientNum = ListToStr(param.Select(c => c.HospitalizationNo).ToList());
-                        var businessId = ListToStr(param.Select(c => c.BusinessId).ToList());
-                        string strSql =
-                            $@"update  [dbo].[inpatient] set  [IsDelete] =1 ,DeleteTime=GETDATE(),DeleteUserId='{user.UserId}' where [IsDelete]=0  and [hospitalizationno] in ({outpatientNum})
-                                 and [businessid] in({businessId})"; 
-                        var num = await _sqlConnection.ExecuteAsync(strSql, null);
-                        string insertSql = "";
-                        foreach (var item in param)
-                        {
-                            string str = $@"
+                string strSql =
+                    $@"update  [dbo].[inpatient] set  [IsDelete] =1 ,DeleteTime=GETDATE(),DeleteUserId='{user.UserId}' where [IsDelete]=0  and [businessid] ='{param.BusinessId}';";
+                string insertSql = $@"
                                 INSERT INTO [dbo].[inpatient]
                                            (id,[HospitalName] ,[AdmissionDate]  ,[LeaveHospitalDate] ,[HospitalizationNo] ,[BusinessId] ,[PatientName] ,[IdCardNo]
                                            ,[PatientSex],[Birthday] ,[ContactName],[ContactPhone] ,[FamilyAddress] ,[InDepartmentName] ,[InDepartmentId]
@@ -734,23 +724,21 @@ namespace BenDing.Repository.Providers.Web
 		                                   ,[LeaveHospitalWard] ,[LeaveHospitalBed]  ,[LeaveHospitalMainDiagnosis] ,[LeaveHospitalMainDiagnosisIcd10] ,[LeaveHospitalSecondaryDiagnosis] ,[LeaveHospitalSecondaryDiagnosisIcd10]
                                            ,[InpatientHospitalState] ,[AdmissionDiagnosticDoctorId] ,[AdmissionBedId]  ,[AdmissionWardId],[LeaveHospitalBedId] ,[LeaveHospitalWardId]
                                            ,[CreateTime]  ,[IsDelete] ,[DeleteTime],OrganizationCode,CreateUserId,FixedEncoding)
-                                     VALUES ('{Guid.NewGuid()}','{item.HospitalName}','{item.AdmissionDate}','{item.LeaveHospitalDate}','{item.HospitalizationNo}','{item.BusinessId}','{item.PatientName}','{item.IdCardNo}',
-                                             '{item.PatientSex}','{item.Birthday}','{item.ContactName}','{item.ContactPhone}','{item.FamilyAddress}','{item.InDepartmentName}','{item.InDepartmentId}',
-                                             '{item.AdmissionDiagnosticDoctor}','{item.AdmissionBed}','{item.AdmissionMainDiagnosis}','{item.AdmissionMainDiagnosisIcd10}','{item.AdmissionSecondaryDiagnosis}','{item.AdmissionSecondaryDiagnosisIcd10}',
-                                             '{item.AdmissionWard}','{item.AdmissionOperator}','{item.AdmissionOperateTime}',{Convert.ToDecimal(item.HospitalizationTotalCost)},'{item.Remark}','{item.LeaveDepartmentName}','{item.LeaveDepartmentId}',
-                                             '{item.LeaveHospitalWard}','{item.LeaveHospitalBed}','{item.LeaveHospitalMainDiagnosis}','{item.LeaveHospitalMainDiagnosisIcd10}','{item.LeaveHospitalSecondaryDiagnosis}','{item.LeaveHospitalSecondaryDiagnosisIcd10}',
-                                             '{item.InpatientHospitalState}','{item.AdmissionDiagnosticDoctorId}','{item.AdmissionBedId}','{item.AdmissionWardId}','{item.LeaveHospitalBedId}','{item.LeaveHospitalWardId}',
-                                               GETDATE(),0,null,'{user.OrganizationCode}','{user.UserId}','{BitConverter.ToInt64(Guid.Parse(item.BusinessId).ToByteArray(), 0)}'
+                                     VALUES ('{Guid.NewGuid()}','{param.HospitalName}','{param.AdmissionDate}','{param.LeaveHospitalDate}','{param.HospitalizationNo}','{param.BusinessId}','{param.PatientName}','{param.IdCardNo}',
+                                             '{param.PatientSex}','{param.Birthday}','{param.ContactName}','{param.ContactPhone}','{param.FamilyAddress}','{param.InDepartmentName}','{param.InDepartmentId}',
+                                             '{param.AdmissionDiagnosticDoctor}','{param.AdmissionBed}','{param.AdmissionMainDiagnosis}','{param.AdmissionMainDiagnosisIcd10}','{param.AdmissionSecondaryDiagnosis}','{param.AdmissionSecondaryDiagnosisIcd10}',
+                                             '{param.AdmissionWard}','{param.AdmissionOperator}','{param.AdmissionOperateTime}',{Convert.ToDecimal(param.HospitalizationTotalCost)},'{param.Remark}','{param.LeaveDepartmentName}','{param.LeaveDepartmentId}',
+                                             '{param.LeaveHospitalWard}','{param.LeaveHospitalBed}','{param.LeaveHospitalMainDiagnosis}','{param.LeaveHospitalMainDiagnosisIcd10}','{param.LeaveHospitalSecondaryDiagnosis}','{param.LeaveHospitalSecondaryDiagnosisIcd10}',
+                                             '{param.InpatientHospitalState}','{param.AdmissionDiagnosticDoctorId}','{param.AdmissionBedId}','{param.AdmissionWardId}','{param.LeaveHospitalBedId}','{param.LeaveHospitalWardId}',
+                                               GETDATE(),0,null,'{user.OrganizationCode}','{user.UserId}','{BitConverter.ToInt64(Guid.Parse(param.BusinessId).ToByteArray(), 0)}'
                                               );";
-                            insertSql += str;
-                        }
-                        var nums = await _sqlConnection.ExecuteAsync(insertSql, null);
-                       
-                    
-                   
-                }
+                insertSql = insertSql + strSql;
+                var nums = await _sqlConnection.ExecuteAsync(insertSql, null);
                 _sqlConnection.Close();
             }
+
+          
+            
         }
         /// <summary>
         /// 住院病人查询
@@ -1009,7 +997,7 @@ namespace BenDing.Repository.Providers.Web
                     try
                     {
 
-                        var outpatientNum = ListToStr(param.Select(c => c.DirectoryCode).ToList());
+                        var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.DirectoryCode).ToList());
                         string strSql =
                             $@"update [dbo].[HospitalGeneralCatalog] set  [IsDelete] =1 ,DeleteTime=GETDATE(),DeleteUserId='{user.UserId}' where [IsDelete]=0 
                                 and [DirectoryCode] in(" + outpatientNum + ")";
@@ -1060,7 +1048,7 @@ namespace BenDing.Repository.Providers.Web
                 _sqlConnection.Open();
                 if (param.Any())
                 {
-                    var projectCodeList = ListToStr(param.Select(c => c.ProjectCode).ToList());
+                    var projectCodeList = CommonHelp.ListToStr(param.Select(c => c.ProjectCode).ToList());
                     //string deleteSql = "delete [dbo].[MedicalInsuranceProject] where ProjectCode in (" + projectCodeList + ")";
                     //await _sqlConnection.ExecuteAsync(deleteSql);
 
@@ -1129,19 +1117,7 @@ namespace BenDing.Repository.Providers.Web
                 return result;
             }
         }
-        private string ListToStr(List<string> param)
-        {
-            string result = null;
-            if (param.Any())
-            {
-                foreach (var item in param)
-                {
-                    result += "'" + item + "'" + ",";
-                }
-
-            }
-            return result?.Substring(0, result.Length - 1);
-        }
+       
         /// <summary>  
         /// 根据GUID获取19位的唯一数字序列  
         /// </summary>  

@@ -148,6 +148,7 @@ namespace BenDing.Domain.Xml
                     xmlDoc.Save(pathXml);
                     result = true;
                 }
+                xmlDoc = null;
                 return result;
             }
         }
@@ -254,6 +255,7 @@ namespace BenDing.Domain.Xml
                 }
             }
             string jsonText = JsonConvert.SerializeXmlNode(doc);
+
             var resultData = JsonConvert.DeserializeObject<ResultData>(jsonText);
             if (resultData?.Row != null && resultData.Row.ToString() != "")
             {
@@ -261,6 +263,7 @@ namespace BenDing.Domain.Xml
                 result = JsonConvert.DeserializeObject<T>(jsonStr);
             }
 
+            doc = null;
             return result;
         }
 
@@ -308,6 +311,8 @@ namespace BenDing.Domain.Xml
             {
                 throw new SystemException(valid.PO_MSG);
             }
+
+            doc = null;
             return resultData;
         }
 

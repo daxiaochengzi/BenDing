@@ -12,6 +12,7 @@ using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
+using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using Dapper;
 
@@ -22,6 +23,7 @@ namespace BenDing.Repository.Providers.Web
         private string _connectionString;
         private SqlConnection _sqlConnection;
         private ISystemManageRepository _iSystemManageRepository;
+
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -30,9 +32,12 @@ namespace BenDing.Repository.Providers.Web
         {
             _iSystemManageRepository = iSystemManageRepository;
             string conStr = ConfigurationManager.ConnectionStrings["NFineDbContext"].ToString();
-            _connectionString = !string.IsNullOrWhiteSpace(conStr) ? conStr : throw new ArgumentNullException(nameof(conStr));
+            _connectionString = !string.IsNullOrWhiteSpace(conStr)
+                ? conStr
+                : throw new ArgumentNullException(nameof(conStr));
 
         }
+
         /// <summary>
         /// 医保病人信息保存
         /// </summary>
@@ -85,6 +90,7 @@ namespace BenDing.Repository.Providers.Web
 
             return counts;
         }
+
         /// <summary>
         /// 医保病人信息查询
         /// </summary>
@@ -112,7 +118,7 @@ namespace BenDing.Repository.Providers.Web
                             FROM [dbo].[MedicalInsurance]
                             where  IsDelete=0";
 
-             
+
                 if (!string.IsNullOrWhiteSpace(param.DataId))
                     strSql += $" and Id='{param.DataId}'";
                 if (!string.IsNullOrWhiteSpace(param.BusinessId))
@@ -124,6 +130,7 @@ namespace BenDing.Repository.Providers.Web
                 return data != null ? data : resultData;
             }
         }
+
         /// <summary>
         ///  更新医保病人信息
         /// </summary>
@@ -154,12 +161,14 @@ namespace BenDing.Repository.Providers.Web
                 return data;
             }
         }
+
         /// <summary>
         /// 住院病人明细查询
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<List<QueryInpatientInfoDetailDto>> InpatientInfoDetailQuery(InpatientInfoDetailQueryParam param)
+        public async Task<List<QueryInpatientInfoDetailDto>> InpatientInfoDetailQuery(
+            InpatientInfoDetailQueryParam param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
@@ -169,14 +178,15 @@ namespace BenDing.Repository.Providers.Web
                 string strSql = @"select * from [dbo].[HospitalizationFee]  where  IsDelete=0 ";
                 if (param.IdList != null && param.IdList.Any())
                 {
-                    var idlist = ListToStr(param.IdList);
+                    var idlist = CommonHelp.ListToStr(param.IdList);
                     strSql += $@" and Id in({idlist})";
                 }
                 else
                 {
                     if (!string.IsNullOrWhiteSpace(param.BusinessId))
                     {
-                        strSql += $@" and HospitalizationNo ='(select top 1 HospitalizationNo from [dbo].[Inpatient] where BusinessId='{param.BusinessId}' and IsDelete=0')";
+                        strSql +=
+                            $@" and HospitalizationNo ='(select top 1 HospitalizationNo from [dbo].[Inpatient] where BusinessId='{param.BusinessId}' and IsDelete=0')";
                     }
                     else
                     {
@@ -186,14 +196,17 @@ namespace BenDing.Repository.Providers.Web
 
 
                 var data = await _sqlConnection.QueryAsync<QueryInpatientInfoDetailDto>(strSql);
-                _sqlConnection.Close();
+
                 if (data != null && data.Count() > 0)
                 {
                     resultData = data.ToList();
                 }
+
+                _sqlConnection.Close();
                 return resultData;
             }
         }
+
         /// <summary>
         /// 单病种下载
         /// </summary>
@@ -217,11 +230,14 @@ namespace BenDing.Repository.Providers.Web
                                 ([Id],[SpecialDiseasesCode],[Name],[ProjectCode] ,[CreateTime],[CreateUserId])
                                 VALUES( '{item.Id}','{item.SpecialDiseasesCode}','{item.Name}','{item.ProjectCode}',GETDATE())";
                     }
+
                     result = await _sqlConnection.ExecuteAsync(insertSql);
                 }
+
                 return result;
             }
         }
+
         /// <summary>
         /// 医保对码
         /// </summary>
@@ -240,8 +256,9 @@ namespace BenDing.Repository.Providers.Web
                     try
                     {
                         string updateSql = "";
-                        var pairCodeIdList = param.PairCodeList.Where(c => c.PairCodeId != null).Select(d => d.PairCodeId.ToString()).ToList();
-                        var updateId = ListToStr(pairCodeIdList);
+                        var pairCodeIdList = param.PairCodeList.Where(c => c.PairCodeId != null)
+                            .Select(d => d.PairCodeId.ToString()).ToList();
+                        var updateId = CommonHelp.ListToStr(pairCodeIdList);
                         //更新对码
                         if (pairCodeIdList.Any())
                         {
@@ -250,6 +267,7 @@ namespace BenDing.Repository.Providers.Web
                             await _sqlConnection.ExecuteAsync(updateSql, null, transaction);
 
                         }
+
                         var insertParam = param.PairCodeList.ToList();
                         string insertSql = "";
                         //新增对码
@@ -264,8 +282,10 @@ namespace BenDing.Repository.Providers.Web
                                            '{BitConverter.ToInt64(Guid.Parse(items.DirectoryCode).ToByteArray(), 0)}',GETDATE(),0,'{param.UserId}',0,'{items.DirectoryCode}') ";
 
                             }
+
                             await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
                         }
+
                         transaction.Commit();
 
                     }
@@ -275,16 +295,19 @@ namespace BenDing.Repository.Providers.Web
                         throw new Exception(e.Message);
                     }
                 }
+
                 _sqlConnection.Close();
 
             }
         }
+
         /// <summary>
         /// 医保对码查询
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<List<QueryMedicalInsurancePairCodeDto>> QueryMedicalInsurancePairCode(QueryMedicalInsurancePairCodeParam param)
+        public async Task<List<QueryMedicalInsurancePairCodeDto>> QueryMedicalInsurancePairCode(
+            QueryMedicalInsurancePairCodeParam param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
@@ -293,7 +316,7 @@ namespace BenDing.Repository.Providers.Web
 
                 if (param.DirectoryCodeList.Any())
                 {
-                    var updateId = ListToStr(param.DirectoryCodeList);
+                    var updateId = CommonHelp.ListToStr(param.DirectoryCodeList);
                     string sqlStr = $@"
                             select a.FixedEncoding,a.DirectoryCode,b.ProjectCode,b.ProjectCodeType,
                             b.ProjectName,b.ProjectLevel,b.Formulation,b.Specification,b.Unit,
@@ -309,16 +332,19 @@ namespace BenDing.Repository.Providers.Web
                         resultData = data.ToList();
                     }
                 }
+
                 _sqlConnection.Close();
                 return resultData;
             }
         }
+
         /// <summary>
         /// 目录对照中心
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<Dictionary<int, List<DirectoryComparisonManagementDto>>> DirectoryComparisonManagement(DirectoryComparisonManagementUiParam param)
+        public async Task<Dictionary<int, List<DirectoryComparisonManagementDto>>> DirectoryComparisonManagement(
+            DirectoryComparisonManagementUiParam param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
@@ -342,7 +368,7 @@ namespace BenDing.Repository.Providers.Web
                 else if (param.State == 2)
                 {
                     querySql =
-                            $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
+                        $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
                              a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
                              c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,b.CreateTime as PairCodeTime,c.ProjectLevel,c.ProjectCodeType
                              from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
@@ -380,59 +406,73 @@ namespace BenDing.Repository.Providers.Web
                 {
                     whereSql += $" and a.DirectoryCode='{param.DirectoryCode}'";
                 }
+
                 if (!string.IsNullOrWhiteSpace(param.DirectoryCategoryCode))
                 {
                     whereSql += $" and a.DirectoryCategoryCode='{param.DirectoryCategoryCode}'";
                 }
+
                 if (!string.IsNullOrWhiteSpace(param.DirectoryName))
                 {
                     whereSql += "  and a.DirectoryName like '" + param.DirectoryName + "%'";
                 }
+
                 if (param.Limit != 0 && param.Page > 0)
                 {
                     var skipCount = param.Limit * (param.Page - 1);
-                    querySql += whereSql + " order by a.CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.Limit + " ROWS ONLY;";
+                    querySql += whereSql + " order by a.CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " +
+                                param.Limit + " ROWS ONLY;";
                 }
+
                 string executeSql = countSql + whereSql + ";" + querySql;
                 var result = await _sqlConnection.QueryMultipleAsync(executeSql);
 
                 int totalPageCount = result.Read<int>().FirstOrDefault();
                 var hospitalOperatorAll = await _iSystemManageRepository.QueryHospitalOperatorAll();
                 var dataList = (from t in result.Read<DirectoryComparisonManagementDto>()
-                                select new DirectoryComparisonManagementDto
-                                {
-                                    Id = t.Id,
-                                    DirectoryCode = t.DirectoryCode,
-                                    DirectoryCategoryName = t.DirectoryCategoryName,
-                                    DirectoryName = t.DirectoryName,
-                                    FixedEncoding = t.FixedEncoding,
-                                    Formulation = t.Formulation,
-                                    LimitPaymentScope = t.LimitPaymentScope,
-                                    ManufacturerName = t.ManufacturerName,
-                                    MnemonicCode = t.MnemonicCode,
-                                    PairCodeTime = t.PairCodeTime,
-                                    ProjectName = t.ProjectName,
-                                    ProjectCode = t.ProjectCode,
-                                    ProjectLevel = t.ProjectLevel != null ? ((ProjectLevel)Convert.ToInt32(t.ProjectLevel)).ToString() : t.ProjectLevel,
-                                    ProjectCodeType = t.ProjectCodeType != null ? ((ProjectCodeType)Convert.ToInt32(t.ProjectCodeType)).ToString() : t.ProjectCodeType,
-                                    QuasiFontSize = t.QuasiFontSize,
-                                    Unit = t.Unit,
-                                    Specification = t.Specification,
-                                    Remark = t.Remark,
-                                    PairCodeUser = t.PairCodeUser != null ? hospitalOperatorAll.Where(c => c.HisUserId == t.PairCodeUser).Select(d => d.HisUserName).FirstOrDefault() : t.PairCodeUser,
-                                }).ToList();
+                    select new DirectoryComparisonManagementDto
+                    {
+                        Id = t.Id,
+                        DirectoryCode = t.DirectoryCode,
+                        DirectoryCategoryName = t.DirectoryCategoryName,
+                        DirectoryName = t.DirectoryName,
+                        FixedEncoding = t.FixedEncoding,
+                        Formulation = t.Formulation,
+                        LimitPaymentScope = t.LimitPaymentScope,
+                        ManufacturerName = t.ManufacturerName,
+                        MnemonicCode = t.MnemonicCode,
+                        PairCodeTime = t.PairCodeTime,
+                        ProjectName = t.ProjectName,
+                        ProjectCode = t.ProjectCode,
+                        ProjectLevel = t.ProjectLevel != null
+                            ? ((ProjectLevel) Convert.ToInt32(t.ProjectLevel)).ToString()
+                            : t.ProjectLevel,
+                        ProjectCodeType = t.ProjectCodeType != null
+                            ? ((ProjectCodeType) Convert.ToInt32(t.ProjectCodeType)).ToString()
+                            : t.ProjectCodeType,
+                        QuasiFontSize = t.QuasiFontSize,
+                        Unit = t.Unit,
+                        Specification = t.Specification,
+                        Remark = t.Remark,
+                        PairCodeUser = t.PairCodeUser != null
+                            ? hospitalOperatorAll.Where(c => c.HisUserId == t.PairCodeUser).Select(d => d.HisUserName)
+                                .FirstOrDefault()
+                            : t.PairCodeUser,
+                    }).ToList();
                 resultData.Add(totalPageCount, dataList);
                 _sqlConnection.Close();
                 return resultData;
 
             }
         }
+
         /// <summary>
         /// 三大目录查询
         /// </summary>
         /// <param name="organizationCode"></param>
         /// <returns></returns>
-        public async Task<List<QueryThreeCataloguePairCodeUploadDto>> ThreeCataloguePairCodeUpload(string organizationCode)
+        public async Task<List<QueryThreeCataloguePairCodeUploadDto>> ThreeCataloguePairCodeUpload(
+            string organizationCode)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
@@ -453,6 +493,7 @@ namespace BenDing.Repository.Providers.Web
                 return resultData;
             }
         }
+
         /// <summary>
         /// his上传更新数据
         /// </summary>
@@ -475,6 +516,7 @@ namespace BenDing.Repository.Providers.Web
 
             return resultData;
         }
+
         /// <summary>
         /// 处方上传数据更新
         /// </summary>
@@ -494,30 +536,20 @@ namespace BenDing.Repository.Providers.Web
                     string querySql = null;
                     foreach (var item in param)
                     {
-                        querySql += $@" update [dbo].[HospitalizationFee] set [UploadMark]=1,ProjectBatchNumber='{item.BatchNumber}',UploadAmount={item.UploadAmount},
+                        querySql +=
+                            $@" update [dbo].[HospitalizationFee] set [UploadMark]=1,BatchNumber='{item.BatchNumber}',UploadAmount={item.UploadAmount},
                                TransactionId='{item.TransactionId}',UploadUserId='{user.UserId}',UploadUserName='{user.UserName}',UploadTime=GETDATE()
                                where id='{item.Id}' and IsDelete=0;";
                     }
 
                     resultData = await _sqlConnection.ExecuteAsync(querySql);
                 }
+
                 _sqlConnection.Close();
 
             }
 
             return resultData;
-        }
-        private string ListToStr(List<string> param)
-        {
-            string result = null;
-            if (param.Any())
-            {
-                foreach (var item in param)
-                {
-                    result = "'" + item + "'" + ",";
-                }
-            }
-            return result?.Substring(0, result.Length - 1);
         }
     }
 }

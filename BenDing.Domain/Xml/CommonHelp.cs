@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 
 namespace BenDing.Domain.Xml
-{
+{/// <summary>
+/// 
+/// </summary>
     public static class CommonHelp
     {///编码
         public static string EncodeBase64(string code_type, string code)
@@ -63,7 +65,11 @@ namespace BenDing.Domain.Xml
 
 
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public static decimal ValueToDecimal(string param)
         {
             decimal resultData = 0;
@@ -75,6 +81,24 @@ namespace BenDing.Domain.Xml
 
             return resultData;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static string ListToStr(List<string> param)
+        {
+            string result = null;
+            if (param.Any())
+            {
+                foreach (var item in param)
+                {
+                    result += "'" + item + "'" + ",";
+                }
 
+            }
+            return result?.Substring(0, result.Length - 1);
+        }
     }
+
 }
