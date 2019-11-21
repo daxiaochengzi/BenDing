@@ -103,7 +103,13 @@ namespace BenDing.Domain.Models.Params.Resident
         //[Display(Name = "经办人")]
         //[Required(ErrorMessage = "{0}不能为空!!!")]
         public string Operators { get; set; }
-
+        /// <summary>
+        /// 医保类型编码
+        /// </summary>
+        [Display(Name = "医保类型编码")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        [XmlIgnoreAttribute]
+        public string InsuranceType { get; set; }
         /// <summary>
         /// 诊断
         /// </summary>

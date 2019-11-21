@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.UI;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces;
 
@@ -44,6 +45,34 @@ namespace BenDing.Service.Providers
 
            
         }
+        //处方自动上传
+        public async Task PrescriptionUploadAutomatic(PrescriptionUploadAutomaticParam param, UserInfoDto user)
+        {//获取所有未传费用病人
+            var allPatients=  await  _baseHelpRepository.QueryAllHospitalizationPatients(param);
+            if (allPatients.Any())
+            { //根据组织机构分组
+                var organizationGroupBy = allPatients.Select(c => c.OrganizationCode).Distinct().ToList();
+                foreach (var item in organizationGroupBy)
+                {    //本院获取病人列表
+                    var ratientsList = allPatients.Where(c => c.OrganizationCode == item).ToList();
+                    //病人传费
+                    foreach (var items in ratientsList)
+                    {
+                        var uploadParam = new PrescriptionUploadUiParam() 
+                        {
+                            BusinessId=items.BusinessId
+                        };
+                        await _residentMedicalInsurance.PrescriptionUpload(uploadParam, user);
+                    }
+
+                }
+            }
+            
+           //await _residentMedicalInsurance.HospitalizationRegister(param, user);
+
+
+        }
+        
         /// <summary>
         /// 医保项目下载
         /// </summary>
