@@ -9,8 +9,17 @@ namespace BenDing.Domain.Models.Dto.Resident
 /// 处方上传回参
 /// </summary>
    public class RetrunPrescriptionUploadDto
-    {
+    { /// <summary>
+    /// 成功条数
+    /// </summary>
         public int Num { get; set; }
+        /// <summary>
+        /// 合计
+        /// </summary>
+        public int Count { get; set; }
+        /// <summary>
+        /// 错误信息
+        /// </summary>
         public string Msg { get; set; }
     }
 }

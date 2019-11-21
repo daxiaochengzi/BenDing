@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
+using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 
@@ -79,14 +80,19 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task GetInpatientInfoDetailDto(UserInfoDto user, List<InpatientInfoDetailDto> param);
+        Task SaveInpatientInfoDetail(UserInfoDto user, List<InpatientInfoDetailDto> param);
+        /// <summary>
+        /// 获取所有未传费用的住院病人
+        /// </summary>
+        /// <returns></returns>
+        Task<List<QueryAllHospitalizationPatientsDto>> QueryAllHospitalizationPatients(PrescriptionUploadAutomaticParam param);
         /// <summary>
         /// 住院清单查询
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
 
-         Task<Dictionary<int, List<QueryHospitalizationFeeDto>>> QueryHospitalizationFee(
+        Task<Dictionary<int, List<QueryHospitalizationFeeDto>>> QueryHospitalizationFee(
             QueryHospitalizationFeeUiParam param);
 
         /// <summary>

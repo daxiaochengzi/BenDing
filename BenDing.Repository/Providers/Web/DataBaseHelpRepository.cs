@@ -518,7 +518,7 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task GetInpatientInfoDetailDto(UserInfoDto user, List<InpatientInfoDetailDto> param)
+        public async Task SaveInpatientInfoDetail(UserInfoDto user, List<InpatientInfoDetailDto> param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
@@ -563,13 +563,15 @@ namespace BenDing.Repository.Providers.Web
 		                       ,[HospitalPricingUnit] ,[IsImportedDrugs] ,[DrugProducingArea] ,[RecipeCode]  ,[CostDocumentType] ,[BillDepartment]
 			                   ,[BillDepartmentId] ,[BillDoctorName],[BillDoctorId] ,[BillTime] ,[OperateDepartmentName],[OperateDepartmentId]
                                ,[OperateDoctorName] ,[OperateDoctorId],[OperateTime] ,[PrescriptionDoctor] ,[Operators],[PracticeDoctorNumber]
-                               ,[CostWriteOffId],[OrganizationCode],[OrganizationName] ,[CreateTime] ,[IsDelete],[DeleteTime],CreateUserId,DataSort,UploadMark,RecipeCodeFixedEncoding,BillDoctorIdFixedEncoding,BusinessTime)
+                               ,[CostWriteOffId],[OrganizationCode],[OrganizationName] ,[CreateTime] ,[IsDelete],[DeleteTime],CreateUserId
+                               ,DataSort,UploadMark,RecipeCodeFixedEncoding,BillDoctorIdFixedEncoding,BusinessTime)
                            VALUES('{Guid.NewGuid()}','{item.HospitalizationNo}','{item.CostDetailId}','{item.CostItemName}','{item.CostItemCode}','{item.CostItemCategoryName}','{item.CostItemCategoryCode}'
                                  ,'{item.Unit}','{item.Formulation}','{item.Specification}',{item.UnitPrice},{item.Quantity},{item.Amount},'{item.Dosage}','{item.Usage}','{item.MedicateDays}',
                                  '{item.HospitalPricingUnit}','{item.IsImportedDrugs}','{item.DrugProducingArea}','{item.RecipeCode}','{item.CostDocumentType}','{item.BillDepartment}'
                                  ,'{item.BillDepartmentId}','{item.BillDoctorName}','{item.BillDoctorId}','{item.BillTime}','{item.OperateDepartmentName}','{item.OperateDepartmentId}'
                                  ,'{item.OperateDoctorName}','{item.OperateDoctorId}','{item.OperateTime}','{item.PrescriptionDoctor}','{item.Operators}','{item.PracticeDoctorNumber}'
-                                 ,'{item.CostWriteOffId}','{item.OrganizationCode}','{item.OrganizationName}',GETDATE(),0,null,'{user.UserId}',{sort},0,'{CommonHelp.GuidToStr(item.RecipeCode)}','{CommonHelp.GuidToStr(item.BillDoctorId)}','{businessTime}'
+                                 ,'{item.CostWriteOffId}','{item.OrganizationCode}','{item.OrganizationName}',GETDATE(),0,null,'{user.UserId}'
+                                 ,{sort},0,'{CommonHelp.GuidToStr(item.RecipeCode)}','{CommonHelp.GuidToStr(item.BillDoctorId)}','{businessTime}'
                                  );";
                             insertSql += str;
                         }
@@ -666,8 +668,8 @@ namespace BenDing.Repository.Providers.Web
                                 ProjectCode = itemPairCode?.ProjectCode,
                                 ProjectCodeType = itemPairCode?.ProjectCodeType,
                                 ProjectLevel = itemPairCode?.ProjectCodeType,
-                                SelfPayProportion= (itemPairCode != null && residentInfoData != null)?GetSelfPayProportion(itemPairCode, residentInfoData) :0,
-                                UploadAmount=c.UploadAmount
+                                SelfPayProportion = (itemPairCode != null && residentInfoData != null) ? GetSelfPayProportion(itemPairCode, residentInfoData) : 0,
+                                UploadAmount = c.UploadAmount
                             };
                             dataListNew.Add(item);
 
@@ -687,7 +689,6 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
-
         public async Task<int> UpdateInpatientInfoDetail(UpdateInpatientInfoDetail param)
         {
             int count = 0;
@@ -701,7 +702,6 @@ namespace BenDing.Repository.Providers.Web
 
             return count;
         }
-
         /// <summary>
         /// 获取住院病人
         /// </summary>
@@ -737,9 +737,50 @@ namespace BenDing.Repository.Providers.Web
                 _sqlConnection.Close();
             }
 
-          
-            
+
+
         }
+        /// <summary>
+        /// 获取所有未传费用的住院病人
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<QueryAllHospitalizationPatientsDto>> QueryAllHospitalizationPatients(PrescriptionUploadAutomaticParam param)
+        {
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+                var resultData = new List<QueryAllHospitalizationPatientsDto>();
+                _sqlConnection.Open();
+                string strSql = null;
+                if (param.IsTodayUpload == true)
+                {
+                    string day = DateTime.Now.ToString("yyyy-MM-dd") + " 00:00:00.000";
+                    strSql = $@"
+                            select a.OrganizationCode,a.HospitalizationNo,a.BusinessId,b.InsuranceType from [dbo].[Inpatient]  as a 
+                            inner join [dbo].[MedicalInsurance] as b on b.HisHospitalizationId=a.FixedEncoding
+                            where a.IsDelete=0 and b.IsDelete=0 and a.HospitalizationNo 
+                            in(select HospitalizationNo from [dbo].[HospitalizationFee] where BusinessTime='{day}' and  Isdelete=0 and UploadMark=0 Group by HospitalizationNo)";
+                }
+                else
+                {
+                    strSql = $@"
+                                select a.OrganizationCode,a.HospitalizationNo,a.BusinessId,b.InsuranceType from [dbo].[Inpatient]  as a 
+                                inner join [dbo].[MedicalInsurance] as b on b.HisHospitalizationId=a.FixedEncoding
+                                where a.IsDelete=0 and b.IsDelete=0 and a.HospitalizationNo 
+                                in(select HospitalizationNo from [dbo].[HospitalizationFee] where Isdelete=0 and UploadMark=0 Group by HospitalizationNo) ";
+                }
+                var data = await _sqlConnection.QueryAsync<QueryAllHospitalizationPatientsDto>(strSql);
+
+                if (data != null && data.Any())
+                {
+                    resultData = data.ToList();
+                }
+                _sqlConnection.Close();
+                return resultData;
+            }
+
+
+        }
+
         /// <summary>
         /// 住院病人查询
         /// </summary>
@@ -829,10 +870,10 @@ namespace BenDing.Repository.Providers.Web
             {
                 _sqlConnection.Open();
                 string insertSql = null;
-                if (!string.IsNullOrWhiteSpace(param.MedicalInsuranceHospitalizationNo)==true && param.IsModify == false)
+                if (!string.IsNullOrWhiteSpace(param.MedicalInsuranceHospitalizationNo) == true && param.IsModify == false)
                 {
                     insertSql = $@"update [dbo].[MedicalInsurance] set MedicalInsuranceYearBalance={param.MedicalInsuranceYearBalance},
-                    MedicalInsuranceHospitalizationNo='{param.MedicalInsuranceHospitalizationNo}',IsDelete=0,InsuranceType='{param.InsuranceType}'
+                    MedicalInsuranceHospitalizationNo='{param.MedicalInsuranceHospitalizationNo}',IsDelete=0
                     where [Id]='{param.Id}'";
                 }
                 else if (param.IsModify)
@@ -849,7 +890,7 @@ namespace BenDing.Repository.Providers.Web
                            VALUES('{param.Id}', '{param.HisHospitalizationId}','{param.InsuranceNo}', {param.MedicalInsuranceYearBalance},'{param.AdmissionInfoJson}',
                                  {param.ReimbursementExpenses},{param.SelfPayFee},'{param.OtherInfo}',
                                 GETDATE(),1,'{user.OrganizationCode}','{user.UserId}','{user.OrganizationName }',{param.InsuranceType});";
-                    insertSql = $"update [dbo].[MedicalInsurance] set [IsDelete]=0,DeleteUserId='{user.UserId}',DeleteTime=GETDATE() where [HisHospitalizationId]='{param.HisHospitalizationId}';" + insertSql;
+                    insertSql = $"update [dbo].[MedicalInsurance] set [IsDelete]=1,DeleteUserId='{user.UserId}',DeleteTime=GETDATE() where [HisHospitalizationId]='{param.HisHospitalizationId}';" + insertSql;
 
                 }
                 var log = LogFactory.GetLogger("ini".GetType().ToString());
@@ -1053,7 +1094,8 @@ namespace BenDing.Repository.Providers.Web
                     string insertSql = null;
                     foreach (var item in param)
                     {//判断日期格式是否正确
-                       
+                        if (DateTime.TryParse(item.NewUpdateTime, out dtDate))
+                        {
                             var projectName = FilteSqlStr(item.ProjectName);
                             insertSql += $@"INSERT INTO [dbo].[MedicalInsuranceProject]
                            (id,[ProjectCode],[ProjectName] ,[ProjectCodeType] ,[ProjectLevel],[WorkersSelfPayProportion]
@@ -1069,11 +1111,10 @@ namespace BenDing.Repository.Providers.Web
                                   ,'{ DateTime.ParseExact(item.NewUpdateTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture).ToString("yyyy-MM-dd HH:mm:ss")}',
                                   NULL,NULL,'{item.LimitPaymentScope}',GETDATE(),'{user.UserId}'
                                );";
-                        
-                        
+                        }
+
                     }
                     result = await _sqlConnection.ExecuteAsync(insertSql);
-                    _sqlConnection.Close();
                 }
                 return result;
             }
@@ -1088,16 +1129,13 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
-                string resultData = "";
                 _sqlConnection.Open();
-                string insertSql = @"select max(NewUpdateTime) from [dbo].[MedicalInsuranceProject]";
-                 var  result = await _sqlConnection.QueryAsync(insertSql);
-                if (result != null) resultData = result.FirstOrDefault().ToString();
+                string insertSql = "select max(NewUpdateTime) from [dbo].[MedicalInsuranceProject]";
+                string result = await _sqlConnection.QueryFirstOrDefault(insertSql);
                 _sqlConnection.Close();
-                return resultData;
+                return result;
             }
         }
-       
         /// <summary>  
         /// 根据GUID获取19位的唯一数字序列  
         /// </summary>  
@@ -1107,7 +1145,6 @@ namespace BenDing.Repository.Providers.Web
             //byte[] buffer = Guid.NewGuid().ToByteArray();
             return BitConverter.ToInt64(Guid.NewGuid().ToByteArray(), 0);
         }
-
         private decimal GetBlockPrice(QueryMedicalInsurancePairCodeDto param, OrganizationGrade grade)
         {
             decimal resultData = 0;
@@ -1119,7 +1156,6 @@ namespace BenDing.Repository.Providers.Web
 
             return resultData;
         }
-
         private decimal GetSelfPayProportion(QueryMedicalInsurancePairCodeDto param, MedicalInsuranceResidentInfoDto residentInfo)
         {
             decimal resultData = 0;
@@ -1131,7 +1167,7 @@ namespace BenDing.Repository.Providers.Web
         }
         public string FilteSqlStr(string Str)
         {
-           
+
             Str = Str.Replace("'", "");
             Str = Str.Replace("\"", "");
             Str = Str.Replace("&", "&amp");
@@ -1144,7 +1180,5 @@ namespace BenDing.Repository.Providers.Web
 
             return Str;
         }
-
-        
     }
 }

@@ -735,14 +735,16 @@ namespace NFine.Web.Controllers
                     };
                     var inpatientData = await _webServiceBasicService.GetInpatientInfo(infoData);
                     if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
-                    {
+                    {  //医保登录
                         await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                         param.Operators = param.UserId;
+                        //入院登记
                         await _residentMedicalInsurance.HospitalizationRegister(param, userBase);
                     }
                     else
                     {
                         infoData.IsSave = true;
+                        //保存病人信息
                         await _webServiceBasicService.GetInpatientInfo(infoData);
                     }
 
@@ -801,15 +803,48 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var userBase = new UserInfoDto()
+                
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var data= await _residentMedicalInsurance.PrescriptionUpload(param, userBase);
+                if (!string.IsNullOrWhiteSpace(data.Msg))
                 {
-                    UserId = "E075AC49FCE443778F897CF839F3B924",
-                    OrganizationCode= "51072600000000000000000513435964"
-                };  
-                //  var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                await _residentMedicalInsurance.PrescriptionUpload(param, userBase);
+                    throw new Exception(data.Msg);
+                }
+                else
+                {
+                    if (data.Num > 0)
+                    {
+                        y.Data = "处方上传成功"+ data.Num+" 条,失败"+ (data.Count - data.Num)+" 条";
+                    }
+                }
             });
             return Json(resultData);
+        }
+        /// <summary>
+        /// 处方自动上传
+        /// </summary>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> PrescriptionUploadAutomatic()
+        {
+            var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
+            {
+
+                //var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //var data = await _residentMedicalInsurance.PrescriptionUpload(param, userBase);
+                //if (!string.IsNullOrWhiteSpace(data.Msg))
+                //{
+                //    throw new Exception(data.Msg);//Automatic
+                //}
+                //else
+                //{
+                //    if (data.Num > 0)
+                //    {
+                //        y.Data = "处方上传成功" + data.Num + " 条,失败" + (data.Count - data.Num) + " 条";
+                //    }
+                //}
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
         }
         /// <summary>
         /// 住院清单查询
