@@ -15,8 +15,8 @@ namespace BenDing.Service.Providers
 {
     public class WebServiceBasicService : IWebServiceBasicService
     {
-        private IDataBaseHelpRepository _dataBaseHelpService;
-        private IBaseSqlServerRepository _baseSqlServer;
+        private IDataBaseHelpRepository _baseHelpRepository;
+        private IBaseSqlServerRepository _baseSqlServerRepository;
         private IWebBasicRepository _webServiceBasic;
         private ISystemManageRepository _iSystemManageRepository;
 
@@ -27,8 +27,8 @@ namespace BenDing.Service.Providers
         )
         {
             _webServiceBasic = iWebServiceBasic;
-            _dataBaseHelpService = dataBase;
-            _baseSqlServer = iBaseSqlServerRepository;
+            _baseHelpRepository = dataBase;
+            _baseSqlServerRepository = iBaseSqlServerRepository;
             _iSystemManageRepository = iSystemManageRepository;
         }
 
@@ -67,7 +67,7 @@ namespace BenDing.Service.Providers
             result = GetResultData(init, data);
             if (result.Any())
             {
-                await _dataBaseHelpService.ChangeOrg(userInfo, result);
+                await _baseHelpRepository.ChangeOrg(userInfo, result);
                 resultData = result.Count;
             }
 
@@ -82,8 +82,8 @@ namespace BenDing.Service.Providers
         public async Task<string> GetCatalog(UserInfoDto user, CatalogParam param)
         {
 
-            var time = await _dataBaseHelpService.GetTime(Convert.ToInt16(param.CatalogType));
-            await _dataBaseHelpService.DeleteCatalog(user, Convert.ToInt16(param.CatalogType));
+            var time = await _baseHelpRepository.GetTime(Convert.ToInt16(param.CatalogType));
+            await _baseHelpRepository.DeleteCatalog(user, Convert.ToInt16(param.CatalogType));
             var timeNew = Convert.ToDateTime(time).ToString("yyyy-MM-dd HH:ss:mm") ??
                           DateTime.Now.AddYears(-40).ToString("yyyy-MM-dd HH:ss:mm");
             var oCatalogInfo = new CatalogInfoDto
@@ -119,7 +119,7 @@ namespace BenDing.Service.Providers
 
                 if (resultCatalogDto.Count > 1) //排除单条更新
                 {
-                    await _dataBaseHelpService.AddCatalog(user, resultCatalogDto, param.CatalogType);
+                    await _baseHelpRepository.AddCatalog(user, resultCatalogDto, param.CatalogType);
                 }
 
 
@@ -137,7 +137,7 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public async Task<string> DeleteCatalog(UserInfoDto user, int catalog)
         {
-            var num = await _dataBaseHelpService.DeleteCatalog(user, catalog);
+            var num = await _baseHelpRepository.DeleteCatalog(user, catalog);
             return "删除【" + (CatalogTypeEnum) catalog + "】 成功 " + num + "条";
         }
 
@@ -150,7 +150,7 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public async Task<string> GetICD10(UserInfoDto user, CatalogParam param)
         {
-            var time = await _dataBaseHelpService.GetICD10Time();
+            var time = await _baseHelpRepository.GetICD10Time();
             var timeNew = Convert.ToDateTime(time).ToString("yyyy-MM-dd HH:ss:mm") ??
                           DateTime.Now.AddYears(-40).ToString("yyyy-MM-dd HH:ss:mm");
             var oICD10Info = new ICD10InfoParam
@@ -181,7 +181,7 @@ namespace BenDing.Service.Providers
                 if (resultCatalogDto.Any())
                 {
                     resultCatalogDtoList.AddRange(resultCatalogDto);
-                    await _dataBaseHelpService.AddICD10(resultCatalogDto, user);
+                    await _baseHelpRepository.AddICD10(resultCatalogDto, user);
                     i = i + param.Nums;
                 }
             }
@@ -203,7 +203,7 @@ namespace BenDing.Service.Providers
             result = GetResultData(init, data);
             if (result.Any())
             {
-                await _dataBaseHelpService.GetOutpatientPerson(user, result);
+                await _baseHelpRepository.GetOutpatientPerson(user, result);
             }
 
             return result;
@@ -226,7 +226,7 @@ namespace BenDing.Service.Providers
 
             if (result.Any())
             {
-                await _dataBaseHelpService.GetOutpatientDetailPerson(user, result);
+                await _baseHelpRepository.GetOutpatientDetailPerson(user, result);
             }
 
             return result;
@@ -249,7 +249,7 @@ namespace BenDing.Service.Providers
                 resultData= result.FirstOrDefault(c => c.BusinessId == param.BusinessId);
                 if (param.IsSave == true)
                 {
-                    await _dataBaseHelpService.GetInpatientInfo(param.User, resultData);
+                    await _baseHelpRepository.GetInpatientInfo(param.User, resultData);
                 }
 
 
@@ -260,7 +260,7 @@ namespace BenDing.Service.Providers
 
         //public async Task<QueryInpatientInfoDto> QueryInpatientInfo(QueryInpatientInfoParam param)
         //{
-        //    var data = await _dataBaseHelpService.QueryInpatientInfo(param);
+        //    var data = await _baseHelpRepository.QueryInpatientInfo(param);
         //    return data;
         //}
 
@@ -281,7 +281,7 @@ namespace BenDing.Service.Providers
 
             if (result.Any())
             {
-                await _dataBaseHelpService.SaveInpatientInfoDetail(user, result);
+                await _baseHelpRepository.SaveInpatientInfoDetail(user, result);
                 //  var msg = "获取住院号【" + resultFirst.住院号 + "】，业务ID【" + param.业务ID + "】的时间段内的住院费用成功，共" + result.Count +
                 //          "条记录";
             }
@@ -296,7 +296,7 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public async Task MedicalInsuranceSave(UserInfoDto user, MedicalInsuranceParam param)
         {
-            var num = await _dataBaseHelpService.QueryMedicalInsurance(param.业务ID);
+            var num = await _baseHelpRepository.QueryMedicalInsurance(param.业务ID);
             if (num == 0)
             {
                 throw new Exception("数据库中未找到相应的住院业务ID的医保信息！");
@@ -311,7 +311,7 @@ namespace BenDing.Service.Providers
                                         oResult.Msg.FirstOrDefault()?.ToString() + "！");
                 }
 
-                var count = await _dataBaseHelpService.DeleteMedicalInsurance(user, param.业务ID);
+                var count = await _baseHelpRepository.DeleteMedicalInsurance(user, param.业务ID);
             }
 
             List<MedicalInsuranceDto> result;
@@ -337,7 +337,7 @@ namespace BenDing.Service.Providers
             if (param.CheckLocal)
             {
 
-                var num = await _dataBaseHelpService.QueryMedicalInsurance(param.业务ID);
+                var num = await _baseHelpRepository.QueryMedicalInsurance(param.业务ID);
                 if (num == 0)
                 {
                     var msg = "数据库中未找到相应的住院业务ID的医保信息！";
@@ -348,7 +348,7 @@ namespace BenDing.Service.Providers
                 "{'验证码':'" + param.验证码 + "','业务ID':'" + param.业务ID + "'}", user.UserId);
             if (resultData.Result == "1")
             {
-                var count = await _dataBaseHelpService.DeleteMedicalInsurance(user, param.业务ID);
+                var count = await _baseHelpRepository.DeleteMedicalInsurance(user, param.业务ID);
             }
         }
 
@@ -367,7 +367,7 @@ namespace BenDing.Service.Providers
             {
                 result = GetResultData(init, resultData);
                 //保存基础信息
-                await _dataBaseHelpService.SaveInformationInfo(user, result, param);
+                await _baseHelpRepository.SaveInformationInfo(user, result, param);
             }
 
             return result;
@@ -411,7 +411,7 @@ namespace BenDing.Service.Providers
             //        IdCard = param.IDCard,
 
             //    };
-            //    await _dataBaseHelpService.SaveMedicalInsuranceDataAll(saveParam);
+            //    await _baseHelpRepository.SaveMedicalInsuranceDataAll(saveParam);
             //}
 
 
@@ -472,7 +472,7 @@ namespace BenDing.Service.Providers
         public async Task<int> ThreeCataloguePairCodeUpload(UserInfoDto user)
         {
             int resultData = 0;
-            var data = await _baseSqlServer.ThreeCataloguePairCodeUpload(user.OrganizationCode);
+            var data = await _baseSqlServerRepository.ThreeCataloguePairCodeUpload(user.OrganizationCode);
             if (data.Any())
             {
                 var uploadDataRow = data.Select(c => new ThreeCataloguePairCodeUploadRowDto()
@@ -500,7 +500,7 @@ namespace BenDing.Service.Providers
                 };
                 await _webServiceBasic.HIS_InterfaceListAsync("35", JsonConvert.SerializeObject(uploadData),
                     user.UserId);
-                resultData = await _baseSqlServer.UpdateThreeCataloguePairCodeUpload(user.OrganizationCode);
+                resultData = await _baseSqlServerRepository.UpdateThreeCataloguePairCodeUpload(user.OrganizationCode);
             }
 
             //限制用药
@@ -527,14 +527,74 @@ namespace BenDing.Service.Providers
         {
             var resultData = new QueryMedicalInsuranceDetailInfoDto();
             var userBase = await GetUserBaseInfo(param.UserId);
-            var queryData = await _dataBaseHelpService.QueryMedicalInsurance(userBase, param.BusinessId);
+            var queryData = await _baseHelpRepository.QueryMedicalInsurance(userBase, param.BusinessId);
             if (!string.IsNullOrWhiteSpace(queryData.AdmissionInfoJson))
             {
-                var data = JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailInfoDto>(queryData.AdmissionInfoJson);
-                data.Id = queryData.Id;
-                data.MedicalInsuranceHospitalizationNo = queryData.MedicalInsuranceHospitalizationNo;
-                data.AdmissionDate = DateTime.ParseExact(data.AdmissionDate,"yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture).ToString("yyyy-MM-dd");
-                resultData = data;
+                var data = JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailDto>(queryData.AdmissionInfoJson);
+                resultData.Id = queryData.Id;
+                resultData.MedicalInsuranceHospitalizationNo = queryData.MedicalInsuranceHospitalizationNo;
+                resultData.AdmissionDate = DateTime.ParseExact(data.AdmissionDate,"yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture).ToString("yyyy-MM-dd");
+                resultData.BedNumber = data.BedNumber;
+                resultData.FetusNumber = data.FetusNumber;
+                resultData.HospitalizationNo = data.HospitalizationNo;
+                if (data.IdentityMark == "1")
+                {
+                    resultData.IdCardNo = data.AfferentSign;
+                }
+                else
+                {
+                    resultData.PersonNumber= data.AfferentSign;
+                }
+                var queryParam = new InformationParam()
+                {
+                    DirectoryType ="0"
+                };
+                //获取科室
+                var infoList = await _baseHelpRepository.QueryInformationInfo(queryParam);
+                if (infoList.Any())
+                {
+                    resultData.InpatientDepartmentName = infoList.Where(c => c.FixedEncoding == data.InpatientDepartmentCode).Select(d=>d.DirectoryName).FirstOrDefault();
+                }
+                //诊疗
+                var diagnosisList = new List<InpatientDiagnosisDto>();
+                diagnosisList.Add(new InpatientDiagnosisDto
+                {
+                    IsMainDiagnosis=true,
+                    DiagnosisName= data.AdmissionMainDiagnosis,
+                    DiagnosisCode=data.AdmissionMainDiagnosisIcd10
+                });
+                if (!string.IsNullOrWhiteSpace(data.DiagnosisIcd10Two))
+                {
+                    var icd10Data = await _baseHelpRepository.QueryICD10(new QueryICD10UiParam() {DiseaseCoding= data.DiagnosisIcd10Two });
+                    if (icd10Data.Any())
+                    {
+                        var Icd10Two = icd10Data.FirstOrDefault();
+                        diagnosisList.Add(new InpatientDiagnosisDto
+                        {
+                            IsMainDiagnosis = false,
+                            DiagnosisName = Icd10Two.DiseaseName,
+                            DiagnosisCode = data.DiagnosisIcd10Two
+                        });
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(data.DiagnosisIcd10Three))
+                {
+                    var icd10Data = await _baseHelpRepository.QueryICD10(new QueryICD10UiParam() { DiseaseCoding = data.DiagnosisIcd10Three });
+                    if (icd10Data.Any())
+                    {
+                        var Icd10Three = icd10Data.FirstOrDefault();
+                        diagnosisList.Add(new InpatientDiagnosisDto
+                        {
+                            IsMainDiagnosis = false,
+                            DiagnosisName = Icd10Three.DiseaseName,
+                            DiagnosisCode = data.DiagnosisIcd10Three
+                        });
+                    }
+                }
+
+                resultData.DiagnosisList = diagnosisList;
+
+               
             }
             return resultData;
         }

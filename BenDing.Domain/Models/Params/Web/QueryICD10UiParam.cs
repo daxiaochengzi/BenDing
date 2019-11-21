@@ -14,6 +14,11 @@ namespace BenDing.Domain.Models.Params.Web
         [Display(Name = "查询关键字")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string Search{ get; set; }
-       
+        /// <summary>
+        /// 疾病编码
+        /// </summary>
+        public string DiseaseCoding { get; set; }
+
+
     }
 }
