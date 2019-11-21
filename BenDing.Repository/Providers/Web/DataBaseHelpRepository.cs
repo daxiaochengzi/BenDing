@@ -1053,8 +1053,7 @@ namespace BenDing.Repository.Providers.Web
                     string insertSql = null;
                     foreach (var item in param)
                     {//判断日期格式是否正确
-                        if (DateTime.TryParse(item.NewUpdateTime, out dtDate))
-                        {
+                       
                             var projectName = FilteSqlStr(item.ProjectName);
                             insertSql += $@"INSERT INTO [dbo].[MedicalInsuranceProject]
                            (id,[ProjectCode],[ProjectName] ,[ProjectCodeType] ,[ProjectLevel],[WorkersSelfPayProportion]
@@ -1070,10 +1069,11 @@ namespace BenDing.Repository.Providers.Web
                                   ,'{ DateTime.ParseExact(item.NewUpdateTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture).ToString("yyyy-MM-dd HH:mm:ss")}',
                                   NULL,NULL,'{item.LimitPaymentScope}',GETDATE(),'{user.UserId}'
                                );";
-                        }
+                        
                         
                     }
                     result = await _sqlConnection.ExecuteAsync(insertSql);
+                    _sqlConnection.Close();
                 }
                 return result;
             }
@@ -1088,11 +1088,13 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
+                string resultData = "";
                 _sqlConnection.Open();
-                string insertSql = "select max(NewUpdateTime) from [dbo].[MedicalInsuranceProject]";
-                string result = await _sqlConnection.QueryFirstOrDefault(insertSql);
+                string insertSql = @"select max(NewUpdateTime) from [dbo].[MedicalInsuranceProject]";
+                 var  result = await _sqlConnection.QueryAsync(insertSql);
+                if (result != null) resultData = result.FirstOrDefault().ToString();
                 _sqlConnection.Close();
-                return result;
+                return resultData;
             }
         }
        
@@ -1127,7 +1129,7 @@ namespace BenDing.Repository.Providers.Web
             if (residentInfo.InsuranceType == "310") resultData = param.WorkersSelfPayProportion;
             return resultData;
         }
-        public  string FilteSqlStr(string Str)
+        public string FilteSqlStr(string Str)
         {
            
             Str = Str.Replace("'", "");
