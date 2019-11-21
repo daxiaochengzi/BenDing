@@ -35,7 +35,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">身份证号</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="IdCardNo" autocomplete="off" disabled class="layui-input layui-disabled">
+                            <input type="text" name="AfferentSign" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -53,13 +53,13 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">主诊医生</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="AdmissionDiagnosticDoctor" autocomplete="off" disabled class="layui-input layui-disabled">
+                            <input type="text" name="AdmissionDiagnosticDoctor" autocomplete="off" disabled class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">社保住院号</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="MedicalInsuranceHospitalizationNo" autocomplete="off" class="layui-input">
+                            <input type="text" name="MedicalInsuranceHospitalizationNo" disabled autocomplete="off" class="layui-input layui-disabled">
                         </div>
                     </div>
                 </div>
@@ -69,9 +69,9 @@
                 </fieldset>
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">住院编号</label>
+                        <label class="layui-form-label">住 院 号 </label>
                         <div class="layui-input-inline">
-                            <input type="text" name="HisHospitalizationId" autocomplete="off" class="layui-input">
+                            <input type="text" name="HospitalizationNo" disabled autocomplete="off" class="layui-input layui-disabled">
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -83,13 +83,13 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">住院科室</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="DepartmentName" autocomplete="off" class="layui-input">
+                            <input type="text" name="DepartmentName" autocomplete="off" class="layui-input">                          
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">床位号</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="AdmissionBed" autocomplete="off" class="layui-input">
+                            <input type="text" name="BedNumber" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -121,11 +121,6 @@
                             <input type="text" id="DiagnosisSearch" placeholder="请输入诊断名称/编码/助记码" class="layui-input">
                         </div>
                     </div>
-                    <div class="layui-inline">
-                        <button class="layui-btn" lay-submit lay-filter="LAY-diagnosis-search">
-                            <i class="layui-icon layui-icon-search"></i>
-                        </button>
-                    </div>
                 </div>
                 <!--诊断列表-->
                 <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
@@ -155,6 +150,117 @@
             , table = layui.table
             , laydate = layui.laydate;
 
+        //数据表格实例化			
+        var layTableId = "layTable";
+        var tableIns = table.render({
+            elem: '#dataTable',
+            id: layTableId,
+            page: false,
+            cols: [[
+                { title: '序号', type: 'numbers', width: 80 },
+                , { field: 'DiagnosisName', title: '诊断名称', width: 280 }
+                , { field: 'DiagnosisCode', title: '诊断代码', width: 280 }
+                , {
+                    field: 'IsMainDiagnosis', title: '主诊', width: 120, event: 'diagnosis', templet: function (d) {
+                        var html = ['<input type="checkbox" name="IsMainDiagnosis" lay-skin="switch" lay-text="是|否"'];
+                        html.push(d.IsMainDiagnosis == true ? 'checked' : '');
+                        html.push('/>');
+                        return html.join('');
+                    }
+                }
+                , {
+                    title: '操作', fixed: 'right', templet: function (d) {
+                        return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="' + d.DiagnosisCode + '"><i class="layui-icon layui-icon-delete"></i>移除</a>';
+                    }
+                }
+            ]]
+        });
+        //录入诊断
+        layui.autocomplete({
+            element: '#DiagnosisSearch',
+            num: 2,
+            display: 'DiseaseName',
+            shortcut: 'MnemonicCode',
+            url: '/BenDing/QueryICD10',
+            query: {},
+            resArray: 'Data',
+            count: 10,
+            done: function (item) {
+                var oldData = table.cache[layTableId];
+                var newRow = {
+                    DiagnosisName: item.DiseaseName,
+                    DiagnosisCode: item.DiseaseCoding,
+                    IsMainDiagnosis: false,
+                    Id: item.Id
+                };
+                oldData.push(newRow);
+                tableIns.reload({
+                    data: oldData
+                });
+            }
+        });
+        //定义事件集合
+        var active = {
+            updateRow: function (obj) {
+                var oldData = table.cache[layTableId];
+                console.log(oldData);
+                for (var i = 0, row; i < oldData.length; i++) {
+                    row = oldData[i];
+                    if (row.DiagnosisCode == obj.DiagnosisCode) {
+                        $.extend(oldData[i], obj);
+                        return;
+                    }
+                }
+                tableIns.reload({
+                    data: oldData
+                });
+            },
+            removeEmptyTableCache: function () {
+                var oldData = table.cache[layTableId];
+                for (var i = 0, row; i < oldData.length; i++) {
+                    row = oldData[i];
+                    if (!row || !row.Id) {
+                        oldData.splice(i, 1);    //删除一项
+                    }
+                    continue;
+                }
+                tableIns.reload({
+                    data: oldData
+                });
+            },
+        };
+        //注册按钮事件
+        $('.layui-btn[data-type]').on('click', function () {
+            var type = $(this).data('type');
+            activeByType(type);
+        });
+        //激活事件
+        var activeByType = function (type, arg) {
+            if (arguments.length === 2) {
+                active[type] ? active[type].call(this, arg) : '';
+            } else {
+                active[type] ? active[type].call(this) : '';
+            }
+        }
+        //监听工具条
+        table.on('tool(dataTable)', function (obj) {
+            var data = obj.data, event = obj.event, tr = obj.tr; //获得当前行 tr 的DOM对象;
+            switch (event) {
+                case "diagnosis":
+                    var stateVal = tr.find("input[name='IsMainDiagnosis']").prop('checked') ? true : false;
+                    $.extend(obj.data, { 'IsMainDiagnosis': stateVal })
+                    activeByType('updateRow', obj.data);	//更新行记录对象
+                    break;
+                case "del":
+                    layer.confirm('真的删除行么？', function (index) {
+                        obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                        layer.close(index);
+                        activeByType('removeEmptyTableCache');
+                    });
+                    break;
+            }
+        });
+
         //页面一加载就发送ajax
         $(function () {
             var params = {
@@ -166,14 +272,18 @@
                 data: params,
                 dataType: "json",
                 async: false,
-                success: function (data) {
-                    console.log(data)
+                success: function (res) {
+                    console.log(res)
+                    //表单初始赋值
+                    form.val('LAY-form-render', res.Data);
+                    //诊断表初始化
+                    var oldData = res.Data;
+                    tableIns.reload({
+                        data: oldData
+                    });
                 }
             });
-            //表单初始赋值
-            form.val('LAY-form-render', {
-                //"endworkdate": endworkdate //这里在赋初始值时没效果, 也不报错
-            });
+            
 
             //取消登记
             $(document).on('click', '#cancelRegister', function () {
@@ -181,20 +291,17 @@
                     "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
                     , "UserId": $("#empid").val() /*授权操作人的ID*/
                 }
-
                 $.ajax({
                     url: '/BenDing/HospitalizationRegisterCancel',
                     data: params,
                     dataType: "json",
                     async: false,
                     success: function (data) {
-                        console.log(data)
                         if (data.Success === false) {
                             var errData = data.Message;
                             //样式类名:墨绿深蓝风
                             layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                         } else {
-                            var resData = data.Data;
                             layer.alert("取消成功", { skin: 'layui-layer-molv', icon: 6, title: '提示' });
                         }
                     }
