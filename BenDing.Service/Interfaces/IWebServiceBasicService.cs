@@ -77,7 +77,7 @@ namespace BenDing.Service.Interfaces
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task<List<InformationDto>> GetInformation(UserInfoDto user, InformationParam param);
+        Task<List<InformationDto>> SaveInformation(UserInfoDto user, InformationParam param);
         /// <summary>
         /// 获取ICD10
         /// </summary>
@@ -87,17 +87,21 @@ namespace BenDing.Service.Interfaces
         Task<string> GetICD10(UserInfoDto user, CatalogParam param);
         Task GetXmlData(XmlData param);
         Task SaveXmlData(SaveXmlData param);
-        Task<QueryInpatientInfoDto> QueryInpatientInfo(QueryInpatientInfoParam param);
+       
         Task<UserInfoDto> GetUserBaseInfo(string param);
-        Task<dynamic> TestFun(QueryInpatientInfoParam param);
+      
         /// <summary>
-        /// 三大目录对码信息回写至基层系统
+        /// 三大目录对码信息回写至基层系统6
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
         Task<int> ThreeCataloguePairCodeUpload(UserInfoDto user);
-
-        Task<QueryMedicalInsuranceDetailDto> QueryMedicalInsuranceDetail(
+        /// <summary>
+        /// 住院医保查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task<QueryMedicalInsuranceDetailInfoDto> QueryMedicalInsuranceDetail(
             QueryMedicalInsuranceUiParam param);
     }
 }

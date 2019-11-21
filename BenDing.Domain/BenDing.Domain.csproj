@@ -70,8 +70,10 @@
     <Compile Include="Models\Dto\Web\QueryHospitalOperatorAll.cs" />
     <Compile Include="Models\Dto\Web\QueryHospitalOperatorDto.cs" />
     <Compile Include="Models\Dto\Web\QueryICD10InfoDto.cs" />
+    <Compile Include="Models\Dto\Web\QueryInformationInfoDto.cs" />
     <Compile Include="Models\Dto\Web\QueryInpatientInfoDetailDto.cs" />
     <Compile Include="Models\Dto\Web\QueryMedicalInsuranceDetailDto.cs" />
+    <Compile Include="Models\Dto\Web\QueryMedicalInsuranceDetailInfoDto.cs" />
     <Compile Include="Models\Dto\Web\QueryMedicalInsuranceDto.cs" />
     <Compile Include="Models\Dto\Web\ThreeCataloguePairCodeUploadDto.cs" />
     <Compile Include="Models\Dto\Web\UiIniParam.cs" />
@@ -86,6 +88,7 @@
     <Compile Include="Models\Params\Resident\QueryMedicalInsurancePairCodeParam.cs" />
     <Compile Include="Models\Params\UI\AddHospitalOrganizationGradeUiParam.cs" />
     <Compile Include="Models\Params\UI\DirectoryComparisonManagementUiParam.cs" />
+    <Compile Include="Models\Params\UI\GetInformationUiParam.cs" />
     <Compile Include="Models\Params\UI\HospitalizationRegisterCancelUi.cs" />
     <Compile Include="Models\Params\UI\InpatientInfosUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalDirectoryCodePairUiParam.cs" />

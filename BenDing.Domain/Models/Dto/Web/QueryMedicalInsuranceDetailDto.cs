@@ -11,10 +11,9 @@ namespace BenDing.Domain.Models.Dto.Web
    public class QueryMedicalInsuranceDetailDto
     {
         public Guid? Id { get; set; }
-
         ///<summary>
-      /// 身份标识
-      /// </summary>
+        /// 身份标识
+        /// </summary>
         [XmlElement("PI_CRBZ", IsNullable = false)]
         [Display(Name = "身份标识")]
         [Required(ErrorMessage = "{0}不能为空!!!")]

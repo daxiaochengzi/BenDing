@@ -47,7 +47,8 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <param name="info"></param>
         /// <returns></returns>
-        Task<Int32> InformationInfoSave(UserInfoDto user, List<InformationDto> param, InformationParam info);
+        Task<Int32> SaveInformationInfo(UserInfoDto user, List<InformationDto> param, InformationParam info);
+        Task<List<QueryInformationInfoDto>> QueryInformationInfo(InformationParam param);
         /// <summary>
         /// 获取门诊病人信息
         /// </summary>
@@ -132,13 +133,6 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         Task SaveMedicalInsuranceDataAll(MedicalInsuranceDataAllParam param);
-        /// <summary>
-        /// 住院病人查询
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-
-        Task<QueryInpatientInfoDto> QueryInpatientInfo(QueryInpatientInfoParam param);
         /// <summary>
         /// 医保反馈数据查询保存
         /// </summary>

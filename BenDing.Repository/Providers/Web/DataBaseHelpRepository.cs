@@ -141,7 +141,7 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<Dictionary<int, List<QueryCatalogDto>>> QueryCatalog(QueryCatalogUiParam param)
+        public async Task<Dictionary<int,List<QueryCatalogDto>>> QueryCatalog(QueryCatalogUiParam param)
         {
             var dataList = new List<QueryCatalogDto>();
             var resultData = new Dictionary<int, List<QueryCatalogDto>>();
@@ -193,7 +193,7 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<Dictionary<int, List<ResidentProjectDownloadRow>>> QueryProjectDownload(QueryProjectUiParam param)
+        public async Task<Dictionary<int,List<ResidentProjectDownloadRow>>> QueryProjectDownload(QueryProjectUiParam param)
         {
             var dataList = new List<ResidentProjectDownloadRow>();
             var resultData = new Dictionary<int, List<ResidentProjectDownloadRow>>();
@@ -780,67 +780,6 @@ namespace BenDing.Repository.Providers.Web
 
 
         }
-
-        /// <summary>
-        /// 住院病人查询
-        /// </summary>
-        /// <returns></returns>
-        public async Task<QueryInpatientInfoDto> QueryInpatientInfo(QueryInpatientInfoParam param)
-        {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-            {
-
-                _sqlConnection.Open();
-                string strSql = $@"SELECT top 1 [Id]
-                                  ,[医院名称]
-                                  ,[入院日期]
-                                  ,[出院日期]
-                                  ,[住院号]
-                                  ,[业务ID]
-                                  ,[姓名]
-                                  ,[身份证号]
-                                  ,[性别]
-                                  ,[出生日期]
-                                  ,[联系人姓名]
-                                  ,[联系电话]
-                                  ,[家庭地址]
-                                  ,[入院科室]
-                                  ,[入院科室编码]
-                                  ,[入院诊断医生]
-                                  ,[入院床位]
-                                  ,[入院主诊断]
-                                  ,[入院主诊断ICD10]
-                                  ,[入院次诊断]
-                                  ,[入院次诊断ICD10]
-                                  ,[入院病区]
-                                  ,[入院经办人]
-                                  ,[入院经办时间]
-                                  ,[住院总费用]
-                                  ,[备注]
-                                  ,[出院科室]
-                                  ,[出院科室编码]
-                                  ,[出院病区]
-                                  ,[出院床位]
-                                  ,[出院主诊断]
-                                  ,[出院主诊断ICD10]
-                                  ,[出院次诊断]
-                                  ,[出院次诊断ICD10]
-                                  ,[在院状态]
-                                  ,[入院诊断医生编码]
-                                  ,[入院床位编码]
-                                  ,[入院病区编码]
-                                  ,[出院床位编码]
-                                  ,[出院病区编码]
-
-                               FROM [dbo].[住院病人] where IsDelete=0 and 业务ID='{param.BusinessId}' and   OrgCode='{param.InstitutionalNumber}'
-                                   ";
-
-                var data = await _sqlConnection.QueryFirstAsync<QueryInpatientInfoDto>(strSql);
-
-                _sqlConnection.Close();
-                return data;
-            }
-        }
         /// <summary>
         /// 医保信息查询
         /// </summary>
@@ -1026,7 +965,14 @@ namespace BenDing.Repository.Providers.Web
                 return result;
             }
         }
-        public async Task<Int32> InformationInfoSave(UserInfoDto user, List<InformationDto> param, InformationParam info)
+        /// <summary>
+        /// 保存HIS系统中科室、医师、病区、床位的基本信息
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="param"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public async Task<Int32> SaveInformationInfo(UserInfoDto user, List<InformationDto> param, InformationParam info)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
@@ -1034,44 +980,55 @@ namespace BenDing.Repository.Providers.Web
                 _sqlConnection.Open();
                 if (param.Any())
                 {
-                    IDbTransaction transaction = _sqlConnection.BeginTransaction();
-                    try
-                    {
-
-                        var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.DirectoryCode).ToList());
-                        string strSql =
-                            $@"update [dbo].[HospitalGeneralCatalog] set  [IsDelete] =1 ,DeleteTime=GETDATE(),DeleteUserId='{user.UserId}' where [IsDelete]=0 
+                    var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.DirectoryCode).ToList());
+                    string strSql =
+                        $@"update [dbo].[HospitalGeneralCatalog] set  [IsDelete] =1 ,DeleteTime=GETDATE(),DeleteUserId='{user.UserId}' where [IsDelete]=0 
                                 and [DirectoryCode] in(" + outpatientNum + ")";
-                        await _sqlConnection.ExecuteAsync(strSql, null, transaction);
-                        string insertSql = "";
-                        int mund = 0;
-                        foreach (var item in param)
-                        {
-                            mund++;
-                            string str = $@"INSERT INTO [dbo].[HospitalGeneralCatalog]
+                    await _sqlConnection.ExecuteAsync(strSql, null);
+                    string insertSql = "";
+                    int num = 0;
+                    foreach (var item in param)
+                    {
+                        num++;
+                        string str = $@"INSERT INTO [dbo].[HospitalGeneralCatalog]
                                    (id,DirectoryType,[OrganizationCode],[DirectoryCode],[DirectoryName]
                                    ,[MnemonicCode],[DirectoryCategoryName],[Remark] ,[CreateTime]
-		                            ,[IsDelete],[DeleteTime],CreateUserId)
+		                            ,[IsDelete],[DeleteTime],CreateUserId,FixedEncoding)
                              VALUES ('{Guid.NewGuid()}','{info.DirectoryType}','{info.OrganizationCode}','{item.DirectoryCode}','{item.DirectoryName}',
                                      '{item.MnemonicCode}','{item.DirectoryCategoryName}','{item.Remark}',GETDATE(),
-                                       0, null,'{user.UserId}');";
-                            insertSql += str;
+                                       0, null,'{user.UserId}','{CommonHelp.GuidToStr(item.DirectoryCode)}');";
+                        insertSql += str;
 
-                        }
-
-                        counts = await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
-                        transaction.Commit();
                     }
-                    catch (Exception)
-                    {
 
-                        transaction.Rollback();
-                        throw;
-                    }
+                    counts = await _sqlConnection.ExecuteAsync(strSql + insertSql, null);
+
                     _sqlConnection.Close();
                 }
 
                 return counts;
+            }
+        }
+        /// <summary>
+        /// 查询HIS系统中科室、医师、病区、床位的基本信息
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<List<QueryInformationInfoDto>> QueryInformationInfo(InformationParam param)
+        {
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+                var resultData = new List<QueryInformationInfoDto>();
+                _sqlConnection.Open();
+                string sqlStr = @"select Id, [OrganizationCode],[DirectoryType], [DirectoryCode],[DirectoryName],[FixedEncoding],
+                                [DirectoryCategoryName],[Remark] from [dbo].[HospitalGeneralCatalog] where IsDelete=0 ";
+                if (!string.IsNullOrWhiteSpace(param.DirectoryName)) sqlStr += " and DirectoryName like '" + param.DirectoryName + "%'";
+                if (!string.IsNullOrWhiteSpace(param.DirectoryType)) sqlStr += $" and DirectoryType='{param.DirectoryType}'";
+                     var data = await _sqlConnection.QueryAsync<QueryInformationInfoDto>(sqlStr);
+                if (data != null) resultData = data.ToList();
+                _sqlConnection.Close();
+
+                return resultData;
             }
         }
         /// <summary>

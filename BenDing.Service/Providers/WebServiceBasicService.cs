@@ -258,11 +258,11 @@ namespace BenDing.Service.Providers
             return resultData;
         }
 
-        public async Task<QueryInpatientInfoDto> QueryInpatientInfo(QueryInpatientInfoParam param)
-        {
-            var data = await _dataBaseHelpService.QueryInpatientInfo(param);
-            return data;
-        }
+        //public async Task<QueryInpatientInfoDto> QueryInpatientInfo(QueryInpatientInfoParam param)
+        //{
+        //    var data = await _dataBaseHelpService.QueryInpatientInfo(param);
+        //    return data;
+        //}
 
         /// <summary>
         /// 获取住院明细
@@ -353,11 +353,11 @@ namespace BenDing.Service.Providers
         }
 
         /// <summary>
-        /// 获取HIS系统中科室、医师、病区、床位的基本信息
+        /// 保存HIS系统中科室、医师、病区、床位的基本信息
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<List<InformationDto>> GetInformation(UserInfoDto user, InformationParam param)
+        public async Task<List<InformationDto>> SaveInformation(UserInfoDto user, InformationParam param)
         {
             var resultData =
                 await _webServiceBasic.HIS_InterfaceListAsync("03", JsonConvert.SerializeObject(param), user.UserId);
@@ -367,7 +367,7 @@ namespace BenDing.Service.Providers
             {
                 result = GetResultData(init, resultData);
                 //保存基础信息
-                await _dataBaseHelpService.InformationInfoSave(user, result, param);
+                await _dataBaseHelpService.SaveInformationInfo(user, result, param);
             }
 
             return result;
@@ -417,16 +417,6 @@ namespace BenDing.Service.Providers
 
         }
 
-        /// <summary>
-        /// 测试函数
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task<dynamic> TestFun(QueryInpatientInfoParam param)
-        {
-            var data = await _dataBaseHelpService.QueryInpatientInfo(param);
-            return data;
-        }
 
         public async Task<UserInfoDto> GetUserBaseInfo(string param)
         {
@@ -527,17 +517,23 @@ namespace BenDing.Service.Providers
 
             return resultData;
         }
-
-        public async Task<QueryMedicalInsuranceDetailDto> QueryMedicalInsuranceDetail(
+        /// <summary>
+        /// 住院医保查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<QueryMedicalInsuranceDetailInfoDto> QueryMedicalInsuranceDetail(
             QueryMedicalInsuranceUiParam param)
         {
-            var resultData = new QueryMedicalInsuranceDetailDto();
+            var resultData = new QueryMedicalInsuranceDetailInfoDto();
             var userBase = await GetUserBaseInfo(param.UserId);
             var queryData = await _dataBaseHelpService.QueryMedicalInsurance(userBase, param.BusinessId);
             if (!string.IsNullOrWhiteSpace(queryData.AdmissionInfoJson))
             {
-                var data = JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailDto>(queryData.AdmissionInfoJson);
+                var data = JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailInfoDto>(queryData.AdmissionInfoJson);
                 data.Id = queryData.Id;
+                data.MedicalInsuranceHospitalizationNo = queryData.MedicalInsuranceHospitalizationNo;
+                data.AdmissionDate = DateTime.ParseExact(data.AdmissionDate,"yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture).ToString("yyyy-MM-dd");
                 resultData = data;
             }
             return resultData;

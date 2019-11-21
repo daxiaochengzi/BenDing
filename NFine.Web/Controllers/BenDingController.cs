@@ -190,7 +190,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetInformation(UiInIParam param)
+        public async Task<ActionResult> GetInformation(GetInformationUiParam param)
         {
             return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
@@ -201,19 +201,37 @@ namespace NFine.Web.Controllers
                     {
                         AuthCode = userBase.AuthCode,
                         OrganizationCode = userBase.OrganizationCode,
-                        DirectoryType = "1"
+                        DirectoryType = param.DirectoryType
                     };
-                    //string inputInpatientInfoJson = JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
-
-                    var inputInpatientInfoData = await _webServiceBasicService.GetInformation(userBase, inputInpatientInfo);
+                    var inputInpatientInfoData = await _webServiceBasicService.SaveInformation(userBase, inputInpatientInfo);
                     if (inputInpatientInfoData.Any())
                     {
                         y.Data = inputInpatientInfoData;
                     }
                 }
+            }), JsonRequestBehavior.AllowGet);
+        }
 
-                //var data = await webService.ExecuteSp(param.Params);
-
+        /// <summary>
+        /// 查询HIS系统中科室、医师、病区、床位的基本信息
+        /// </summary>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> QueryInformationInfo(GetInformationUiParam param)
+        {
+            return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                if (userBase != null)
+                {
+                    var queryParam = new InformationParam()
+                    {
+                        OrganizationCode = userBase.OrganizationCode,
+                        DirectoryType= param.DirectoryType
+                    };
+                    var data = await _baseHelpRepository.QueryInformationInfo(queryParam);
+                    y.Data = data;
+                }
             }), JsonRequestBehavior.AllowGet);
         }
         /// <summary>
