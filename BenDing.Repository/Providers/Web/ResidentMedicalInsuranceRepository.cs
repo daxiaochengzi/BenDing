@@ -300,17 +300,17 @@ namespace BenDing.Repository.Providers.Web
                         BusinessId = queryBusinessId
                       };
                     //获取病人医保信息
-                    var data = await _baseSqlServerRepository.QueryMedicalInsuranceResidentInfo(medicalInsuranceParam);
-                    if (data == null && (!string.IsNullOrWhiteSpace(data.HisHospitalizationId)) == false)
+                    var medicalInsurance = await _baseSqlServerRepository.QueryMedicalInsuranceResidentInfo(medicalInsuranceParam);
+                    if (medicalInsurance == null && (!string.IsNullOrWhiteSpace(medicalInsurance.HisHospitalizationId)) == false)
                     {
                         if (!string.IsNullOrWhiteSpace(queryParam.BusinessId))
                         {
-                            resultData.Msg += "病人无医保入院信息";
+                            resultData.Msg += "病人未办理医保入院";
 
                         }
                         else
                         {
-                            throw new Exception("病人无医保入院信息");
+                            throw new Exception("病人未办理医保入院");
                         }
                     }
                     else
@@ -334,7 +334,9 @@ namespace BenDing.Repository.Providers.Web
                             resultData.Msg += validDataMsg;
                         }
                         //获取处方上传入参
-                        var paramIni = await GetPrescriptionUploadParam(validDataList, queryPairCode, user, param.InsuranceType);
+                        var paramIni = await GetPrescriptionUploadParam(validDataList, queryPairCode, user, medicalInsurance.InsuranceType);
+                        //医保住院号
+                        paramIni.MedicalInsuranceHospitalizationNo = medicalInsurance.MedicalInsuranceHospitalizationNo;
                         int num = paramIni.RowDataList.Count;
                         int a = 0;
                         int limit = 2;//限制条数
@@ -448,7 +450,7 @@ namespace BenDing.Repository.Providers.Web
             return await Task.Run(async () =>
             {
                 var resultData = new PrescriptionUploadParam();
-                resultData.MedicalInsuranceHospitalizationNo = param.FirstOrDefault()?.HospitalizationNo.ToString();
+               
                 resultData.Operators = CommonHelp.GuidToStr(user.UserId);
                 var rowDataList = new List<PrescriptionUploadRowParam>();
                 foreach (var item in param)
