@@ -820,14 +820,37 @@ namespace NFine.Web.Controllers
         [System.Web.Mvc.HttpPost]
         public async Task<ActionResult> PrescriptionUpload([FromBody]PrescriptionUploadUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
-                
                 var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                // var xml = new PrescriptionUploadParam();
+                // xml.MedicalInsuranceHospitalizationNo = "";
+                // xml.Operators = "";
+
+                // var rowDataList = new List<PrescriptionUploadRowParam>();
+                // rowDataList.Add(new PrescriptionUploadRowParam() { Amount = 20 });
+                // rowDataList.Add(new PrescriptionUploadRowParam() { Amount = 30 });
+                // xml.RowDataList = rowDataList;
+                //
+                // //保存至基层
+                // var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(xml);
+                // var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
+                // var saveXmlData = new SaveXmlData();
+                // saveXmlData.OrganizationCode = userBase.OrganizationCode;
+                // saveXmlData.AuthCode = userBase.AuthCode;
+                // saveXmlData.BusinessId = "E8FB1C8604DB41CFBD0DF10E85608214";
+                // saveXmlData.TransactionId = "E2553DCAAD7647238E31363D221451E1";
+                // saveXmlData.MedicalInsuranceBackNum = "CXJB004";
+                // saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
+                // saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                // saveXmlData.MedicalInsuranceCode = "31";
+                // saveXmlData.UserId = userBase.UserId;
+                // await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), userBase.UserId);
+
                 //医保登录
                 await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //处方上传
-                var data= await _residentMedicalInsurance.PrescriptionUpload(param, userBase);
+                var data = await _residentMedicalInsurance.PrescriptionUpload(param, userBase);
                 if (!string.IsNullOrWhiteSpace(data.Msg))
                 {
                     throw new Exception(data.Msg);
@@ -836,7 +859,7 @@ namespace NFine.Web.Controllers
                 {
                     if (data.Num > 0)
                     {
-                        y.Data = "处方上传成功"+ data.Num+" 条,失败"+ (data.Count - data.Num)+" 条";
+                        y.Data = "处方上传成功" + data.Num + " 条,失败" + (data.Count - data.Num) + " 条";
                     }
                 }
             });

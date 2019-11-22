@@ -304,7 +304,6 @@ namespace BenDing.Repository.Providers.Web
                         if (!string.IsNullOrWhiteSpace(queryParam.BusinessId))
                         {
                             resultData.Msg += "病人未办理医保入院";
-
                         }
                         else
                         {
@@ -337,7 +336,7 @@ namespace BenDing.Repository.Providers.Web
                         paramIni.MedicalInsuranceHospitalizationNo = medicalInsurance.MedicalInsuranceHospitalizationNo;
                         int num = paramIni.RowDataList.Count;
                         int a = 0;
-                        int limit = 2;//限制条数
+                        int limit = 40;//限制条数
                         var count = Convert.ToInt32(num / limit) + ((num % limit) > 0 ? 1 : 0);
                         var idList = new List<Guid>();
                         while (a < count)
@@ -355,7 +354,6 @@ namespace BenDing.Repository.Providers.Web
                             }
                             else
                             {
-                             
                                 //更新数据上传状态
                                 idList.AddRange(sendList);
                                 //获取总行数
@@ -412,18 +410,18 @@ namespace BenDing.Repository.Providers.Web
                             }).ToList();
                             await _baseSqlServerRepository.UpdateHospitalizationFee(updateFeeParam, user);
                             //保存至基层
-                            var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(xmlStr);
-                            var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
-                            var saveXmlData = new SaveXmlData();
-                            saveXmlData.OrganizationCode = user.OrganizationCode;
-                            saveXmlData.AuthCode = user.AuthCode;
-                            saveXmlData.BusinessId = businessId;
-                            saveXmlData.TransactionId = transactionId;
-                            saveXmlData.MedicalInsuranceBackNum = "CXJB004";
-                            saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
-                            saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-                            saveXmlData.MedicalInsuranceCode = "31";
-                            saveXmlData.UserId = user.UserId;
+                            //var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(xmlStr);
+                            //var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
+                            //var saveXmlData = new SaveXmlData();
+                            //saveXmlData.OrganizationCode = user.OrganizationCode;
+                            //saveXmlData.AuthCode = user.AuthCode;
+                            //saveXmlData.BusinessId = businessId;
+                            //saveXmlData.TransactionId = transactionId;
+                            //saveXmlData.MedicalInsuranceBackNum = "CXJB004";
+                            //saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
+                            //saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                            //saveXmlData.MedicalInsuranceCode = "31";
+                            //saveXmlData.UserId = user.UserId;
                             //await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), user.UserId);
                         }
 
