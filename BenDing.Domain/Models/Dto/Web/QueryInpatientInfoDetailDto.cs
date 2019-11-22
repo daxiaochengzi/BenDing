@@ -35,6 +35,10 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 调整差值
         /// </summary>
         public  decimal AdjustmentDifferenceValue { get; set; }
+        /// <summary>
+        /// 业务id
+        /// </summary>
+        public string BusinessId { get; set; }
 
 
     }

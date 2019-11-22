@@ -175,7 +175,8 @@ namespace BenDing.Repository.Providers.Web
                 var resultData = new List<QueryInpatientInfoDetailDto>();
                 _sqlConnection.Open();
 
-                string strSql = @"select * from [dbo].[HospitalizationFee]  where  IsDelete=0 ";
+                string strSql = @"select (select  top 1 a.BusinessId from [dbo].[Inpatient] as a where a.HospitalizationNo=HospitalizationNo and IsDelete=0) as BusinessId,
+                                  * from [dbo].[HospitalizationFee]  where  IsDelete=0 ";
                 if (param.IdList != null && param.IdList.Any())
                 {
                     var idlist = CommonHelp.ListToStr(param.IdList);

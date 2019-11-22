@@ -18,6 +18,7 @@ namespace BenDing.Repository.Providers.Web
 {
     public class ResidentMedicalInsuranceRepository : IResidentMedicalInsuranceRepository
     {
+        
         private IDataBaseHelpRepository _baseHelpRepository;
         private IBaseSqlServerRepository _baseSqlServerRepository;
         private ISystemManageRepository _iSystemManageRepository;
@@ -293,53 +294,77 @@ namespace BenDing.Repository.Providers.Web
                 queryData = await _baseSqlServerRepository.InpatientInfoDetailQuery(queryParam);
                 if (queryData.Any())
                 {
-                    resultData.Count = queryData.Count;
-                     var queryPairCodeParam = new QueryMedicalInsurancePairCodeParam()
+                    var queryBusinessId = "";
+                      var medicalInsuranceParam = new QueryMedicalInsuranceResidentInfoParam()
                     {
-                        DirectoryCodeList = queryData.Select(d => d.CostItemCode).Distinct().ToList(),
-                        OrganizationCode = user.OrganizationCode,
-                    };
-                    //获取医保对码数据
-                    var queryPairCode =
-                        await _baseSqlServerRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
-                    //处方上传数据金额验证
-                    var validData = await PrescriptionDataUnitPriceValidation(queryData, queryPairCode, user);
-                    var validDataList = validData.Values.FirstOrDefault();
-                    //错误提示信息
-                    var validDataMsg = validData.Keys.FirstOrDefault();
-                    if (!string.IsNullOrWhiteSpace(validDataMsg))
+                        BusinessId = queryBusinessId
+                      };
+                    //获取病人医保信息
+                    var data = await _baseSqlServerRepository.QueryMedicalInsuranceResidentInfo(medicalInsuranceParam);
+                    if (data == null && (!string.IsNullOrWhiteSpace(data.HisHospitalizationId)) == false)
                     {
-                        resultData.Msg += validDataMsg;
-                    }
-                    //获取处方上传入参
-                    var paramIni = await GetPrescriptionUploadParam(validDataList, queryPairCode, user, param.InsuranceType);
-                    int num = paramIni.RowDataList.Count;
-                    int a = 0;
-                    int limit = 2;//限制条数
-                    var count = Convert.ToInt32(num / limit) + ((num % limit) > 0 ? 1 : 0);
-                    var idList = new List<Guid>();
-                    while (a < count)
-                    {//排除已上传数据
-
-                        var rowDataListAll = paramIni.RowDataList.Where(d => !idList.Contains(d.Id)).OrderBy(c => c.PrescriptionSort).ToList();
-                        var sendList = rowDataListAll.Take(limit).ToList();
-                        var uploadData = await PrescriptionUploadData(paramIni, param.BusinessId, user);
-                        if (uploadData.PO_FHZ != "1")
+                        if (!string.IsNullOrWhiteSpace(queryParam.BusinessId))
                         {
-                            resultData.Msg += uploadData.PO_MSG;
+                            resultData.Msg += "病人无医保入院信息";
+
                         }
                         else
                         {
-                            var sendIdList = sendList.Select(s => s.Id).ToList();
-                            //更新数据上传状态
-                            idList.AddRange(sendIdList);
-                            //获取总行数
-                            resultData.Num += sendList.Count();
+                            throw new Exception("病人无医保入院信息");
                         }
-                        a++;
                     }
+                    else
+                    {
+                        resultData.Count = queryData.Count;
+                        var queryPairCodeParam = new QueryMedicalInsurancePairCodeParam()
+                        {
+                            DirectoryCodeList = queryData.Select(d => d.CostItemCode).Distinct().ToList(),
+                            OrganizationCode = user.OrganizationCode,
+                        };
+                        //获取医保对码数据
+                        var queryPairCode =
+                            await _baseSqlServerRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
+                        //处方上传数据金额验证
+                        var validData = await PrescriptionDataUnitPriceValidation(queryData, queryPairCode, user);
+                        var validDataList = validData.Values.FirstOrDefault();
+                        //错误提示信息
+                        var validDataMsg = validData.Keys.FirstOrDefault();
+                        if (!string.IsNullOrWhiteSpace(validDataMsg))
+                        {
+                            resultData.Msg += validDataMsg;
+                        }
+                        //获取处方上传入参
+                        var paramIni = await GetPrescriptionUploadParam(validDataList, queryPairCode, user, param.InsuranceType);
+                        int num = paramIni.RowDataList.Count;
+                        int a = 0;
+                        int limit = 2;//限制条数
+                        var count = Convert.ToInt32(num / limit) + ((num % limit) > 0 ? 1 : 0);
+                        var idList = new List<Guid>();
+                        while (a < count)
+                        {//排除已上传数据
 
+                            var rowDataListAll = paramIni.RowDataList.Where(d => !idList.Contains(d.Id)).OrderBy(c => c.PrescriptionSort).ToList();
+                            var sendList = rowDataListAll.Take(limit).ToList();
+                            var uploadData = await PrescriptionUploadData(paramIni, param.BusinessId, user);
+                            if (uploadData.PO_FHZ != "1")
+                            {
+                                resultData.Msg += uploadData.PO_MSG;
+                            }
+                            else
+                            {
+                                var sendIdList = sendList.Select(s => s.Id).ToList();
+                                //更新数据上传状态
+                                idList.AddRange(sendIdList);
+                                //获取总行数
+                                resultData.Num += sendList.Count();
+                            }
+                            a++;
+                        }
+
+                    }
                 }
+
+                   
                 return resultData;
             });
         }
@@ -411,7 +436,8 @@ namespace BenDing.Repository.Providers.Web
                 return data;
             });
         }
-       
+      
+
         /// <summary>
         /// 获取处方上传入参
         /// </summary>
