@@ -359,7 +359,7 @@ namespace BenDing.Repository.Providers.Web
                 var xmlStr = XmlHelp.SaveXml(param);
                 if (xmlStr)
                 {
-                    int result = 1; //MedicalInsuranceDll.CallService_cxjb("CXJB004");
+                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB004");
                     if (result == 1)
                     {//如果业务id存在则不直接抛出异常
                         if (!string.IsNullOrWhiteSpace(businessId))
@@ -398,12 +398,13 @@ namespace BenDing.Repository.Providers.Web
                             saveXmlData.UserId = user.UserId;
                             await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), user.UserId);
                         }
-                        else
-                        {
-                            throw new Exception("["+user.UserId+"]"+"处方上传执行出差!!!");
-                        }
+                       
                     }
-                    
+                    else
+                    {
+                        throw new Exception("[" + user.UserId + "]" + "处方上传执行出错!!!");
+                    }
+
 
                 }
 
@@ -504,30 +505,33 @@ namespace BenDing.Repository.Providers.Web
                 foreach (var item in param)
                 {
                     var queryData = pairCode.FirstOrDefault(c => c.DirectoryCode == item.CostItemCode);
-                    decimal queryAmount = 0;
-                    if (grade == OrganizationGrade.二级乙等以下) queryAmount = queryData.ZeroBlock;
-                    if (grade == OrganizationGrade.二级乙等) queryAmount = queryData.OneBlock;
-                    if (grade == OrganizationGrade.二级甲等) queryAmount = queryData.TwoBlock;
-                    if (grade == OrganizationGrade.三级乙等) queryAmount = queryData.ThreeBlock;
-                    if (grade == OrganizationGrade.三级甲等)
+                    if (queryData != null)
                     {
-                        queryAmount = queryData.FourBlock;
-                    }
-                    //限价大于零判断
-                    if (queryAmount > 0)
-                    {
-                        if (item.Amount < queryAmount)
+                        decimal queryAmount = 0;
+                        if (grade == OrganizationGrade.二级乙等以下) queryAmount = queryData.ZeroBlock;
+                        if (grade == OrganizationGrade.二级乙等) queryAmount = queryData.OneBlock;
+                        if (grade == OrganizationGrade.二级甲等) queryAmount = queryData.TwoBlock;
+                        if (grade == OrganizationGrade.三级乙等) queryAmount = queryData.ThreeBlock;
+                        if (grade == OrganizationGrade.三级甲等)
                         {
-                            dataList.Add(item);
+                            queryAmount = queryData.FourBlock;
+                        }
+                        //限价大于零判断
+                        if (queryAmount > 0)
+                        {
+                            if (item.Amount < queryAmount)
+                            {
+                                dataList.Add(item);
+                            }
+                            else
+                            {
+                                msg += item.CostItemName + ",";
+                            }
                         }
                         else
                         {
-                            msg += item.CostItemName + ",";
+                            dataList.Add(item);
                         }
-                    }
-                    else
-                    {
-                        dataList.Add(item);
                     }
                 }
 

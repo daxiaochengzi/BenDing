@@ -630,6 +630,7 @@ namespace NFine.Web.Controllers
             {
                 var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 param.OrganizationCode = verificationCode.OrganizationCode;
+                param.State = 0;
                 var queryData = await _dataBaseSqlServerService.DirectoryComparisonManagement(param);
                 var data = new
                 {
@@ -823,6 +824,9 @@ namespace NFine.Web.Controllers
             {
                 
                 var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //医保登录
+                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                //处方上传
                 var data= await _residentMedicalInsurance.PrescriptionUpload(param, userBase);
                 if (!string.IsNullOrWhiteSpace(data.Msg))
                 {

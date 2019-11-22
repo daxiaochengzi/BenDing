@@ -186,7 +186,7 @@ namespace BenDing.Repository.Providers.Web
                     if (!string.IsNullOrWhiteSpace(param.BusinessId))
                     {
                         strSql +=
-                            $@" and HospitalizationNo ='(select top 1 HospitalizationNo from [dbo].[Inpatient] where BusinessId='{param.BusinessId}' and IsDelete=0')";
+                            $@" and HospitalizationNo =(select top 1 HospitalizationNo from [dbo].[Inpatient] where BusinessId='{param.BusinessId}' and IsDelete=0)";
                     }
                     else
                     {
@@ -354,7 +354,7 @@ namespace BenDing.Repository.Providers.Web
                 string countSql = "";
                 string whereSql = "";
                 var resultData = new Dictionary<int, List<DirectoryComparisonManagementDto>>();
-                if (param.State == "1")
+                if (param.State == 1)
                 {
                     whereSql = $@" where not exists(select b.FixedEncoding from  [dbo].[ThreeCataloguePairCode] as b 
                                 where b.OrganizationCode='{param.OrganizationCode}' and b.FixedEncoding=a.FixedEncoding and b.IsDelete=0 )";
@@ -365,7 +365,7 @@ namespace BenDing.Repository.Providers.Web
 
 
                 }
-                else if (param.State == "2")
+                else if (param.State == 2)
                 {
                     querySql =
                         $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
@@ -383,7 +383,7 @@ namespace BenDing.Repository.Providers.Web
 
 
                 }
-                else if (param.State == "0")
+                else if (param.State == 0)
                 {
                     querySql =
                         $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
