@@ -495,7 +495,12 @@ namespace BenDing.Repository.Providers.Web
                             UseDays = 0,
                             Remark = "",
                             DoctorJobNumber = item.BillDoctorIdFixedEncoding,
-                            Id = item.Id
+                            Id = item.Id,
+                            LimitApprovalDate = "",
+                            LimitApprovalUser = "",
+                            LimitApprovalMark = "",
+                            LimitApprovalRemark = ""
+
                         };
                         //是否现在使用药品
                         if (pairCodeData.RestrictionSign == "1")
