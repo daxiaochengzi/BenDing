@@ -12,7 +12,7 @@ namespace BenDing.Domain.Models.Params.SystemManage
     {/// <summary>
     /// 关联id
     /// </summary>
-        public string RelationId { get; set; }
+        public Guid? RelationId { get; set; }
         /// <summary>
         /// 入参或者旧数据
         /// </summary>

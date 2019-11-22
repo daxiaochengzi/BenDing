@@ -194,7 +194,7 @@ namespace BenDing.Repository.Providers.Web
                        var logParam = new AddHospitalLogParam();
                        logParam.UserId = user.UserId;
                        logParam.OrganizationCode = user.OrganizationCode;
-                       logParam.RelationId = param.BusinessId;
+                       logParam.RelationId = queryData.Id;
                        logParam.JoinOrOldJson = queryData.AdmissionInfoJson;
                        logParam.ReturnOrNewJson = paramStr;
                        logParam.Remark = "医保入院登记修改";
