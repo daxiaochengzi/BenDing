@@ -824,7 +824,7 @@ namespace BenDing.Repository.Providers.Web
                     where [Id]='{param.Id}'";
                 }
                 else if (param.IsModify)
-                {
+                {  
                     insertSql = $@"update [dbo].[MedicalInsurance] set [MedicalInsuranceYearBalance]=0,
                     AdmissionInfoJson='{param.AdmissionInfoJson}',[IsDelete]=0,
                     where [Id]='{param.Id}' and OrganizationCode='{user.OrganizationCode}'";
@@ -840,11 +840,10 @@ namespace BenDing.Repository.Providers.Web
                     insertSql = $"update [dbo].[MedicalInsurance] set [IsDelete]=1,DeleteUserId='{user.UserId}',DeleteTime=GETDATE() where [HisHospitalizationId]='{param.HisHospitalizationId}';" + insertSql;
 
                 }
-                var log = LogFactory.GetLogger("ini".GetType().ToString());
-                log.Debug(insertSql);
-                await _sqlConnection.ExecuteAsync(insertSql);
-
-
+                //var log = LogFactory.GetLogger("ini".GetType().ToString());
+                //log.Debug(insertSql);
+              var num= await _sqlConnection.ExecuteAsync(insertSql);
+             
             }
         }
         public async Task<QueryMedicalInsuranceDto> QueryMedicalInsurance(UserInfoDto user, string businessId)

@@ -7,6 +7,7 @@ using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
@@ -180,7 +181,6 @@ namespace BenDing.Repository.Providers.Web
                            data.Id = queryData.Id;
                            paramStr = JsonConvert.SerializeObject(data);
                        }
-
                        var saveData = new MedicalInsuranceDto
                        {
                            AdmissionInfoJson = paramStr,
@@ -189,15 +189,20 @@ namespace BenDing.Repository.Providers.Web
                            IsModify = true,
                            MedicalInsuranceHospitalizationNo = queryData.MedicalInsuranceHospitalizationNo
                        };
-
                        await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
+                       //日志
+                       var logParam = new AddHospitalLogParam();
+                       logParam.UserId = user.UserId;
+                       logParam.OrganizationCode = user.OrganizationCode;
+                       logParam.RelationId = param.BusinessId;
+                       logParam.JoinOrOldJson = queryData.AdmissionInfoJson;
+                       logParam.ReturnOrNewJson = paramStr;
+                       logParam.Remark = "医保入院登记修改";
+                       _iSystemManageRepository.AddHospitalLog(logParam);
                    }
 
                }
            });
-
-
-
         }
         /// <summary>
         /// 项目下载

@@ -86,6 +86,7 @@
     <Compile Include="Models\Params\Resident\PrescriptionUploadAutomaticParam.cs" />
     <Compile Include="Models\Params\Resident\PrescriptionUploadParam.cs" />
     <Compile Include="Models\Params\Resident\QueryMedicalInsurancePairCodeParam.cs" />
+    <Compile Include="Models\Params\SystemManage\AddHospitalLogParam.cs" />
     <Compile Include="Models\Params\UI\AddHospitalOrganizationGradeUiParam.cs" />
     <Compile Include="Models\Params\UI\DirectoryComparisonManagementUiParam.cs" />
     <Compile Include="Models\Params\UI\GetInformationUiParam.cs" />
@@ -181,6 +182,8 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Models\Dto\SystemManage\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

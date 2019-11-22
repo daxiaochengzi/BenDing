@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
+using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Repository.Interfaces.Web;
 using Dapper;
@@ -172,6 +173,35 @@ namespace BenDing.Repository.Providers.Web
 
                 _sqlConnection.Close();
                 return resultData;
+            }
+        }
+
+        /// <summary>
+        /// 添加操作日志
+        /// </summary>
+        /// <returns></returns>
+        public int AddHospitalLog(AddHospitalLogParam param)
+        {
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+                
+                _sqlConnection.Open();
+                string querySql = $@"insert into  [dbo].[HospitalLog](
+                                [Id]
+                               ,[RelationId]
+                               ,[JoinOrOldJson]
+                               ,[ReturnOrNewJson]
+                               ,[Remark]
+                               ,[OrganizationCode]
+                               ,[CreateTime]
+                               ,[IsDelete]
+                               ,[CreateUserId]
+                              )
+                             values('{Guid.NewGuid()}','{param.RelationId}','{param.JoinOrOldJson}','{param.ReturnOrNewJson}',
+                              '{param.Remark}','{param.OrganizationCode}',GETDATE(),0,'{param.UserId}')";
+                var data =  _sqlConnection.Execute(querySql);
+                _sqlConnection.Close();
+                return data;
             }
         }
     }
