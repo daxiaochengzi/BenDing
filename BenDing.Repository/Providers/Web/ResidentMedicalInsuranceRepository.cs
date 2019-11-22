@@ -492,7 +492,7 @@ namespace BenDing.Repository.Providers.Web
                             Usage = item.Usage,
                             Specification = item.Specification,
                             Unit = item.Unit,
-                            UseDays = "0",
+                            UseDays = 0,
                             Remark = "",
                             DoctorJobNumber = item.BillDoctorIdFixedEncoding,
                             Id = item.Id

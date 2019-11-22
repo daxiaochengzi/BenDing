@@ -135,7 +135,7 @@ namespace BenDing.Domain.Models.Params.Resident
         /// 执行天数
         /// </summary>
         [XmlElementAttribute("AKC229", IsNullable = false)]
-        public string UseDays { get; set; }
+        public int UseDays { get; set; }
         /// <summary>
         /// 备注
         /// </summary>
