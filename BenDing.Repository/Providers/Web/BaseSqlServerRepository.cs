@@ -122,7 +122,7 @@ namespace BenDing.Repository.Providers.Web
                 if (!string.IsNullOrWhiteSpace(param.DataId))
                     strSql += $" and Id='{param.DataId}'";
                 if (!string.IsNullOrWhiteSpace(param.BusinessId))
-                    strSql += $" and HisHospitalizationId='{param.BusinessId}'";
+                    strSql += $" and HisHospitalizationId='{CommonHelp.GuidToStr(param.BusinessId)}'";
                 if (!string.IsNullOrWhiteSpace(param.OrgCode))
                     strSql += $" and OrgCode='{param.OrgCode}'";
                 var data = await _sqlConnection.QueryFirstOrDefaultAsync<MedicalInsuranceResidentInfoDto>(strSql);
