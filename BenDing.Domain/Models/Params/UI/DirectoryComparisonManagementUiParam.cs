@@ -24,7 +24,7 @@ namespace BenDing.Domain.Models.Params.UI
         /// <summary>
         /// 0.全部显示,1.未对码,2.已对码
         /// </summary>
-        public string State { get; set; } = "0";
+        public int State { get; set; }
        
     }
 }
