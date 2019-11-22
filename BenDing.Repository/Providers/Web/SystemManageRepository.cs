@@ -144,7 +144,7 @@ namespace BenDing.Repository.Providers.Web
                 var resultData = new QueryHospitalOperatorDto();
                 _sqlConnection.Open();
                 string querySql = $"select top 1 MedicalInsuranceAccount,[MedicalInsurancePwd],[HisUserAccount],[HisUserPwd],ManufacturerNumber from [dbo].[HospitalOperator] where [HisUserId]='{param.UserId}' ";
-                var data = await _sqlConnection.QueryFirstAsync<QueryHospitalOperatorDto>(querySql);
+                var data = await _sqlConnection.QuerySingleAsync<QueryHospitalOperatorDto>(querySql);
                 if (data != null)
                 {
                     resultData = data;

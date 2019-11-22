@@ -360,7 +360,7 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
-            var inpatientInList = new List<InpatientInfoDto>();
+          
             var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 if (verificationCode != null)
                 {
@@ -384,13 +384,13 @@ namespace NFine.Web.Controllers
                     var inpatientData = await _webServiceBasicService.GetInpatientInfo(infoData);
                     if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
                     {
-                        var inpatientIni = inpatientInList.FirstOrDefault();
+                    
                         var InpatientInfoDetail = new InpatientInfoDetailParam()
                         {
                             AuthCode = verificationCode.AuthCode,
-                            HospitalizationNo = inpatientIni.HospitalizationNo,
-                            BusinessId = inpatientIni.BusinessId,
-                            StartTime = inpatientIni.AdmissionDate,
+                            HospitalizationNo = inpatientData.HospitalizationNo,
+                            BusinessId = inpatientData.BusinessId,
+                            StartTime = inpatientData.AdmissionDate,
                             EndTime = "2020-04-27 11:09:00",
                             State = "0"
                         };
