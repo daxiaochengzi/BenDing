@@ -486,7 +486,7 @@ namespace BenDing.Repository.Providers.Web
                             Amount = item.Amount,
                             ResidentSelfPayProportion = residentSelfPayProportion,//自付金额计算
                             Formulation = pairCodeData.Formulation,
-                            Dosage = item.Dosage,
+                            Dosage = (!string.IsNullOrWhiteSpace(item.Dosage))? CommonHelp.ValueToDouble(Convert.ToDecimal( item.Dosage)):0 ,
                             UseFrequency = "0",
                             Usage = item.Usage,
                             Specification = item.Specification,

@@ -109,7 +109,7 @@ namespace BenDing.Domain.Models.Params.Resident
         /// 用量
         /// </summary>
         [XmlElementAttribute("AKA071", IsNullable = false)]
-        public string Dosage { get; set; }
+        public decimal Dosage { get; set; }
 
         /// <summary>
         /// 使用频率
