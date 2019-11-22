@@ -1054,29 +1054,25 @@ namespace BenDing.Repository.Providers.Web
                 if (param.Any())
                 {
                     var projectCodeList = CommonHelp.ListToStr(param.Select(c => c.ProjectCode).ToList());
-                    DateTime dtDate;
+                   
                     string insertSql = null;
                     foreach (var item in param)
                     {//判断日期格式是否正确
-                        if (DateTime.TryParse(item.NewUpdateTime, out dtDate))
-                        {
-                            var projectName = FilteSqlStr(item.ProjectName);
-                            insertSql += $@"INSERT INTO [dbo].[MedicalInsuranceProject]
+                        var projectName = FilteSqlStr(item.ProjectName);
+                        insertSql += $@"INSERT INTO [dbo].[MedicalInsuranceProject]
                            (id,[ProjectCode],[ProjectName] ,[ProjectCodeType] ,[ProjectLevel],[WorkersSelfPayProportion]
                            ,[Unit],[MnemonicCode] ,[Formulation],[ResidentSelfPayProportion],[RestrictionSign]
                            ,[ZeroBlock],[OneBlock],[TwoBlock],[ThreeBlock],[FourBlock],[EffectiveSign],[ResidentOutpatientSign]
                            ,[ResidentOutpatientBlock],[Manufacturer] ,[QuasiFontSize] ,[Specification],[Remark],[NewCodeMark]
-                           ,[NewUpdateTime],[StartTime] ,[EndTime],[LimitPaymentScope],[CreateTime],[CreateUserId]
+                           ,[NewUpdateTime],[StartTime] ,[EndTime],[LimitPaymentScope],[CreateTime],[CreateUserId],[IsDelete]
                            )
                           VALUES('{Guid.NewGuid()}','{item.ProjectCode}','{projectName}','{item.ProjectCodeType}','{item.ProjectLevel}',{CommonHelp.ValueToDecimal(item.WorkersSelfPayProportion)}
                                   ,'{item.Unit}','{item.MnemonicCode}', '{item.Formulation}',{CommonHelp.ValueToDecimal(item.ResidentSelfPayProportion)},'{item.RestrictionSign}'
                                   ,{CommonHelp.ValueToDecimal(item.ZeroBlock)},{CommonHelp.ValueToDecimal(item.OneBlock)},{CommonHelp.ValueToDecimal(item.TwoBlock)},{CommonHelp.ValueToDecimal(item.ThreeBlock)},{CommonHelp.ValueToDecimal(item.FourBlock)},'{item.EffectiveSign}','{item.ResidentOutpatientSign}'
                                   ,{CommonHelp.ValueToDecimal(item.ResidentOutpatientBlock)},'{item.Manufacturer}','{item.QuasiFontSize}','{item.Specification}','{item.Remark}','{item.NewCodeMark}'
                                   ,'{ DateTime.ParseExact(item.NewUpdateTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture).ToString("yyyy-MM-dd HH:mm:ss")}',
-                                  NULL,NULL,'{item.LimitPaymentScope}',GETDATE(),'{user.UserId}'
+                                  NULL,NULL,'{item.LimitPaymentScope}',GETDATE(),'{user.UserId}',0
                                );";
-                        }
-
                     }
                     result = await _sqlConnection.ExecuteAsync(insertSql);
                 }

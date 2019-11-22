@@ -315,7 +315,7 @@ namespace BenDing.Repository.Providers.Web
                     var paramIni = await GetPrescriptionUploadParam(validDataList, queryPairCode, user, param.InsuranceType);
                     int num = paramIni.RowDataList.Count;
                     int a = 0;
-                    int limit = 50;//限制条数
+                    int limit = 2;//限制条数
                     var count = Convert.ToInt32(num / limit) + ((num % limit) > 0 ? 1 : 0);
                     var idList = new List<Guid>();
                     while (a < count)
