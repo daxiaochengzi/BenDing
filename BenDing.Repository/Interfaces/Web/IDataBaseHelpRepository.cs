@@ -120,6 +120,12 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
         Task GetInpatientInfo(UserInfoDto user, InpatientInfoDto param);
         /// <summary>
+        /// 住院病人查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task<QueryInpatientInfoDto> QueryInpatientInfo(QueryInpatientInfoParam param);
+        /// <summary>
         /// 医保信息保存
         /// </summary>
         /// <param name="user"></param>

@@ -364,40 +364,21 @@ namespace NFine.Web.Controllers
             var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 if (verificationCode != null)
                 {
-                    var inputInpatientInfo = new InpatientInfoParam()
-                    {
-                        AuthCode = verificationCode.AuthCode,
-                        OrganizationCode = verificationCode.OrganizationCode,
-                        IdCardNo = "512527196604306139",
-                        StartTime = "2019-11-01 14:41:00",
-                        EndTime = "2020-12-01 11:09:00",
-                        State = "0"
-                    };
-                   
-
-                    var infoData = new GetInpatientInfoParam()
-                    {
-                        User = verificationCode,
-                        BusinessId = param.BusinessId,
-                        InfoParam = inputInpatientInfo,
-                    };
-                    var inpatientData = await _webServiceBasicService.GetInpatientInfo(infoData);
-                    if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
-                    {
-                    
+                  var   inpatientData= await _baseHelpRepository.QueryInpatientInfo(new QueryInpatientInfoParam() { BusinessId = param.BusinessId });
+                       
                         var InpatientInfoDetail = new InpatientInfoDetailParam()
                         {
                             AuthCode = verificationCode.AuthCode,
                             HospitalizationNo = inpatientData.HospitalizationNo,
                             BusinessId = inpatientData.BusinessId,
                             StartTime = inpatientData.AdmissionDate,
-                            EndTime = "2020-04-27 11:09:00",
+                            EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                             State = "0"
                         };
                         var data = await _webServiceBasicService.GetInpatientInfoDetail(verificationCode,
                             InpatientInfoDetail, param.BusinessId);
                         y.Data = data;
-                    }
+                
                 }
 
             }), JsonRequestBehavior.AllowGet);
