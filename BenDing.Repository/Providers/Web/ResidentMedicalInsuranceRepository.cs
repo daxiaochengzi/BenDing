@@ -18,7 +18,7 @@ namespace BenDing.Repository.Providers.Web
 {
     public class ResidentMedicalInsuranceRepository : IResidentMedicalInsuranceRepository
     {
-        
+
         private IDataBaseHelpRepository _baseHelpRepository;
         private IBaseSqlServerRepository _baseSqlServerRepository;
         private ISystemManageRepository _iSystemManageRepository;
@@ -89,14 +89,14 @@ namespace BenDing.Repository.Providers.Web
                 var xmlStr = XmlHelp.SaveXml(paramIni);
                 if (xmlStr)
                 {
-                     
+
                     var saveData = new MedicalInsuranceDto
                     {
                         AdmissionInfoJson = JsonConvert.SerializeObject(param),
                         HisHospitalizationId = param.HospitalizationNo,
                         Id = Guid.NewGuid(),
                         IsModify = false,
-                        InsuranceType= (!string.IsNullOrWhiteSpace(param.InsuranceType)) == true ? Convert.ToInt32(param.InsuranceType) : 0
+                        InsuranceType = (!string.IsNullOrWhiteSpace(param.InsuranceType)) == true ? Convert.ToInt32(param.InsuranceType) : 0
 
 
                     };
@@ -294,11 +294,9 @@ namespace BenDing.Repository.Providers.Web
                 queryData = await _baseSqlServerRepository.InpatientInfoDetailQuery(queryParam);
                 if (queryData.Any())
                 {
-                    var queryBusinessId = "";
-                      var medicalInsuranceParam = new QueryMedicalInsuranceResidentInfoParam()
-                    {
-                        BusinessId = queryBusinessId
-                      };
+                    var queryBusinessId = (!string.IsNullOrWhiteSpace(queryParam.BusinessId)) == true ? param.BusinessId : 
+                                        queryData.Select(c => c.BusinessId).FirstOrDefault();
+                    var medicalInsuranceParam = new QueryMedicalInsuranceResidentInfoParam(){BusinessId = queryBusinessId};
                     //获取病人医保信息
                     var medicalInsurance = await _baseSqlServerRepository.QueryMedicalInsuranceResidentInfo(medicalInsuranceParam);
                     if (medicalInsurance == null && (!string.IsNullOrWhiteSpace(medicalInsurance.HisHospitalizationId)) == false)
@@ -346,17 +344,20 @@ namespace BenDing.Repository.Providers.Web
                         {//排除已上传数据
 
                             var rowDataListAll = paramIni.RowDataList.Where(d => !idList.Contains(d.Id)).OrderBy(c => c.PrescriptionSort).ToList();
-                            var sendList = rowDataListAll.Take(limit).ToList();
-                            var uploadData = await PrescriptionUploadData(paramIni, param.BusinessId, user);
+                            var sendList = rowDataListAll.Take(limit).Select(s=>s.Id).ToList();
+                            //新的数据上传参数
+                            var uploadDataParam = paramIni;
+                            uploadDataParam.RowDataList = rowDataListAll.Where(c=> sendList.Contains(c.Id)).ToList();
+                            var uploadData = await PrescriptionUploadData(uploadDataParam, param.BusinessId, user);
                             if (uploadData.PO_FHZ != "1")
                             {
                                 resultData.Msg += uploadData.PO_MSG;
                             }
                             else
                             {
-                                var sendIdList = sendList.Select(s => s.Id).ToList();
+                             
                                 //更新数据上传状态
-                                idList.AddRange(sendIdList);
+                                idList.AddRange(sendList);
                                 //获取总行数
                                 resultData.Num += sendList.Count();
                             }
@@ -366,11 +367,11 @@ namespace BenDing.Repository.Providers.Web
                     }
                 }
 
-                   
+
                 return resultData;
             });
         }
-        
+
         /// <summary>
         /// 处方数据上传
         /// </summary>
@@ -423,9 +424,9 @@ namespace BenDing.Repository.Providers.Web
                             saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                             saveXmlData.MedicalInsuranceCode = "31";
                             saveXmlData.UserId = user.UserId;
-                            await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), user.UserId);
+                            //await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), user.UserId);
                         }
-                       
+
                     }
                     else
                     {
@@ -438,7 +439,7 @@ namespace BenDing.Repository.Providers.Web
                 return data;
             });
         }
-      
+
 
         /// <summary>
         /// 获取处方上传入参
@@ -450,7 +451,7 @@ namespace BenDing.Repository.Providers.Web
             return await Task.Run(async () =>
             {
                 var resultData = new PrescriptionUploadParam();
-               
+
                 resultData.Operators = CommonHelp.GuidToStr(user.UserId);
                 var rowDataList = new List<PrescriptionUploadRowParam>();
                 foreach (var item in param)
