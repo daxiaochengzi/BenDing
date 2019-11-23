@@ -70,10 +70,8 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
 
-        Task<Dictionary<int, List<DirectoryComparisonManagementDto>>> DirectoryComparisonManagement(
+         Task<Dictionary<int, List<DirectoryComparisonManagementDto>>> DirectoryComparisonManagement(
             DirectoryComparisonManagementUiParam param);
-      
-
          Task<List<QueryThreeCataloguePairCodeUploadDto>> ThreeCataloguePairCodeUpload(
             string organizationCode);
         /// <summary>
@@ -89,7 +87,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task<int> UpdateHospitalizationFee(List<UpdateHospitalizationFeeParam> param, UserInfoDto user);
+        Task<int> UpdateHospitalizationFee(List<UpdateHospitalizationFeeParam> param, bool batchConfirmFail, UserInfoDto user);
 
 
     }

@@ -749,6 +749,28 @@ namespace BenDing.Repository.Providers.Web
 
         }
         /// <summary>
+        /// 住院病人查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<QueryInpatientInfoDto> QueryInpatientInfo(QueryInpatientInfoParam param)
+        {
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+                var resultData = new QueryInpatientInfoDto();
+                _sqlConnection.Open();
+                string strSql = $"select top 1 * from [dbo].[Inpatient] where IsDelete=0 and BusinessId='{param.BusinessId}'";
+
+                var data = await _sqlConnection.QueryAsync<QueryInpatientInfoDto>(strSql, null);
+                if (data != null && data.Any()) resultData = data.FirstOrDefault();
+                _sqlConnection.Close();
+                return resultData;
+            }
+
+
+
+        }
+        /// <summary>
         /// 获取所有未传费用的住院病人
         /// </summary>
         /// <returns></returns>
