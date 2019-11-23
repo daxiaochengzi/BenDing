@@ -71,7 +71,7 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// </summary>
         [XmlElementAttribute("PO_BZ", IsNullable = false)]
         [JsonProperty(PropertyName = "PO_BZ")]
-        public decimal Remark { get; set; }
+        public string Remark { get; set; }
         /// <summary>
         /// 现金支付
         /// </summary>

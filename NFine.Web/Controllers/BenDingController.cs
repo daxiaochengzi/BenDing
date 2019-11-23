@@ -280,8 +280,7 @@ namespace NFine.Web.Controllers
                   BusinessId = param.BusinessId,
                   InfoParam = inputInpatientInfo,
                };
-               var inpatientData = await _webServiceBasicService
-                   .GetInpatientInfo(infoData);
+               var inpatientData = await _webServiceBasicService.GetInpatientInfo(infoData);
                if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId ))
                {//获取医保个人信息
                    await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
@@ -851,11 +850,12 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {   //获取操作人员信息
+
                 var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
-                { 
-                  BusinessId= param.BusinessId,
-                  OrganizationCode= userBase.OrganizationCode
+                {
+                    BusinessId = param.BusinessId,
+                    OrganizationCode = userBase.OrganizationCode
                 };
                 //获取医保病人信息
                 var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
@@ -867,8 +867,54 @@ namespace NFine.Web.Controllers
                     LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
                 };
 
-                var data = await _residentMedicalInsurance.HospitalizationPresettlement(presettlementParam);
+                var data = await _residentMedicalInsurance.HospitalizationPresettlement(presettlementParam, userBase);
                 y.Data = data;
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// 医保出院费用结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> LeaveHospitalSettlement(HospitalizationPresettlementUiParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {   //获取操作人员信息
+
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    BusinessId = param.BusinessId,
+                    OrganizationCode = userBase.OrganizationCode
+                };
+                //获取医保病人信息
+                var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+                if (residentData != null)
+                {
+                    if (residentData.MedicalInsuranceState == 1)
+                    {
+                        throw new Exception("当前病人已办理结算");
+                    }
+                    else
+                    {
+                        var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId=param.BusinessId};
+                        //获取住院病人
+                        var InpatientInfoData = await _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
+                         //医保登录
+                        await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                        var presettlementParam = new LeaveHospitalSettlementParam()
+                        {
+                            MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                            LeaveHospitalDate =(!string.IsNullOrWhiteSpace(InpatientInfoData.LeaveHospitalDate)) ==true?Convert.ToDateTime(InpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd"): DateTime.Now.ToString("yyyyMMdd"),
+                        };
+                        var data = await _residentMedicalInsurance.LeaveHospitalSettlement(presettlementParam, residentData.Id, userBase);
+                        y.Data = data;
+                    }
+
+                }
+               
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }

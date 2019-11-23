@@ -50,6 +50,14 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task<HospitalizationPresettlementDto> HospitalizationPresettlement(HospitalizationPresettlementParam param);
+        Task<HospitalizationPresettlementDto> HospitalizationPresettlement(HospitalizationPresettlementParam param, UserInfoDto user);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="businessId"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        Task<HospitalizationPresettlementDto> LeaveHospitalSettlement(LeaveHospitalSettlementParam param, Guid id, UserInfoDto user);
     }
 }

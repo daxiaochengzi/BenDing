@@ -202,6 +202,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
         [JsonProperty(PropertyName = "出院病区编码")]
         public string LeaveHospitalWardId { get; set; }
+       
         public ResidentUserInfoDto MedicalInsuranceResidentInfo { get; set; }
     }
 }

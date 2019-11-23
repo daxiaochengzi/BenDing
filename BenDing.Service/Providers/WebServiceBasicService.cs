@@ -255,7 +255,7 @@ namespace BenDing.Service.Providers
                 resultData= result.FirstOrDefault(c => c.BusinessId == param.BusinessId);
                 if (param.IsSave == true)
                 {
-                    await _hisSqlRepository.GetInpatientInfo(param.User, resultData);
+                    await _hisSqlRepository.SaveInpatientInfo(param.User, resultData);
                 }
 
 

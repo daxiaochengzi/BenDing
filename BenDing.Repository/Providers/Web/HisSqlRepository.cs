@@ -188,7 +188,6 @@ namespace BenDing.Repository.Providers.Web
             return resultData;
 
         }
-
         /// <summary>
         /// 删除三大目录
         /// </summary>
@@ -632,11 +631,11 @@ namespace BenDing.Repository.Providers.Web
             }
         }
         /// <summary>
-        /// 获取住院病人
+        /// 保存住院病人
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task GetInpatientInfo(UserInfoDto user, InpatientInfoDto param)
+        public async Task SaveInpatientInfo(UserInfoDto user, InpatientInfoDto param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
@@ -644,6 +643,14 @@ namespace BenDing.Repository.Providers.Web
                 _sqlConnection.Open();
                 string strSql =
                     $@"update  [dbo].[inpatient] set  [IsDelete] =1 ,DeleteTime=GETDATE(),DeleteUserId='{user.UserId}' where [IsDelete]=0  and [businessid] ='{param.BusinessId}';";
+                string leaveHospitalDate = null;
+                if (!string.IsNullOrWhiteSpace(param.LeaveHospitalDate))
+                {
+                    if (param.LeaveHospitalDate != "1900-01-01 00:00:00.000")
+                    {
+                        leaveHospitalDate = param.LeaveHospitalDate;
+                    }
+                }
                 string insertSql = $@"
                                 INSERT INTO [dbo].[inpatient]
                                            (id,[HospitalName] ,[AdmissionDate]  ,[LeaveHospitalDate] ,[HospitalizationNo] ,[BusinessId] ,[PatientName] ,[IdCardNo]
@@ -653,7 +660,7 @@ namespace BenDing.Repository.Providers.Web
 		                                   ,[LeaveHospitalWard] ,[LeaveHospitalBed]  ,[LeaveHospitalMainDiagnosis] ,[LeaveHospitalMainDiagnosisIcd10] ,[LeaveHospitalSecondaryDiagnosis] ,[LeaveHospitalSecondaryDiagnosisIcd10]
                                            ,[InpatientHospitalState] ,[AdmissionDiagnosticDoctorId] ,[AdmissionBedId]  ,[AdmissionWardId],[LeaveHospitalBedId] ,[LeaveHospitalWardId]
                                            ,[CreateTime]  ,[IsDelete] ,[DeleteTime],OrganizationCode,CreateUserId,FixedEncoding)
-                                     VALUES ('{Guid.NewGuid()}','{param.HospitalName}','{param.AdmissionDate}','{param.LeaveHospitalDate}','{param.HospitalizationNo}','{param.BusinessId}','{param.PatientName}','{param.IdCardNo}',
+                                     VALUES ('{Guid.NewGuid()}','{param.HospitalName}','{param.AdmissionDate}','{leaveHospitalDate}','{param.HospitalizationNo}','{param.BusinessId}','{param.PatientName}','{param.IdCardNo}',
                                              '{param.PatientSex}','{param.Birthday}','{param.ContactName}','{param.ContactPhone}','{param.FamilyAddress}','{param.InDepartmentName}','{param.InDepartmentId}',
                                              '{param.AdmissionDiagnosticDoctor}','{param.AdmissionBed}','{param.AdmissionMainDiagnosis}','{param.AdmissionMainDiagnosisIcd10}','{param.AdmissionSecondaryDiagnosis}','{param.AdmissionSecondaryDiagnosisIcd10}',
                                              '{param.AdmissionWard}','{param.AdmissionOperator}','{param.AdmissionOperateTime}',{Convert.ToDecimal(param.HospitalizationTotalCost)},'{param.Remark}','{param.LeaveDepartmentName}','{param.LeaveDepartmentId}',

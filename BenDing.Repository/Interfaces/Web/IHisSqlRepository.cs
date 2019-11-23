@@ -110,7 +110,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task GetInpatientInfo(UserInfoDto user, InpatientInfoDto param);
+        Task SaveInpatientInfo(UserInfoDto user, InpatientInfoDto param);
         /// <summary>
         /// 住院病人查询
         /// </summary>

@@ -208,7 +208,7 @@ namespace BenDing.Repository.Providers.Web
                        logParam.JoinOrOldJson = queryData.AdmissionInfoJson;
                        logParam.ReturnOrNewJson = paramStr;
                        logParam.Remark = "医保入院登记修改";
-                       _systemManageRepository.AddHospitalLog(logParam);
+                      await _systemManageRepository.AddHospitalLog(logParam);
                    }
 
                }
@@ -270,7 +270,7 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<HospitalizationPresettlementDto> HospitalizationPresettlement(HospitalizationPresettlementParam param)
+        public async Task<HospitalizationPresettlementDto> HospitalizationPresettlement(HospitalizationPresettlementParam param, UserInfoDto user)
         {
 
             return await Task.Run(async () =>
@@ -283,6 +283,22 @@ namespace BenDing.Repository.Providers.Web
                     if (result == 1)
                     {
                         data = XmlHelp.DeSerializerModel(new HospitalizationPresettlementDto(), true);
+                        var logParam=new AddHospitalLogParam() 
+                        { 
+                            JoinOrOldJson=JsonConvert.SerializeObject(param),
+                            ReturnOrNewJson= JsonConvert.SerializeObject(data),
+                            OrganizationCode=user.OrganizationCode,
+                            UserId=user.UserId,
+                            Remark="住院病人预结算"
+                        };
+
+                       await _systemManageRepository.AddHospitalLog(logParam);
+
+
+                    }
+                    else
+                    {
+                        throw new Exception("住院预结算执行失败!!!");
                     }
                 }
                 return data;
@@ -290,6 +306,57 @@ namespace BenDing.Repository.Providers.Web
 
 
         }
+        /// <summary>
+        /// 医保出院费用结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public async Task<HospitalizationPresettlementDto> LeaveHospitalSettlement(LeaveHospitalSettlementParam param, Guid id,UserInfoDto user)
+        {
+
+            return await Task.Run(async () =>
+            {
+                var data = new HospitalizationPresettlementDto();
+                var xmlStr = XmlHelp.SaveXml(param);
+                if (xmlStr)
+                {
+                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB010");
+                    if (result == 1)
+                    {
+                        data = XmlHelp.DeSerializerModel(new HospitalizationPresettlementDto(), true);
+                        var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
+                        {
+                            UserId=user.UserId,
+                            //ReimbursementExpenses= data.
+                            SelfPayFee= data.CashPayment
+                        };
+                       await _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
+                        var logParam = new AddHospitalLogParam()
+                        {
+                            JoinOrOldJson = JsonConvert.SerializeObject(param),
+                            ReturnOrNewJson = JsonConvert.SerializeObject(data),
+                            OrganizationCode = user.OrganizationCode,
+                            UserId = user.UserId,
+                            Remark = "住院病人出院结算",
+                            RelationId=id
+                        };
+
+                        await _systemManageRepository.AddHospitalLog(logParam);
+
+
+                    }
+                    else
+                    {
+                        throw new Exception("住院病人出院结算执行失败!!!");
+                    }
+                }
+                return data;
+            });
+
+
+        }
+        // 
         /// <summary>
         /// 处方上传
         /// </summary>

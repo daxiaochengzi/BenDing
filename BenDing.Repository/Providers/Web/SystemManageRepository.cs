@@ -180,7 +180,7 @@ namespace BenDing.Repository.Providers.Web
         /// 添加操作日志
         /// </summary>
         /// <returns></returns>
-        public int AddHospitalLog(AddHospitalLogParam param)
+        public async Task<int> AddHospitalLog(AddHospitalLogParam param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
@@ -199,7 +199,7 @@ namespace BenDing.Repository.Providers.Web
                               )
                              values('{Guid.NewGuid()}','{param.RelationId}','{param.JoinOrOldJson}','{param.ReturnOrNewJson}',
                               '{param.Remark}','{param.OrganizationCode}',GETDATE(),0,'{param.UserId}')";
-                var data =  _sqlConnection.Execute(querySql);
+                var data = await _sqlConnection.ExecuteAsync(querySql);
                 _sqlConnection.Close();
                 return data;
             }

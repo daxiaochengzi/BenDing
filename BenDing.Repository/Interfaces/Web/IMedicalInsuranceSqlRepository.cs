@@ -39,6 +39,7 @@ namespace BenDing.Repository.Interfaces.Web
         //Task<Int32> SingleResidentInfoDownload(UserInfoDto user, List<SingleResidentInfoDto> param);
 
         #endregion
+        Task<int> UpdateMedicalInsuranceResidentSettlement(UpdateMedicalInsuranceResidentSettlementParam param);
         /// <summary>
         /// 住院病人明细查询
         /// </summary>

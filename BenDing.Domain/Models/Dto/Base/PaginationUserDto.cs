@@ -8,7 +8,9 @@ using System.Xml.Serialization;
 using Newtonsoft.Json;
 
 namespace BenDing.Domain.Models.Dto.Base
-{
+{/// <summary>
+/// 
+/// </summary>
    public class PaginationUserDto
    {
        public int Limit { get; set; }

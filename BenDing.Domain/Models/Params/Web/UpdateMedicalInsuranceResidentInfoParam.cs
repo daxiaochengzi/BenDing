@@ -4,25 +4,24 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace BenDing.Domain.Models.Params.Web
-{
-   public class UpdateMedicalInsuranceResidentInfoParam
-    {/// <summary>
-     /// 数据类型
-     /// </summary>
-        [Display(Name = "数据类型")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
-        public string DataType { get; set; }
-        public  string ContentJson { get; set; }
-
-        public string ResultDatajson { get; set; }
-        public  string DataId { get; set; }
+{/// <summary>
+/// 
+/// </summary>
+   public class UpdateMedicalInsuranceResidentSettlementParam
+    {
+        public Guid Id { get; set; }
         /// <summary>
-        /// 数据Id
+        /// 用户id
         /// </summary>
-        [Display(Name = "数据Id")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
-        public  string DataAllId { get; set; }
+        public string UserId { get; set; }
+        /// <summary>
+        /// 自费金额
+        /// </summary>
+        public decimal SelfPayFee { get; set; }
+        /// <summary>
+        /// 报销金额
+        /// </summary>
+        public decimal ReimbursementExpenses { get; set; }
 
-        public  string IdCard { get; set; }
     }
 }

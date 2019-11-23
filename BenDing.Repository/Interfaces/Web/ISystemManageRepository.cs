@@ -42,6 +42,6 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         Task<OrganizationGrade> QueryHospitalOrganizationGrade(string param);
-        int AddHospitalLog(AddHospitalLogParam param);
+        Task<int>  AddHospitalLog(AddHospitalLogParam param);
     }
 }

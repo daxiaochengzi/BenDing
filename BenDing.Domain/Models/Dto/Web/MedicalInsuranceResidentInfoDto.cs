@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace BenDing.Domain.Models.Dto.Web
-{
+{/// <summary>
+/// 医保病人信息
+/// </summary>
  public   class MedicalInsuranceResidentInfoDto
     {
         /// <summary>
@@ -54,6 +56,11 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 医保类型(居民，职工,异地)
         /// </summary>
         public  string InsuranceType { get; set; }
+        /// <summary>
+        /// 医保状态 (0:办理入院，1:办理结算出院)
+        /// </summary>
+
+        public int MedicalInsuranceState { get; set; }
 
 
 
