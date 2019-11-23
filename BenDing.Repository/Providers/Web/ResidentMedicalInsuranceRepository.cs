@@ -313,7 +313,7 @@ namespace BenDing.Repository.Providers.Web
                     }
                     else
                     {
-                        resultData.Count = queryData.Count;
+                     
                         var queryPairCodeParam = new QueryMedicalInsurancePairCodeParam()
                         {
                             DirectoryCodeList = queryData.Select(d => d.CostItemCode).Distinct().ToList(),
@@ -335,7 +335,9 @@ namespace BenDing.Repository.Providers.Web
                         var paramIni = await GetPrescriptionUploadParam(validDataList, queryPairCode, user, medicalInsurance.InsuranceType);
                         //医保住院号
                         paramIni.MedicalInsuranceHospitalizationNo = medicalInsurance.MedicalInsuranceHospitalizationNo;
+                       
                         int num = paramIni.RowDataList.Count;
+                        resultData.Count = num;//所有数据为已对码数据
                         int a = 0;
                         int limit = 2;//限制条数
                         var count = Convert.ToInt32(num / limit) + ((num % limit) > 0 ? 1 : 0);
@@ -346,7 +348,9 @@ namespace BenDing.Repository.Providers.Web
                             var rowDataListAll = paramIni.RowDataList.Where(d => !idList.Contains(d.Id)).OrderBy(c => c.PrescriptionSort).ToList();
                             var sendList = rowDataListAll.Take(limit).Select(s=>s.Id).ToList();
                             //新的数据上传参数
-                            var uploadDataParam = paramIni;
+                            var uploadDataParam = new PrescriptionUploadParam();
+                            uploadDataParam.MedicalInsuranceHospitalizationNo = paramIni.MedicalInsuranceHospitalizationNo;
+                            uploadDataParam.Operators = paramIni.Operators;
                             uploadDataParam.RowDataList = rowDataListAll.Where(c=> sendList.Contains(c.Id)).ToList();
                             var uploadData = await PrescriptionUploadData(uploadDataParam, param.BusinessId, user);
                             if (uploadData.PO_FHZ != "1")
@@ -355,7 +359,7 @@ namespace BenDing.Repository.Providers.Web
                             }
                             else
                             {
-                             
+
                                 //更新数据上传状态
                                 idList.AddRange(sendList);
                                 //获取总行数
