@@ -523,26 +523,33 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<int> UpdateHospitalizationFee(List<UpdateHospitalizationFeeParam> param, UserInfoDto user)
+        public async Task<int> UpdateHospitalizationFee(List<UpdateHospitalizationFeeParam> param, bool batchConfirmFail, UserInfoDto user)
         {
             int resultData = 0;
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
 
                 _sqlConnection.Open();
-                // var updateId = ListToStr(param.IdList.Select(c=>c.ToString()).ToList());
-
+               
                 if (param.Any())
                 {
                     string querySql = null;
-                    foreach (var item in param)
+                    if (batchConfirmFail == false)
                     {
-                        querySql +=
-                            $@" update [dbo].[HospitalizationFee] set [UploadMark]=1,BatchNumber='{item.BatchNumber}',UploadAmount={item.UploadAmount},
+                        foreach (var item in param)
+                        {
+                            querySql +=
+                               $@"update [dbo].[HospitalizationFee] set [UploadMark]=1,BatchNumber='{item.BatchNumber}',UploadAmount={item.UploadAmount},
                                TransactionId='{item.TransactionId}',UploadUserId='{user.UserId}',UploadUserName='{user.UserName}',UploadTime=GETDATE()
                                where id='{item.Id}' and IsDelete=0;";
+                        }
                     }
+                    else //更新批次确认失败
+                    {
+                        var updateId = CommonHelp.ListToStr(param.Select(c=>c.Id.ToString()).ToList());
+                        querySql = $"update [dbo].[HospitalizationFee] set [UploadMark]=0 where id in ({updateId});";
 
+                    }
                     resultData = await _sqlConnection.ExecuteAsync(querySql);
                 }
 

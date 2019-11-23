@@ -290,13 +290,23 @@ namespace BenDing.Repository.Providers.Web
                 {
                     queryParam.BusinessId = param.BusinessId;
                 }
+
                 //获取病人明细
-                queryData = await _baseSqlServerRepository.InpatientInfoDetailQuery(queryParam);
+                //queryData = await _baseSqlServerRepository.InpatientInfoDetailQuery(queryParam);
+                var batchConfirmParam = new BatchConfirmParam()
+                {
+                    ConfirmType = 1,
+                    MedicalInsuranceHospitalizationNo = "44116030",
+                    BatchNumber = "136412075",
+                    Operators = CommonHelp.GuidToStr(user.UserId)
+                };
+                var batchConfirmData = await BatchConfirm(batchConfirmParam);
+                queryData = null;
                 if (queryData.Any())
                 {
-                    var queryBusinessId = (!string.IsNullOrWhiteSpace(queryParam.BusinessId)) == true ? param.BusinessId : 
+                    var queryBusinessId = (!string.IsNullOrWhiteSpace(queryParam.BusinessId)) == true ? param.BusinessId :
                                         queryData.Select(c => c.BusinessId).FirstOrDefault();
-                    var medicalInsuranceParam = new QueryMedicalInsuranceResidentInfoParam(){BusinessId = queryBusinessId};
+                    var medicalInsuranceParam = new QueryMedicalInsuranceResidentInfoParam() { BusinessId = queryBusinessId };
                     //获取病人医保信息
                     var medicalInsurance = await _baseSqlServerRepository.QueryMedicalInsuranceResidentInfo(medicalInsuranceParam);
                     if (medicalInsurance == null && (!string.IsNullOrWhiteSpace(medicalInsurance.HisHospitalizationId)) == false)
@@ -343,10 +353,10 @@ namespace BenDing.Repository.Providers.Web
                         {//排除已上传数据
 
                             var rowDataListAll = paramIni.RowDataList.Where(d => !idList.Contains(d.Id)).OrderBy(c => c.PrescriptionSort).ToList();
-                            var sendList = rowDataListAll.Take(limit).Select(s=>s.Id).ToList();
+                            var sendList = rowDataListAll.Take(limit).Select(s => s.Id).ToList();
                             //新的数据上传参数
                             var uploadDataParam = paramIni;
-                            uploadDataParam.RowDataList = rowDataListAll.Where(c=> sendList.Contains(c.Id)).ToList();
+                            uploadDataParam.RowDataList = rowDataListAll.Where(c => sendList.Contains(c.Id)).ToList();
                             var uploadData = await PrescriptionUploadData(uploadDataParam, param.BusinessId, user);
                             if (uploadData.PO_FHZ != "1")
                             {
@@ -369,7 +379,6 @@ namespace BenDing.Repository.Providers.Web
                 return resultData;
             });
         }
-
         /// <summary>
         /// 处方数据上传
         /// </summary>
@@ -408,7 +417,7 @@ namespace BenDing.Repository.Providers.Web
                                 TransactionId = transactionId,
                                 UploadAmount = d.Amount
                             }).ToList();
-                            await _baseSqlServerRepository.UpdateHospitalizationFee(updateFeeParam, user);
+                            await _baseSqlServerRepository.UpdateHospitalizationFee(updateFeeParam,false, user);
                             //保存至基层
                             //var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(xmlStr);
                             //var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
@@ -423,6 +432,20 @@ namespace BenDing.Repository.Providers.Web
                             //saveXmlData.MedicalInsuranceCode = "31";
                             //saveXmlData.UserId = user.UserId;
                             //await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), user.UserId);
+                            var batchConfirmParam = new BatchConfirmParam()
+                            {
+                                ConfirmType=1,
+                                MedicalInsuranceHospitalizationNo= param.MedicalInsuranceHospitalizationNo,
+                                BatchNumber=data.ProjectBatch,
+                                Operators= CommonHelp.GuidToStr(user.UserId)
+                            };
+                            var batchConfirmData =await BatchConfirm(batchConfirmParam);
+                            //如果批次号确认失败,更新病人处方上传标示为 0(未上传)
+                            if (batchConfirmData == false)
+                            {
+                                await _baseSqlServerRepository.UpdateHospitalizationFee(updateFeeParam, true, user);
+                            }
+
                         }
 
                     }
@@ -437,8 +460,6 @@ namespace BenDing.Repository.Providers.Web
                 return data;
             });
         }
-
-
         /// <summary>
         /// 获取处方上传入参
         /// </summary>
@@ -485,7 +506,7 @@ namespace BenDing.Repository.Providers.Web
                             Amount = item.Amount,
                             ResidentSelfPayProportion = residentSelfPayProportion,//自付金额计算
                             Formulation = pairCodeData.Formulation,
-                            Dosage = (!string.IsNullOrWhiteSpace(item.Dosage))? CommonHelp.ValueToDouble(Convert.ToDecimal( item.Dosage)):0 ,
+                            Dosage = (!string.IsNullOrWhiteSpace(item.Dosage)) ? CommonHelp.ValueToDouble(Convert.ToDecimal(item.Dosage)) : 0,
                             UseFrequency = "0",
                             Usage = item.Usage,
                             Specification = item.Specification,
@@ -569,6 +590,33 @@ namespace BenDing.Repository.Providers.Web
 
                 msg = msg != "" ? msg + "金额超出限制等级" : "";
                 resultData.Add(msg, dataList);
+                return resultData;
+            });
+        }
+        /// <summary>
+        /// 批次确认
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        private async Task<bool> BatchConfirm(BatchConfirmParam param)
+        {
+            return await Task.Run(async () =>
+            {
+                var resultData = true;
+                var data = new PrescriptionUploadDto();
+                var xmlStr = XmlHelp.SaveXml(param);
+                if (xmlStr)
+                {
+                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB007");
+                    if (result == 1)
+                    {
+                        data = XmlHelp.DeSerializerModel(new PrescriptionUploadDto(), false);
+                        if (data.PO_FHZ != "1")
+                        {
+                            resultData = false;
+                        }
+                    }
+                }
                 return resultData;
             });
         }
