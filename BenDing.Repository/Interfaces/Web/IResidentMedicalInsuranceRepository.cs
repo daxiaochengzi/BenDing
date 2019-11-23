@@ -45,5 +45,11 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         Task<RetrunPrescriptionUploadDto> PrescriptionUpload(PrescriptionUploadUiParam param, UserInfoDto user);
+        /// <summary>
+        /// 费用预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task<HospitalizationPresettlementDto> HospitalizationPresettlement(HospitalizationPresettlementParam param);
     }
 }

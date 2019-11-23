@@ -19,28 +19,34 @@ namespace BenDing.Repository.Providers.Web
     public class ResidentMedicalInsuranceRepository : IResidentMedicalInsuranceRepository
     {
 
-        private IDataBaseHelpRepository _baseHelpRepository;
-        private IBaseSqlServerRepository _baseSqlServerRepository;
-        private ISystemManageRepository _iSystemManageRepository;
+       
+        private IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
+        private ISystemManageRepository _systemManageRepository;
         private IWebBasicRepository _webServiceBasic;
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hisSqlRepository"></param>
+        /// <param name="webBasicRepository"></param>
+        /// <param name="medicalInsuranceSqlRepository"></param>
+        /// <param name="systemManageRepository"></param>
         public ResidentMedicalInsuranceRepository(
-            IDataBaseHelpRepository iDataBaseHelpRepository,
+            IHisSqlRepository hisSqlRepository,
             IWebBasicRepository webBasicRepository,
-            IBaseSqlServerRepository baseSqlServerRepository,
-            ISystemManageRepository iSystemManageRepository
+            IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
+            ISystemManageRepository systemManageRepository
             )
         {
-            _baseHelpRepository = iDataBaseHelpRepository;
+           
             _webServiceBasic = webBasicRepository;
-            _baseSqlServerRepository = baseSqlServerRepository;
-            _iSystemManageRepository = iSystemManageRepository;
+            _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
+            _systemManageRepository = systemManageRepository;
         }
         public async Task Login(QueryHospitalOperatorParam param)
         {
             await Task.Run(async () =>
             {
-                var userInfo = await _iSystemManageRepository.QueryHospitalOperator(param);
+                var userInfo = await _systemManageRepository.QueryHospitalOperator(param);
 
                 var result = MedicalInsuranceDll.ConnectAppServer_cxjb(userInfo.MedicalInsuranceAccount, userInfo.MedicalInsurancePwd);
                 if (result != 1)
@@ -101,7 +107,7 @@ namespace BenDing.Repository.Providers.Web
 
                     };
                     //保存医保信息
-                    await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
+                    await _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
 
                     int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
                     if (result == 1)
@@ -126,7 +132,7 @@ namespace BenDing.Repository.Providers.Web
                         //存基层
                         await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), param.UserId);
                         //存中间库
-                        await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
+                        await _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
                     }
                     else
                     {
@@ -166,7 +172,10 @@ namespace BenDing.Repository.Providers.Web
                        saveXmlData.UserId = user.UserId;
                        await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), param.UserId);
                        var paramStr = "";
-                       var queryData = await _baseHelpRepository.QueryMedicalInsurance(user, param.BusinessId);
+                       var queryData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam {
+                       BusinessId= param.BusinessId,
+                       OrganizationCode= user.OrganizationCode
+                       });
                        if (!string.IsNullOrWhiteSpace(queryData.AdmissionInfoJson))
                        {
                            var data = JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailDto>(queryData.AdmissionInfoJson);
@@ -190,7 +199,7 @@ namespace BenDing.Repository.Providers.Web
                            IsModify = true,
                            MedicalInsuranceHospitalizationNo = queryData.MedicalInsuranceHospitalizationNo
                        };
-                       await _baseHelpRepository.SaveMedicalInsurance(user, saveData);
+                       await _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
                        //日志
                        var logParam = new AddHospitalLogParam();
                        logParam.UserId = user.UserId;
@@ -199,7 +208,7 @@ namespace BenDing.Repository.Providers.Web
                        logParam.JoinOrOldJson = queryData.AdmissionInfoJson;
                        logParam.ReturnOrNewJson = paramStr;
                        logParam.Remark = "医保入院登记修改";
-                       _iSystemManageRepository.AddHospitalLog(logParam);
+                       _systemManageRepository.AddHospitalLog(logParam);
                    }
 
                }
@@ -257,6 +266,31 @@ namespace BenDing.Repository.Providers.Web
             });
         }
         /// <summary>
+        /// 住院预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<HospitalizationPresettlementDto> HospitalizationPresettlement(HospitalizationPresettlementParam param)
+        {
+
+            return await Task.Run(async () =>
+            {
+                var data = new HospitalizationPresettlementDto();
+                var xmlStr = XmlHelp.SaveXml(param);
+                if (xmlStr)
+                {
+                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB009");
+                    if (result == 1)
+                    {
+                        data = XmlHelp.DeSerializerModel(new HospitalizationPresettlementDto(), true);
+                    }
+                }
+                return data;
+            });
+
+
+        }
+        /// <summary>
         /// 处方上传
         /// </summary>
         /// <param name="param"></param>
@@ -292,23 +326,14 @@ namespace BenDing.Repository.Providers.Web
                 }
 
                 //获取病人明细
-                //queryData = await _baseSqlServerRepository.InpatientInfoDetailQuery(queryParam);
-                var batchConfirmParam = new BatchConfirmParam()
-                {
-                    ConfirmType = 1,
-                    MedicalInsuranceHospitalizationNo = "44116030",
-                    BatchNumber = "136412075",
-                    Operators = CommonHelp.GuidToStr(user.UserId)
-                };
-                var batchConfirmData = await BatchConfirm(batchConfirmParam);
-                queryData = null;
+                queryData = await _medicalInsuranceSqlRepository.InpatientInfoDetailQuery(queryParam);
                 if (queryData.Any())
                 {
                     var queryBusinessId = (!string.IsNullOrWhiteSpace(queryParam.BusinessId)) == true ? param.BusinessId :
                                         queryData.Select(c => c.BusinessId).FirstOrDefault();
                     var medicalInsuranceParam = new QueryMedicalInsuranceResidentInfoParam() { BusinessId = queryBusinessId };
                     //获取病人医保信息
-                    var medicalInsurance = await _baseSqlServerRepository.QueryMedicalInsuranceResidentInfo(medicalInsuranceParam);
+                    var medicalInsurance = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(medicalInsuranceParam);
                     if (medicalInsurance == null && (!string.IsNullOrWhiteSpace(medicalInsurance.HisHospitalizationId)) == false)
                     {
                         if (!string.IsNullOrWhiteSpace(queryParam.BusinessId))
@@ -330,7 +355,7 @@ namespace BenDing.Repository.Providers.Web
                         };
                         //获取医保对码数据
                         var queryPairCode =
-                            await _baseSqlServerRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
+                            await _medicalInsuranceSqlRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
                         //处方上传数据金额验证
                         var validData = await PrescriptionDataUnitPriceValidation(queryData, queryPairCode, user);
                         var validDataList = validData.Values.FirstOrDefault();
@@ -417,7 +442,7 @@ namespace BenDing.Repository.Providers.Web
                                 TransactionId = transactionId,
                                 UploadAmount = d.Amount
                             }).ToList();
-                            await _baseSqlServerRepository.UpdateHospitalizationFee(updateFeeParam,false, user);
+                            await _medicalInsuranceSqlRepository.UpdateHospitalizationFee(updateFeeParam, false, user);
                             //保存至基层
                             //var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(xmlStr);
                             //var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
@@ -434,16 +459,16 @@ namespace BenDing.Repository.Providers.Web
                             //await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), user.UserId);
                             var batchConfirmParam = new BatchConfirmParam()
                             {
-                                ConfirmType=1,
-                                MedicalInsuranceHospitalizationNo= param.MedicalInsuranceHospitalizationNo,
-                                BatchNumber=data.ProjectBatch,
-                                Operators= CommonHelp.GuidToStr(user.UserId)
+                                ConfirmType = 1,
+                                MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
+                                BatchNumber = data.ProjectBatch,
+                                Operators = CommonHelp.GuidToStr(user.UserId)
                             };
-                            var batchConfirmData =await BatchConfirm(batchConfirmParam);
+                            var batchConfirmData = await BatchConfirm(batchConfirmParam);
                             //如果批次号确认失败,更新病人处方上传标示为 0(未上传)
                             if (batchConfirmData == false)
                             {
-                                await _baseSqlServerRepository.UpdateHospitalizationFee(updateFeeParam, true, user);
+                                await _medicalInsuranceSqlRepository.UpdateHospitalizationFee(updateFeeParam, true, user);
                             }
 
                         }
@@ -553,7 +578,7 @@ namespace BenDing.Repository.Providers.Web
                 var resultData = new Dictionary<string, List<QueryInpatientInfoDetailDto>>();
                 var dataList = new List<QueryInpatientInfoDetailDto>();
                 //获取医院等级
-                var grade = await _iSystemManageRepository.QueryHospitalOrganizationGrade(user.OrganizationCode);
+                var grade = await _systemManageRepository.QueryHospitalOrganizationGrade(user.OrganizationCode);
                 string msg = "";
                 foreach (var item in param)
                 {

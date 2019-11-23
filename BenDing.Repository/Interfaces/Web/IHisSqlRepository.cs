@@ -12,7 +12,7 @@ using BenDing.Domain.Models.Params.Web;
 
 namespace BenDing.Repository.Interfaces.Web
 {
-   public interface IDataBaseHelpRepository
+   public interface IHisSqlRepository
     {
         Task ChangeOrg(UserInfoDto userInfo, List<OrgDto> param);
         /// <summary>
@@ -27,14 +27,6 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         Task<int> DeleteCatalog(UserInfoDto user, int param);
-
-        /// <summary>
-        /// 医保信息查询
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        Task<Int32> QueryMedicalInsurance(string param);
-
         /// <summary>
         /// 删除医保信息
         /// </summary>
@@ -131,46 +123,9 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="user"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task SaveMedicalInsurance(UserInfoDto user, MedicalInsuranceDto param);
-        /// <summary>
-        /// 医保反馈数据保存
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        Task SaveMedicalInsuranceDataAll(MedicalInsuranceDataAllParam param);
-        /// <summary>
-        /// 医保反馈数据查询保存
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        Task<MedicalInsuranceDataAllDto> SaveMedicalInsuranceDataAllQuery(
-            MedicalInsuranceDataAllParamUIQueryParam param);
-        /// <summary>
-        /// 下载医保项目 DownloadD
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        Task<Int32> ProjectDownload(UserInfoDto user, List<ResidentProjectDownloadRowDataRowDto> param);
-        /// <summary>
-        /// 获取医保项目更新时间
-        /// </summary>
-        /// <returns></returns>
-       Task<string> ProjectDownloadTimeMax();
-       /// <summary>
-       ///  医保项目下载查询
-       /// </summary>
-       /// <param name="param"></param>
-       /// <returns></returns>
-       Task<Dictionary<int, List<ResidentProjectDownloadRow>>> QueryProjectDownload(
-            QueryProjectUiParam param);
-        /// <summary>
-        /// 病人医保信息查询
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="businessId"></param>
-        /// <returns></returns>
-       Task<QueryMedicalInsuranceDto> QueryMedicalInsurance(UserInfoDto user, string businessId);
+   
+     
+     
+     
     }
 }

@@ -16,17 +16,20 @@ namespace BenDing.Service.Providers
     {
         private IResidentMedicalInsuranceRepository _residentMedicalInsurance;
         private IWebBasicRepository _webServiceBasic;
-        private IDataBaseHelpRepository _baseHelpRepository;
+        private IHisSqlRepository _hisSqlRepository;
+        private IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
 
         public ResidentMedicalInsuranceService(
             IResidentMedicalInsuranceRepository insuranceRepository,
             IWebBasicRepository iWebServiceBasic,
-            IDataBaseHelpRepository iBaseHelpRepository
+            IHisSqlRepository hisSqlRepository,
+            IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository
             )
         {
             _residentMedicalInsurance = insuranceRepository;
             _webServiceBasic = iWebServiceBasic;
-            _baseHelpRepository = iBaseHelpRepository;
+            _hisSqlRepository = hisSqlRepository;
+            _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
         }
         public async Task<ResidentUserInfoDto> GetUserInfo(ResidentUserInfoParam param)
         {
@@ -48,7 +51,7 @@ namespace BenDing.Service.Providers
         //处方自动上传
         public async Task PrescriptionUploadAutomatic(PrescriptionUploadAutomaticParam param, UserInfoDto user)
         {//获取所有未传费用病人
-            var allPatients=  await  _baseHelpRepository.QueryAllHospitalizationPatients(param);
+            var allPatients=  await _hisSqlRepository.QueryAllHospitalizationPatients(param);
             if (allPatients.Any())
             { //根据组织机构分组
                 var organizationGroupBy = allPatients.Select(c => c.OrganizationCode).Distinct().ToList();
@@ -67,10 +70,6 @@ namespace BenDing.Service.Providers
 
                 }
             }
-            
-           //await _residentMedicalInsurance.HospitalizationRegister(param, user);
-
-
         }
         
         /// <summary>
@@ -84,7 +83,7 @@ namespace BenDing.Service.Providers
             var pageIni = param.Page;
             string resultData = "";
             param.QueryType = 1;
-            var updateTime=await  _baseHelpRepository.ProjectDownloadTimeMax();
+            var updateTime=await _medicalInsuranceSqlRepository.ProjectDownloadTimeMax();
             if (!string.IsNullOrWhiteSpace(updateTime)) param.UpdateTime = Convert.ToDateTime(updateTime).ToString("yyyyMMdd");
 
             var count = await _residentMedicalInsurance.ProjectDownloadCount(param);
@@ -99,7 +98,7 @@ namespace BenDing.Service.Providers
                 if (data != null && data.Row.Any())
                 {
                     allNum += data.Row.Count;
-                    await _baseHelpRepository.ProjectDownload(new UserInfoDto() { UserId = param.UserId }, data.Row);
+                    await _medicalInsuranceSqlRepository.ProjectDownload(new UserInfoDto() { UserId = param.UserId }, data.Row);
                 }
                 i ++;
             }

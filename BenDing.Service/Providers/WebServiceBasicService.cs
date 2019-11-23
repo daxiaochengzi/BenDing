@@ -15,21 +15,27 @@ namespace BenDing.Service.Providers
 {
     public class WebServiceBasicService : IWebServiceBasicService
     {
-        private IDataBaseHelpRepository _baseHelpRepository;
-        private IBaseSqlServerRepository _baseSqlServerRepository;
+        private IHisSqlRepository _hisSqlRepository;
+        private IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private IWebBasicRepository _webServiceBasic;
-        private ISystemManageRepository _iSystemManageRepository;
-
+        private ISystemManageRepository _systemManageRepository;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="iWebServiceBasic"></param>
+        /// <param name="hisSqlRepository"></param>
+        /// <param name="medicalInsuranceSqlRepository"></param>
+        /// <param name="iSystemManageRepository"></param>
         public WebServiceBasicService(IWebBasicRepository iWebServiceBasic,
-            IDataBaseHelpRepository dataBase,
-            IBaseSqlServerRepository iBaseSqlServerRepository,
+            IHisSqlRepository hisSqlRepository,
+            IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
             ISystemManageRepository iSystemManageRepository
         )
         {
             _webServiceBasic = iWebServiceBasic;
-            _baseHelpRepository = dataBase;
-            _baseSqlServerRepository = iBaseSqlServerRepository;
-            _iSystemManageRepository = iSystemManageRepository;
+            _hisSqlRepository = hisSqlRepository;
+            _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
+            _systemManageRepository = iSystemManageRepository;
         }
 
         /// <summary>
@@ -67,7 +73,7 @@ namespace BenDing.Service.Providers
             result = GetResultData(init, data);
             if (result.Any())
             {
-                await _baseHelpRepository.ChangeOrg(userInfo, result);
+                await _hisSqlRepository.ChangeOrg(userInfo, result);
                 resultData = result.Count;
             }
 
@@ -82,8 +88,8 @@ namespace BenDing.Service.Providers
         public async Task<string> GetCatalog(UserInfoDto user, CatalogParam param)
         {
 
-            var time = await _baseHelpRepository.GetTime(Convert.ToInt16(param.CatalogType));
-            await _baseHelpRepository.DeleteCatalog(user, Convert.ToInt16(param.CatalogType));
+            var time = await _hisSqlRepository.GetTime(Convert.ToInt16(param.CatalogType));
+            await _hisSqlRepository.DeleteCatalog(user, Convert.ToInt16(param.CatalogType));
             var timeNew = Convert.ToDateTime(time).ToString("yyyy-MM-dd HH:ss:mm") ??
                           DateTime.Now.AddYears(-40).ToString("yyyy-MM-dd HH:ss:mm");
             var oCatalogInfo = new CatalogInfoDto
@@ -119,7 +125,7 @@ namespace BenDing.Service.Providers
 
                 if (resultCatalogDto.Count > 1) //排除单条更新
                 {
-                    await _baseHelpRepository.AddCatalog(user, resultCatalogDto, param.CatalogType);
+                    await _hisSqlRepository.AddCatalog(user, resultCatalogDto, param.CatalogType);
                 }
 
 
@@ -137,7 +143,7 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public async Task<string> DeleteCatalog(UserInfoDto user, int catalog)
         {
-            var num = await _baseHelpRepository.DeleteCatalog(user, catalog);
+            var num = await _hisSqlRepository.DeleteCatalog(user, catalog);
             return "删除【" + (CatalogTypeEnum) catalog + "】 成功 " + num + "条";
         }
 
@@ -150,7 +156,7 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public async Task<string> GetICD10(UserInfoDto user, CatalogParam param)
         {
-            var time = await _baseHelpRepository.GetICD10Time();
+            var time = await _hisSqlRepository.GetICD10Time();
             var timeNew = Convert.ToDateTime(time).ToString("yyyy-MM-dd HH:ss:mm") ??
                           DateTime.Now.AddYears(-40).ToString("yyyy-MM-dd HH:ss:mm");
             var oICD10Info = new ICD10InfoParam
@@ -181,7 +187,7 @@ namespace BenDing.Service.Providers
                 if (resultCatalogDto.Any())
                 {
                     resultCatalogDtoList.AddRange(resultCatalogDto);
-                    await _baseHelpRepository.AddICD10(resultCatalogDto, user);
+                    await _hisSqlRepository.AddICD10(resultCatalogDto, user);
                     i = i + param.Nums;
                 }
             }
@@ -203,7 +209,7 @@ namespace BenDing.Service.Providers
             result = GetResultData(init, data);
             if (result.Any())
             {
-                await _baseHelpRepository.GetOutpatientPerson(user, result);
+                await _hisSqlRepository.GetOutpatientPerson(user, result);
             }
 
             return result;
@@ -226,7 +232,7 @@ namespace BenDing.Service.Providers
 
             if (result.Any())
             {
-                await _baseHelpRepository.GetOutpatientDetailPerson(user, result);
+                await _hisSqlRepository.GetOutpatientDetailPerson(user, result);
             }
 
             return result;
@@ -249,7 +255,7 @@ namespace BenDing.Service.Providers
                 resultData= result.FirstOrDefault(c => c.BusinessId == param.BusinessId);
                 if (param.IsSave == true)
                 {
-                    await _baseHelpRepository.GetInpatientInfo(param.User, resultData);
+                    await _hisSqlRepository.GetInpatientInfo(param.User, resultData);
                 }
 
 
@@ -258,11 +264,7 @@ namespace BenDing.Service.Providers
             return resultData;
         }
 
-        //public async Task<QueryInpatientInfoDto> QueryInpatientInfo(QueryInpatientInfoParam param)
-        //{
-        //    var data = await _baseHelpRepository.QueryInpatientInfo(param);
-        //    return data;
-        //}
+     
 
         /// <summary>
         /// 获取住院明细
@@ -281,7 +283,7 @@ namespace BenDing.Service.Providers
 
             if (result.Any())
             {
-                await _baseHelpRepository.SaveInpatientInfoDetail(user, result);
+                await _hisSqlRepository.SaveInpatientInfoDetail(user, result);
                 //  var msg = "获取住院号【" + resultFirst.住院号 + "】，业务ID【" + param.业务ID + "】的时间段内的住院费用成功，共" + result.Count +
                 //          "条记录";
             }
@@ -296,23 +298,23 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public async Task MedicalInsuranceSave(UserInfoDto user, MedicalInsuranceParam param)
         {
-            var num = await _baseHelpRepository.QueryMedicalInsurance(param.业务ID);
-            if (num == 0)
-            {
-                throw new Exception("数据库中未找到相应的住院业务ID的医保信息！");
-            }
-            else
-            {
-                var oResult = await _webServiceBasic.HIS_InterfaceListAsync("37",
-                    "{'验证码':'" + param.验证码 + "','业务ID':'" + param.业务ID + "'}", user.UserId);
-                if (oResult.Result == "1")
-                {
-                    throw new Exception("此业务ID已经报销过，在试图调用接口删除中心住院医保信息时异常。中心返回删除失败消息：" +
-                                        oResult.Msg.FirstOrDefault()?.ToString() + "！");
-                }
+           // var num = await _hisSqlRepository.QueryMedicalInsurance(param.业务ID);
+            //if (num == 0)
+            //{
+            //    throw new Exception("数据库中未找到相应的住院业务ID的医保信息！");
+            //}
+            //else
+            //{
+            //    var oResult = await _webServiceBasic.HIS_InterfaceListAsync("37",
+            //        "{'验证码':'" + param.验证码 + "','业务ID':'" + param.业务ID + "'}", user.UserId);
+            //    if (oResult.Result == "1")
+            //    {
+            //        throw new Exception("此业务ID已经报销过，在试图调用接口删除中心住院医保信息时异常。中心返回删除失败消息：" +
+            //                            oResult.Msg.FirstOrDefault()?.ToString() + "！");
+            //    }
 
-                var count = await _baseHelpRepository.DeleteMedicalInsurance(user, param.业务ID);
-            }
+            //    var count = await _hisSqlRepository.DeleteMedicalInsurance(user, param.业务ID);
+            //}
 
             List<MedicalInsuranceDto> result;
             var init = new MedicalInsuranceDto();
@@ -337,7 +339,7 @@ namespace BenDing.Service.Providers
             if (param.CheckLocal)
             {
 
-                var num = await _baseHelpRepository.QueryMedicalInsurance(param.业务ID);
+                var num = 0; //await _hisSqlRepository.QueryMedicalInsurance(param.业务ID);
                 if (num == 0)
                 {
                     var msg = "数据库中未找到相应的住院业务ID的医保信息！";
@@ -348,7 +350,7 @@ namespace BenDing.Service.Providers
                 "{'验证码':'" + param.验证码 + "','业务ID':'" + param.业务ID + "'}", user.UserId);
             if (resultData.Result == "1")
             {
-                var count = await _baseHelpRepository.DeleteMedicalInsurance(user, param.业务ID);
+                var count = await _hisSqlRepository.DeleteMedicalInsurance(user, param.业务ID);
             }
         }
 
@@ -367,7 +369,7 @@ namespace BenDing.Service.Providers
             {
                 result = GetResultData(init, resultData);
                 //保存基础信息
-                await _baseHelpRepository.SaveInformationInfo(user, result, param);
+                await _hisSqlRepository.SaveInformationInfo(user, result, param);
             }
 
             return result;
@@ -411,7 +413,7 @@ namespace BenDing.Service.Providers
             //        IdCard = param.IDCard,
 
             //    };
-            //    await _baseHelpRepository.SaveMedicalInsuranceDataAll(saveParam);
+            //    await _hisSqlRepository.SaveMedicalInsuranceDataAll(saveParam);
             //}
 
 
@@ -420,7 +422,7 @@ namespace BenDing.Service.Providers
 
         public async Task<UserInfoDto> GetUserBaseInfo(string param)
         {
-            var data = await _iSystemManageRepository.QueryHospitalOperator(new QueryHospitalOperatorParam()
+            var data = await _systemManageRepository.QueryHospitalOperator(new QueryHospitalOperatorParam()
                 {UserId = param});
             if (string.IsNullOrWhiteSpace(data.HisUserAccount))
             {
@@ -472,7 +474,7 @@ namespace BenDing.Service.Providers
         public async Task<int> ThreeCataloguePairCodeUpload(UserInfoDto user)
         {
             int resultData = 0;
-            var data = await _baseSqlServerRepository.ThreeCataloguePairCodeUpload(user.OrganizationCode);
+            var data = await _medicalInsuranceSqlRepository.ThreeCataloguePairCodeUpload(user.OrganizationCode);
             if (data.Any())
             {
                 var uploadDataRow = data.Select(c => new ThreeCataloguePairCodeUploadRowDto()
@@ -500,7 +502,7 @@ namespace BenDing.Service.Providers
                 };
                 await _webServiceBasic.HIS_InterfaceListAsync("35", JsonConvert.SerializeObject(uploadData),
                     user.UserId);
-                resultData = await _baseSqlServerRepository.UpdateThreeCataloguePairCodeUpload(user.OrganizationCode);
+                resultData = await _medicalInsuranceSqlRepository.UpdateThreeCataloguePairCodeUpload(user.OrganizationCode);
             }
 
             //限制用药
@@ -527,7 +529,12 @@ namespace BenDing.Service.Providers
         {
             var resultData = new QueryMedicalInsuranceDetailInfoDto();
             var userBase = await GetUserBaseInfo(param.UserId);
-            var queryData = await _baseHelpRepository.QueryMedicalInsurance(userBase, param.BusinessId);
+            var queryData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(
+                new QueryMedicalInsuranceResidentInfoParam() 
+                { 
+                 OrganizationCode= userBase.OrganizationCode,
+                 BusinessId= param.BusinessId
+                });
             if (!string.IsNullOrWhiteSpace(queryData.AdmissionInfoJson))
             {
                 var data = JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailDto>(queryData.AdmissionInfoJson);
@@ -550,7 +557,7 @@ namespace BenDing.Service.Providers
                     DirectoryType ="0"
                 };
                 //获取科室
-                var infoList = await _baseHelpRepository.QueryInformationInfo(queryParam);
+                var infoList = await _hisSqlRepository.QueryInformationInfo(queryParam);
                 if (infoList.Any())
                 {
                     resultData.InpatientDepartmentName = infoList.Where(c => c.FixedEncoding == data.InpatientDepartmentCode).Select(d=>d.DirectoryName).FirstOrDefault();
@@ -565,7 +572,7 @@ namespace BenDing.Service.Providers
                 });
                 if (!string.IsNullOrWhiteSpace(data.DiagnosisIcd10Two))
                 {
-                    var icd10Data = await _baseHelpRepository.QueryICD10(new QueryICD10UiParam() {DiseaseCoding= data.DiagnosisIcd10Two });
+                    var icd10Data = await _hisSqlRepository.QueryICD10(new QueryICD10UiParam() {DiseaseCoding= data.DiagnosisIcd10Two });
                     if (icd10Data.Any())
                     {
                         var Icd10Two = icd10Data.FirstOrDefault();
@@ -579,7 +586,7 @@ namespace BenDing.Service.Providers
                 }
                 if (!string.IsNullOrWhiteSpace(data.DiagnosisIcd10Three))
                 {
-                    var icd10Data = await _baseHelpRepository.QueryICD10(new QueryICD10UiParam() { DiseaseCoding = data.DiagnosisIcd10Three });
+                    var icd10Data = await _hisSqlRepository.QueryICD10(new QueryICD10UiParam() { DiseaseCoding = data.DiagnosisIcd10Three });
                     if (icd10Data.Any())
                     {
                         var Icd10Three = icd10Data.FirstOrDefault();

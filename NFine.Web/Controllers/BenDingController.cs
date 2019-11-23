@@ -22,9 +22,9 @@ namespace NFine.Web.Controllers
     public class BenDingController : BaseAsyncController
     {
         private IWebBasicRepository _webServiceBasic;
-        private IDataBaseHelpRepository _baseHelpRepository;
+        private IHisSqlRepository _hisSqlRepository;
         private IWebServiceBasicService _webServiceBasicService;
-        private IBaseSqlServerRepository _dataBaseSqlServerService;
+        private IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private ISystemManageRepository _systemManage;
         private IResidentMedicalInsuranceRepository _residentMedicalInsurance;
         private IResidentMedicalInsuranceService _residentService;
@@ -32,24 +32,27 @@ namespace NFine.Web.Controllers
         /// 
         /// </summary>
         /// <param name="insuranceRepository"></param>
-        /// <param name="iWebServiceBasicService"></param>
-        /// <param name="iDataBaseSqlServerService"></param>
-        /// <param name="iBaseHelpRepository"></param>
+        /// <param name="webServiceBasicService"></param>
+        /// <param name="medicalInsuranceSqlRepository"></param>
+        /// <param name="hisSqlRepository"></param>
+        /// <param name="manageRepository"></param>
+        /// <param name="iresidentService"></param>
+        /// <param name="webServiceBasic"></param>
         public BenDingController(IResidentMedicalInsuranceRepository insuranceRepository,
-            IWebServiceBasicService iWebServiceBasicService,
-            IBaseSqlServerRepository iDataBaseSqlServerService,
-            IDataBaseHelpRepository iBaseHelpRepository,
-            ISystemManageRepository iManageRepository,
-            IResidentMedicalInsuranceService IresidentService,
+            IWebServiceBasicService webServiceBasicService,
+            IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
+            IHisSqlRepository hisSqlRepository,
+            ISystemManageRepository manageRepository,
+            IResidentMedicalInsuranceService iresidentService,
             IWebBasicRepository webServiceBasic
             )
         {
-            _webServiceBasicService = iWebServiceBasicService;
-            _dataBaseSqlServerService = iDataBaseSqlServerService;
+            _webServiceBasicService = webServiceBasicService;
+            _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
             _residentMedicalInsurance = insuranceRepository;
-            _baseHelpRepository = iBaseHelpRepository;
-            _systemManage = iManageRepository;
-            _residentService = IresidentService;
+            _hisSqlRepository = hisSqlRepository;
+            _systemManage = manageRepository;
+            _residentService = iresidentService;
             _webServiceBasic = webServiceBasic;
         }
         #region 基层接口
@@ -166,7 +169,7 @@ namespace NFine.Web.Controllers
             return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
 
-                var data = await _baseHelpRepository.QueryICD10(param);
+                var data = await _hisSqlRepository.QueryICD10(param);
                 y.Data = data;
             }));
         }
@@ -229,7 +232,7 @@ namespace NFine.Web.Controllers
                         OrganizationCode = userBase.OrganizationCode,
                         DirectoryType= param.DirectoryType
                     };
-                    var data = await _baseHelpRepository.QueryInformationInfo(queryParam);
+                    var data = await _hisSqlRepository.QueryInformationInfo(queryParam);
                     y.Data = data;
                 }
             }), JsonRequestBehavior.AllowGet);
@@ -244,7 +247,7 @@ namespace NFine.Web.Controllers
         {
             return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
            {
-               var data = await _dataBaseSqlServerService.QueryMedicalInsuranceResidentInfo(param);
+               var data = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(param);
                y.Data = data;
 
            }));
@@ -364,9 +367,9 @@ namespace NFine.Web.Controllers
             var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 if (verificationCode != null)
                 {
-                  var   inpatientData= await _baseHelpRepository.QueryInpatientInfo(new QueryInpatientInfoParam() { BusinessId = param.BusinessId });
-                       
-                        var InpatientInfoDetail = new InpatientInfoDetailParam()
+                    var   inpatientData= await _hisSqlRepository.QueryInpatientInfo(new QueryInpatientInfoParam() { BusinessId = param.BusinessId });
+                     
+                    var InpatientInfoDetail = new InpatientInfoDetailParam()
                         {
                             AuthCode = verificationCode.AuthCode,
                             HospitalizationNo = inpatientData.HospitalizationNo,
@@ -384,36 +387,6 @@ namespace NFine.Web.Controllers
             }), JsonRequestBehavior.AllowGet);
 
         }
-        ///// <summary>
-        ///// 获取门诊病人
-        ///// </summary>
-        ///// <returns></returns>
-        //[System.Web.Mvc.HttpGet]
-        //public async Task<ActionResult> GetOutpatientPerson()
-        //{
-        //    return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
-        //   {
-        //       var verificationCode = await _webServiceBasicService.GetUserBaseInfo("");
-        //       if (verificationCode != null)
-        //       {
-        //           var outPatient = new OutpatientParam()
-        //           {
-        //               验证码 = verificationCode.AuthCode,
-        //               机构编码 = verificationCode.OrganizationCode,
-        //               身份证号码 = "511526199610225518",
-        //               开始时间 = "2019-04-27 11:09:00",
-        //               结束时间 = "2020-04-27 11:09:00",
-
-        //           };
-        //           var inputInpatientInfoData = await _webServiceBasicService.GetOutpatientPerson(verificationCode, outPatient);
-        //           if (inputInpatientInfoData.Any())
-        //           {
-        //               y.Data = inputInpatientInfoData;
-        //           }
-        //       }
-
-        //   }), JsonRequestBehavior.AllowGet);
-        //}
         /// <summary>
         /// 获取门诊病人明细
         /// </summary>
@@ -538,7 +511,7 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var queryData = await _baseHelpRepository.QueryCatalog(param);
+                var queryData = await _hisSqlRepository.QueryCatalog(param);
                 var data = new
                 {
                     data = queryData.Values.FirstOrDefault(),
@@ -561,7 +534,7 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-                var queryData = await _baseHelpRepository.QueryProjectDownload(param);
+                var queryData = await _medicalInsuranceSqlRepository.QueryProjectDownload(param);
                
 
                 var data = new
@@ -593,7 +566,7 @@ namespace NFine.Web.Controllers
                 {
                     param.OrganizationCode = userBase.OrganizationCode;
                     param.OrganizationName = userBase.OrganizationName;
-                    await _dataBaseSqlServerService.MedicalInsurancePairCode(param);
+                    await _medicalInsuranceSqlRepository.MedicalInsurancePairCode(param);
                     y.Data = param;
                 }
             });
@@ -612,7 +585,7 @@ namespace NFine.Web.Controllers
                 var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 param.OrganizationCode = verificationCode.OrganizationCode;
                 param.State = 0;
-                var queryData = await _dataBaseSqlServerService.DirectoryComparisonManagement(param);
+                var queryData = await _medicalInsuranceSqlRepository.DirectoryComparisonManagement(param);
                 var data = new
                 {
                     data = queryData.Values.FirstOrDefault(),
@@ -795,6 +768,26 @@ namespace NFine.Web.Controllers
             return Json(resultData);
         }
         /// <summary>
+        /// 住院清单查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> QueryHospitalizationFee(QueryHospitalizationFeeUiParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+                var queryData = await _hisSqlRepository.QueryHospitalizationFee(param);
+                var data = new
+                {
+                    data = queryData.Values.FirstOrDefault(),
+                    count = queryData.Keys.FirstOrDefault()
+                };
+                y.Data = data;
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
         /// 处方上传
         /// </summary>
         /// <returns></returns>
@@ -873,21 +866,30 @@ namespace NFine.Web.Controllers
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
         /// <summary>
-        /// 住院清单查询
+        /// 医保住院费用预结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> QueryHospitalizationFee(QueryHospitalizationFeeUiParam param)
+        public async Task<ActionResult> HospitalizationPresettlement(HospitalizationPresettlementUiParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {
-                var queryData = await _baseHelpRepository.QueryHospitalizationFee(param);
-                var data = new
-                {
-                    data = queryData.Values.FirstOrDefault(),
-                    count = queryData.Keys.FirstOrDefault()
+            {   //获取操作人员信息
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+                { 
+                  BusinessId= param.BusinessId,
+                  OrganizationCode= userBase.OrganizationCode
                 };
+                //获取医保病人信息
+                var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+                var presettlementParam = new HospitalizationPresettlementParam()
+                {
+                    MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                    LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
+                };
+
+                var data = await _residentMedicalInsurance.HospitalizationPresettlement(presettlementParam);
                 y.Data = data;
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);

@@ -18,7 +18,7 @@ namespace BenDing.Domain.Models.Params.Web
         /// <summary>
         /// 组织机构
         /// </summary>
-        public string OrgCode { get; set; }
+        public string OrganizationCode { get; set; }
         
     }
 }

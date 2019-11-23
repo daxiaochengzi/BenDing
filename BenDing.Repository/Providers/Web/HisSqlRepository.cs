@@ -20,16 +20,16 @@ using NFine.Code;
 
 namespace BenDing.Repository.Providers.Web
 {
-    public class DataBaseHelpRepository : IDataBaseHelpRepository
+    public class HisSqlRepository : IHisSqlRepository
     {
-        private IBaseSqlServerRepository _baseSqlServerRepository;
+        private IMedicalInsuranceSqlRepository _baseSqlServerRepository;
         private ISystemManageRepository _iSystemManageRepository;
         private string _connectionString;
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="conStr"></param>   
-        public DataBaseHelpRepository(IBaseSqlServerRepository iBaseSqlServerRepository, ISystemManageRepository ImanageRepository)
+        public HisSqlRepository(IMedicalInsuranceSqlRepository iBaseSqlServerRepository, ISystemManageRepository ImanageRepository)
         {
             _baseSqlServerRepository = iBaseSqlServerRepository;
             _iSystemManageRepository = ImanageRepository;
@@ -188,73 +188,7 @@ namespace BenDing.Repository.Providers.Web
             return resultData;
 
         }
-        /// <summary>
-        /// 医保中心端
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task<Dictionary<int,List<ResidentProjectDownloadRow>>> QueryProjectDownload(QueryProjectUiParam param)
-        {
-            var dataList = new List<ResidentProjectDownloadRow>();
-            var resultData = new Dictionary<int, List<ResidentProjectDownloadRow>>();
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-            {
-                _sqlConnection.Open();
-                string querySql = @"
-                             select [Id],[ProjectCode],[ProjectName],[ProjectCodeType],Unit,MnemonicCode,Formulation,ProjectLevel,
-                             Manufacturer,QuasiFontSize,Specification,Remark,NewCodeMark,NewUpdateTime from [dbo].[MedicalInsuranceProject] 
-                             where  IsDelete=0";
-                string countSql = @"select count(*) from [dbo].[MedicalInsuranceProject] where  IsDelete=0";
-                string whereSql = "";
-                if (!string.IsNullOrWhiteSpace(param.ProjectCodeType))
-                {   //西药
-                    if (param.ProjectCodeType == "1")
-                    {
-                        whereSql += $" and ProjectCodeType in('11','91','92')";
-                    }//中药
-                    if (param.ProjectCodeType == "0")
-                    {
-                        whereSql += $" and ProjectCodeType in('12','13','91','92')";
-                    }//耗材
-                    if (param.ProjectCodeType == "3")
-                    {
-                        whereSql += $" and ProjectCodeType in('41','81','91','92')";
-                    }
 
-                    if (param.ProjectCodeType == "2")
-                    {
-                        whereSql += $" and ProjectCodeType not in('11','12','13','41','81','91','92')";
-                    }
-                }
-                if (!string.IsNullOrWhiteSpace(param.ProjectCode))
-                {
-                    whereSql += $" and ProjectCode='{param.ProjectCode}'";
-                }
-                if (!string.IsNullOrWhiteSpace(param.ProjectName))
-                {
-                    whereSql += "  and ProjectName like '" + param.ProjectName + "%'";
-                }
-                if (param.Limit != 0 && param.Page > 0)
-                {
-                    var skipCount = param.Limit * (param.Page - 1);
-                    querySql += whereSql + " order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.Limit + " ROWS ONLY;";
-                }
-                string executeSql = countSql + whereSql + ";" + querySql;
-
-                var result = await _sqlConnection.QueryMultipleAsync(executeSql);
-
-                int totalPageCount = result.Read<int>().FirstOrDefault();
-                dataList = (from t in result.Read<ResidentProjectDownloadRow>()
-                            select t).ToList();
-                resultData.Add(totalPageCount, dataList);
-                _sqlConnection.Close();
-
-            }
-
-
-            return resultData;
-
-        }
         /// <summary>
         /// 删除三大目录
         /// </summary>
@@ -697,19 +631,6 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
-        public async Task<int> UpdateInpatientInfoDetail(UpdateInpatientInfoDetail param)
-        {
-            int count = 0;
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-            {
-                //update [dbo].[住院费用] set [DataState]=1,update_time=GETDATE(),[UpdateUserId]= where [费用明细ID]='' and [机构编码]=''
-                _sqlConnection.Open();
-                count = await _sqlConnection.ExecuteAsync("");
-                _sqlConnection.Close();
-            }
-
-            return count;
-        }
         /// <summary>
         /// 获取住院病人
         /// </summary>
@@ -810,175 +731,7 @@ namespace BenDing.Repository.Providers.Web
 
 
         }
-        /// <summary>
-        /// 医保信息查询
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task<Int32> QueryMedicalInsurance(string param)
-        {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-            {
-                _sqlConnection.Open();
-                string strSql = $"select  COUNT(*) from [dbo].[住院医保信息] where [业务ID]={param} and IsDelete=0";
-                var counts = await _sqlConnection.ExecuteAsync(strSql);
-                _sqlConnection.Close();
-                return counts;
-
-            }
-        }
-        /// <summary>
-        /// 医保信息保存
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task SaveMedicalInsurance(UserInfoDto user, MedicalInsuranceDto param)
-        {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-            {
-                _sqlConnection.Open();
-                string insertSql = null;
-                if (!string.IsNullOrWhiteSpace(param.MedicalInsuranceHospitalizationNo) == true && param.IsModify == false)
-                {
-                    insertSql = $@"update [dbo].[MedicalInsurance] set MedicalInsuranceYearBalance={param.MedicalInsuranceYearBalance},
-                    MedicalInsuranceHospitalizationNo='{param.MedicalInsuranceHospitalizationNo}',IsDelete=0
-                    where [Id]='{param.Id}'";
-                }
-                else if (param.IsModify)
-                {  
-                    insertSql = $@"update [dbo].[MedicalInsurance] set [MedicalInsuranceYearBalance]=0,
-                    AdmissionInfoJson='{param.AdmissionInfoJson}',[IsDelete]=0,
-                    where [Id]='{param.Id}' and OrganizationCode='{user.OrganizationCode}'";
-                }
-                else
-                {
-                    insertSql = $@"INSERT INTO [dbo].[MedicalInsurance]([Id],[HisHospitalizationId],[InsuranceNo],[MedicalInsuranceYearBalance]
-                               ,[AdmissionInfoJson],[ReimbursementExpenses] ,[SelfPayFee],[OtherInfo] 
-		                       ,[CreateTime],[IsDelete] ,OrganizationCode,CreateUserId,OrganizationName,InsuranceType)
-                           VALUES('{param.Id}', '{param.HisHospitalizationId}','{param.InsuranceNo}', {param.MedicalInsuranceYearBalance},'{param.AdmissionInfoJson}',
-                                 {param.ReimbursementExpenses},{param.SelfPayFee},'{param.OtherInfo}',
-                                GETDATE(),1,'{user.OrganizationCode}','{user.UserId}','{user.OrganizationName }',{param.InsuranceType});";
-                    insertSql = $"update [dbo].[MedicalInsurance] set [IsDelete]=1,DeleteUserId='{user.UserId}',DeleteTime=GETDATE() where [HisHospitalizationId]='{param.HisHospitalizationId}';" + insertSql;
-
-                }
-                //var log = LogFactory.GetLogger("ini".GetType().ToString());
-                //log.Debug(insertSql);
-              var num= await _sqlConnection.ExecuteAsync(insertSql);
-             
-            }
-        }
-        public async Task<QueryMedicalInsuranceDto> QueryMedicalInsurance(UserInfoDto user, string businessId)
-        {
-            var resultData = new QueryMedicalInsuranceDto();
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-            {
-                _sqlConnection.Open();
-                string querySql = $@"select a.[Id],a.[AdmissionInfoJson],a.HisHospitalizationId,a.MedicalInsuranceHospitalizationNo,a.InsuranceType from [dbo].[MedicalInsurance] as a
-                                inner join [dbo].[inpatient] as b on
-                                a.HisHospitalizationId=b.FixedEncoding
-                                where a.IsDelete=0 and b.IsDelete=0
-                                and b.BusinessId='{businessId}' and a.OrganizationCode='{user.OrganizationCode}'";
-                var data = await _sqlConnection.QueryFirstOrDefaultAsync<QueryMedicalInsuranceDto>(querySql);
-                if (data != null) resultData = data;
-                _sqlConnection.Close();
-                return resultData;
-
-            }
-        }
-        /// <summary>
-        ///  医保反馈数据保存
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task SaveMedicalInsuranceDataAll(MedicalInsuranceDataAllParam param)
-        {
-
-
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-            {
-
-                _sqlConnection.Open();
-
-                IDbTransaction transaction = _sqlConnection.BeginTransaction();
-                try
-                {
-
-                    string strSql =
-                        $@"update MedicalInsuranceDataAll set DeleteTime=GETDATE(),DeleteUserId='{param.CreateUserId}' where  DeleteTime is  null and DataId='{param.DataId}' and BusinessId='{param.BusinessId}'";
-                    var num = await _sqlConnection.ExecuteAsync(strSql, null, transaction);
-                    string insertSql = $@"INSERT INTO [dbo].[MedicalInsuranceDataAll]
-                   ([DataAllId]
-                   ,[ParticipationJson]
-                   ,[ResultDataJson]
-                   ,[DataType]
-                   ,[DataId]
-                   ,[Remark]
-                   ,[CreateUserId]
-                   ,[create_time]
-                   ,BusinessId
-                   ,HisMedicalInsuranceId
-                   ,OrgCode
-                   ,IDCard
-                    )
-                VALUES ('{param.DataAllId}','{param.ParticipationJson}','{param.ResultDataJson}','{param.DataType}','{param.DataId}'
-                        , '{param.Remark}','{param.CreateUserId}', GETDATE(),'{param.BusinessId}'
-                        ,'{param.HisMedicalInsuranceId}','{param.OrgCode}','{param.IdCard}')";
-                    var nums = await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-
-                    transaction.Rollback();
-                    throw new Exception(exception.Message);
-                }
-                _sqlConnection.Close();
-            }
-
-        }
-        /// <summary>
-        ///  医保反馈数据查询
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task<MedicalInsuranceDataAllDto> SaveMedicalInsuranceDataAllQuery(MedicalInsuranceDataAllParamUIQueryParam param)
-        {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-            {
-                var resultData = new MedicalInsuranceDataAllDto();
-                _sqlConnection.Open();
-                string strSql = $@"
-                SELECT [DataAllId]
-                      ,[ParticipationJson]
-                      ,[ResultDataJson]
-                      ,[DataType]
-                      ,[DataId]
-                      ,[HisMedicalInsuranceId]
-                      ,[BusinessId]
-                      ,[Remark]
-                      ,[CreateUserId]
-                      ,[create_time]
-                      ,[DeleteTime]
-                      ,[OrgCode]
-                      ,[DeleteUserId]
-                  FROM [dbo].[MedicalInsuranceDataAll] where DataId='{param.DataId}' and  DataType='{param.DataType}' and OrgCode='{param.OrgCode}' and BusinessId='{param.BusinessId}' and  DeleteTime is  null";
-                var data = await _sqlConnection.QueryFirstOrDefaultAsync<MedicalInsuranceDataAllDto>(strSql);
-                return data ?? resultData;
-
-
-            }
-
-
-        }
-        /// <summary>
-        /// 业务ID
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
+ 
         public async Task<Int32> DeleteMedicalInsurance(UserInfoDto user, string param)
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
@@ -1060,73 +813,7 @@ namespace BenDing.Repository.Providers.Web
                 return resultData;
             }
         }
-        /// <summary>
-        /// 医保项目下载
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task<Int32> ProjectDownload(UserInfoDto user, List<ResidentProjectDownloadRowDataRowDto> param)
-        {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-            {
-                int result = 0;
 
-                _sqlConnection.Open();
-                if (param.Any())
-                {
-                    var projectCodeList = CommonHelp.ListToStr(param.Select(c => c.ProjectCode).ToList());
-                   
-                    string insertSql = null;
-                    foreach (var item in param)
-                    {//判断日期格式是否正确
-                        var projectName = FilteSqlStr(item.ProjectName);
-                        insertSql += $@"INSERT INTO [dbo].[MedicalInsuranceProject]
-                           (id,[ProjectCode],[ProjectName] ,[ProjectCodeType] ,[ProjectLevel],[WorkersSelfPayProportion]
-                           ,[Unit],[MnemonicCode] ,[Formulation],[ResidentSelfPayProportion],[RestrictionSign]
-                           ,[ZeroBlock],[OneBlock],[TwoBlock],[ThreeBlock],[FourBlock],[EffectiveSign],[ResidentOutpatientSign]
-                           ,[ResidentOutpatientBlock],[Manufacturer] ,[QuasiFontSize] ,[Specification],[Remark],[NewCodeMark]
-                           ,[NewUpdateTime],[StartTime] ,[EndTime],[LimitPaymentScope],[CreateTime],[CreateUserId],[IsDelete]
-                           )
-                          VALUES('{Guid.NewGuid()}','{item.ProjectCode}','{projectName}','{item.ProjectCodeType}','{item.ProjectLevel}',{CommonHelp.ValueToDecimal(item.WorkersSelfPayProportion)}
-                                  ,'{item.Unit}','{item.MnemonicCode}', '{item.Formulation}',{CommonHelp.ValueToDecimal(item.ResidentSelfPayProportion)},'{item.RestrictionSign}'
-                                  ,{CommonHelp.ValueToDecimal(item.ZeroBlock)},{CommonHelp.ValueToDecimal(item.OneBlock)},{CommonHelp.ValueToDecimal(item.TwoBlock)},{CommonHelp.ValueToDecimal(item.ThreeBlock)},{CommonHelp.ValueToDecimal(item.FourBlock)},'{item.EffectiveSign}','{item.ResidentOutpatientSign}'
-                                  ,{CommonHelp.ValueToDecimal(item.ResidentOutpatientBlock)},'{item.Manufacturer}','{item.QuasiFontSize}','{item.Specification}','{item.Remark}','{item.NewCodeMark}'
-                                  ,'{ DateTime.ParseExact(item.NewUpdateTime, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture).ToString("yyyy-MM-dd HH:mm:ss")}',
-                                  NULL,NULL,'{item.LimitPaymentScope}',GETDATE(),'{user.UserId}',0
-                               );";
-                    }
-                    result = await _sqlConnection.ExecuteAsync(insertSql);
-                }
-                return result;
-            }
-        }
-        /// <summary>
-        /// 获取更新最新时间
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task<string> ProjectDownloadTimeMax()
-        {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-            {
-                _sqlConnection.Open();
-                string insertSql = "select max(NewUpdateTime) from [dbo].[MedicalInsuranceProject]";
-                string result = await _sqlConnection.QueryFirstOrDefault(insertSql);
-                _sqlConnection.Close();
-                return result;
-            }
-        }
-        /// <summary>  
-        /// 根据GUID获取19位的唯一数字序列  
-        /// </summary>  
-        /// <returns></returns>  
-        private long GuidToLongID()
-        {
-            //byte[] buffer = Guid.NewGuid().ToByteArray();
-            return BitConverter.ToInt64(Guid.NewGuid().ToByteArray(), 0);
-        }
         private decimal GetBlockPrice(QueryMedicalInsurancePairCodeDto param, OrganizationGrade grade)
         {
             decimal resultData = 0;
@@ -1147,20 +834,6 @@ namespace BenDing.Repository.Providers.Web
             if (residentInfo.InsuranceType == "310") resultData = param.WorkersSelfPayProportion;
             return resultData;
         }
-        public string FilteSqlStr(string Str)
-        {
-
-            Str = Str.Replace("'", "");
-            Str = Str.Replace("\"", "");
-            Str = Str.Replace("&", "&amp");
-            Str = Str.Replace("<", "&lt");
-            Str = Str.Replace(">", "&gt");
-
-            Str = Str.Replace("delete", "");
-            Str = Str.Replace("update", "");
-            Str = Str.Replace("insert", "");
-
-            return Str;
-        }
+      
     }
 }

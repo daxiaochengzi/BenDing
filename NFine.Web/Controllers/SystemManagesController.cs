@@ -17,9 +17,9 @@ namespace NFine.Web.Controllers
     /// </summary>
     public class SystemManagesController : Controller
     {
-        private IDataBaseHelpRepository _baseHelpRepository;
+        private IHisSqlRepository _baseHelpRepository;
         private IWebServiceBasicService _webServiceBasicService;
-        private IBaseSqlServerRepository _dataBaseSqlServerService;
+        private IMedicalInsuranceSqlRepository _dataBaseSqlServerService;
         private ISystemManageRepository _systemManage;
         private IResidentMedicalInsuranceRepository _residentMedicalInsurance;
         /// <summary>
@@ -32,8 +32,8 @@ namespace NFine.Web.Controllers
         /// <param name="iManageRepository"></param>
         public SystemManagesController(IResidentMedicalInsuranceRepository insuranceRepository,
             IWebServiceBasicService iWebServiceBasicService,
-            IBaseSqlServerRepository iDataBaseSqlServerService,
-            IDataBaseHelpRepository iBaseHelpRepository,
+            IMedicalInsuranceSqlRepository iDataBaseSqlServerService,
+            IHisSqlRepository iBaseHelpRepository,
             ISystemManageRepository iManageRepository
         )
         {

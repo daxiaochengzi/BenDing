@@ -55,14 +55,14 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\Web\IBaseSqlServerRepository.cs" />
-    <Compile Include="Interfaces\Web\IDataBaseHelpRepository.cs" />
+    <Compile Include="Interfaces\Web\IMedicalInsuranceSqlRepository.cs" />
+    <Compile Include="Interfaces\Web\IHisSqlRepository.cs" />
     <Compile Include="Interfaces\Web\IResidentMedicalInsuranceRepository.cs" />
     <Compile Include="Interfaces\Web\ISystemManageRepository.cs" />
     <Compile Include="Interfaces\Web\IWebBasicRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Providers\Web\BaseSqlServerRepository.cs" />
-    <Compile Include="Providers\Web\DataBaseHelpRepository.cs" />
+    <Compile Include="Providers\Web\MedicalInsuranceSqlRepository.cs" />
+    <Compile Include="Providers\Web\HisSqlRepository.cs" />
     <Compile Include="Providers\Web\ResidentMedicalInsuranceRepository.cs" />
     <Compile Include="Providers\Web\SystemManageRepository.cs" />
     <Compile Include="Providers\Web\WebBasicRepository.cs" />

@@ -51,6 +51,7 @@
     <Compile Include="Models\Dto\Base\PaginationDto.cs" />
     <Compile Include="Models\Dto\Base\PaginationUserDto.cs" />
     <Compile Include="Models\Dto\Resident\DirectoryComparisonManagementDto.cs" />
+    <Compile Include="Models\Dto\Resident\HospitalizationPresettlementDto.cs" />
     <Compile Include="Models\Dto\Resident\IniXmlDto.cs" />
     <Compile Include="Models\Dto\Resident\PrescriptionUploadDto.cs" />
     <Compile Include="Models\Dto\Resident\ProjectDownloadCountDto.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Models\Params\Resident\AddProjectBatchParam.cs" />
     <Compile Include="Models\Params\Resident\BatchConfirmParam.cs" />
     <Compile Include="Models\Params\Resident\HospitalizationModifyParam.cs" />
+    <Compile Include="Models\Params\Resident\HospitalizationPresettlementParam.cs" />
     <Compile Include="Models\Params\Resident\PrescriptionUploadAutomaticParam.cs" />
     <Compile Include="Models\Params\Resident\PrescriptionUploadParam.cs" />
     <Compile Include="Models\Params\Resident\QueryMedicalInsurancePairCodeParam.cs" />
@@ -91,6 +93,7 @@
     <Compile Include="Models\Params\UI\AddHospitalOrganizationGradeUiParam.cs" />
     <Compile Include="Models\Params\UI\DirectoryComparisonManagementUiParam.cs" />
     <Compile Include="Models\Params\UI\GetInformationUiParam.cs" />
+    <Compile Include="Models\Params\UI\HospitalizationPresettlementUiParam.cs" />
     <Compile Include="Models\Params\UI\HospitalizationRegisterCancelUi.cs" />
     <Compile Include="Models\Params\UI\InpatientInfosUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalDirectoryCodePairUiParam.cs" />
