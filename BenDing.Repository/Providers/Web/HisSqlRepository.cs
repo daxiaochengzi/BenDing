@@ -311,9 +311,9 @@ namespace BenDing.Repository.Providers.Web
 
                 string strSql = $"select  [id],[DiseaseCoding],[DiseaseName] ,[MnemonicCode],[Remark] ,DiseaseId from [dbo].[ICD10]  where IsDelete=0";
                 string regexstr = @"[\u4e00-\u9fa5]";
-                if (string.IsNullOrWhiteSpace(param.DiseaseCoding))
+                if (!string.IsNullOrWhiteSpace(param.DiseaseCoding))
                 {
-                    strSql += $" and DiseaseCoding = '{param.DiseaseCoding}'";
+                    strSql += $" and DiseaseCoding ='{param.DiseaseCoding}'";
                 }
                 else
                 {

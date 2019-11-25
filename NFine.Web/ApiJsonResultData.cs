@@ -135,7 +135,7 @@ namespace NFine.Web
 
         public static ApiJsonResultData RunWithTry(this ApiJsonResultData jsonResultEntry, Action<ApiJsonResultData> runMethod)
         {
-            string Is_day ="[" +DateTime.Now.Date.ToString("yyyy-MM-dd HH:mm:ss")+"] ";
+            string Is_day ="[" +DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+"] ";
 
             var log = LogFactory.GetLogger("ini".GetType().ToString());
 
@@ -166,7 +166,7 @@ namespace NFine.Web
         /// <returns></returns>
         public static async Task<ApiJsonResultData> RunWithTryAsync(this ApiJsonResultData jsonResultEntry, Func<ApiJsonResultData, Task> runMethod)
         {
-            string Is_day = "[" + DateTime.Now.Date.ToString("yyyy-MM-dd HH:mm:ss") + "] ";
+            string Is_day = "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] ";
             var log = LogFactory.GetLogger("ini".GetType().ToString());
             try
             {
