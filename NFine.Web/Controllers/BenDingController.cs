@@ -891,7 +891,7 @@ namespace NFine.Web.Controllers
                         //获取住院病人
                         var InpatientInfoData = await _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
                         //医保登录
-                        //await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                        await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                         var presettlementParam = new LeaveHospitalSettlementParam()
                         {
                             MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
