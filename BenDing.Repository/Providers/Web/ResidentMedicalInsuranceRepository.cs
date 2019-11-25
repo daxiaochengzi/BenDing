@@ -324,7 +324,7 @@ namespace BenDing.Repository.Providers.Web
                 var xmlStr = XmlHelp.SaveXml(param);
                 if (xmlStr)
                 {
-                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB010");
+                    int result = 1;//MedicalInsuranceDll.CallService_cxjb("CXJB010");
                     if (result == 1)
                     {
                         data = XmlHelp.DeSerializerModel(new HospitalizationPresettlementDto(), true);

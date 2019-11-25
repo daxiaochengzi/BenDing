@@ -215,7 +215,6 @@ namespace NFine.Web.Controllers
                 }
             }), JsonRequestBehavior.AllowGet);
         }
-
         /// <summary>
         /// 查询HIS系统中科室、医师、病区、床位的基本信息
         /// </summary>
@@ -467,7 +466,6 @@ namespace NFine.Web.Controllers
 
             }), JsonRequestBehavior.AllowGet);
         }
-
         /// <summary>
         /// 基层入院登记取消
         /// </summary>
@@ -823,7 +821,6 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
-
                 var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 await _residentService.PrescriptionUploadAutomatic(new PrescriptionUploadAutomaticParam() 
                                        { IsTodayUpload= param.IsTodayUpload}, userBase);
@@ -894,7 +891,7 @@ namespace NFine.Web.Controllers
                         //获取住院病人
                         var InpatientInfoData = await _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
                         //医保登录
-                        await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                        //await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                         var presettlementParam = new LeaveHospitalSettlementParam()
                         {
                             MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
@@ -992,8 +989,6 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
-      
-
         /// <summary>
         /// 医保连接
         /// </summary>

@@ -139,7 +139,7 @@ namespace BenDing.Repository.Providers.Web
                 string strSql= "";
                 if (!string.IsNullOrWhiteSpace(param.CancelUserId))
                 {
-                    strSql = $@" update MedicalInsurance set SettlementUserId={param.UserId},SettlementTime=NULL,SettlementCancelTime=GETDATE(),
+                    strSql = $@" update MedicalInsurance set SettlementUserId='{param.UserId}',SettlementTime=NULL,SettlementCancelTime=GETDATE(),
                                     SettlementCancelUserId='{param.CancelUserId}',OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
                                     SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
                                     SettlementNo='{param.SettlementNo}',TransactionId='{param.TransactionId}'
@@ -147,7 +147,7 @@ namespace BenDing.Repository.Providers.Web
                 }
                 else
                 {
-                    strSql = $@" update MedicalInsurance set SettlementUserId={param.UserId},SettlementTime=GETDATE(),
+                    strSql = $@" update MedicalInsurance set SettlementUserId='{param.UserId}',SettlementTime=GETDATE(),
                                     OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
                                     SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
                                     SettlementNo='{param.SettlementNo}',TransactionId='{param.TransactionId}'

@@ -102,7 +102,6 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// </summary>
         [JsonProperty(PropertyName = "PO_MSG")]
         [XmlElementAttribute("PO_MSG", IsNullable = false)]
-
         public string Msg { get; set; }
 
 
