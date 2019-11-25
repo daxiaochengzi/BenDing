@@ -936,6 +936,8 @@ namespace NFine.Web.Controllers
                     BusinessId = param.BusinessId,
                     OrganizationCode = userBase.OrganizationCode
                 };
+                //医保登录
+                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保病人信息
                 var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
                 if (residentData != null)
@@ -965,6 +967,8 @@ namespace NFine.Web.Controllers
                     BusinessId = param.BusinessId,
                     OrganizationCode = userBase.OrganizationCode
                 };
+                //医保登录
+                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保病人信息
                 var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
                 if (residentData != null)
