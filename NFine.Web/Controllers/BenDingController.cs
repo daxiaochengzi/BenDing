@@ -911,7 +911,8 @@ namespace NFine.Web.Controllers
                             LeaveHospitalMainDiagnosisIcd10 = InpatientInfoData.LeaveHospitalMainDiagnosisIcd10,
                             LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
                             LeaveHospitalMainDiagnosis = InpatientInfoData.LeaveHospitalMainDiagnosis,
-                            UserId = CommonHelp.GuidToStr(userBase.UserId)
+                            UserId = CommonHelp.GuidToStr(userBase.UserId),
+                            LeaveHospitalInpatientState= param.LeaveHospitalInpatientState
 
                         };
                         var InfoParam = new LeaveHospitalSettlementInfoParam()
@@ -936,7 +937,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> QueryLeaveHospitalSettlement(HospitalizationPresettlementUiParam param)
+        public async Task<ActionResult> QueryLeaveHospitalSettlement(QueryHospitalizationPresettlementUiParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {   //获取操作人员信息

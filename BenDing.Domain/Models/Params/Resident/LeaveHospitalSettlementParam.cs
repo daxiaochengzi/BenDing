@@ -45,6 +45,12 @@ namespace BenDing.Domain.Models.Params.Resident
         [XmlElementAttribute("PI_ICD10_3", IsNullable = false)]
         public string LeaveHospitalDiagnosisIcd10Three { get; set; }
         /// <summary>
+        /// 出院病人状态(1康复，2转院，3死亡，4其他)
+        /// </summary>
+        [XmlElementAttribute("PI_CYQK", IsNullable = false)]
+       
+        public string LeaveHospitalInpatientState { get; set; }
+        /// <summary>
         /// 出院诊断疾病名称
         /// </summary>
         [XmlElementAttribute("PI_CYZD", IsNullable = false)]

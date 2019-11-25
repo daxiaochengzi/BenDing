@@ -144,6 +144,7 @@
     <Compile Include="Models\Params\UI\PrescriptionUploadUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryCatalogUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryHospitalizationFeeUiParam.cs" />
+    <Compile Include="Models\Params\UI\QueryHospitalizationPresettlementUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryMedicalInsuranceUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryProjectUiParam.cs" />
     <Compile Include="Models\Params\UI\SaveXmlDataUiParam.cs" />

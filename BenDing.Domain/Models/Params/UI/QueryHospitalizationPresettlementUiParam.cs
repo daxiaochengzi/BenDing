@@ -6,14 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BenDing.Domain.Models.Params.UI
-{/// <summary>
-/// 
-/// </summary>
-  public  class HospitalizationPresettlementUiParam
-    {
-        /// <summary>
-        /// 业务id
-        /// </summary>
+{
+  public  class QueryHospitalizationPresettlementUiParam
+    { /// <summary>
+      /// 业务id
+      /// </summary>
         [Display(Name = "业务id")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
 
@@ -25,13 +22,5 @@ namespace BenDing.Domain.Models.Params.UI
         [Required(ErrorMessage = "{0}不能为空!!!")]
 
         public string UserId { get; set; }
-
-        /// <summary>
-        /// 出院病人状态(1康复，2转院，3死亡，4其他)
-        /// </summary>
-        [Display(Name = "出院病人状态")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
-
-        public string LeaveHospitalInpatientState { get; set; }
     }
 }
