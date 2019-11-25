@@ -791,6 +791,10 @@ namespace NFine.Web.Controllers
 
                     await _residentMedicalInsurance.HospitalizationModify(modifyParam, verificationCode);
                 }
+                else
+                {
+                    throw new Exception("诊断不能为空!!!");
+                }
             });
             return Json(resultData);
         }
