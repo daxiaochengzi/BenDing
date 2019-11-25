@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Mvc;
+using BenDing.Domain.Models.Dto;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Resident;
@@ -898,10 +899,10 @@ namespace NFine.Web.Controllers
                     }
                     else
                     {
-                        var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId=param.BusinessId};
+                        var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
                         //获取住院病人
                         var InpatientInfoData = await _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
-                         //医保登录
+                        //医保登录
                         await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                         var presettlementParam = new LeaveHospitalSettlementParam()
                         {
@@ -909,23 +910,23 @@ namespace NFine.Web.Controllers
                             LeaveHospitalDate = (!string.IsNullOrWhiteSpace(InpatientInfoData.LeaveHospitalDate)) == true ? Convert.ToDateTime(InpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd") : DateTime.Now.ToString("yyyyMMdd"),
                             LeaveHospitalMainDiagnosisIcd10 = InpatientInfoData.LeaveHospitalMainDiagnosisIcd10,
                             LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
-                            LeaveHospitalMainDiagnosis= InpatientInfoData.LeaveHospitalMainDiagnosis,
-                            UserId= CommonHelp.GuidToStr(userBase.UserId)
+                            LeaveHospitalMainDiagnosis = InpatientInfoData.LeaveHospitalMainDiagnosis,
+                            UserId = CommonHelp.GuidToStr(userBase.UserId)
 
                         };
                         var InfoParam = new LeaveHospitalSettlementInfoParam()
                         {
-                            user= userBase,
-                            BusinessId=param.BusinessId,
-                            Id= residentData.Id,
-                            InsuranceNo= residentData.InsuranceNo,
+                            user = userBase,
+                            BusinessId = param.BusinessId,
+                            Id = residentData.Id,
+                            InsuranceNo = residentData.InsuranceNo,
                         };
                         var data = await _residentMedicalInsurance.LeaveHospitalSettlement(presettlementParam, InfoParam);
                         y.Data = data;
                     }
 
                 }
-               
+
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }

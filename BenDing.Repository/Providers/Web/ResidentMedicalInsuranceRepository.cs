@@ -345,18 +345,19 @@ namespace BenDing.Repository.Providers.Web
                         };
                         //更新医保病人信息
                         await _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
-                        // HIS住院医保信息保存
-                        var uploadParam = new UploadMedicalInsuranceResidentHisDto()
-                        {
-                            AuthCode = InfoParam.user.AuthCode,
-                            BusinessId = InfoParam.BusinessId,
-                            InsuranceNo = InfoParam.InsuranceNo,
-                            OtherInfo = updateParam.OtherInfo,
-                            SelfPayFeeAmount = updateParam.SelfPayFeeAmount,
-                            MedicalInsuranceAllAmount = updateParam.MedicalInsuranceAllAmount,
-                            ReimbursementExpensesAmount = updateParam.ReimbursementExpensesAmount
-                        };
-                        await _webServiceBasic.HIS_InterfaceListAsync("36", JsonConvert.SerializeObject(uploadParam), param.UserId);
+                        //// HIS住院医保信息保存
+                        //var uploadParam = new UploadMedicalInsuranceResidentHisDto()
+                        //{
+                        //    AuthCode = InfoParam.user.AuthCode,
+                        //    BusinessId = InfoParam.BusinessId,
+                        //    InsuranceNo = InfoParam.InsuranceNo,
+                        //    OtherInfo = JsonConvert.SerializeObject(new { 统筹支付= data.BasicOverallPay, 起付线= data.PaidAmount }),
+                        //    SelfPayFeeAmount = updateParam.SelfPayFeeAmount,
+                        //    MedicalInsuranceAllAmount = updateParam.MedicalInsuranceAllAmount,
+                        //    ReimbursementExpensesAmount = updateParam.ReimbursementExpensesAmount,
+                           
+                        //};
+                        //await _webServiceBasic.HIS_InterfaceListAsync("36", JsonConvert.SerializeObject(uploadParam), param.UserId);
                         //添加日志
                         var logParam = new AddHospitalLogParam()
                         {
@@ -449,8 +450,8 @@ namespace BenDing.Repository.Providers.Web
                    };
                    await _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
                    // HIS住院医保信息删除
-                   await _webServiceBasic.HIS_InterfaceListAsync("37", JsonConvert.SerializeObject(
-                        new { 验证码 = infoParam.User.AuthCode, 业务ID = infoParam.BusinessId }), infoParam.User.UserId);
+                   //await _webServiceBasic.HIS_InterfaceListAsync("37", JsonConvert.SerializeObject(
+                   //     new { 验证码 = infoParam.User.AuthCode, 业务ID = infoParam.BusinessId }), infoParam.User.UserId);
                }
 
                string Cancel(LeaveHospitalSettlementCancelParam paramc)
