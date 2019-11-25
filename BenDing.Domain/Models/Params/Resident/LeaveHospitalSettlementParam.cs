@@ -38,12 +38,12 @@ namespace BenDing.Domain.Models.Params.Resident
         /// 出院诊断疾病ICD-10编码
         /// </summary>
         [XmlElementAttribute("PI_ICD10_2", IsNullable = false)]
-        public string DiagnosisIcd10Two { get; set; }
+        public string LeaveHospitalDiagnosisIcd10Two { get; set; }
         /// <summary>
         /// 出院诊断疾病ICD-10编码three
         /// </summary>
         [XmlElementAttribute("PI_ICD10_3", IsNullable = false)]
-        public string DiagnosisIcd10Three { get; set; }
+        public string LeaveHospitalDiagnosisIcd10Three { get; set; }
         /// <summary>
         /// 出院诊断疾病名称
         /// </summary>

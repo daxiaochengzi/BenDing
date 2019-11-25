@@ -63,6 +63,7 @@
     <Compile Include="Models\Dto\Resident\ResidentProjectDownloadRow.cs" />
     <Compile Include="Models\Dto\Resident\ResidentUserInfoDto.cs" />
     <Compile Include="Models\Dto\Resident\RetrunPrescriptionUploadDto.cs" />
+    <Compile Include="Models\Dto\Resident\UploadMedicalInsuranceResidentHisDto.cs" />
     <Compile Include="Models\Dto\Web\AddHospitalOperatorParam.cs" />
     <Compile Include="Models\Dto\Web\HospitalThreeCatalogueCodeDto.cs" />
     <Compile Include="Models\Dto\Web\InpatientDiagnosisDto.cs" />
@@ -86,9 +87,13 @@
     <Compile Include="Models\Params\Resident\BatchConfirmParam.cs" />
     <Compile Include="Models\Params\Resident\HospitalizationModifyParam.cs" />
     <Compile Include="Models\Params\Resident\HospitalizationPresettlementParam.cs" />
+    <Compile Include="Models\Params\Resident\LeaveHospitalSettlementCancelInfoParam.cs" />
+    <Compile Include="Models\Params\Resident\LeaveHospitalSettlementCancelParam.cs" />
+    <Compile Include="Models\Params\Resident\LeaveHospitalSettlementInfoParam.cs" />
     <Compile Include="Models\Params\Resident\LeaveHospitalSettlementParam.cs" />
     <Compile Include="Models\Params\Resident\PrescriptionUploadAutomaticParam.cs" />
     <Compile Include="Models\Params\Resident\PrescriptionUploadParam.cs" />
+    <Compile Include="Models\Params\Resident\QueryLeaveHospitalSettlementParam.cs" />
     <Compile Include="Models\Params\Resident\QueryMedicalInsurancePairCodeParam.cs" />
     <Compile Include="Models\Params\SystemManage\AddHospitalLogParam.cs" />
     <Compile Include="Models\Params\UI\AddHospitalOrganizationGradeUiParam.cs" />

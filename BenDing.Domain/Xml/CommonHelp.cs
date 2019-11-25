@@ -50,12 +50,17 @@ namespace BenDing.Domain.Xml
           return  BitConverter.ToInt64(Guid.Parse(param).ToByteArray(), 0).ToString();
         }
        
+        /// <summary>
+        /// 日志字符串格式化
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public static string FormatDateTime(string param)
         {
             return Convert.ToDateTime(param).ToString("yyyy-MM-dd HH:mm:ss");
         }
         /// <summary>
-        /// 四舍五入到2位
+        /// 四舍五入到2位等同于Double
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -66,7 +71,7 @@ namespace BenDing.Domain.Xml
 
         }
         /// <summary>
-        /// 
+        ///  字符串转换数值型
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -82,7 +87,7 @@ namespace BenDing.Domain.Xml
             return resultData;
         }
         /// <summary>
-        /// 
+        /// sql in串联
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>

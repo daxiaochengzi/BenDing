@@ -136,9 +136,24 @@ namespace BenDing.Repository.Providers.Web
             {
                 var resultData = new MedicalInsuranceResidentInfoDto();
                 _sqlConnection.Open();
-                string strSql = $@" update MedicalInsurance set SettlementUserId={param.UserId},SettlementTime=GETDATE(),MedicalInsuranceState=1
+                string strSql= "";
+                if (!string.IsNullOrWhiteSpace(param.CancelUserId))
+                {
+                    strSql = $@" update MedicalInsurance set SettlementUserId={param.UserId},SettlementTime=NULL,SettlementCancelTime=GETDATE(),
+                                    SettlementCancelUserId='{param.CancelUserId}',OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
+                                    SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
+                                    SettlementNo='{param.SettlementNo}',TransactionId='{param.TransactionId}'
                                     where Id='{param.Id}' ";
-
+                }
+                else
+                {
+                    strSql = $@" update MedicalInsurance set SettlementUserId={param.UserId},SettlementTime=GETDATE(),
+                                    OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
+                                    SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
+                                    SettlementNo='{param.SettlementNo}',TransactionId='{param.TransactionId}'
+                                    where Id='{param.Id}' ";
+                }
+                
                
                 var data = await _sqlConnection.ExecuteAsync(strSql);
                 _sqlConnection.Close();
@@ -204,24 +219,24 @@ namespace BenDing.Repository.Providers.Web
                 string insertSql = null;
                 if (!string.IsNullOrWhiteSpace(param.MedicalInsuranceHospitalizationNo) == true && param.IsModify == false)
                 {
-                    insertSql = $@"update [dbo].[MedicalInsurance] set MedicalInsuranceYearBalance={param.MedicalInsuranceYearBalance},
+                    insertSql = $@"update [dbo].[MedicalInsurance] set 
                     MedicalInsuranceHospitalizationNo='{param.MedicalInsuranceHospitalizationNo}',IsDelete=0
                     where [Id]='{param.Id}'";
                 }
                 else if (param.IsModify)
                 {
-                    insertSql = $@"update [dbo].[MedicalInsurance] set [MedicalInsuranceYearBalance]=0,
+                    insertSql = $@"update [dbo].[MedicalInsurance] set 
                     AdmissionInfoJson='{param.AdmissionInfoJson}',[IsDelete]=0,
                     where [Id]='{param.Id}' and OrganizationCode='{user.OrganizationCode}'";
                 }
                 else
                 {
-                    insertSql = $@"INSERT INTO [dbo].[MedicalInsurance]([Id],[HisHospitalizationId],[InsuranceNo],[MedicalInsuranceYearBalance]
+                    insertSql = $@"INSERT INTO [dbo].[MedicalInsurance]([Id],[HisHospitalizationId],[InsuranceNo],[MedicalInsuranceAllAmount]
                                ,[AdmissionInfoJson],[ReimbursementExpenses] ,[SelfPayFee],[OtherInfo] 
-		                       ,[CreateTime],[IsDelete] ,OrganizationCode,CreateUserId,OrganizationName,InsuranceType,MedicalInsuranceState)
-                           VALUES('{param.Id}', '{param.HisHospitalizationId}','{param.InsuranceNo}', {param.MedicalInsuranceYearBalance},'{param.AdmissionInfoJson}',
-                                 {param.ReimbursementExpenses},{param.SelfPayFee},'{param.OtherInfo}',
-                                GETDATE(),1,'{user.OrganizationCode}','{user.UserId}','{user.OrganizationName }',{param.InsuranceType},0);";
+		                       ,[CreateTime],[IsDelete] ,OrganizationCode,CreateUserId,OrganizationName,InsuranceType)
+                           VALUES('{param.Id}','{param.HisHospitalizationId}','{param.InsuranceNo}', 0,
+                                '{param.AdmissionInfoJson}',0,0,NULL,
+                                GETDATE(),1,'{user.OrganizationCode}','{user.UserId}','{user.OrganizationName }',{param.InsuranceType});";
                     insertSql = $"update [dbo].[MedicalInsurance] set [IsDelete]=1,DeleteUserId='{user.UserId}',DeleteTime=GETDATE() where [HisHospitalizationId]='{param.HisHospitalizationId}';" + insertSql;
 
                 }
@@ -246,16 +261,17 @@ namespace BenDing.Repository.Providers.Web
                 string strSql = @" SELECT [Id]
                               ,[HisHospitalizationId]
                               ,[InsuranceNo]
-                              ,[MedicalInsuranceYearBalance]
+                              ,[MedicalInsuranceAllAmount]
                               ,[MedicalInsuranceHospitalizationNo]
-                              ,[SelfPayFee]
+                              ,[SelfPayFeeAmount]
                               ,[AdmissionInfoJson]
-                              ,[ReimbursementExpenses]
+                              ,[ReimbursementExpensesAmount]
                               ,[OtherInfo]
                               ,[OrganizationCode]
                               ,[OrganizationName]
                               ,[InsuranceType]
-                              ,[MedicalInsuranceState]
+                              ,[SettlementNo]
+                              ,[TransactionId]
                             FROM [dbo].[MedicalInsurance]
                             where  IsDelete=0";
                 if (!string.IsNullOrWhiteSpace(param.DataId))

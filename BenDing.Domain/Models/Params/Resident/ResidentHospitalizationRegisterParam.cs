@@ -10,7 +10,9 @@ using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 
 namespace BenDing.Domain.Models.Params.Resident
-{
+{/// <summary>
+/// 入院登记参数
+/// </summary>
     [XmlRootAttribute("ROW", IsNullable = false)]
     public class ResidentHospitalizationRegisterParam: InpatientInfosUiParam
     {
@@ -110,6 +112,13 @@ namespace BenDing.Domain.Models.Params.Resident
         [Required(ErrorMessage = "{0}不能为空!!!")]
         [XmlIgnoreAttribute]
         public string InsuranceType { get; set; }
+        /// <summary>
+        /// 医保卡号
+        /// </summary>
+        [Display(Name = "医保卡号")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        [XmlIgnoreAttribute]
+        public string MedicalInsuranceCardNo { get; set; }
         /// <summary>
         /// 诊断
         /// </summary>

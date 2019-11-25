@@ -29,6 +29,11 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
 
         Task<ResidentProjectDownloadDto> ProjectDownload(ResidentProjectDownloadParam param);
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="param"></param>
+       /// <returns></returns>
         Task<Int64> ProjectDownloadCount(ResidentProjectDownloadParam param);
         /// <summary>
         /// 修改居民入院登记
@@ -36,6 +41,11 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         Task HospitalizationModify(HospitalizationModifyParam param, UserInfoDto user);
+        /// <summary>
+        /// 医保登录
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
 
         Task Login(QueryHospitalOperatorParam param);
 
@@ -52,12 +62,17 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
         Task<HospitalizationPresettlementDto> HospitalizationPresettlement(HospitalizationPresettlementParam param, UserInfoDto user);
         /// <summary>
-        /// 
+        /// 医保出院结算信息
         /// </summary>
         /// <param name="param"></param>
-        /// <param name="businessId"></param>
-        /// <param name="user"></param>
+        /// <param name="InfoParam"></param>
         /// <returns></returns>
-        Task<HospitalizationPresettlementDto> LeaveHospitalSettlement(LeaveHospitalSettlementParam param, Guid id, UserInfoDto user);
+        Task<HospitalizationPresettlementDto> LeaveHospitalSettlement(LeaveHospitalSettlementParam param, LeaveHospitalSettlementInfoParam InfoParam);
+        /// <summary>
+        /// 查询医保出院结算信息
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task<HospitalizationPresettlementDto> QueryLeaveHospitalSettlement(QueryLeaveHospitalSettlementParam param);
     }
 }

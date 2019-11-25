@@ -497,7 +497,6 @@ namespace NFine.Web.Controllers
 
             }), JsonRequestBehavior.AllowGet);
         }
-
         #endregion
         #region 医保对码
         /// <summary>
@@ -893,7 +892,7 @@ namespace NFine.Web.Controllers
                 var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
                 if (residentData != null)
                 {
-                    if (residentData.MedicalInsuranceState == 1)
+                    if (!string.IsNullOrWhiteSpace(residentData.TransactionId))
                     {
                         throw new Exception("当前病人已办理结算");
                     }
@@ -907,14 +906,55 @@ namespace NFine.Web.Controllers
                         var presettlementParam = new LeaveHospitalSettlementParam()
                         {
                             MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                            LeaveHospitalDate =(!string.IsNullOrWhiteSpace(InpatientInfoData.LeaveHospitalDate)) ==true?Convert.ToDateTime(InpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd"): DateTime.Now.ToString("yyyyMMdd"),
+                            LeaveHospitalDate = (!string.IsNullOrWhiteSpace(InpatientInfoData.LeaveHospitalDate)) == true ? Convert.ToDateTime(InpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd") : DateTime.Now.ToString("yyyyMMdd"),
+                            LeaveHospitalMainDiagnosisIcd10 = InpatientInfoData.LeaveHospitalMainDiagnosisIcd10,
+                            LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
+                            LeaveHospitalMainDiagnosis= InpatientInfoData.LeaveHospitalMainDiagnosis,
+                            UserId= CommonHelp.GuidToStr(userBase.UserId)
+
                         };
-                        var data = await _residentMedicalInsurance.LeaveHospitalSettlement(presettlementParam, residentData.Id, userBase);
+                        var InfoParam = new LeaveHospitalSettlementInfoParam()
+                        {
+                            user= userBase,
+                            BusinessId=param.BusinessId,
+                            Id= residentData.Id,
+                            InsuranceNo= residentData.InsuranceNo,
+                        };
+                        var data = await _residentMedicalInsurance.LeaveHospitalSettlement(presettlementParam, InfoParam);
                         y.Data = data;
                     }
 
                 }
                
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// 查询医保出院费用结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> QueryLeaveHospitalSettlement(HospitalizationPresettlementUiParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {   //获取操作人员信息
+
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    BusinessId = param.BusinessId,
+                    OrganizationCode = userBase.OrganizationCode
+                };
+                //获取医保病人信息
+                var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+                if (residentData != null)
+                {
+                    var data = await _residentMedicalInsurance.QueryLeaveHospitalSettlement(new QueryLeaveHospitalSettlementParam() { MedicalInsuranceHospitalizationNo= residentData.MedicalInsuranceHospitalizationNo});
+                    y.Data = data;
+
+                }
+
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }

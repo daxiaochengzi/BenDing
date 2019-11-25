@@ -23,7 +23,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// <summary>
         /// 医保年度余额
         /// </summary>
-        public string MedicalInsuranceYearBalance { get; set; }
+        public string MedicalInsuranceAllAmount { get; set; }
         /// <summary>
         /// 医保住院号
         /// </summary>
@@ -31,7 +31,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// <summary>
         /// 自付费用
         /// </summary>
-        public decimal SelfPayFee { get; set; }
+        public decimal SelfPayFeeAmount { get; set; }
         /// <summary>
         /// 入院json信息
         /// </summary>
@@ -39,7 +39,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// <summary>
         /// 报账费用
         /// </summary>
-        public  decimal ReimbursementExpenses { get; set; }
+        public  decimal ReimbursementExpensesAmount { get; set; }
         /// <summary>
         /// 其它信息
         /// </summary>
@@ -57,11 +57,14 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
         public  string InsuranceType { get; set; }
         /// <summary>
-        /// 医保状态 (0:办理入院，1:办理结算出院)
+        /// 单据号
         /// </summary>
-
-        public int MedicalInsuranceState { get; set; }
-
+      
+        public  string SettlementNo { get; set; }
+        /// <summary>
+        /// 交易id
+        /// </summary>
+        public string TransactionId { get; set; }
 
 
     }

@@ -9,7 +9,9 @@ using Newtonsoft.Json;
 namespace BenDing.Domain.Models.Dto.Web
 {
     
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class IniDto
     {/// <summary>
      /// 过程返回值(为1时正常，否则不正常)
