@@ -752,15 +752,45 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> HospitalizationModify([FromBody]HospitalizationModifyParam param)
+        public async Task<ActionResult> HospitalizationModify([FromBody]HospitalizationModifyUiParam  param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {  //his登陆
                 var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //医保登陆
                 await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                //医保修改
-                await _residentMedicalInsurance.HospitalizationModify(param, verificationCode);
+                if (param.DiagnosisList != null && param.DiagnosisList.Any())
+                {   //主诊断
+                    //医保修改
+                    var modifyParam = new HospitalizationModifyParam()
+                    {
+                        AdmissionDate = param.AdmissionDate,
+                        BedNumber = param.BedNumber,
+                        BusinessId = param.BusinessId,
+                        FetusNumber = param.FetusNumber,
+                        HouseholdNature = param.HouseholdNature,
+                        MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
+                        TransactionId = param.TransactionId,
+                        UserId = param.UserId,
+                        InpatientDepartmentCode = param.InpatientDepartmentCode,
+                    };
+                    var mainDiagnosis = param.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == true);
+                    if (mainDiagnosis == null) throw new Exception("主诊断不能为空!!!");
+                    modifyParam.AdmissionMainDiagnosisIcd10 = mainDiagnosis.DiagnosisCode;
+                    modifyParam.AdmissionMainDiagnosis = mainDiagnosis.DiagnosisName;
+                    //次诊断
+                    var nextDiagnosis = param.DiagnosisList.Where(c => c.IsMainDiagnosis == false).ToList();
+                    int num = 1;
+                    foreach (var item in nextDiagnosis)
+                    {
+                        if (num == 1) modifyParam.DiagnosisIcd10Two = item.DiagnosisCode;
+                        if (num == 2) modifyParam.DiagnosisIcd10Three = item.DiagnosisCode;
+                        num++;
+                    }
+                   
+
+                    await _residentMedicalInsurance.HospitalizationModify(modifyParam, verificationCode);
+                }
             });
             return Json(resultData);
         }
