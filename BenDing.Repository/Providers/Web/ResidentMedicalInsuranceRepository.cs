@@ -445,7 +445,7 @@ namespace BenDing.Repository.Providers.Web
                {    //更新医保病人信息
                    var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
                    {
-                       UserId = infoParam.User.UserId,
+                       CancelUserId = infoParam.User.UserId,
                        Id = infoParam.Id,
                    };
                    await _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);

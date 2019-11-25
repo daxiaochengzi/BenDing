@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.UI;
 
 namespace BenDing.Domain.Models.Params.Resident
@@ -70,7 +71,9 @@ namespace BenDing.Domain.Models.Params.Resident
         /// </summary>
         [XmlElement("PI_CWH", IsNullable = false)]
         public string BedNumber { get; set; }
-        
+      
+
+
 
 
     }
