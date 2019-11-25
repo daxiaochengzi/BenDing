@@ -434,7 +434,9 @@ namespace BenDing.Repository.Providers.Web
                }
                else
                {
+                   param.CancelLimit = "1";
                    cancelData = Cancel(param);
+                 
                    param.CancelLimit = "2";
                    if (cancelData == "1")
                    {
