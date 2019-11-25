@@ -59,7 +59,7 @@ namespace BenDing.Domain.Models.Params.UI
         //[XmlElement("PI_RYZD", IsNullable = false)]
 
         //public string AdmissionMainDiagnosis { get; set; }
-        ///// <summary>
+        /// <summary>
         /// 住院科室编号 
         /// </summary>
         [XmlElement("PI_ZYBQ", IsNullable = false)]
