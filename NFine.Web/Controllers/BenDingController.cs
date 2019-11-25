@@ -959,6 +959,49 @@ namespace NFine.Web.Controllers
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
         /// <summary>
+        /// 取消医保出院费用结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> LeaveHospitalSettlementCancel(LeaveHospitalSettlementCancelUiParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {   //获取操作人员信息
+
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    BusinessId = param.BusinessId,
+                    OrganizationCode = userBase.OrganizationCode
+                };
+                //获取医保病人信息
+                var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+                if (residentData != null)
+                {
+                    var settlementCancelParam=new LeaveHospitalSettlementCancelParam()
+                    { 
+                        MedicalInsuranceHospitalizationNo= residentData.MedicalInsuranceHospitalizationNo,
+                        SettlementNo= residentData.SettlementNo,
+                        Operators= CommonHelp.GuidToStr(userBase.UserId),
+                        CancelLimit= param.CancelLimit,
+                    };
+                    var cancelParam = new LeaveHospitalSettlementCancelInfoParam() 
+                    {  BusinessId= param.BusinessId,
+                       Id= residentData.Id,
+                       User= userBase,
+                    };
+                     await _residentMedicalInsurance.LeaveHospitalSettlementCancel(settlementCancelParam,  cancelParam);
+                   
+
+                }
+
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
+        }
+      
+
+        /// <summary>
         /// 医保连接
         /// </summary>
         /// <returns></returns>

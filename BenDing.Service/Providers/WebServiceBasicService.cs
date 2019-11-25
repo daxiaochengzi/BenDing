@@ -560,6 +560,7 @@ namespace BenDing.Service.Providers
                 var infoList = await _hisSqlRepository.QueryInformationInfo(queryParam);
                 if (infoList.Any())
                 {
+                    resultData.InpatientDepartmentCode = data.InpatientDepartmentCode;
                     resultData.InpatientDepartmentName = infoList.Where(c => c.FixedEncoding == data.InpatientDepartmentCode).Select(d=>d.DirectoryName).FirstOrDefault();
                 }
                 //诊疗

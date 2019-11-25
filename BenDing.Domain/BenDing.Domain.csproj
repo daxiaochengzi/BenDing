@@ -102,6 +102,7 @@
     <Compile Include="Models\Params\UI\HospitalizationPresettlementUiParam.cs" />
     <Compile Include="Models\Params\UI\HospitalizationRegisterCancelUi.cs" />
     <Compile Include="Models\Params\UI\InpatientInfosUiParam.cs" />
+    <Compile Include="Models\Params\UI\LeaveHospitalSettlementCancelUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalDirectoryCodePairUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalInsurancePairCodesUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalInsurancePairCodeUiParam.cs" />
