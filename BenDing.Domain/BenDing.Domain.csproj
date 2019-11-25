@@ -141,6 +141,7 @@
     <Compile Include="Models\Params\UI\GetInpatientInfoDetailUIParam.cs" />
     <Compile Include="Models\Params\UI\InpatientInfoUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalInsuranceDataAllParamUIQuery.cs" />
+    <Compile Include="Models\Params\UI\PrescriptionUploadAutomaticUiParam.cs" />
     <Compile Include="Models\Params\UI\PrescriptionUploadUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryCatalogUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryHospitalizationFeeUiParam.cs" />

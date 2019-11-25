@@ -27,6 +27,8 @@ namespace BenDing.Service.Interfaces
         /// <returns></returns>
 
         Task<string> ProjectDownload(ResidentProjectDownloadParam param);
-       
+        Task PrescriptionUploadAutomatic(PrescriptionUploadAutomaticParam param, UserInfoDto user);
+
+
     }
 }

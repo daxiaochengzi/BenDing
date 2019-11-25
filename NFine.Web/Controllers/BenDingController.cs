@@ -819,24 +819,15 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> PrescriptionUploadAutomatic()
+        public async Task<ActionResult> PrescriptionUploadAutomatic(PrescriptionUploadAutomaticUiParam param)
         {
             var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
 
-                //var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                //var data = await _residentMedicalInsurance.PrescriptionUpload(param, userBase);
-                //if (!string.IsNullOrWhiteSpace(data.Msg))
-                //{
-                //    throw new Exception(data.Msg);//Automatic
-                //}
-                //else
-                //{
-                //    if (data.Num > 0)
-                //    {
-                //        y.Data = "处方上传成功" + data.Num + " 条,失败" + (data.Count - data.Num) + " 条";
-                //    }
-                //}
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                await _residentService.PrescriptionUploadAutomatic(new PrescriptionUploadAutomaticParam() 
+                                       { IsTodayUpload= param.IsTodayUpload}, userBase);
+               
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
