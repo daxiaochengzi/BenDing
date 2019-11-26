@@ -16,7 +16,7 @@ namespace BenDing.Domain.Models.Params.Resident
         /// <summary>
         /// 医保住院号
         /// </summary>
-        [XmlElement("PI_ZHY", IsNullable = false)]
+        [XmlElement("PI_ZYH", IsNullable = false)]
         [Display(Name = "医保住院号")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string MedicalInsuranceHospitalizationNo { get; set; }
