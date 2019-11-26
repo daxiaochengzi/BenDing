@@ -19,6 +19,13 @@ namespace BenDing.Domain.Models.Params.UI
         [Display(Name = "医保住院号")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string MedicalInsuranceHospitalizationNo { get; set; }
+        /// <summary>
+        /// 医院住院号
+        /// </summary>
+        [XmlElementAttribute("PI_YYZYH", IsNullable = false)]
+        [Display(Name = "医院住院号")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        public string HospitalizationNo { get; set; }
 
         /// <summary>
         /// 胎儿数
