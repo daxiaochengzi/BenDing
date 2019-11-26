@@ -858,6 +858,8 @@ namespace NFine.Web.Controllers
             var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
                 var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //医保登录
+                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 await _residentService.PrescriptionUploadAutomatic(new PrescriptionUploadAutomaticParam()
                 { IsTodayUpload = param.IsTodayUpload }, userBase);
 

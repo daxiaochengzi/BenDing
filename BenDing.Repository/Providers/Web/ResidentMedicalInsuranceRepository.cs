@@ -557,7 +557,7 @@ namespace BenDing.Repository.Providers.Web
                     }
                     else
                     {
-                        resultData.Count = queryData.Count;
+                        
                         var queryPairCodeParam = new QueryMedicalInsurancePairCodeParam()
                         {
                             DirectoryCodeList = queryData.Select(d => d.CostItemCode).Distinct().ToList(),
@@ -580,6 +580,7 @@ namespace BenDing.Repository.Providers.Web
                         //医保住院号
                         paramIni.MedicalInsuranceHospitalizationNo = medicalInsurance.MedicalInsuranceHospitalizationNo;
                         int num = paramIni.RowDataList.Count;
+                        resultData.Count = num;
                         int a = 0;
                         int limit = 40;//限制条数
                         var count = Convert.ToInt32(num / limit) + ((num % limit) > 0 ? 1 : 0);
