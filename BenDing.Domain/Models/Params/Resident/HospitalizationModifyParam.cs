@@ -16,7 +16,7 @@ namespace BenDing.Domain.Models.Params.Resident
         /// <summary>
         /// 医保住院号
         /// </summary>
-        [XmlElementAttribute("PI_ZHY", IsNullable = false)]
+        [XmlElement("PI_ZYH", IsNullable = false)]
         [Display(Name = "医保住院号")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string MedicalInsuranceHospitalizationNo { get; set; }
@@ -24,52 +24,52 @@ namespace BenDing.Domain.Models.Params.Resident
         /// <summary>
         /// 胎儿数
         /// </summary>
-        [XmlElementAttribute("PI_TES", IsNullable = false)]
+        [XmlElement("PI_TES", IsNullable = false)]
         public string FetusNumber { get; set; }
         /// <summary>
         /// 户口性质
         /// </summary>
-        [XmlElementAttribute("PI_HKXZ", IsNullable = false)]
+        [XmlElement("PI_HKXZ", IsNullable = false)]
         public string HouseholdNature { get; set; }
         /// <summary>
         /// 入院日期(格式为YYYYMMDD)
         /// </summary>
 
-        [XmlElementAttribute("PI_RYRQ", IsNullable = false)]
+        [XmlElement("PI_RYRQ", IsNullable = false)]
       
         public string AdmissionDate { get; set; }
         /// <summary>
         /// 入院主要诊断疾病ICD-10编码
         /// </summary>
-        [XmlElementAttribute("PI_ICD10", IsNullable = false)]
+        [XmlElement("PI_ICD10", IsNullable = false)]
      
         public string AdmissionMainDiagnosisIcd10 { get; set; }
         /// <summary>
         /// 入院诊断疾病ICD-10编码
         /// </summary>
-        [XmlElementAttribute("PI_ICD10_2", IsNullable = false)]
+        [XmlElement("PI_ICD10_2", IsNullable = false)]
         public string DiagnosisIcd10Two { get; set; }
         /// <summary>
         /// 入院诊断疾病ICD-10编码three
         /// </summary>
-        [XmlElementAttribute("PI_ICD10_3", IsNullable = false)]
+        [XmlElement("PI_ICD10_3", IsNullable = false)]
         public string DiagnosisIcd10Three { get; set; }
         /// <summary>
         /// 入院诊断疾病名称
         /// </summary>
-        [XmlElementAttribute("PI_RYZD", IsNullable = false)]
+        [XmlElement("PI_RYZD", IsNullable = false)]
         
         public string AdmissionMainDiagnosis { get; set; }
         /// <summary>
         /// 住院科室编号 
         /// </summary>
-        [XmlElementAttribute("PI_ZYBQ", IsNullable = false)]
+        [XmlElement("PI_ZYBQ", IsNullable = false)]
        
         public string InpatientDepartmentCode { get; set; }
         /// <summary>
         /// 床位号
         /// </summary>
-        [XmlElementAttribute("PI_CWH", IsNullable = false)]
+        [XmlElement("PI_CWH", IsNullable = false)]
         public string BedNumber { get; set; }
         /// <summary>
         /// 医院住院号
