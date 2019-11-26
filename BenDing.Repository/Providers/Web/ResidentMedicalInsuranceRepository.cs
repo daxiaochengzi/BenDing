@@ -670,7 +670,9 @@ namespace BenDing.Repository.Providers.Web
                     {
                         string strXml = XmlHelp.DeSerializerModelStr("CFMX");
                         data = XmlHelp.DeSerializer<QueryPrescriptionDetailDto>(strXml);
-                     
+                        if (data.RowDataList == null && data.RowDataList.Any())
+                        { 
+                        }
                     }
                     else
                     {
@@ -682,9 +684,6 @@ namespace BenDing.Repository.Providers.Web
 
 
         }
-
-
-        
         /// <summary>
         /// 处方数据上传
         /// </summary>

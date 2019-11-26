@@ -188,7 +188,7 @@ namespace BenDing.Repository.Providers.Web
                 else
                 {
                     insertSql = $@"INSERT INTO [dbo].[MedicalInsurance]([Id],[HisHospitalizationId],[InsuranceNo],[MedicalInsuranceAllAmount]
-                               ,[AdmissionInfoJson],[ReimbursementExpenses] ,[SelfPayFee],[OtherInfo] 
+                               ,[AdmissionInfoJson],[ReimbursementExpensesAmount] ,[SelfPayFeeAmount],[OtherInfo] 
 		                       ,[CreateTime],[IsDelete] ,OrganizationCode,CreateUserId,OrganizationName,InsuranceType)
                            VALUES('{param.Id}','{param.HisHospitalizationId}','{param.InsuranceNo}', 0,
                                 '{param.AdmissionInfoJson}',0,0,NULL,

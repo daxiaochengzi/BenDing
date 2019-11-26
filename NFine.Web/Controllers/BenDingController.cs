@@ -473,7 +473,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> HospitalizationRegisterCancel(HospitalizationRegisterCancelUi param)
+        public async Task<ActionResult> HospitalizationRegisterCancel(BaseUiBusinessIdDataParam param)
         {
             return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
             {
@@ -864,7 +864,6 @@ namespace NFine.Web.Controllers
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
-
         /// <summary>
         /// 删除处方数据
         /// </summary>
