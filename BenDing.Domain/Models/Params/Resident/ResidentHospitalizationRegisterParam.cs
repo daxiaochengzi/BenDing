@@ -115,8 +115,8 @@ namespace BenDing.Domain.Models.Params.Resident
         /// <summary>
         /// 医保卡号
         /// </summary>
-        [Display(Name = "医保卡号")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
+        //[Display(Name = "医保卡号")]
+        //[Required(ErrorMessage = "{0}不能为空!!!")]
         [XmlIgnoreAttribute]
         public string MedicalInsuranceCardNo { get; set; }
         /// <summary>

@@ -44,8 +44,11 @@ namespace BenDing.Domain.Models.Params.Web
         /// 取消人员
         /// </summary>
         public string CancelUserId { get; set; }
+        /// <summary>
+        /// 取消交易id
+        /// </summary>
 
-
+        public string CancelTransactionId { get; set; }
 
     }
 }

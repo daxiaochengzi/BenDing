@@ -739,7 +739,6 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-            
                 var data =  await _webServiceBasicService.QueryMedicalInsuranceDetail(param);
                 y.Data = data;
 

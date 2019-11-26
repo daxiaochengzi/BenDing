@@ -427,6 +427,7 @@ namespace BenDing.Repository.Providers.Web
 
             await Task.Run(async () =>
            {
+               var cancelLimit = param.CancelLimit;
                string cancelData = null;
                if (param.CancelLimit == "1")
                {
@@ -455,6 +456,23 @@ namespace BenDing.Repository.Providers.Web
                    // HIS住院医保信息删除
                    //await _webServiceBasic.HIS_InterfaceListAsync("37", JsonConvert.SerializeObject(
                    //     new { 验证码 = infoParam.User.AuthCode, 业务ID = infoParam.BusinessId }), infoParam.User.UserId);
+                   if (cancelLimit == "2")//取消结算,并删除资料<==>删除资料与取消入院
+                   {
+                      //his取消入院登记
+                       var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(param);
+                       var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
+                       var saveXmlData = new SaveXmlData();
+                       saveXmlData.OrganizationCode = infoParam.User.OrganizationCode;
+                       saveXmlData.AuthCode = infoParam.User.AuthCode;
+                       saveXmlData.BusinessId = infoParam.BusinessId;
+                       saveXmlData.TransactionId =Guid.NewGuid().ToString("N");
+                       saveXmlData.MedicalInsuranceBackNum = "CXJB004";
+                       saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
+                       saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                       saveXmlData.MedicalInsuranceCode = "22";
+                       saveXmlData.UserId = infoParam.User.UserId;
+                       await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), infoParam.User.UserId);
+                   }
                }
 
                string Cancel(LeaveHospitalSettlementCancelParam paramc)
