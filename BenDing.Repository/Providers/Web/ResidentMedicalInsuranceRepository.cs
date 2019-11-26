@@ -446,12 +446,15 @@ namespace BenDing.Repository.Providers.Web
                    }
                }
                if (cancelData == "1")
-               {    //更新医保病人信息
+               {    //取消交易id
+                   var CancelTransactionId = Guid.NewGuid().ToString("N");
                    var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
                    {
                        CancelUserId = infoParam.User.UserId,
                        Id = infoParam.Id,
+                       CancelTransactionId = CancelTransactionId,
                    };
+                   //更新医保病人信息
                    await _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
                    // HIS住院医保信息删除
                    //await _webServiceBasic.HIS_InterfaceListAsync("37", JsonConvert.SerializeObject(
@@ -465,7 +468,7 @@ namespace BenDing.Repository.Providers.Web
                        saveXmlData.OrganizationCode = infoParam.User.OrganizationCode;
                        saveXmlData.AuthCode = infoParam.User.AuthCode;
                        saveXmlData.BusinessId = infoParam.BusinessId;
-                       saveXmlData.TransactionId =Guid.NewGuid().ToString("N");
+                       saveXmlData.TransactionId = CancelTransactionId;
                        saveXmlData.MedicalInsuranceBackNum = "CXJB004";
                        saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
                        saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
