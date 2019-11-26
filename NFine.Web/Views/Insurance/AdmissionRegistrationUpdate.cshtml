@@ -47,8 +47,7 @@
                     <div class="layui-inline layer_update">
                         <label class="layui-form-label">住院科室</label>
                         <div class="layui-input-inline">
-                            <!--InpatientDepartmentCode-->
-                            <select name="InpatientDepartmentName" id="InpatientDepartmentCode">
+                            <select name="InpatientDepartmentCode" id="InpatientDepartmentCode">
                                 <option value="">请选择科室</option>
                             </select>
                         </div>
@@ -240,24 +239,13 @@
         //登记
         form.on('submit(updateRegister)', function (data) {
             var field = data.field;
-            //科室ID
-            field.InpatientDepartmentCode = field.InDepartmentId
-            //床位号
-            field.BedNumber = field.AdmissionBed
-            //经办人
-            field.Operators = field.UserId
-            //业务ID
-            field.BusinessId = field.BusinessId
-            //获取入院病人查询开始时间
-            field.StartTime = field.AdmissionDate
-            //诊断列表
             var dataTable1 = table.cache[layTableId];
-
             //诊断列表 add
             field.DiagnosisList = dataTable1;
+            console.log(field)
             $.ajax({
                 type: 'POST',
-                url: '/BenDing/HospitalizationRegister',
+                url: '/BenDing/HospitalizationModify',
                 async: false,
                 data: JSON.stringify(field),
                 dataType: "json",
@@ -266,10 +254,10 @@
                     if (data.Success === false) {
                         var errData = data.Message;
                         //样式类名:墨绿深蓝风
-                        layer.msg('登记失败\n' + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                        layer.msg('修改失败\n' + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' })
                     } else {
                         console.log(data);
-                        layer.msg('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' })
+                        layer.msg('修改成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' })
                     }
                 }
             });
