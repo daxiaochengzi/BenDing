@@ -82,9 +82,11 @@
     <Compile Include="Models\Enums\OrganizationGrade.cs" />
     <Compile Include="Models\Enums\ProjectCodeType.cs" />
     <Compile Include="Models\Enums\ProjectLevel.cs" />
+    <Compile Include="Models\Params\Base\BaseUiBusinessDataParam.cs" />
     <Compile Include="Models\Params\Base\BaseUiIniParam.cs" />
     <Compile Include="Models\Params\Resident\AddProjectBatchParam.cs" />
     <Compile Include="Models\Params\Resident\BatchConfirmParam.cs" />
+    <Compile Include="Models\Params\Resident\DeletePrescriptionUploadParam.cs" />
     <Compile Include="Models\Params\Resident\HospitalizationModifyParam.cs" />
     <Compile Include="Models\Params\Resident\HospitalizationPresettlementParam.cs" />
     <Compile Include="Models\Params\Resident\LeaveHospitalSettlementCancelInfoParam.cs" />
@@ -153,8 +155,8 @@
     <Compile Include="Models\Params\UI\SingleResidentInfoDownloadUIParam.cs" />
     <Compile Include="Models\Params\UI\TabelIni.cs" />
     <Compile Include="Models\Params\UI\UiICD10Param.cs" />
-    <Compile Include="Models\Params\UI\UiInIDataParam.cs" />
-    <Compile Include="Models\Params\UI\UiInIParam.cs" />
+    <Compile Include="Models\Params\Base\UiInIDataParam.cs" />
+    <Compile Include="Models\Params\Base\UiInIParam.cs" />
     <Compile Include="Models\Params\Web\CatalogParam.cs" />
     <Compile Include="Models\Params\Web\DeleteMedicalInsuranceParam.cs" />
     <Compile Include="Models\Params\Web\ExecuteSpParam.cs" />

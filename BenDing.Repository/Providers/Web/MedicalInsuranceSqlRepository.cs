@@ -160,51 +160,7 @@ namespace BenDing.Repository.Providers.Web
                 return data;
             }
         }
-        /// <summary>
-        /// 住院病人明细查询
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task<List<QueryInpatientInfoDetailDto>> InpatientInfoDetailQuery(
-            InpatientInfoDetailQueryParam param)
-        {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
-            {
-                var resultData = new List<QueryInpatientInfoDetailDto>();
-                _sqlConnection.Open();
-
-                string strSql = @"select (select  top 1 a.BusinessId from [dbo].[Inpatient] as a where a.HospitalizationNo=HospitalizationNo and IsDelete=0) as BusinessId,
-                                  * from [dbo].[HospitalizationFee]  where  IsDelete=0 ";
-                if (param.IdList != null && param.IdList.Any())
-                {
-                    var idlist = CommonHelp.ListToStr(param.IdList);
-                    strSql += $@" and Id in({idlist})";
-                }
-                else
-                {
-                    if (!string.IsNullOrWhiteSpace(param.BusinessId))
-                    {
-                        strSql +=
-                            $@" and HospitalizationNo =(select top 1 HospitalizationNo from [dbo].[Inpatient] where BusinessId='{param.BusinessId}' and IsDelete=0)";
-                    }
-                    else
-                    {
-                        throw new Exception("业务号不能为空!!!");
-                    }
-                }
-
-
-                var data = await _sqlConnection.QueryAsync<QueryInpatientInfoDetailDto>(strSql);
-
-                if (data != null && data.Count() > 0)
-                {
-                    resultData = data.ToList();
-                }
-
-                _sqlConnection.Close();
-                return resultData;
-            }
-        }
+ 
         /// <summary>
         /// 医保信息保存
         /// </summary>
@@ -256,7 +212,6 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var _sqlConnection = new SqlConnection(_connectionString))
             {
-                var resultData = new MedicalInsuranceResidentInfoDto();
                 _sqlConnection.Open();
                 string strSql = @" SELECT [Id]
                               ,[HisHospitalizationId]
@@ -282,7 +237,8 @@ namespace BenDing.Repository.Providers.Web
                     strSql += $" and OrganizationCode='{param.OrganizationCode}'";
                 var data = await _sqlConnection.QueryFirstOrDefaultAsync<MedicalInsuranceResidentInfoDto>(strSql);
                 _sqlConnection.Close();
-                return data != null ? data : resultData;
+                if (data==null) throw new Exception("当前用未进行医保登记!!!");
+                return data;
             }
         }
         /// <summary>
@@ -662,7 +618,6 @@ namespace BenDing.Repository.Providers.Web
                 return resultData;
             }
         }
-
         /// <summary>
         /// his上传更新数据
         /// </summary>
@@ -685,11 +640,12 @@ namespace BenDing.Repository.Providers.Web
 
             return resultData;
         }
-
         /// <summary>
         /// 处方上传数据更新
         /// </summary>
         /// <param name="param"></param>
+        /// <param name="batchConfirmFail"></param>
+        /// <param name="user"></param>
         /// <returns></returns>
         public async Task<int> UpdateHospitalizationFee(List<UpdateHospitalizationFeeParam> param, bool batchConfirmFail, UserInfoDto user)
         {

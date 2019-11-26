@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BenDing.Domain.Models.Dto.Web
-{
+{/// <summary>
+/// 
+/// </summary>
    public class QueryInpatientInfoDetailDto: InpatientInfoDetailDto
     { /// <summary>
         /// id
@@ -39,7 +41,13 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 业务id
         /// </summary>
         public string BusinessId { get; set; }
-
-
+        /// <summary>
+        /// 上传状态
+        /// </summary>
+        public int UploadMark { get; set; }
+        /// <summary>
+        /// 批次号
+        /// </summary>
+        public string BatchNumber { get; set; }
     }
 }

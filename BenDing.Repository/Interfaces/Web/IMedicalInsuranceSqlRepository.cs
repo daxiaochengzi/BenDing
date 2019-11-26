@@ -41,12 +41,6 @@ namespace BenDing.Repository.Interfaces.Web
         #endregion
         Task<int> UpdateMedicalInsuranceResidentSettlement(UpdateMedicalInsuranceResidentSettlementParam param);
         /// <summary>
-        /// 住院病人明细查询
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        Task<List<QueryInpatientInfoDetailDto>> InpatientInfoDetailQuery(InpatientInfoDetailQueryParam param);
-        /// <summary>
         /// 医保中心端查询
         /// </summary>
         /// <param name="param"></param>
@@ -108,12 +102,12 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="organizationCode"></param>
         /// <returns></returns>
         Task<int> UpdateThreeCataloguePairCodeUpload(string organizationCode);
-
-        //Task<int> AddProjectBatch(AddProjectBatchParam param);
         /// <summary>
         /// 更新批次号
         /// </summary>
         /// <param name="param"></param>
+        /// <param name="batchConfirmFail">是否确认失败</param>
+        /// <param name="user"></param>
         /// <returns></returns>
         Task<int> UpdateHospitalizationFee(List<UpdateHospitalizationFeeParam> param, bool batchConfirmFail, UserInfoDto user);
 

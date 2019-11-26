@@ -20,7 +20,7 @@ namespace BenDing.Repository.Providers.Web
     public class ResidentMedicalInsuranceRepository : IResidentMedicalInsuranceRepository
     {
 
-
+        private IHisSqlRepository _hisSqlRepository;
         private IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private ISystemManageRepository _systemManageRepository;
         private IWebBasicRepository _webServiceBasic;
@@ -38,7 +38,7 @@ namespace BenDing.Repository.Providers.Web
             ISystemManageRepository systemManageRepository
             )
         {
-
+            _hisSqlRepository = hisSqlRepository;
             _webServiceBasic = webBasicRepository;
             _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
             _systemManageRepository = systemManageRepository;
@@ -536,7 +536,7 @@ namespace BenDing.Repository.Providers.Web
                 }
 
                 //获取病人明细
-                queryData = await _medicalInsuranceSqlRepository.InpatientInfoDetailQuery(queryParam);
+                queryData = await _hisSqlRepository.InpatientInfoDetailQuery(queryParam);
                 if (queryData.Any())
                 {
                     var queryBusinessId = (!string.IsNullOrWhiteSpace(queryParam.BusinessId)) == true ? param.BusinessId :
@@ -612,6 +612,43 @@ namespace BenDing.Repository.Providers.Web
 
 
                 return resultData;
+            });
+        }
+        /// <summary>
+        /// 删除处方数据
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="ids"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public async Task DeletePrescriptionUpload(DeletePrescriptionUploadParam param,List<Guid>ids, UserInfoDto user)
+        {
+             await Task.Run(async () =>
+            {
+                var xmlStr = XmlHelp.SaveXml(param);
+                if (xmlStr)
+                {
+                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB005");
+                    if (result == 1)
+                    {
+                        var data=  XmlHelp.DeSerializerModel(new IniDto(), true);
+                        //添加批次
+                        var updateFeeParam = ids.Select(c => new UpdateHospitalizationFeeParam { Id=c }).ToList();  //new  UpdateHospitalizationFeeParam
+                        await _medicalInsuranceSqlRepository.UpdateHospitalizationFee(updateFeeParam, true, user);
+                        //添加日志
+                        var logParam = new AddHospitalLogParam()
+                        {
+                            JoinOrOldJson = JsonConvert.SerializeObject(param),
+                            ReturnOrNewJson = JsonConvert.SerializeObject(ids),
+                            OrganizationCode = user.OrganizationCode,
+                            UserId =user.UserId,
+                            Remark = "[R][HospitalizationFee]删除处方数据",
+                            
+                        };
+                        await _systemManageRepository.AddHospitalLog(logParam);
+                    }
+                }
+
             });
         }
         /// <summary>

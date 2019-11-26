@@ -80,6 +80,12 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
         Task<List<QueryAllHospitalizationPatientsDto>> QueryAllHospitalizationPatients(PrescriptionUploadAutomaticParam param);
         /// <summary>
+        /// 住院病人明细查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task<List<QueryInpatientInfoDetailDto>> InpatientInfoDetailQuery(InpatientInfoDetailQueryParam param);
+        /// <summary>
         /// 住院清单查询
         /// </summary>
         /// <param name="param"></param>

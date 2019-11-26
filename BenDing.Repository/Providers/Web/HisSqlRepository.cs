@@ -536,6 +536,50 @@ namespace BenDing.Repository.Providers.Web
             }
         }
         /// <summary>
+        /// 住院病人明细查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<List<QueryInpatientInfoDetailDto>> InpatientInfoDetailQuery(InpatientInfoDetailQueryParam param)
+        {
+            using (var _sqlConnection = new SqlConnection(_connectionString))
+            {
+                var resultData = new List<QueryInpatientInfoDetailDto>();
+                _sqlConnection.Open();
+
+                string strSql = @"select (select  top 1 a.BusinessId from [dbo].[Inpatient] as a where a.HospitalizationNo=HospitalizationNo and IsDelete=0) as BusinessId,
+                                  * from [dbo].[HospitalizationFee]  where  IsDelete=0 ";
+                if (param.IdList != null && param.IdList.Any())
+                {
+                    var idlist = CommonHelp.ListToStr(param.IdList);
+                    strSql += $@" and Id in({idlist})";
+                }
+                else
+                {
+                    if (!string.IsNullOrWhiteSpace(param.BusinessId))
+                    {
+                        strSql +=
+                            $@" and HospitalizationNo =(select top 1 HospitalizationNo from [dbo].[Inpatient] where BusinessId='{param.BusinessId}' and IsDelete=0)";
+                    }
+                    else
+                    {
+                        throw new Exception("业务号不能为空!!!");
+                    }
+                }
+
+
+                var data = await _sqlConnection.QueryAsync<QueryInpatientInfoDetailDto>(strSql);
+
+                if (data != null && data.Count() > 0)
+                {
+                    resultData = data.ToList();
+                }
+
+                _sqlConnection.Close();
+                return resultData;
+            }
+        }
+        /// <summary>
         /// 住院清单查询
         /// </summary>
         /// <param name="param"></param>
