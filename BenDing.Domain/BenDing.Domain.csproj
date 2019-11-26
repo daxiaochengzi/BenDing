@@ -117,7 +117,7 @@
     <Compile Include="Models\Dto\Web\CatalogInfoDto.cs" />
     <Compile Include="Models\Dto\Web\ICD10InfoDto.cs" />
     <Compile Include="Models\Dto\Web\InformationDto.cs" />
-    <Compile Include="Models\Dto\Web\IniDto.cs" />
+    <Compile Include="Models\Dto\Resident\IniDto.cs" />
     <Compile Include="Models\Dto\Web\InpatientInfoDetailDto.cs" />
     <Compile Include="Models\Dto\Web\InpatientInfoDetaiQueryDto.cs" />
     <Compile Include="Models\Dto\Web\InpatientInfoDto.cs" />

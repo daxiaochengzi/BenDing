@@ -160,6 +160,7 @@ namespace BenDing.Repository.Providers.Web
                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB003");
                    if (result == 1)
                    {
+                       var   resultData = XmlHelp.DeSerializerModel(new IniDto(), true);
                        var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
                        var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(param);
                        var saveXmlData = new SaveXmlData();
@@ -458,7 +459,7 @@ namespace BenDing.Repository.Providers.Web
 
                string Cancel(LeaveHospitalSettlementCancelParam paramc)
                {
-                   string resultData = "";
+                   string  resultData = null;
                    var xmlStr = XmlHelp.SaveXml(paramc);
                    if (xmlStr)
                    {
@@ -466,7 +467,7 @@ namespace BenDing.Repository.Providers.Web
                        if (result == 1)
                        {
                            var data = XmlHelp.DeSerializerModel(new IniDto(), true);
-                           resultData = data.PO_FHZ;
+                           resultData = data.ReturnState;
                        }
 
                    }
@@ -571,9 +572,9 @@ namespace BenDing.Repository.Providers.Web
                             var uploadDataParam = paramIni;
                             uploadDataParam.RowDataList = rowDataListAll.Where(c => sendList.Contains(c.Id)).ToList();
                             var uploadData = await PrescriptionUploadData(uploadDataParam, param.BusinessId, user);
-                            if (uploadData.PO_FHZ != "1")
+                            if (uploadData.ReturnState != "1")
                             {
-                                resultData.Msg += uploadData.PO_MSG;
+                                resultData.Msg += uploadData.ReturnState;
                             }
                             else
                             {
@@ -619,7 +620,7 @@ namespace BenDing.Repository.Providers.Web
                             data = XmlHelp.DeSerializerModel(new PrescriptionUploadDto(), true);
                         }
 
-                        if (data.PO_FHZ == "1")
+                        if (data.ReturnState == "1")
                         {   //交易码
                             var transactionId = Guid.NewGuid().ToString("N");
                             //添加批次
@@ -824,7 +825,7 @@ namespace BenDing.Repository.Providers.Web
                     if (result == 1)
                     {
                         data = XmlHelp.DeSerializerModel(new PrescriptionUploadDto(), false);
-                        if (data.PO_FHZ != "1")
+                        if (data.ReturnState != "1")
                         {
                             resultData = false;
                         }

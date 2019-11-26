@@ -18,13 +18,13 @@ namespace BenDing.Domain.Models.Dto.Web
      /// </summary>
         [JsonProperty(PropertyName = "PO_FHZ")]
       
-        public string PO_FHZ { get; set; }
+        public string ReturnState { get; set; }
         /// <summary>
         /// 系统错误信息
         /// </summary>
         [JsonProperty(PropertyName = "PO_MSG")]
        
-        public string PO_MSG { get; set; }
+        public string Msg { get; set; }
 
         
     }
