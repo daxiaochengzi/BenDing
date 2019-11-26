@@ -937,7 +937,7 @@ namespace NFine.Web.Controllers
                     OrganizationCode = userBase.OrganizationCode
                 };
                 //医保登录
-                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                //await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保病人信息
                 var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
                 var data = await _residentMedicalInsurance.QueryPrescriptionDetail(new QueryPrescriptionDetailParam() 

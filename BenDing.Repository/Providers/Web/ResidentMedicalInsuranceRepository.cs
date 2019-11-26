@@ -663,16 +663,18 @@ namespace BenDing.Repository.Providers.Web
             return await Task.Run(async () =>
             {
                 var data = new QueryPrescriptionDetailDto();
+              
                 var xmlStr = XmlHelp.SaveXml(param);
                 if (xmlStr)
                 {
                     int result = MedicalInsuranceDll.CallService_cxjb("CXJB006");
                     if (result == 1)
                     {
-                        string strXml = XmlHelp.DeSerializerModelStr("CFMX");
-                        data = XmlHelp.DeSerializer<QueryPrescriptionDetailDto>(strXml);
+                     
+                       string strXml = XmlHelp.DeSerializerModelStr("CFMX");
+                       data = XmlHelp.DeSerializer<QueryPrescriptionDetailDto >(strXml);
                         if (data.RowDataList == null && data.RowDataList.Any())
-                        { 
+                        {
                         }
                     }
                     else

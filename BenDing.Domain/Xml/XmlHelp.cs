@@ -304,7 +304,7 @@ namespace BenDing.Domain.Xml
             {
                 var rowNode = doc.SelectSingleNode("/ROW/" + rowsName) ?? doc.SelectSingleNode("/row/" + rowsName);
                 string strIni = "xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'";
-                resultData = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" + "<ROWDATA " + strIni + ">" + rowNode.InnerXml + "</ROWDATA>";
+                resultData = "<?xml version=\"1.0\" encoding=\"utf-16\"?>" + "<"+ rowsName + " " + strIni + ">" + rowNode.InnerXml + "</"+ rowsName + ">";
 
             }
             else
@@ -458,7 +458,11 @@ namespace BenDing.Domain.Xml
         {
             var result = new ValidXmlDto();
 
-            string pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "RequestParams.xml";
+            string pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\ResponseParams.xml";
+            if (!System.IO.File.Exists(pathXml))
+            {
+                throw new SystemException("ResponseParams文件不存在!!!");
+            }
             XmlDocument doc = new XmlDocument();
             doc.Load(pathXml);
             XmlNode po_fhzNode = doc.SelectSingleNode("/ROW/PO_FHZ");
