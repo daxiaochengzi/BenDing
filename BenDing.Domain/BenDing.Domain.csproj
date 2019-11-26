@@ -82,7 +82,7 @@
     <Compile Include="Models\Enums\OrganizationGrade.cs" />
     <Compile Include="Models\Enums\ProjectCodeType.cs" />
     <Compile Include="Models\Enums\ProjectLevel.cs" />
-    <Compile Include="Models\Params\Base\BaseUiBusinessDataParam.cs" />
+    <Compile Include="Models\Params\Base\BaseUiBusinessIdDataParam.cs" />
     <Compile Include="Models\Params\Base\BaseUiIniParam.cs" />
     <Compile Include="Models\Params\Resident\AddProjectBatchParam.cs" />
     <Compile Include="Models\Params\Resident\BatchConfirmParam.cs" />
@@ -97,6 +97,8 @@
     <Compile Include="Models\Params\Resident\PrescriptionUploadParam.cs" />
     <Compile Include="Models\Params\Resident\QueryLeaveHospitalSettlementParam.cs" />
     <Compile Include="Models\Params\Resident\QueryMedicalInsurancePairCodeParam.cs" />
+    <Compile Include="Models\Params\Resident\QueryPrescriptionDetailDto.cs" />
+    <Compile Include="Models\Params\Resident\QueryPrescriptionDetailParam.cs" />
     <Compile Include="Models\Params\SystemManage\AddHospitalLogParam.cs" />
     <Compile Include="Models\Params\UI\AddHospitalOrganizationGradeUiParam.cs" />
     <Compile Include="Models\Params\UI\DirectoryComparisonManagementUiParam.cs" />

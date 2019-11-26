@@ -912,6 +912,40 @@ namespace NFine.Web.Controllers
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
         /// <summary>
+        /// 医保处方明细查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public async Task<ActionResult> QueryPrescriptionDetail(BaseUiBusinessIdDataParam param)
+        {
+            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+                //var queryData = await _medicalInsuranceSqlRepository.QueryProjectDownload(param);
+                //var data = new 
+                //{
+                //    data = queryData.Values.FirstOrDefault(),
+                //    count = queryData.Keys.FirstOrDefault()
+                //};
+                //获取操作人员信息
+
+                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    BusinessId = param.BusinessId,
+                    OrganizationCode = userBase.OrganizationCode
+                };
+                //医保登录
+                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                //获取医保病人信息
+                var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+                var data = await _residentMedicalInsurance.QueryPrescriptionDetail(new QueryPrescriptionDetailParam() 
+                          { MedicalInsuranceHospitalizationNo= residentData .MedicalInsuranceHospitalizationNo});
+                y.Data = data;
+            });
+            return Json(resultData, JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
         /// 医保住院费用预结算
         /// </summary>
         /// <param name="param"></param>

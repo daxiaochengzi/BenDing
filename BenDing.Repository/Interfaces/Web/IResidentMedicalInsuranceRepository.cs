@@ -84,6 +84,12 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
         Task<HospitalizationPresettlementDto> QueryLeaveHospitalSettlement(QueryLeaveHospitalSettlementParam param);
         /// <summary>
+        ///	医保处方明细查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        Task<QueryPrescriptionDetailDto> QueryPrescriptionDetail(QueryPrescriptionDetailParam param);
+        /// <summary>
         /// 出院院结算取消
         /// </summary>
         /// <param name="param"></param>

@@ -501,7 +501,7 @@ namespace BenDing.Repository.Providers.Web
         }
 
         /// <summary>
-        /// 处方上传
+        /// 医保处方上传
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -615,7 +615,7 @@ namespace BenDing.Repository.Providers.Web
             });
         }
         /// <summary>
-        /// 删除处方数据
+        /// 删除医保处方数据
         /// </summary>
         /// <param name="param"></param>
         /// <param name="ids"></param>
@@ -651,6 +651,40 @@ namespace BenDing.Repository.Providers.Web
 
             });
         }
+        /// <summary>
+        ///	医保处方明细查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<QueryPrescriptionDetailDto> QueryPrescriptionDetail(QueryPrescriptionDetailParam param)
+        {
+
+            return await Task.Run(async () =>
+            {
+                var data = new QueryPrescriptionDetailDto();
+                var xmlStr = XmlHelp.SaveXml(param);
+                if (xmlStr)
+                {
+                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB006");
+                    if (result == 1)
+                    {
+                        string strXml = XmlHelp.DeSerializerModelStr("CFMX");
+                        data = XmlHelp.DeSerializer<QueryPrescriptionDetailDto>(strXml);
+                     
+                    }
+                    else
+                    {
+                        throw new Exception("医保处方明细查询执行失败!!!");
+                    }
+                }
+                return data;
+            });
+
+
+        }
+
+
+        
         /// <summary>
         /// 处方数据上传
         /// </summary>
@@ -818,7 +852,8 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="pairCode"></param>
         /// <param name="user"></param>
         ///  <returns></returns>
-        private async Task<Dictionary<string, List<QueryInpatientInfoDetailDto>>> PrescriptionDataUnitPriceValidation(List<QueryInpatientInfoDetailDto> param, List<QueryMedicalInsurancePairCodeDto> pairCode, UserInfoDto user)
+        private async Task<Dictionary<string, List<QueryInpatientInfoDetailDto>>> PrescriptionDataUnitPriceValidation(List<QueryInpatientInfoDetailDto> param,
+            List<QueryMedicalInsurancePairCodeDto> pairCode, UserInfoDto user)
         {
             return await Task.Run(async () =>
             {
