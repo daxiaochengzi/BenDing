@@ -773,7 +773,7 @@ namespace NFine.Web.Controllers
                         TransactionId = param.TransactionId,
                         UserId = param.UserId,
                         InpatientDepartmentCode = param.InpatientDepartmentCode,
-                         HospitalizationNo = param.HospitalizationNo
+                         HospitalizationNo = CommonHelp.GuidToStr(param.BusinessId)
                     };
                     var mainDiagnosis = param.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == true);
                     if (mainDiagnosis == null) throw new Exception("主诊断不能为空!!!");
