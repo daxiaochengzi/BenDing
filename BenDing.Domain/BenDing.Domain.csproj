@@ -79,6 +79,7 @@
     <Compile Include="Models\Dto\Web\QueryMedicalInsuranceDto.cs" />
     <Compile Include="Models\Dto\Web\ThreeCataloguePairCodeUploadDto.cs" />
     <Compile Include="Models\Dto\Web\UiIniParam.cs" />
+    <Compile Include="Models\Enums\MedicalInsuranceState.cs" />
     <Compile Include="Models\Enums\OrganizationGrade.cs" />
     <Compile Include="Models\Enums\ProjectCodeType.cs" />
     <Compile Include="Models\Enums\ProjectLevel.cs" />

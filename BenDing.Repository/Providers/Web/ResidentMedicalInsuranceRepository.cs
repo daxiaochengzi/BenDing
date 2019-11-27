@@ -287,6 +287,7 @@ namespace BenDing.Repository.Providers.Web
                     if (result == 1)
                     {
                         data = XmlHelp.DeSerializerModel(new HospitalizationPresettlementDto(), true);
+
                         var logParam = new AddHospitalLogParam()
                         {
                             JoinOrOldJson = JsonConvert.SerializeObject(param),

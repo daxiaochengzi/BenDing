@@ -49,6 +49,10 @@ namespace BenDing.Domain.Models.Params.Web
         /// </summary>
 
         public string CancelTransactionId { get; set; }
+        /// <summary>
+        /// 是否预结算
+        /// </summary>
+        public bool IsPresettlement { get; set; }
 
     }
 }

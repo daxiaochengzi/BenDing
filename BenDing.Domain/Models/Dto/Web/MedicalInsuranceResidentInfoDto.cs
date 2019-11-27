@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using BenDing.Domain.Models.Enums;
 
 namespace BenDing.Domain.Models.Dto.Web
 {/// <summary>
@@ -65,6 +66,10 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 交易id
         /// </summary>
         public string TransactionId { get; set; }
+        /// <summary>
+        /// 医保状态
+        /// </summary>
+        public MedicalInsuranceState MedicalInsuranceState { get; set; }
 
 
     }
