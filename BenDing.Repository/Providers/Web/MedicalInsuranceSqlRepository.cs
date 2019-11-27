@@ -459,7 +459,7 @@ namespace BenDing.Repository.Providers.Web
                             from [dbo].[ThreeCataloguePairCode] as   a
                             inner join [dbo].[MedicalInsuranceProject] as b on b.ProjectCode=a.ProjectCode
                             where a.OrganizationCode='{param.OrganizationCode}' and a.[DirectoryCode] in({updateId})
-                              and a.IsDelete=0  and b.IsDelete=0 and b.EffectiveSign=1";
+                             and a.IsDelete=0  and b.IsDelete=0 ";
                     var data = await _sqlConnection.QueryAsync<QueryMedicalInsurancePairCodeDto>(sqlStr);
                     if (data != null && data.Any() == true)
                     {
