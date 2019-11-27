@@ -88,8 +88,8 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 住院清单上传,2.2.4.	处方项目传输
         /// </summary>
-        /// <param name="bid">用户ID</param>
-        /// <param name="empid">业务ID</param>
+        /// <param name="bid">业务ID</param>
+        /// <param name="empid">用户ID</param>
         /// <returns></returns>
         public ActionResult HospitalizationExpensesManagement(string bid, string empid)
         {
