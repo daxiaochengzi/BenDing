@@ -764,7 +764,8 @@ namespace NFine.Web.Controllers
                     //医保修改
                     var modifyParam = new HospitalizationModifyParam()
                     {
-                        AdmissionDate = param.AdmissionDate,
+                        AdmissionDate = Convert.ToDateTime(param.AdmissionDate).ToString("yyyyMMdd"),
+                       
                         BedNumber = param.BedNumber,
                         BusinessId = param.BusinessId,
                         FetusNumber = param.FetusNumber,
@@ -891,7 +892,7 @@ namespace NFine.Web.Controllers
                     //获取已上传数据、
                     var uploadDataId = queryData.Where(c => c.UploadMark == 1).Select(d => d.Id).ToList();
                     var batchNumberList = queryData.Where(c => c.UploadMark == 1).GroupBy(d => d.BatchNumber).Select(b => b.Key).ToList();
-                    if (batchNumberList != null && batchNumberList.Any())
+                    if ( batchNumberList.Any())
                     {
                         var batchNumberArray = string.Join(",", batchNumberList.ToArray());
                         var deleteParam = new DeletePrescriptionUploadParam()
@@ -903,14 +904,7 @@ namespace NFine.Web.Controllers
                         await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                         await _residentMedicalInsurance.DeletePrescriptionUpload(deleteParam, uploadDataId, userBase);
                     }
-
-
-
-
                 }
-
-
-
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
         }
@@ -1028,14 +1022,14 @@ namespace NFine.Web.Controllers
                             LeaveHospitalInpatientState = param.LeaveHospitalInpatientState
 
                         };
-                        var InfoParam = new LeaveHospitalSettlementInfoParam()
+                        var infoParam = new LeaveHospitalSettlementInfoParam()
                         {
                             user = userBase,
                             BusinessId = param.BusinessId,
                             Id = residentData.Id,
                             InsuranceNo = residentData.InsuranceNo,
                         };
-                        var data = await _residentMedicalInsurance.LeaveHospitalSettlement(presettlementParam, InfoParam);
+                        var data = await _residentMedicalInsurance.LeaveHospitalSettlement(presettlementParam, infoParam);
                         y.Data = data;
                     }
 
