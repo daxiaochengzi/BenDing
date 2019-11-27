@@ -13,11 +13,8 @@ namespace BenDing.Domain.Models.Params.Resident
     {   /// <summary>
     /// 操作人员
     /// </summary>
-        public UserInfoDto user { get; set; }
-        /// <summary>
-        /// 业务id
-        /// </summary>
-        public string BusinessId { get; set; }
+        public UserInfoDto User { get; set; }
+        
         /// <summary>
         /// 医保病人id
         /// </summary>
@@ -26,5 +23,9 @@ namespace BenDing.Domain.Models.Params.Resident
         /// 医保卡号
         /// </summary>
         public string InsuranceNo { get; set; }
+        /// <summary>
+        /// 业务id
+        /// </summary>
+        public  string BusinessId { get; set; }
     }
 }

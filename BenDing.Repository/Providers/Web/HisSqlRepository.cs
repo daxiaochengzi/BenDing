@@ -640,7 +640,10 @@ namespace BenDing.Repository.Providers.Web
                                 BillDepartment = c.BillDepartment,
                                 DirectoryCode = c.DirectoryCode,
                                 DirectoryName = c.DirectoryName,
-                                DirectoryCategoryCode = c.DirectoryCategoryCode,
+                            
+                                DirectoryCategoryCode = c.DirectoryCategoryCode != null
+                                    ? ((CatalogTypeEnum)Convert.ToInt32(c.ProjectLevel)).ToString()
+                                    : c.DirectoryCategoryCode,
                                 UnitPrice = c.UnitPrice,
                                 UploadUserName = c.UploadUserName,
                                 Quantity = c.Quantity,
@@ -651,8 +654,12 @@ namespace BenDing.Repository.Providers.Web
                                 AdjustmentDifferenceValue = c.AdjustmentDifferenceValue,
                                 BlockPrice = itemPairCode != null ? GetBlockPrice(itemPairCode, gradeData) : 0,
                                 ProjectCode = itemPairCode?.ProjectCode,
-                                ProjectCodeType = itemPairCode?.ProjectCodeType,
-                                ProjectLevel = itemPairCode?.ProjectCodeType,
+                                ProjectLevel = c.ProjectLevel != null
+                                    ? ((ProjectLevel)Convert.ToInt32(c.ProjectLevel)).ToString()
+                                    : c.ProjectLevel,
+                                ProjectCodeType = c.ProjectCodeType != null
+                                    ? ((ProjectCodeType)Convert.ToInt32(c.ProjectCodeType)).ToString()
+                                    : c.ProjectCodeType,
                                 SelfPayProportion = (itemPairCode != null && residentInfoData != null) ? GetSelfPayProportion(itemPairCode, residentInfoData) : 0,
                                 UploadAmount = c.UploadAmount
                             };

@@ -178,7 +178,7 @@ namespace BenDing.Domain.Models.Dto.Web
         [JsonProperty(PropertyName = "出院次诊断ICD10")]
         public string LeaveHospitalSecondaryDiagnosisIcd10 { get; set; }
         /// <summary>
-        /// 在院状态
+        /// 在院状态   0在院无床、1在院有床、2出院未结算、3出院已结算、-1撤销入院
         /// </summary>
         [JsonProperty(PropertyName = "在院状态")]
         public string InpatientHospitalState { get; set; }

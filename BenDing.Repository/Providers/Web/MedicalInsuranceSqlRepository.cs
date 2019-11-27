@@ -137,25 +137,30 @@ namespace BenDing.Repository.Providers.Web
                 var resultData = new MedicalInsuranceResidentInfoDto();
                 _sqlConnection.Open();
                 string strSql= "";
-                if (!string.IsNullOrWhiteSpace(param.CancelUserId))
+                if (!string.IsNullOrWhiteSpace(param.CancelTransactionId))
                 {
                     strSql = $@" update MedicalInsurance set SettlementUserId='{param.UserId}',SettlementTime=NULL,SettlementCancelTime=GETDATE(),[MedicalInsuranceState]=0, 
-                                    SettlementCancelUserId='{param.CancelUserId}',OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
+                                    SettlementCancelUserId='{param.UserId}',OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
                                     SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
-                                    SettlementNo='{param.SettlementNo}',TransactionId='{param.TransactionId}',CancelTransactionId='{param.CancelTransactionId}'
+                                    SettlementNo='{param.SettlementNo}',CancelTransactionId='{param.CancelTransactionId}',CancelTransactionId='{param.CancelTransactionId}'
                                     where Id='{param.Id}' ";
                 }
-                else if(!string.IsNullOrWhiteSpace(param.UserId))
+                else if(!string.IsNullOrWhiteSpace(param.SettlementTransactionId))
                 {
                     strSql = $@" update MedicalInsurance set SettlementUserId='{param.UserId}',SettlementTime=GETDATE(),MedicalInsuranceState=2,
                                     OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
                                     SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
-                                    SettlementNo='{param.SettlementNo}',TransactionId='{param.TransactionId}'
+                                    SettlementNo='{param.SettlementNo}',SettlementTransactionId='{param.SettlementTransactionId}'
                                     where Id='{param.Id}' ";
                 }
-                else if (param.IsPresettlement)
+                else if (!string.IsNullOrWhiteSpace(param.PreSettlementTransactionId))
                 {
-                    strSql = $@"update [dbo].[MedicalInsurance] set [MedicalInsuranceState]=1 where Id='{param.Id}'";
+                    strSql = $@" update MedicalInsurance set PreSettlementUserId='{param.UserId}',PreSettlementTime=GETDATE(),MedicalInsuranceState=1,
+                                    OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
+                                    SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
+                                    SettlementNo='{param.SettlementNo}',PreSettlementTransactionId='{param.SettlementTransactionId}'
+                                    where Id='{param.Id}' ";
+                  
                 }
                 var data = await _sqlConnection.ExecuteAsync(strSql);
                 _sqlConnection.Close();

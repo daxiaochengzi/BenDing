@@ -63,20 +63,20 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="user"></param>
         /// <returns></returns>
         Task DeletePrescriptionUpload(DeletePrescriptionUploadParam param, List<Guid> ids, UserInfoDto user);
-
-            /// <summary>
-            /// 费用预结算
-            /// </summary>
-            /// <param name="param"></param>
-            /// <returns></returns>
-            Task<HospitalizationPresettlementDto> HospitalizationPresettlement(HospitalizationPresettlementParam param, UserInfoDto user);
+        /// <summary>
+        /// 费用预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="infoParam"></param>
+        /// <returns></returns>
+        Task<HospitalizationPresettlementDto> HospitalizationPreSettlement(HospitalizationPresettlementParam param, HospitalizationPreSettlementInfoParam infoParam);
         /// <summary>
         /// 医保出院结算信息
         /// </summary>
         /// <param name="param"></param>
-        /// <param name="InfoParam"></param>
+        /// <param name="infoParam"></param>
         /// <returns></returns>
-        Task<HospitalizationPresettlementDto> LeaveHospitalSettlement(LeaveHospitalSettlementParam param, LeaveHospitalSettlementInfoParam InfoParam);
+        Task<HospitalizationPresettlementDto> LeaveHospitalSettlement(LeaveHospitalSettlementParam param, LeaveHospitalSettlementInfoParam infoParam);
         /// <summary>
         /// 查询医保出院结算信息
         /// </summary>

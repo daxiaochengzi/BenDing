@@ -672,10 +672,9 @@ namespace NFine.Web.Controllers
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {
-
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
                 {   //主诊断
-                    var mainDiagnosis = param.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == true);
+                    var mainDiagnosis = param.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis);
                     if (mainDiagnosis == null) throw new Exception("主诊断不能为空!!!");
                     param.AdmissionMainDiagnosisIcd10 = mainDiagnosis.DiagnosisCode;
                     param.AdmissionMainDiagnosis = mainDiagnosis.DiagnosisName;
@@ -725,9 +724,6 @@ namespace NFine.Web.Controllers
                 {
                     throw new Exception("诊断不能为空!!!");
                 }
-
-
-
             });
             return Json(resultData);
         }
@@ -777,11 +773,10 @@ namespace NFine.Web.Controllers
                         InpatientDepartmentCode = param.InpatientDepartmentCode,
                         HospitalizationNo = CommonHelp.GuidToStr(param.BusinessId)
                     };
-                    var mainDiagnosis = param.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == true);
+                    var mainDiagnosis = param.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis);
                     if (mainDiagnosis == null) throw new Exception("主诊断不能为空!!!");
                     modifyParam.AdmissionMainDiagnosisIcd10 = mainDiagnosis.DiagnosisCode;
                     modifyParam.AdmissionMainDiagnosis = mainDiagnosis.DiagnosisName;
-
                     //次诊断
                     var nextDiagnosis = param.DiagnosisList.Where(c => c.IsMainDiagnosis == false).ToList();
                     int num = 1;
@@ -893,7 +888,6 @@ namespace NFine.Web.Controllers
                     var batchNumberList = queryData.Where(c => c.UploadMark == 1).GroupBy(d => d.BatchNumber).Select(b => b.Key).ToList();
                     if (batchNumberList.Any())
                     {
-                        var batchNumberArray = string.Join(",", batchNumberList.ToArray());
                         var deleteParam = new DeletePrescriptionUploadParam()
                         {
                             BatchNumber = string.Join(",", batchNumberList.ToArray()),
@@ -947,7 +941,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> HospitalizationPresettlement(HospitalizationPresettlementUiParam param)
+        public async Task<ActionResult> HospitalizationPreSettlement(HospitalizationPresettlementUiParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {   //获取操作人员信息
@@ -967,14 +961,14 @@ namespace NFine.Web.Controllers
                     MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
                     LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
                 };
-                var data = await _residentMedicalInsurance.HospitalizationPresettlement(presettlementParam, userBase);
-                var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
+                var infoParam = new HospitalizationPreSettlementInfoParam()
                 {
-                   Id = residentData.Id,
-                   IsPresettlement = true,
+                    User = userBase,
+                    Id = residentData.Id,
+                    BusinessId = param.BusinessId,
                 };
-                //更新医保病人信息
-                await _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
+                var data = await _residentMedicalInsurance.HospitalizationPreSettlement(presettlementParam, infoParam);
+               
                 y.Data = data;
             });
             return Json(resultData, JsonRequestBehavior.AllowGet);
@@ -1002,31 +996,30 @@ namespace NFine.Web.Controllers
                 if (residentData.MedicalInsuranceState == MedicalInsuranceState.医保入院) throw new Exception("当前病人未预结算,不能结算!!!");
                 var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
                 //获取住院病人
-                var InpatientInfoData = await _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
+                var inpatientInfoData = await _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
+                if (Convert.ToInt32(inpatientInfoData.InpatientHospitalState)<2 ) throw new Exception("当前病人基层系统未办理出院,不能办理医保结算!!!");
                 //医保登录
                 await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 var presettlementParam = new LeaveHospitalSettlementParam()
                 {
                     MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                    // LeaveHospitalDate = (!string.IsNullOrWhiteSpace(InpatientInfoData.LeaveHospitalDate)) == true ? Convert.ToDateTime(InpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd") : DateTime.Now.ToString("yyyyMMdd"),
-                    //LeaveHospitalMainDiagnosisIcd10 = InpatientInfoData.LeaveHospitalMainDiagnosisIcd10,
-                    //LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
-                    //LeaveHospitalMainDiagnosis = InpatientInfoData.LeaveHospitalMainDiagnosis,
-
-                    LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
-                    LeaveHospitalMainDiagnosisIcd10 = InpatientInfoData.AdmissionMainDiagnosisIcd10,
-                    //LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
-                    LeaveHospitalMainDiagnosis = InpatientInfoData.AdmissionSecondaryDiagnosis,
+                    LeaveHospitalDate = (!string.IsNullOrWhiteSpace(inpatientInfoData.LeaveHospitalDate)) == true ? Convert.ToDateTime(inpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd") : DateTime.Now.ToString("yyyyMMdd"),
+                    LeaveHospitalMainDiagnosisIcd10 = inpatientInfoData.LeaveHospitalMainDiagnosisIcd10,
+                    LeaveHospitalDiagnosisIcd10Two = inpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
+                    LeaveHospitalMainDiagnosis = inpatientInfoData.LeaveHospitalMainDiagnosis,
+                    //LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
+                    //LeaveHospitalMainDiagnosisIcd10 = InpatientInfoData.AdmissionMainDiagnosisIcd10,
+                    ////LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
+                    //LeaveHospitalMainDiagnosis = InpatientInfoData.AdmissionSecondaryDiagnosis,
                     UserId = CommonHelp.GuidToStr(userBase.UserId),
                     LeaveHospitalInpatientState = param.LeaveHospitalInpatientState
-
                 };
                 var infoParam = new LeaveHospitalSettlementInfoParam()
                 {
-                    user = userBase,
-                    BusinessId = param.BusinessId,
+                    User = userBase,
                     Id = residentData.Id,
                     InsuranceNo = residentData.InsuranceNo,
+                    BusinessId = inpatientInfoData.BusinessId,
                 };
                 var data = await _residentMedicalInsurance.LeaveHospitalSettlement(presettlementParam, infoParam);
                 y.Data = data;

@@ -37,22 +37,22 @@ namespace BenDing.Domain.Models.Params.Web
         /// </summary>
         public string SettlementNo { get; set; }
         /// <summary>
-        /// 交易号
+        /// 结算交易id
         /// </summary>
-        public string TransactionId { get; set; }
-        /// <summary>
-        /// 取消人员
-        /// </summary>
-        public string CancelUserId { get; set; }
+        public string SettlementTransactionId { get; set; }
+       
         /// <summary>
         /// 取消交易id
         /// </summary>
 
         public string CancelTransactionId { get; set; }
         /// <summary>
-        /// 是否预结算
+        /// 预结算交易id
         /// </summary>
-        public bool IsPresettlement { get; set; }
+        public string PreSettlementTransactionId { get; set; }
+
+        
+
 
     }
 }
