@@ -93,6 +93,7 @@
     <Compile Include="Models\Params\Resident\LeaveHospitalSettlementCancelParam.cs" />
     <Compile Include="Models\Params\Resident\LeaveHospitalSettlementInfoParam.cs" />
     <Compile Include="Models\Params\Resident\LeaveHospitalSettlementParam.cs" />
+    <Compile Include="Models\Params\Resident\LeaveHospitalSettlementUiParam.cs" />
     <Compile Include="Models\Params\Resident\PrescriptionUploadAutomaticParam.cs" />
     <Compile Include="Models\Params\Resident\PrescriptionUploadParam.cs" />
     <Compile Include="Models\Params\Resident\QueryLeaveHospitalSettlementParam.cs" />

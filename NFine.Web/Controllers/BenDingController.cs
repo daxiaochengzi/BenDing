@@ -899,6 +899,8 @@ namespace NFine.Web.Controllers
                             BatchNumber = string.Join(",", batchNumberList.ToArray()),
                             MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo
                         };
+                        //医保登录
+                        await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                         await _residentMedicalInsurance.DeletePrescriptionUpload(deleteParam, uploadDataId, userBase);
                     }
 
@@ -984,7 +986,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> LeaveHospitalSettlement(HospitalizationPresettlementUiParam param)
+        public async Task<ActionResult> LeaveHospitalSettlement(LeaveHospitalSettlementUiParam param)
         {
             var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
             {   //获取操作人员信息
@@ -1013,10 +1015,15 @@ namespace NFine.Web.Controllers
                         var presettlementParam = new LeaveHospitalSettlementParam()
                         {
                             MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                            LeaveHospitalDate = (!string.IsNullOrWhiteSpace(InpatientInfoData.LeaveHospitalDate)) == true ? Convert.ToDateTime(InpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd") : DateTime.Now.ToString("yyyyMMdd"),
-                            LeaveHospitalMainDiagnosisIcd10 = InpatientInfoData.LeaveHospitalMainDiagnosisIcd10,
-                            LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
-                            LeaveHospitalMainDiagnosis = InpatientInfoData.LeaveHospitalMainDiagnosis,
+                            // LeaveHospitalDate = (!string.IsNullOrWhiteSpace(InpatientInfoData.LeaveHospitalDate)) == true ? Convert.ToDateTime(InpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd") : DateTime.Now.ToString("yyyyMMdd"),
+                            //LeaveHospitalMainDiagnosisIcd10 = InpatientInfoData.LeaveHospitalMainDiagnosisIcd10,
+                            //LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
+                            //LeaveHospitalMainDiagnosis = InpatientInfoData.LeaveHospitalMainDiagnosis,
+                           
+                            LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
+                            LeaveHospitalMainDiagnosisIcd10 = InpatientInfoData.AdmissionMainDiagnosisIcd10,
+                            //LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
+                            LeaveHospitalMainDiagnosis = InpatientInfoData.AdmissionSecondaryDiagnosis,
                             UserId = CommonHelp.GuidToStr(userBase.UserId),
                             LeaveHospitalInpatientState = param.LeaveHospitalInpatientState
 

@@ -629,7 +629,7 @@ namespace BenDing.Repository.Providers.Web
                 var xmlStr = XmlHelp.SaveXml(param);
                 if (xmlStr)
                 {
-                    int result = MedicalInsuranceDll.CallService_cxjb("CXJB005");
+                    int result = 1;//MedicalInsuranceDll.CallService_cxjb("CXJB005");
                     if (result == 1)
                     {
                         var data=  XmlHelp.DeSerializerModel(new IniDto(), true);
@@ -644,7 +644,6 @@ namespace BenDing.Repository.Providers.Web
                             OrganizationCode = user.OrganizationCode,
                             UserId =user.UserId,
                             Remark = "[R][HospitalizationFee]删除处方数据",
-                            
                         };
                         await _systemManageRepository.AddHospitalLog(logParam);
                     }

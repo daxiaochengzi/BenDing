@@ -10,9 +10,9 @@ namespace BenDing.Domain.Models.Params.SystemManage
 /// </summary>
   public  class AddHospitalLogParam
     {/// <summary>
-    /// 关联id
-    /// </summary>
-        public Guid? RelationId { get; set; }
+     /// 关联id
+     /// </summary>
+        public Guid? RelationId { get; set; } = Guid.Empty;
         /// <summary>
         /// 入参或者旧数据
         /// </summary>
