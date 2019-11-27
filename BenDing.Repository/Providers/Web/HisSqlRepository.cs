@@ -609,7 +609,36 @@ namespace BenDing.Repository.Providers.Web
                 var result = await _sqlConnection.QueryMultipleAsync(executeSql);
                 int totalPageCount = result.Read<int>().FirstOrDefault();
                 dataList = (from t in result.Read<QueryHospitalizationFeeDto>()
-                            select t).ToList();
+                    select new QueryHospitalizationFeeDto
+                    {
+                        Id = t.Id,
+                        Amount = t.Amount,
+                        BillTime = t.BillTime,
+                        BillDepartment = t.BillDepartment,
+                        DirectoryCode = t.DirectoryCode,
+                        DirectoryName = t.DirectoryName,
+
+                        DirectoryCategoryCode = t.DirectoryCategoryCode != null
+                                    ? ((CatalogTypeEnum)Convert.ToInt32(t.ProjectLevel)).ToString()
+                                    : t.DirectoryCategoryCode,
+                        UnitPrice = t.UnitPrice,
+                        UploadUserName = t.UploadUserName,
+                        Quantity = t.Quantity,
+                        RecipeCode = t.RecipeCode,
+                        Specification = t.Specification,
+                        OperateDoctorName = t.OperateDoctorName,
+                        UploadMark = t.UploadMark,
+                        AdjustmentDifferenceValue = t.AdjustmentDifferenceValue,
+                       
+                        ProjectLevel = t.ProjectLevel != null
+                                    ? ((ProjectLevel)Convert.ToInt32(t.ProjectLevel)).ToString()
+                                    : t.ProjectLevel,
+                        ProjectCodeType = t.ProjectCodeType != null
+                                    ? ((ProjectCodeType)Convert.ToInt32(t.ProjectCodeType)).ToString()
+                                    : t.ProjectCodeType,
+                        UploadAmount = t.UploadAmount
+                    }
+                             ).ToList();
                 if (dataList.Any())
                 {
                     var organizationCode = dataList.Select(d => d.OrganizationCode).FirstOrDefault();
