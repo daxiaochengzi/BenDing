@@ -693,7 +693,7 @@ namespace NFine.Web.Controllers
                         AuthCode = userBase.AuthCode,
                         OrganizationCode = userBase.OrganizationCode,
                         IdCardNo = param.IdCardNo,
-                        StartTime = param.StartTime,
+                        StartTime = Convert.ToDateTime(param.StartTime).ToString("yyyy-MM-dd HH:mm:ss"),
                         EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                         State = "0",
                     };
