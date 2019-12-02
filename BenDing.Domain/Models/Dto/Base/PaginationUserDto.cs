@@ -16,17 +16,16 @@ namespace BenDing.Domain.Models.Dto.Base
        public int Limit { get; set; }
 
        public int Page { get; set; }
-
-
         /// <summary>
         /// 用户id
         /// </summary>
-        [JsonProperty(PropertyName = "UserId")]
-        //[Display(Name = "用户id")]
-        //[Required(ErrorMessage = "{0}不能为空!!!")]
+        //[JsonProperty(PropertyName = "UserId")]
         [XmlIgnore]
         [JsonIgnore]
         public string UserId { get; set; }
+       /// <summary>
+       /// 组织机构
+       /// </summary>
         public string OrganizationCode { get; set; }
         //    /// <summary>
         //    /// 每页行数

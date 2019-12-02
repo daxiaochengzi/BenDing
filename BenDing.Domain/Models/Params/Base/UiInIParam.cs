@@ -16,7 +16,7 @@ namespace BenDing.Domain.Models.Params.UI
         /// <summary>
         /// 用户id
         /// </summary>
-        [JsonProperty(PropertyName = "UserId")]
+     
         [Display(Name = "用户id")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         [XmlIgnore]

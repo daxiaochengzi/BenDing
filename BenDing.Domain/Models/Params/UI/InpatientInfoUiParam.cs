@@ -16,16 +16,22 @@ namespace BenDing.Domain.Models.Params.UI
       
      
         public string IdCardNo { get; set; }
-        [JsonProperty(PropertyName = "开始时间")]
-        
+
+        /// <summary>
+        /// 开始时间
+        /// </summary>
         [Display(Name = "开始时间")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string StartTime { get; set; }
-        [JsonProperty(PropertyName = "结束时间")]
+        /// <summary>
+        /// 结束时间
+        /// </summary>
+       
       
         public string EndTime { get; set; }
-      
-        [JsonProperty(PropertyName = "状态")]
+        /// <summary>
+        /// 状态
+        /// </summary>
        
         public string State { get; set; }
         /// <summary>

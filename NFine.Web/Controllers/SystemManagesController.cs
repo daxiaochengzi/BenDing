@@ -8,11 +8,12 @@ using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces;
 using Newtonsoft.Json;
+using NFine.Web;
 
 namespace NFine.Web.Controllers
 {
     /// <summary>
-    /// 本鼎系统管理
+    /// 本鼎后台系统管理
     /// </summary>
     public class SystemManagesController : ApiController
     {
@@ -21,14 +22,14 @@ namespace NFine.Web.Controllers
         private readonly IMedicalInsuranceSqlRepository _dataBaseSqlServerService;
         private readonly ISystemManageRepository _systemManage;
         private readonly IResidentMedicalInsuranceRepository _residentMedicalInsurance;
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="insuranceRepository"></param>
-        /// <param name="iWebServiceBasicService"></param>
-        /// <param name="iDataBaseSqlServerService"></param>
-        /// <param name="iBaseHelpRepository"></param>
-        /// <param name="iManageRepository"></param>
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="insuranceRepository"></param>
+       /// <param name="iWebServiceBasicService"></param>
+       /// <param name="iDataBaseSqlServerService"></param>
+       /// <param name="iBaseHelpRepository"></param>
+       /// <param name="iManageRepository"></param>
         public SystemManagesController(IResidentMedicalInsuranceRepository insuranceRepository,
             IWebServiceBasicService iWebServiceBasicService,
             IMedicalInsuranceSqlRepository iDataBaseSqlServerService,

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http.ModelBinding;
-
 using BenDing.Domain.Xml;
 using Newtonsoft.Json;
 using NFine.Code;
@@ -20,14 +19,17 @@ namespace NFine.Web
         /// <summary>
         /// 
         /// </summary>
-        public ApiJsonResultData(Object obj)
+        public ApiJsonResultData()
+        {
+            Messages = new string[0];
+            Success = true;
+            //DataDescribe = CommonHelp.GetPropertyAliasDict(obj);
+        }
+        public ApiJsonResultData( ModelStateDictionary modelState, Object obj):this() 
         {
             Messages = new string[0];
             Success = true;
             DataDescribe = CommonHelp.GetPropertyAliasDict(obj);
-        }
-        public ApiJsonResultData(ModelStateDictionary modelState, Object obj) : this(obj)
-        {
             this.AddModelState(modelState);
         }
         #endregion
@@ -38,7 +40,7 @@ namespace NFine.Web
         /// 是否成功
         /// </summary>
 
-        public bool Success { get; set; } = true;
+        public bool Success { get; set; }
 
         /// <summary>
         /// messages.
