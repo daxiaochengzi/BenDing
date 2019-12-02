@@ -5,8 +5,8 @@ using System.Web;
 
 namespace NFine.Web.Model
 {
-    public interface IGrammarNewService
+    public interface IUserService
     {
-        int TestIf();
+        UserInfo GetUserInfo();
     }
 }

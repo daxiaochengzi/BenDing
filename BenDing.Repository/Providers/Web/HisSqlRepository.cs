@@ -4,9 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
@@ -16,23 +14,24 @@ using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using Dapper;
-using NFine.Code;
 
 namespace BenDing.Repository.Providers.Web
 {
     public class HisSqlRepository : IHisSqlRepository
     {
-        private IMedicalInsuranceSqlRepository _baseSqlServerRepository;
-        private ISystemManageRepository _iSystemManageRepository;
-        private string _connectionString;
+        private readonly IMedicalInsuranceSqlRepository _baseSqlServerRepository;
+        private readonly ISystemManageRepository _iSystemManageRepository;
+        private readonly string _connectionString;
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="conStr"></param>   
-        public HisSqlRepository(IMedicalInsuranceSqlRepository iBaseSqlServerRepository, ISystemManageRepository ImanageRepository)
+        /// <param name="iBaseSqlServerRepository"></param>
+        /// <param name="IsystemManageRepository"></param>
+
+        public HisSqlRepository(IMedicalInsuranceSqlRepository iBaseSqlServerRepository, ISystemManageRepository IsystemManageRepository)
         {
             _baseSqlServerRepository = iBaseSqlServerRepository;
-            _iSystemManageRepository = ImanageRepository;
+            _iSystemManageRepository = IsystemManageRepository;
             string conStr = ConfigurationManager.ConnectionStrings["NFineDbContext"].ToString();
             _connectionString = !string.IsNullOrWhiteSpace(conStr) ? conStr : throw new ArgumentNullException(nameof(conStr));
 
@@ -43,24 +42,24 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="userInfo"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task ChangeOrg(UserInfoDto userInfo, List<OrgDto> param)
+        public void ChangeOrg(UserInfoDto userInfo, List<OrgDto> param)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
 
-                _sqlConnection.Open();
+                sqlConnection.Open();
                 if (param.Any())
                 {
-                    IDbTransaction transaction = _sqlConnection.BeginTransaction();
+                    IDbTransaction transaction = sqlConnection.BeginTransaction();
                     try
                     {
 
-                        string strSql = $"update [dbo].[HospitalOrganization] set DeleteTime=GETDATE(),IsDelete=1,DeleteUserId='{userInfo.UserId}'";
+                        string strSql = $"update [dbo].[HospitalOrganization] set DeleteTime=getDate(),IsDelete=1,DeleteUserId='{userInfo.UserId}'";
 
                         if (param.Any())
                         {
 
-                            await _sqlConnection.ExecuteAsync(strSql, null, transaction);
+                            sqlConnection.Execute(strSql, null, transaction);
 
                             string insterCount = null;
                             foreach (var itmes in param)
@@ -68,10 +67,10 @@ namespace BenDing.Repository.Providers.Web
                                 string insterSql = $@"
                                 insert into [dbo].[HospitalOrganization](id,HospitalId,HospitalName,HospitalAddr,ContactPhone,PostalCode,ContactPerson,CreateTime,IsDelete,DeleteTime,CreateUserId)
                                 values('{Guid.NewGuid()}','{itmes.Id}','{itmes.HospitalName}','{itmes.HospitalAddr}','{itmes.ContactPhone}','{itmes.PostalCode}','{itmes.ContactPerson}',
-                                    GETDATE(),0,null,'{userInfo.UserId}');";
+                                    getDate(),0,null,'{userInfo.UserId}');";
                                 insterCount += insterSql;
                             }
-                            await _sqlConnection.ExecuteAsync(insterCount, null, transaction);
+                            sqlConnection.Execute(insterCount, null, transaction);
                             transaction.Commit();
 
                         }
@@ -85,10 +84,8 @@ namespace BenDing.Repository.Providers.Web
 
                     }
                 }
-                //var sqlData = await _sqlConnection.QueryAsync<string>("usp_webHealth_NJ_all", new { SPName = name, Params = strParams },
-                //    commandType: CommandType.StoredProcedure);
-                //string strSqlData = sqlData.FirstOrDefault();
-                _sqlConnection.Close();
+
+                sqlConnection.Close();
 
 
             }
@@ -98,14 +95,14 @@ namespace BenDing.Repository.Providers.Web
         /// <summary>
         /// 添加三大目录
         /// </summary>
+        /// <param name="userInfo"></param>
         /// <param name="param"></param>
         /// <param name="type"></param>
-        /// <returns></returns>
-        public async Task AddCatalog(UserInfoDto userInfo, List<CatalogDto> param, CatalogTypeEnum type)
+        public void AddCatalog(UserInfoDto userInfo, List<CatalogDto> param, CatalogTypeEnum type)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                _sqlConnection.Open();
+                sqlConnection.Open();
                 try
                 {
                     if (param.Any())
@@ -117,18 +114,18 @@ namespace BenDing.Repository.Providers.Web
                                     insert into [dbo].[HospitalThreeCatalogue]([id],[DirectoryCode],[DirectoryName],[MnemonicCode],[DirectoryCategoryCode],[DirectoryCategoryName],[Unit],[Specification],[formulation],
                                     [ManufacturerName],[remark],DirectoryCreateTime,CreateTime,IsDelete,CreateUserId,FixedEncoding)
                                     values('{Guid.NewGuid()}','{itmes.DirectoryCode}','{itmes.DirectoryName}','{itmes.MnemonicCode}',{Convert.ToInt16(type)},'{itmes.DirectoryCategoryName}','{itmes.Unit}','{itmes.Specification}','{itmes.Formulation}',
-                                   '{itmes.ManufacturerName}','{itmes.Remark}', '{itmes.DirectoryCreateTime}',GETDATE(),0,'{userInfo.UserId}','{ BitConverter.ToInt64(Guid.Parse(itmes.DirectoryCode).ToByteArray(), 0)}');";
+                                   '{itmes.ManufacturerName}','{itmes.Remark}', '{itmes.DirectoryCreateTime}',getDate(),0,'{userInfo.UserId}','{ BitConverter.ToInt64(Guid.Parse(itmes.DirectoryCode).ToByteArray(), 0)}');";
                             insterCount += insterSql;
                         }
-                        await _sqlConnection.ExecuteAsync(insterCount, null);
+                        sqlConnection.Execute(insterCount);
 
                     }
-                    _sqlConnection.Close();
+                    sqlConnection.Close();
                 }
                 catch (Exception e)
                 {
 
-                    _sqlConnection.Close();
+                    sqlConnection.Close();
                     throw new Exception(e.Message);
                 }
 
@@ -141,13 +138,13 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<Dictionary<int,List<QueryCatalogDto>>> QueryCatalog(QueryCatalogUiParam param)
+        public Dictionary<int, List<QueryCatalogDto>> QueryCatalog(QueryCatalogUiParam param)
         {
-            var dataList = new List<QueryCatalogDto>();
+            List<QueryCatalogDto> dataList;
             var resultData = new Dictionary<int, List<QueryCatalogDto>>();
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                _sqlConnection.Open();
+                sqlConnection.Open();
                 string querySql = @"
                              select Id, DirectoryCode ,DirectoryName,MnemonicCode,DirectoryCategoryName,Unit,Specification
                              ,Formulation,ManufacturerName,Remark,DirectoryCreateTime from [dbo].[HospitalThreeCatalogue] where IsDelete=0";
@@ -172,7 +169,7 @@ namespace BenDing.Repository.Providers.Web
                 }
                 string executeSql = countSql + whereSql + ";" + querySql;
 
-                var result = await _sqlConnection.QueryMultipleAsync(executeSql);
+                var result = sqlConnection.QueryMultiple(executeSql);
 
                 int totalPageCount = result.Read<int>().FirstOrDefault();
                 dataList = (from t in result.Read<QueryCatalogDto>()
@@ -180,7 +177,7 @@ namespace BenDing.Repository.Providers.Web
                             select t).ToList();
 
                 resultData.Add(totalPageCount, dataList);
-                _sqlConnection.Close();
+                sqlConnection.Close();
 
             }
 
@@ -191,16 +188,17 @@ namespace BenDing.Repository.Providers.Web
         /// <summary>
         /// 删除三大目录
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<int> DeleteCatalog(UserInfoDto user, int param)
+        public int DeleteCatalog(UserInfoDto user, int param)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                _sqlConnection.Open();
-                string strSql = $" update [dbo].[HospitalThreeCatalogue] set IsDelete=1 ,DeleteUserId='{user.UserId}',DeleteTime=GETDATE()  where DirectoryCategoryCode='{param.ToString()}'";
-                var num = await _sqlConnection.ExecuteAsync(strSql);
-                _sqlConnection.Close();
+                sqlConnection.Open();
+                string strSql = $" update [dbo].[HospitalThreeCatalogue] set IsDelete=1 ,DeleteUserId='{user.UserId}',DeleteTime=getDate()  where DirectoryCategoryCode='{param.ToString()}'";
+                var num = sqlConnection.Execute(strSql);
+                sqlConnection.Close();
                 return num;
             }
         }
@@ -209,17 +207,17 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="num"></param>
         /// <returns></returns>
-        public async Task<string> GetTime(int num)
+        public string GetTime(int num)
         {
-            string result = null;
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            string result;
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                _sqlConnection.Open();
+                sqlConnection.Open();
                 string strSql = $"select MAX(DirectoryCreateTime) from [dbo].[HospitalThreeCatalogue] where IsDelete=0 and DirectoryCategoryCode={num} ";
-                var timeMax = await _sqlConnection.QueryFirstAsync<string>(strSql);
+                var timeMax = sqlConnection.QueryFirst<string>(strSql);
 
                 result = timeMax;
-                _sqlConnection.Close();
+                sqlConnection.Close();
             }
 
             return result;
@@ -229,17 +227,17 @@ namespace BenDing.Repository.Providers.Web
         /// ICD10获取最新时间
         /// </summary>
         /// <returns></returns>
-        public async Task<string> GetICD10Time()
+        public string GetICD10Time()
         {
-            string result = null;
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            string result;
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                _sqlConnection.Open();
+                sqlConnection.Open();
                 string strSql = $"select MAX(CreateTime) from [dbo].[ICD10] where IsDelete=0 ";
-                var timeMax = await _sqlConnection.QueryFirstAsync<string>(strSql);
+                var timeMax = sqlConnection.QueryFirst<string>(strSql);
 
                 result = timeMax;
-                _sqlConnection.Close();
+                sqlConnection.Close();
             }
 
             return result;
@@ -249,24 +247,24 @@ namespace BenDing.Repository.Providers.Web
         /// 添加ICD10
         /// </summary>
         /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task AddICD10(List<ICD10InfoDto> param, UserInfoDto user)
+        /// <param name="user"></param>
+        public void AddICD10(List<ICD10InfoDto> param, UserInfoDto user)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 //排除已有项目
 
-                _sqlConnection.Open();
+                sqlConnection.Open();
                 if (param.Any())
                 {
-                    var paramNew = new List<ICD10InfoDto>();
                     //获取唯一编码
                     var catalogDtoIdList = param.Select(c => c.DiseaseId).ToList();
                     var ids = CommonHelp.ListToStr(catalogDtoIdList);
-                    string sqlstr = $"select DiseaseCoding  from [dbo].[ICD10]  where DiseaseCoding  in({ids}) and IsDelete=0";
-                    var idListNew = await _sqlConnection.QueryAsync<string>(sqlstr);
-                    //排除已有项目
-                    paramNew = idListNew.Any() == true ? param.Where(c => !idListNew.Contains(c.DiseaseId)).ToList()
+                    string sqlStr = $"select DiseaseCoding  from [dbo].[ICD10]  where DiseaseCoding  in({ids}) and IsDelete=0";
+                    var idListNew = sqlConnection.Query<string>(sqlStr);
+                    //排除已有项目 
+                    var listNew = idListNew as string[] ?? idListNew.ToArray();
+                    var paramNew = listNew.Any() ? param.Where(c => !listNew.Contains(c.DiseaseId)).ToList()
                         : param;
                     string insterCount = null;
 
@@ -279,11 +277,11 @@ namespace BenDing.Repository.Providers.Web
                                         insert into [dbo].[ICD10]([id],[DiseaseCoding],[DiseaseName],[MnemonicCode],[Remark],[DiseaseId],
                                           Icd10CreateTime, CreateTime,CreateUserId,IsDelete)
                                         values('{Guid.NewGuid()}','{itmes.DiseaseCoding}','{itmes.DiseaseName}','{itmes.MnemonicCode}','{itmes.Remark}','{itmes.DiseaseId}','{itmes.Icd10CreateTime}',
-                                        GETDATE(),'{user.UserId}',0);";
+                                        getDate(),'{user.UserId}',0);";
 
                             insterCount += insterSql;
                         }
-                        await _sqlConnection.ExecuteAsync(insterCount);
+                        sqlConnection.Execute(insterCount);
                     }
 
 
@@ -291,7 +289,7 @@ namespace BenDing.Repository.Providers.Web
                 }
 
 
-                _sqlConnection.Close();
+                sqlConnection.Close();
 
 
             }
@@ -301,13 +299,13 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<List<QueryICD10InfoDto>> QueryICD10(QueryICD10UiParam param)
+        public List<QueryICD10InfoDto> QueryICD10(QueryICD10UiParam param)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 //排除已有项目
                 var resultData = new List<QueryICD10InfoDto>();
-                _sqlConnection.Open();
+                sqlConnection.Open();
 
                 string strSql = $"select  [id],[DiseaseCoding],[DiseaseName] ,[MnemonicCode],[Remark] ,DiseaseId from [dbo].[ICD10]  where IsDelete=0";
                 string regexstr = @"[\u4e00-\u9fa5]";
@@ -326,10 +324,10 @@ namespace BenDing.Repository.Providers.Web
                         strSql += " and MnemonicCode like '" + param.Search + "%'";
                     }
                 }
-               
 
 
-                var data = await _sqlConnection.QueryAsync<QueryICD10InfoDto>(strSql);
+
+                var data = sqlConnection.Query<QueryICD10InfoDto>(strSql);
 
                 if (data != null && data.Any())
                 {
@@ -337,7 +335,7 @@ namespace BenDing.Repository.Providers.Web
                 }
 
 
-                _sqlConnection.Close();
+                sqlConnection.Close();
 
                 return resultData;
 
@@ -347,25 +345,25 @@ namespace BenDing.Repository.Providers.Web
         /// <summary>
         /// 获取门诊病人信息
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task GetOutpatientPerson(UserInfoDto user, List<OutpatientInfoDto> param)
+        public void GetOutpatientPerson(UserInfoDto user, List<OutpatientInfoDto> param)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
 
-                _sqlConnection.Open();
+                sqlConnection.Open();
                 if (param.Any())
                 {
-                    IDbTransaction transaction = _sqlConnection.BeginTransaction();
+                    IDbTransaction transaction = sqlConnection.BeginTransaction();
                     try
                     {
                         var ywId = CommonHelp.ListToStr(param.Select(c => c.业务ID).ToList());
                         var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.门诊号).ToList());
                         string strSql =
-                            $@"update [dbo].[outpatient] set  [IsDelete] =1 ,DeleteTime=GETDATE(),DeleteUserId='{user.UserId}' where [IsDelete]=0 and [businessid] in(" +
-                            ywId + ") and [outpatientnumber] in(" + outpatientNum + ")";
-                        var num = await _sqlConnection.ExecuteAsync(strSql, null, transaction);
+                            $@"update [dbo].[outpatient] set  [IsDelete] =1 ,DeleteTime=getDate(),DeleteUserId='{user.UserId}' where [IsDelete]=0 and [businessid] in(" +
+                            ywId + ") and [outpatientNumber] in(" + outpatientNum + ")";
+                        sqlConnection.Execute(strSql, null, transaction);
                         string insertSql = "";
                         foreach (var item in param)
                         {
@@ -377,13 +375,13 @@ namespace BenDing.Repository.Providers.Web
                                VALUES('{Guid.NewGuid()}','{item.姓名}','{item.身份证号码}','{item.性别}','{item.业务ID}','{item.门诊号}','{item.就诊日期}'
                                      ,'{item.科室}','{item.科室编码}','{item.诊断医生}','{item.诊断疾病编码}','{item.诊断疾病名称}'
                                      ,'{item.主要病情描述}','{item.经办人}','{item.就诊总费用}','{item.备注}','{item.接诊状态}'
-                                     ,GETDATE(),0,null,'{user.OrganizationCode}','{user.UserId}'
+                                     ,getDate(),0,null,'{user.OrganizationCode}','{user.UserId}'
                                 );";
                             insertSql += str;
 
                         }
 
-                        var nums = await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
+                        sqlConnection.Execute(insertSql, null, transaction);
                         transaction.Commit();
                     }
                     catch (Exception exception)
@@ -401,25 +399,25 @@ namespace BenDing.Repository.Providers.Web
         /// <summary>
         /// 获取门诊病人明细
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task GetOutpatientDetailPerson(UserInfoDto user, List<OutpatientDetailDto> param)
+        public void GetOutpatientDetailPerson(UserInfoDto user, List<OutpatientDetailDto> param)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
 
-                _sqlConnection.Open();
+                sqlConnection.Open();
                 if (param.Any())
                 {
-                    IDbTransaction transaction = _sqlConnection.BeginTransaction();
+                    IDbTransaction transaction = sqlConnection.BeginTransaction();
                     try
                     {
 
                         var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.门诊号).ToList());
                         string strSql =
-                            $@"update [dbo].[outpatientfee] set  [IsDelete] =1 ,DeleteTime=GETDATE(),DeleteUserId='{user.UserId}' where [IsDelete]=0 
+                            $@"update [dbo].[outpatientfee] set  [IsDelete] =1 ,DeleteTime=getDate(),DeleteUserId='{user.UserId}' where [IsDelete]=0 
                                 and [outpatientnumber] in(" + outpatientNum + ")";
-                        var num = await _sqlConnection.ExecuteAsync(strSql, null, transaction);
+                        sqlConnection.Execute(strSql, null, transaction);
                         string insertSql = "";
                         foreach (var item in param)
                         {
@@ -435,14 +433,14 @@ namespace BenDing.Repository.Providers.Web
                                  '{item.医院计价单位}','{item.是否进口药品}','{item.药品产地}','{item.处方号}','{item.费用单据类型}','{item.开单科室名称}'
                                  ,'{item.开单科室编码}','{item.开单医生姓名}','{item.开单医生编码}','{item.开单时间}','{item.执行科室名称}','{item.执行科室编码}'
                                  ,'{item.执行医生姓名}','{item.执行医生编码}','{item.执行时间}','{item.处方医师}','{item.经办人}','{item.执业医师证号}'
-                                 ,'{item.费用冲销ID}','{item.机构编码}','{item.机构名称}',GETDATE(),0,null,'{user.UserId}'
+                                 ,'{item.费用冲销ID}','{item.机构编码}','{item.机构名称}',getDate(),0,null,'{user.UserId}'
                                  );";
                             insertSql += str;
 
 
 
                         }
-                        var nums = await _sqlConnection.ExecuteAsync(insertSql, null, transaction);
+                        sqlConnection.Execute(insertSql, null, transaction);
                         transaction.Commit();
                     }
                     catch (Exception exception)
@@ -457,14 +455,14 @@ namespace BenDing.Repository.Providers.Web
         /// <summary>
         /// 保存住院病人明细
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task SaveInpatientInfoDetail(UserInfoDto user, List<InpatientInfoDetailDto> param)
+        public void SaveInpatientInfoDetail(UserInfoDto user, List<InpatientInfoDetailDto> param)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
 
-                _sqlConnection.Open();
+                sqlConnection.Open();
 
                 if (param.Any())
                 {
@@ -474,31 +472,33 @@ namespace BenDing.Repository.Providers.Web
 
                         var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.CostDetailId).ToList());
                         var paramFirst = param.FirstOrDefault();
-                        string strSql =
-                            $@" select [CostDetailId],[DataSort] from [dbo].[HospitalizationFee] where [HospitalizationNo]={paramFirst.HospitalizationNo}
+                        if (paramFirst != null)
+                        {
+                            string strSql =
+                                $@" select [CostDetailId],[DataSort] from [dbo].[HospitalizationFee] where [HospitalizationNo]={paramFirst.HospitalizationNo}
                                  and [CostDetailId] in({outpatientNum})";
-                        var data = await _sqlConnection.QueryAsync<InpatientInfoDetailQueryDto>(strSql);
-                        int sort = 0;
-                        List<InpatientInfoDetailDto> paramNew;
-                        if (data.Any())
-                        {    //获取最大排序号
-                            sort = data.Select(c => c.DataSort).Max();
-                            var costDetailIdList = data.Select(c => c.CostDetailId).ToList();
-                            //排除已包含的明细id
-                            paramNew = param.Where(c => !costDetailIdList.Contains(c.CostDetailId)).ToList();
-                        }
-                        else
-                        {
-                            paramNew = param.OrderBy(d => d.BillTime).ToList();
-                        }
+                            var data = sqlConnection.Query<InpatientInfoDetailQueryDto>(strSql);
+                            int sort = 0;
+                            List<InpatientInfoDetailDto> paramNew;
+                            if (data.Any())
+                            {    //获取最大排序号
+                                sort = data.Select(c => c.DataSort).Max();
+                                var costDetailIdList = data.Select(c => c.CostDetailId).ToList();
+                                //排除已包含的明细id
+                                paramNew = param.Where(c => !costDetailIdList.Contains(c.CostDetailId)).ToList();
+                            }
+                            else
+                            {
+                                paramNew = param.OrderBy(d => d.BillTime).ToList();
+                            }
 
-                        string insertSql = "";
+                            string insertSql = "";
 
-                        foreach (var item in paramNew)
-                        {
-                            sort++;
-                            var businessTime = item.BillTime.Substring(0, 10) + " 00:00:00.000";
-                            string str = $@"INSERT INTO [dbo].[HospitalizationFee](
+                            foreach (var item in paramNew)
+                            {
+                                sort++;
+                                var businessTime = item.BillTime.Substring(0, 10) + " 00:00:00.000";
+                                string str = $@"INSERT INTO [dbo].[HospitalizationFee](
                                id,[HospitalizationNo] ,[CostDetailId] ,[CostItemName],[CostItemCode] ,[CostItemCategoryName] ,[CostItemCategoryCode]
                                ,[Unit] ,[Formulation] ,[Specification] ,[UnitPrice],[Quantity],[Amount] ,[Dosage] ,[Usage] ,[MedicateDays]
 		                       ,[HospitalPricingUnit] ,[IsImportedDrugs] ,[DrugProducingArea] ,[RecipeCode]  ,[CostDocumentType] ,[BillDepartment]
@@ -511,19 +511,19 @@ namespace BenDing.Repository.Providers.Web
                                  '{item.HospitalPricingUnit}','{item.IsImportedDrugs}','{item.DrugProducingArea}','{item.RecipeCode}','{item.CostDocumentType}','{item.BillDepartment}'
                                  ,'{item.BillDepartmentId}','{item.BillDoctorName}','{item.BillDoctorId}','{item.BillTime}','{item.OperateDepartmentName}','{item.OperateDepartmentId}'
                                  ,'{item.OperateDoctorName}','{item.OperateDoctorId}','{item.OperateTime}','{item.PrescriptionDoctor}','{item.Operators}','{item.PracticeDoctorNumber}'
-                                 ,'{item.CostWriteOffId}','{item.OrganizationCode}','{item.OrganizationName}',GETDATE(),0,null,'{user.UserId}'
+                                 ,'{item.CostWriteOffId}','{item.OrganizationCode}','{item.OrganizationName}',getDate(),0,null,'{user.UserId}'
                                  ,{sort},0,'{CommonHelp.GuidToStr(item.RecipeCode)}','{CommonHelp.GuidToStr(item.BillDoctorId)}','{businessTime}'
                                  );";
-                            insertSql += str;
+                                insertSql += str;
+                            }
+
+                            if (paramNew.Count > 0)
+                            {
+                                sqlConnection.Execute(insertSql);
+
+
+                            }
                         }
-
-                        if (paramNew.Count > 0)
-                        {
-                            var nums = await _sqlConnection.ExecuteAsync(insertSql, null);
-
-
-                        }
-
                     }
                     catch (Exception exception)
                     {
@@ -540,12 +540,12 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<List<QueryInpatientInfoDetailDto>> InpatientInfoDetailQuery(InpatientInfoDetailQueryParam param)
+        public List<QueryInpatientInfoDetailDto> InpatientInfoDetailQuery(InpatientInfoDetailQueryParam param)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 var resultData = new List<QueryInpatientInfoDetailDto>();
-                _sqlConnection.Open();
+                sqlConnection.Open();
 
                 string strSql = @"select (select  top 1 a.BusinessId from [dbo].[Inpatient] as a where a.HospitalizationNo=HospitalizationNo and IsDelete=0) as BusinessId,
                                   * from [dbo].[HospitalizationFee]  where  IsDelete=0 ";
@@ -566,16 +566,14 @@ namespace BenDing.Repository.Providers.Web
                         throw new Exception("业务号不能为空!!!");
                     }
                 }
+                var data = sqlConnection.Query<QueryInpatientInfoDetailDto>(strSql);
 
-
-                var data = await _sqlConnection.QueryAsync<QueryInpatientInfoDetailDto>(strSql);
-
-                if (data != null && data.Count() > 0)
+                if (data != null && data.Any())
                 {
                     resultData = data.ToList();
                 }
 
-                _sqlConnection.Close();
+                sqlConnection.Close();
                 return resultData;
             }
         }
@@ -584,14 +582,14 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<Dictionary<int, List<QueryHospitalizationFeeDto>>> QueryHospitalizationFee(QueryHospitalizationFeeUiParam param)
+        public Dictionary<int, List<QueryHospitalizationFeeDto>> QueryHospitalizationFee(QueryHospitalizationFeeUiParam param)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                var dataList = new List<QueryHospitalizationFeeDto>();
+                List<QueryHospitalizationFeeDto> dataList;
                 var dataListNew = new List<QueryHospitalizationFeeDto>();
                 var resultData = new Dictionary<int, List<QueryHospitalizationFeeDto>>();
-                _sqlConnection.Open();
+                sqlConnection.Open();
 
                 string querySql = $@"
                              select Id,[CostItemCode] as DirectoryCode,[CostItemName] as DirectoryName,[CostItemCategoryCode] as DirectoryCategoryCode,
@@ -606,38 +604,31 @@ namespace BenDing.Repository.Providers.Web
                     querySql += whereSql + " order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.Limit + " ROWS ONLY;";
                 }
                 string executeSql = countSql + whereSql + ";" + querySql;
-                var result = await _sqlConnection.QueryMultipleAsync(executeSql);
+                var result = sqlConnection.QueryMultiple(executeSql);
                 int totalPageCount = result.Read<int>().FirstOrDefault();
                 dataList = (from t in result.Read<QueryHospitalizationFeeDto>()
-                    select new QueryHospitalizationFeeDto
-                    {
-                        Id = t.Id,
-                        Amount = t.Amount,
-                        BillTime = t.BillTime,
-                        BillDepartment = t.BillDepartment,
-                        DirectoryCode = t.DirectoryCode,
-                        DirectoryName = t.DirectoryName,
-
-                        DirectoryCategoryCode = t.DirectoryCategoryCode != null
-                                    ? ((CatalogTypeEnum)Convert.ToInt32(t.ProjectLevel)).ToString()
-                                    : t.DirectoryCategoryCode,
-                        UnitPrice = t.UnitPrice,
-                        UploadUserName = t.UploadUserName,
-                        Quantity = t.Quantity,
-                        RecipeCode = t.RecipeCode,
-                        Specification = t.Specification,
-                        OperateDoctorName = t.OperateDoctorName,
-                        UploadMark = t.UploadMark,
-                        AdjustmentDifferenceValue = t.AdjustmentDifferenceValue,
-                       
-                        ProjectLevel = t.ProjectLevel != null
-                                    ? ((ProjectLevel)Convert.ToInt32(t.ProjectLevel)).ToString()
-                                    : t.ProjectLevel,
-                        ProjectCodeType = t.ProjectCodeType != null
-                                    ? ((ProjectCodeType)Convert.ToInt32(t.ProjectCodeType)).ToString()
-                                    : t.ProjectCodeType,
-                        UploadAmount = t.UploadAmount
-                    }
+                            select new QueryHospitalizationFeeDto
+                            {
+                                Id = t.Id,
+                                Amount = t.Amount,
+                                BillTime = t.BillTime,
+                                BillDepartment = t.BillDepartment,
+                                DirectoryCode = t.DirectoryCode,
+                                DirectoryName = t.DirectoryName,
+                                DirectoryCategoryCode = t.DirectoryCategoryCode != null
+                                            ? ((CatalogTypeEnum)Convert.ToInt32(t.ProjectLevel)).ToString()
+                                            : t.DirectoryCategoryCode,
+                                UnitPrice = t.UnitPrice,
+                                UploadUserName = t.UploadUserName,
+                                Quantity = t.Quantity,
+                                RecipeCode = t.RecipeCode,
+                                Specification = t.Specification,
+                                OperateDoctorName = t.OperateDoctorName,
+                                UploadMark = t.UploadMark,
+                                AdjustmentDifferenceValue = t.AdjustmentDifferenceValue,
+                                UploadAmount = t.UploadAmount,
+                                OrganizationCode = t.OrganizationCode
+                            }
                              ).ToList();
                 if (dataList.Any())
                 {
@@ -649,11 +640,11 @@ namespace BenDing.Repository.Providers.Web
                         OrganizationCode = organizationCode
                     };
                     //获取医保对码数据
-                    var pairCodeData = await _baseSqlServerRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
+                    var pairCodeData = _baseSqlServerRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
                     //获取医院登记
-                    var gradeData = await _iSystemManageRepository.QueryHospitalOrganizationGrade(organizationCode);
+                    var gradeData = _iSystemManageRepository.QueryHospitalOrganizationGrade(organizationCode);
                     //获取入院病人登记信息
-                    var residentInfoData = await _baseSqlServerRepository.QueryMedicalInsuranceResidentInfo(
+                    var residentInfoData = _baseSqlServerRepository.QueryMedicalInsuranceResidentInfo(
                              new QueryMedicalInsuranceResidentInfoParam() { BusinessId = param.BusinessId });
                     if (pairCodeData != null)
                     {
@@ -669,7 +660,6 @@ namespace BenDing.Repository.Providers.Web
                                 BillDepartment = c.BillDepartment,
                                 DirectoryCode = c.DirectoryCode,
                                 DirectoryName = c.DirectoryName,
-                            
                                 DirectoryCategoryCode = c.DirectoryCategoryCode != null
                                     ? ((CatalogTypeEnum)Convert.ToInt32(c.ProjectLevel)).ToString()
                                     : c.DirectoryCategoryCode,
@@ -704,7 +694,7 @@ namespace BenDing.Repository.Providers.Web
                 {
                     dataListNew = dataList;
                 }
-                _sqlConnection.Close();
+                sqlConnection.Close();
                 resultData.Add(totalPageCount, dataListNew);
                 return resultData;
 
@@ -713,16 +703,16 @@ namespace BenDing.Repository.Providers.Web
         /// <summary>
         /// 保存住院病人
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
-        /// <returns></returns>
-        public async Task SaveInpatientInfo(UserInfoDto user, InpatientInfoDto param)
+        public void SaveInpatientInfo(UserInfoDto user, InpatientInfoDto param)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
 
-                _sqlConnection.Open();
+                sqlConnection.Open();
                 string strSql =
-                    $@"update  [dbo].[inpatient] set  [IsDelete] =1 ,DeleteTime=GETDATE(),DeleteUserId='{user.UserId}' where [IsDelete]=0  and [businessid] ='{param.BusinessId}';";
+                    $@"update  [dbo].[inpatient] set  [IsDelete] =1 ,DeleteTime=getDate(),DeleteUserId='{user.UserId}' where [IsDelete]=0  and [businessid] ='{param.BusinessId}';";
                 string leaveHospitalDate = null;
                 if (!string.IsNullOrWhiteSpace(param.LeaveHospitalDate))
                 {
@@ -746,11 +736,11 @@ namespace BenDing.Repository.Providers.Web
                                              '{param.AdmissionWard}','{param.AdmissionOperator}','{param.AdmissionOperateTime}',{Convert.ToDecimal(param.HospitalizationTotalCost)},'{param.Remark}','{param.LeaveDepartmentName}','{param.LeaveDepartmentId}',
                                              '{param.LeaveHospitalWard}','{param.LeaveHospitalBed}','{param.LeaveHospitalMainDiagnosis}','{param.LeaveHospitalMainDiagnosisIcd10}','{param.LeaveHospitalSecondaryDiagnosis}','{param.LeaveHospitalSecondaryDiagnosisIcd10}',
                                              '{param.InpatientHospitalState}','{param.AdmissionDiagnosticDoctorId}','{param.AdmissionBedId}','{param.AdmissionWardId}','{param.LeaveHospitalBedId}','{param.LeaveHospitalWardId}',
-                                               GETDATE(),0,null,'{user.OrganizationCode}','{user.UserId}','{BitConverter.ToInt64(Guid.Parse(param.BusinessId).ToByteArray(), 0)}'
+                                               getDate(),0,null,'{user.OrganizationCode}','{user.UserId}','{BitConverter.ToInt64(Guid.Parse(param.BusinessId).ToByteArray(), 0)}'
                                               );";
                 insertSql = insertSql + strSql;
-                var nums = await _sqlConnection.ExecuteAsync(insertSql, null);
-                _sqlConnection.Close();
+                sqlConnection.Execute(insertSql);
+                sqlConnection.Close();
             }
 
 
@@ -761,18 +751,16 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<QueryInpatientInfoDto> QueryInpatientInfo(QueryInpatientInfoParam param)
+        public QueryInpatientInfoDto QueryInpatientInfo(QueryInpatientInfoParam param)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                var resultData = new QueryInpatientInfoDto();
-                _sqlConnection.Open();
-                string strSql = $"select top 1 * from [dbo].[Inpatient] where IsDelete=0 and BusinessId='{param.BusinessId}'";
 
-                var data = await _sqlConnection.QueryAsync<QueryInpatientInfoDto>(strSql, null);
-                if (data != null && data.Any()) resultData = data.FirstOrDefault();
-                _sqlConnection.Close();
-                return resultData;
+                sqlConnection.Open();
+                string strSql = $"select top 1 * from [dbo].[Inpatient] where IsDelete=0 and BusinessId='{param.BusinessId}'";
+                var data = sqlConnection.QueryFirstOrDefault<QueryInpatientInfoDto>(strSql);
+                sqlConnection.Close();
+                return data;
             }
 
 
@@ -782,54 +770,59 @@ namespace BenDing.Repository.Providers.Web
         /// 获取所有未传费用的住院病人
         /// </summary>
         /// <returns></returns>
-        public async Task<List<QueryAllHospitalizationPatientsDto>> QueryAllHospitalizationPatients(PrescriptionUploadAutomaticParam param)
+        public List<QueryAllHospitalizationPatientsDto> QueryAllHospitalizationPatients(PrescriptionUploadAutomaticParam param)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 var resultData = new List<QueryAllHospitalizationPatientsDto>();
-                _sqlConnection.Open();
-                string strSql = null;
-                if (param.IsTodayUpload == true)
+                sqlConnection.Open();
+                string strSql;
+                if (param.IsTodayUpload)
                 {
                     string day = DateTime.Now.ToString("yyyy-MM-dd") + " 00:00:00.000";
                     strSql = $@"
                             select a.OrganizationCode,a.HospitalizationNo,a.BusinessId,b.InsuranceType from [dbo].[Inpatient]  as a 
                             inner join [dbo].[MedicalInsurance] as b on b.HisHospitalizationId=a.FixedEncoding
                             where a.IsDelete=0 and b.IsDelete=0 and a.HospitalizationNo 
-                            in(select HospitalizationNo from [dbo].[HospitalizationFee] where BusinessTime='{day}' and  Isdelete=0 and UploadMark=0 Group by HospitalizationNo)";
+                            in(select HospitalizationNo from [dbo].[HospitalizationFee] where BusinessTime='{day}' and  IsDelete=0 and UploadMark=0 Group by HospitalizationNo)";
                 }
                 else
                 {
-                    strSql = $@"
+                    strSql = @"
                                 select a.OrganizationCode,a.HospitalizationNo,a.BusinessId,b.InsuranceType from [dbo].[Inpatient]  as a 
                                 inner join [dbo].[MedicalInsurance] as b on b.HisHospitalizationId=a.FixedEncoding
                                 where a.IsDelete=0 and b.IsDelete=0 and a.HospitalizationNo 
-                                in(select HospitalizationNo from [dbo].[HospitalizationFee] where Isdelete=0 and UploadMark=0 Group by HospitalizationNo) ";
+                                in(select HospitalizationNo from [dbo].[HospitalizationFee] where IsDelete=0 and UploadMark=0 Group by HospitalizationNo) ";
                 }
-                var data = await _sqlConnection.QueryAsync<QueryAllHospitalizationPatientsDto>(strSql);
+                var data = sqlConnection.Query<QueryAllHospitalizationPatientsDto>(strSql);
 
                 if (data != null && data.Any())
                 {
                     resultData = data.ToList();
                 }
-                _sqlConnection.Close();
+                sqlConnection.Close();
                 return resultData;
             }
 
 
         }
- 
-        public async Task<Int32> DeleteMedicalInsurance(UserInfoDto user, string param)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public Int32 DeleteMedicalInsurance(UserInfoDto user, string param)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 int result = 0;
-                _sqlConnection.Open();
+                sqlConnection.Open();
                 if (param.Any())
                 {
 
-                    string insertSql = $@"update [dbo].[住院医保信息] set IsDelete=1,DeleteTime=GETDATE(),DeleteUserId='{user.UserId}' where  [业务ID]={param}";
-                    result = await _sqlConnection.ExecuteAsync(insertSql);
+                    string insertSql = $@"update [dbo].[住院医保信息] set IsDelete=1,DeleteTime=getDate(),DeleteUserId='{user.UserId}' where  [业务ID]={param}";
+                    result = sqlConnection.Execute(insertSql);
                 }
                 return result;
             }
@@ -841,38 +834,37 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="param"></param>
         /// <param name="info"></param>
         /// <returns></returns>
-        public async Task<Int32> SaveInformationInfo(UserInfoDto user, List<InformationDto> param, InformationParam info)
+        public Int32 SaveInformationInfo(UserInfoDto user, List<InformationDto> param, InformationParam info)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 Int32 counts = 0;
-                _sqlConnection.Open();
+                sqlConnection.Open();
                 if (param.Any())
                 {
                     var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.DirectoryCode).ToList());
                     string strSql =
-                        $@"update [dbo].[HospitalGeneralCatalog] set  [IsDelete] =1 ,DeleteTime=GETDATE(),DeleteUserId='{user.UserId}' where [IsDelete]=0 
+                        $@"update [dbo].[HospitalGeneralCatalog] set  [IsDelete] =1 ,DeleteTime=getDate(),DeleteUserId='{user.UserId}' where [IsDelete]=0 
                                 and [DirectoryCode] in(" + outpatientNum + ")";
-                    await _sqlConnection.ExecuteAsync(strSql, null);
+                    sqlConnection.Execute(strSql);
                     string insertSql = "";
-                    int num = 0;
                     foreach (var item in param)
                     {
-                        num++;
+
                         string str = $@"INSERT INTO [dbo].[HospitalGeneralCatalog]
                                    (id,DirectoryType,[OrganizationCode],[DirectoryCode],[DirectoryName]
                                    ,[MnemonicCode],[DirectoryCategoryName],[Remark] ,[CreateTime]
 		                            ,[IsDelete],[DeleteTime],CreateUserId,FixedEncoding)
                              VALUES ('{Guid.NewGuid()}','{info.DirectoryType}','{info.OrganizationCode}','{item.DirectoryCode}','{item.DirectoryName}',
-                                     '{item.MnemonicCode}','{item.DirectoryCategoryName}','{item.Remark}',GETDATE(),
+                                     '{item.MnemonicCode}','{item.DirectoryCategoryName}','{item.Remark}',getDate(),
                                        0, null,'{user.UserId}','{CommonHelp.GuidToStr(item.DirectoryCode)}');";
                         insertSql += str;
 
                     }
 
-                    counts = await _sqlConnection.ExecuteAsync(strSql + insertSql, null);
+                    counts = sqlConnection.Execute(strSql + insertSql);
 
-                    _sqlConnection.Close();
+                    sqlConnection.Close();
                 }
 
                 return counts;
@@ -883,20 +875,19 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<List<QueryInformationInfoDto>> QueryInformationInfo(InformationParam param)
+        public List<QueryInformationInfoDto> QueryInformationInfo(InformationParam param)
         {
-            using (var _sqlConnection = new SqlConnection(_connectionString))
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 var resultData = new List<QueryInformationInfoDto>();
-                _sqlConnection.Open();
+                sqlConnection.Open();
                 string sqlStr = @"select Id, [OrganizationCode],[DirectoryType], [DirectoryCode],[DirectoryName],[FixedEncoding],
                                 [DirectoryCategoryName],[Remark] from [dbo].[HospitalGeneralCatalog] where IsDelete=0 ";
                 if (!string.IsNullOrWhiteSpace(param.DirectoryName)) sqlStr += " and DirectoryName like '" + param.DirectoryName + "%'";
                 if (!string.IsNullOrWhiteSpace(param.DirectoryType)) sqlStr += $" and DirectoryType='{param.DirectoryType}'";
-                     var data = await _sqlConnection.QueryAsync<QueryInformationInfoDto>(sqlStr);
+                var data = sqlConnection.Query<QueryInformationInfoDto>(sqlStr);
                 if (data != null) resultData = data.ToList();
-                _sqlConnection.Close();
-
+                sqlConnection.Close();
                 return resultData;
             }
         }
@@ -921,6 +912,6 @@ namespace BenDing.Repository.Providers.Web
             if (residentInfo.InsuranceType == "310") resultData = param.WorkersSelfPayProportion;
             return resultData;
         }
-      
+
     }
 }

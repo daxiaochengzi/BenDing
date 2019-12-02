@@ -1,13 +1,14 @@
 ﻿using System.Web.Mvc;
+using BenDing.Domain.Models.Params.UI;
 
 namespace NFine.Web.Controllers
-{ 
+{
     /// <summary>
     /// 基层HIS医保嵌入页面
     /// </summary>
-    public class InsuranceController : AsyncController
+    public class InsuranceController : Controller
     {
-       
+
 
         /// <summary>
         /// 读卡
@@ -34,10 +35,10 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 入院登记
         /// </summary>
-        /// <param name="bid">业务ID</param>
-        /// <param name="empid">用户ID</param>
+        /// <param name="bid"></param>
+        /// <param name="empid"></param>
         /// <returns></returns>
-        public ActionResult AdmissionRegistration(string bid,string empid)
+        public ActionResult AdmissionRegistration(string bid, string empid)
         {
             ViewBag.bid = bid;
             ViewBag.empid = empid;
@@ -48,8 +49,8 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 修改医保登记
         /// </summary>
-        /// <param name="bid">业务ID</param>
-        /// <param name="empid">用户ID</param>
+        /// <param name="bid"></param>
+        /// <param name="empid"></param>
         /// <returns></returns>
         public ActionResult AdmissionRegistrationUpdate(string bid, string empid)
         {
@@ -63,8 +64,8 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 医保生育住院登记
         /// </summary>
-        /// <param name="bid">业务ID</param>
-        /// <param name="empid">用户ID</param>
+        /// <param name="bid"></param>
+        /// <param name="empid"></param>
         /// <returns></returns>
         public ActionResult AdmissionBirthRegistration(string bid, string empid)
         {
@@ -77,7 +78,6 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 医保目录对码
         /// </summary>
-        /// <param name="empid">用户ID</param>
         /// <returns></returns>
         public ActionResult MedicalDirectoryCode(string empid)
         {
@@ -103,8 +103,8 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 住院清单撤销
         /// </summary>
-        /// <param name="empid">用户ID</param>
-        /// <param name="bid">业务ID</param>
+        /// <param name="bid">用户ID</param>
+        /// <param name="empid">业务ID</param>
         /// <returns></returns>
         public ActionResult HospitalizationExpensesManagementReceive(string bid, string empid)
         {
@@ -114,12 +114,27 @@ namespace NFine.Web.Controllers
             return View();
         }
 
+        ///// <summary>
+        ///// 目录对码页面
+        ///// </summary>
+        ///// <param name="param"></param>
+        ///// <returns></returns>
+        //public ActionResult MedicalDirectoryPairCode(MedicalDirectoryCodePairUiParam param)
+        //{
+        //    //参数可查询医保中心目录
+        //    ViewBag.DirectoryName = param.ProjectName;
+        //    ViewBag.DirectoryCode = param.ProjectCode;
+        //    ViewBag.DirectoryCategoryCode = param.ProjectCodeType;
+        //    ViewBag.empid = param.UserId;
+        //    return View();
+        //}
+
 
         /// <summary>
         /// 住院预结算
         /// </summary>
-        /// <param name="empid">用户ID</param>
-        /// <param name="bid">业务ID</param>
+        /// <param name="bid">用户ID</param>
+        /// <param name="empid">业务ID</param>
         /// <returns></returns>
         public ActionResult HospitalPreSettle(string bid, string empid)
         {
@@ -133,8 +148,8 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 住院结算
         /// </summary>
-        /// <param name="empid">用户ID</param>
-        /// <param name="bid">业务ID</param>
+        /// <param name="bid">用户ID</param>
+        /// <param name="empid">业务ID</param>
         /// <returns></returns>
         public ActionResult LeaveHospitalSettlement(string bid, string empid)
         {
@@ -147,8 +162,8 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 住院取消结算
         /// </summary>
-        /// <param name="empid">用户ID</param>
-        /// <param name="bid">业务ID</param>
+        /// <param name="bid">用户ID</param>
+        /// <param name="empid">业务ID</param>
         /// <returns></returns>
         public ActionResult LeaveHospitalSettlementCancel(string bid, string empid)
         {

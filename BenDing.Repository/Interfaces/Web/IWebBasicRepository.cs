@@ -8,8 +8,8 @@ using BenDing.Domain.Models.Dto.Web;
 
 namespace BenDing.Repository.Interfaces.Web
 {
-  public  interface IWebBasicRepository
+    public interface IWebBasicRepository
     {
-        Task<BasicResultDto> HIS_InterfaceListAsync(string tradeCode, string inputParameter, string operatorId);
+        BasicResultDto HIS_InterfaceList(string tradeCode, string inputParameter, string operatorId);
     }
 }

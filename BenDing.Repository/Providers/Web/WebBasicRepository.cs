@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Repository.ServiceReference;
@@ -11,55 +7,54 @@ using Newtonsoft.Json;
 
 namespace BenDing.Repository.Providers.Web
 {
-   public class WebBasicRepository: IWebBasicRepository
+    public class WebBasicRepository : IWebBasicRepository
     {
-        public async Task<BasicResultDto> HIS_InterfaceListAsync(string tradeCode, string inputParameter,
+        public BasicResultDto HIS_InterfaceList(string tradeCode, string inputParameter,
             string operatorId)
         {
-            return await Task.Run(async () =>
+
+            //11008
+            var result = new BasicResultDto();
+            // 创建 HTTP 绑定对象与设置最大传输接受数量
+            var binding = new BasicHttpBinding { MaxReceivedMessageSize = 2147483647 };
+            // 根据 WebService 的 URL 构建终端点对象
+            var endpoint = new EndpointAddress("http://47.111.29.88:11013/WebService.asmx");
+            // 创建调用接口的工厂，注意这里泛型只能传入接口 添加服务引用时生成的 webservice的接口 一般是 (XXXSoap)
+            var factory = new ChannelFactory<WebServiceSoap>(binding, endpoint);
+            // 从工厂获取具体的调用实例 
+            var callClient = factory.CreateChannel();
+            //var paramIni = new ExecuteSPRequest(new ExecuteSPRequestBody() {param = param});
+            string resultData = callClient.HIS_Interface(tradeCode, inputParameter);
+            if (!string.IsNullOrEmpty(resultData))
             {
-                //11008
-                var result = new BasicResultDto();
-                // 创建 HTTP 绑定对象与设置最大传输接受数量
-                var binding = new BasicHttpBinding { MaxReceivedMessageSize = 2147483647 };
-                // 根据 WebService 的 URL 构建终端点对象
-                var endpoint = new EndpointAddress("http://47.111.29.88:11013/WebService.asmx");
-                // 创建调用接口的工厂，注意这里泛型只能传入接口 添加服务引用时生成的 webservice的接口 一般是 (XXXSoap)
-                var factory = new ChannelFactory<WebServiceSoap>(binding, endpoint);
-                // 从工厂获取具体的调用实例 
-                var callClient = factory.CreateChannel();
-                //var paramIni = new ExecuteSPRequest(new ExecuteSPRequestBody() {param = param});
-                string resultData = await callClient.HIS_InterfaceAsync(tradeCode, inputParameter);
-                if (!string.IsNullOrEmpty(resultData))
+                var resultDto = JsonConvert.DeserializeObject<ResultDataDto>(resultData);
+
+                if (resultDto.Result == "0")
                 {
-                    var resultDto = JsonConvert.DeserializeObject<ResultDataDto>(resultData);
-
-                    if (resultDto.Result == "0")
-                    {
-                        throw new Exception(resultDto.Msg);
-                    }
-
-                    if (tradeCode == "35")
-                    {
-                        //var basicResultDto=new BasicResultDto();
-                        //basicResultDto.Msg.Add(resultDto.Msg);
-                        // result = basicResultDto;
-                    }
-                    else
-                    {
-                        var basicResultDto = JsonConvert.DeserializeObject<BasicResultDto>(resultData);
-                        result = basicResultDto;
-                    }
-
-                  
-                    return result;
+                    throw new Exception(resultDto.Msg);
                 }
 
-                //异步执行一些任务
-                //return resultData.Body.ExecuteSPResult;
-                //var account = JsonConvert.DeserializeObject<Account>(json);
+                if (tradeCode == "35")
+                {
+                    //var basicResultDto=new BasicResultDto();
+                    //basicResultDto.Msg.Add(resultDto.Msg);
+                    // result = basicResultDto;
+                }
+                else
+                {
+                    var basicResultDto = JsonConvert.DeserializeObject<BasicResultDto>(resultData);
+                    result = basicResultDto;
+                }
+
+
                 return result;
-            });
+            }
+
+            //异步执行一些任务
+            //return resultData.Body.ExecuteSPResult;
+            //var account = JsonConvert.DeserializeObject<Account>(json);
+            return result;
+
 
 
         }

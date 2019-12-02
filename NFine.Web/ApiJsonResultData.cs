@@ -3,32 +3,30 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Mvc;
+using System.Web.Http.ModelBinding;
+
+using BenDing.Domain.Xml;
 using Newtonsoft.Json;
 using NFine.Code;
 
 
 namespace NFine.Web
-{
+{/// <summary>
+/// 返回结果值封装
+/// </summary>
     public class ApiJsonResultData
     {
-
         #region .ctor
         /// <summary>
-        /// Initializes a new instance of the <see cref="JsonResultData" /> class.
+        /// 
         /// </summary>
-        public ApiJsonResultData()
+        public ApiJsonResultData(Object obj)
         {
             Messages = new string[0];
-
             Success = true;
+            DataDescribe = CommonHelp.GetPropertyAliasDict(obj);
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="JsonResultData" /> class.
-        /// </summary>
-        /// <param name="modelState">State of the model.</param>
-        public ApiJsonResultData(ModelStateDictionary modelState) : this()
+        public ApiJsonResultData(ModelStateDictionary modelState, Object obj) : this(obj)
         {
             this.AddModelState(modelState);
         }
@@ -37,20 +35,20 @@ namespace NFine.Web
         #region Properties
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="ApiJsonResultData" /> is success.
+        /// 是否成功
         /// </summary>
-        /// <value>
-        ///   <c>true</c> if success; otherwise, <c>false</c>.
-        /// </value>
-        [JsonProperty("success")]
+
         public bool Success { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the messages.
+        /// messages.
         /// </summary>
         [JsonIgnore]
         public string[] Messages { get; set; }
-        [JsonProperty("message")]
+        /// <summary>
+        /// 消息
+        /// </summary>
+
         public string Message
         {
             get
@@ -62,24 +60,20 @@ namespace NFine.Web
         }
 
         /// <summary>
-        /// Gets or sets the model.
+        /// 数据
         /// </summary>
-        [JsonProperty("data")]
+
         public object Data { get; set; }
+        /// <summary>
+        /// 状态码
+        /// </summary>
 
-        [JsonProperty("code")]
         public int Code { get; set; }
-
-        [JsonProperty("redirect")]
-        public string RedirectUrl { get; set; }
-
-
-
-        [JsonProperty("reloadpage")]
-        public bool ReloadPage { get; set; }
-
+        /// <summary>
+        /// 数据描述文档
+        /// </summary>
+        public Dictionary<string, string> DataDescribe { get; set; }
         #endregion
-
         #region methods
         public void AddMessage(string message)
         {
@@ -135,7 +129,7 @@ namespace NFine.Web
 
         public static ApiJsonResultData RunWithTry(this ApiJsonResultData jsonResultEntry, Action<ApiJsonResultData> runMethod)
         {
-            string Is_day ="[" +DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+"] ";
+            string Is_day = "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] ";
 
             var log = LogFactory.GetLogger("ini".GetType().ToString());
 
@@ -149,7 +143,7 @@ namespace NFine.Web
             {
                 jsonResultEntry.Code = 1010;
 
-                log.Error(Is_day+e.ToString());
+                log.Error(Is_day + e.ToString());
                 jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message : e.InnerException.InnerException == null ? e.InnerException.Message : e.InnerException.InnerException.Message));
 
             }
@@ -176,12 +170,11 @@ namespace NFine.Web
             catch (Exception e)
             {
                 jsonResultEntry.Code = 1010;
-                log.Error(Is_day+e.ToString());
+                log.Error(Is_day + e.ToString());
                 jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message :
                                                     e.InnerException.InnerException == null ? e.InnerException.Message :
                                                     e.InnerException.InnerException.Message));
             }
-
 
             if (jsonResultEntry.Success) jsonResultEntry.Code = 0;
             return jsonResultEntry;

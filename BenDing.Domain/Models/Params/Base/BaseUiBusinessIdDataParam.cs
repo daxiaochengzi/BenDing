@@ -5,19 +5,20 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Dto.Base;
 
 namespace BenDing.Domain.Models.Params.Base
 {/// <summary>
-/// 根据业务id查询数据
-/// </summary>
-    public class BaseUiBusinessIdDataParam
+    /// 根据业务id查询数据
+    /// </summary>
+    public class BaseUiBusinessIdDataParam : PaginationDto
     { /// <summary>
-      /// 用户id
-      /// </summary>
+        /// 用户id
+        /// </summary>
         [JsonProperty(PropertyName = "操作人员ID")]
         [Display(Name = "用户id")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
-     
+
         public string UserId { get; set; }
         /// <summary>
         /// 业务id

@@ -9,25 +9,25 @@ using BenDing.Domain.Models.Params.Resident;
 
 namespace BenDing.Service.Interfaces
 {
-   public interface IResidentMedicalInsuranceService
+    public interface IResidentMedicalInsuranceService
     {/// <summary>
         /// 获取个人基础资料
         /// </summary>
         /// <param name="param"></param>
-        Task<ResidentUserInfoDto> GetUserInfo(ResidentUserInfoParam param);
+        ResidentUserInfoDto GetUserInfo(ResidentUserInfoParam param);
         /// <summary>
         /// 入院登记
         /// </summary>
         /// <returns></returns>
-        Task HospitalizationRegister(ResidentHospitalizationRegisterParam param, UserInfoDto user);
+        void HospitalizationRegister(ResidentHospitalizationRegisterParam param, UserInfoDto user);
         /// <summary>
         /// 项目下载
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
 
-        Task<string> ProjectDownload(ResidentProjectDownloadParam param);
-        Task PrescriptionUploadAutomatic(PrescriptionUploadAutomaticParam param, UserInfoDto user);
+        string ProjectDownload(ResidentProjectDownloadParam param);
+        void PrescriptionUploadAutomatic(PrescriptionUploadAutomaticParam param, UserInfoDto user);
 
 
     }

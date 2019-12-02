@@ -8,6 +8,9 @@ using Swashbuckle.Swagger;
 using System.Web.Http.Description;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Xml;
+using System.IO;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
@@ -23,65 +26,105 @@ namespace NFine.Web
                 .EnableSwagger(c =>
                 {
                     c.SingleApiVersion("v1", "NFine.Web");
-                    c.IncludeXmlComments(string.Format("{0}/bin/NFine.Web.xml", System.AppDomain.CurrentDomain.BaseDirectory));
-                    c.IncludeXmlComments(string.Format("{0}/bin/BenDing.Domain.xml", System.AppDomain.CurrentDomain.BaseDirectory));
-                  
-                   // c.OperationFilter<HttpAuthHeaderFilter>();
-                    //解决同样的接口名 传递不同参数
-                    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+                    c.IncludeXmlComments(string.Format("{0}/bin/NFine.Web.xml",
+                        System.AppDomain.CurrentDomain.BaseDirectory));
+                    c.IncludeXmlComments(string.Format("{0}/bin/BenDing.Domain.xml",
+                        System.AppDomain.CurrentDomain.BaseDirectory));
+                    c.CustomProvider((defaultProvider) => new CachingSwaggerProvider(defaultProvider));
+                    //// c.OperationFilter<HttpAuthHeaderFilter>();
+                    // //解决同样的接口名 传递不同参数
+                    // c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
 
-                    c.CustomProvider((defaultProvider) => new SwaggerCacheProvider(defaultProvider,string.Format("{0}/bin/NFine.Web.xml", System.AppDomain.CurrentDomain.BaseDirectory)));
-                    c.CustomProvider((defaultProvider) => new SwaggerCacheProvider(defaultProvider, string.Format("{0}/bin/BenDing.Domain.xml", System.AppDomain.CurrentDomain.BaseDirectory)));
+                    // c.CustomProvider((defaultProvider) => new SwaggerCacheProvider(defaultProvider,string.Format("{0}/bin/NFine.Web.xml", System.AppDomain.CurrentDomain.BaseDirectory)));
+                    // c.CustomProvider((defaultProvider) => new SwaggerCacheProvider(defaultProvider, string.Format("{0}/bin/BenDing.Domain.xml", System.AppDomain.CurrentDomain.BaseDirectory)));
 
-                    c.DocumentFilter<HiddenApiFilter>(); //隐藏Swagger 自带API及隐藏具体Api
+                    // c.DocumentFilter<HiddenApiFilter>(); //隐藏Swagger 自带API及隐藏具体Api
 
                 })
-                .EnableSwaggerUi(c =>
-                {
-                    //c.InjectJavaScript(System.Reflection.Assembly.GetExecutingAssembly(), "NFine.Web.script.swagger.js");
-                });
+                .EnableSwaggerUi(c => { c.InjectJavaScript(thisAssembly, "NFine.Web.script.swagger_lang.js"); });
         }
-    }
 
-    /// <summary>
-    /// 隐藏Swagger默认接口
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-    public partial class HiddenApiAttribute : Attribute
-    {
-    }
-
-    /// <summary>
-    /// 隐藏Swagger默认接口
-    /// </summary>
-    public class HiddenApiFilter : IDocumentFilter
-    {
-        public void Apply(SwaggerDocument swaggerDoc, SchemaRegistry schemaRegistry, IApiExplorer apiExplorer)
+        public class CachingSwaggerProvider : ISwaggerProvider
         {
-            foreach (ApiDescription apiDescription in apiExplorer.ApiDescriptions)
+            private static ConcurrentDictionary<string, SwaggerDocument> _cache =
+                new ConcurrentDictionary<string, SwaggerDocument>();
+
+            private readonly ISwaggerProvider _swaggerProvider;
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="swaggerProvider"></param>
+            public CachingSwaggerProvider(ISwaggerProvider swaggerProvider)
             {
-                var _key = "/" + apiDescription.RelativePath.TrimEnd('/');
-                // 过滤 swagger 自带的接口
-                if (_key.Contains("/api/Swagger") && swaggerDoc.paths.ContainsKey(_key))
-                    swaggerDoc.paths.Remove(_key);
+                _swaggerProvider = swaggerProvider;
+            }/// <summary>
+             /// 
+             /// </summary>
+             /// <param name="rootUrl"></param>
+             /// <param name="apiVersion"></param>
+             /// <returns></returns>
 
-                //隐藏具体Api接口 需要在想隐藏的api 上面添加特性[HiddenApi]
-                if (Enumerable
-                    .OfType<HiddenApiAttribute>(apiDescription.GetControllerAndActionAttributes<HiddenApiAttribute>())
-                    .Any())
+            public SwaggerDocument GetSwagger(string rootUrl, string apiVersion)
+            {
+                var cacheKey = string.Format("{0}_{1}", rootUrl, apiVersion);
+                SwaggerDocument srcDoc = null;
+                //只读取一次
+                if (!_cache.TryGetValue(cacheKey, out srcDoc))
                 {
-                    string key = "/" + apiDescription.RelativePath;
-                    if (key.Contains("?"))
-                    {
-                        int idx = key.IndexOf("?", System.StringComparison.Ordinal);
-                        key = key.Substring(0, idx);
-                    }
+                    srcDoc = _swaggerProvider.GetSwagger(rootUrl, apiVersion);
 
-                    swaggerDoc.paths.Remove(key);
+                    srcDoc.vendorExtensions = new Dictionary<string, object> { { "ControllerDesc", GetControllerDesc() } };
+                    _cache.TryAdd(cacheKey, srcDoc);
                 }
+                return srcDoc;
+            }
+
+            /// <summary>
+            /// 从API文档中读取控制器描述
+            /// </summary>
+            /// <returns>所有控制器描述</returns>
+            public static ConcurrentDictionary<string, string> GetControllerDesc()
+            {
+                string xmlpath = string.Format("{0}/bin/NFine.Web.xml", System.AppDomain.CurrentDomain.BaseDirectory);
+                ConcurrentDictionary<string, string> controllerDescDict = new ConcurrentDictionary<string, string>();
+                if (File.Exists(xmlpath))
+                {
+                    XmlDocument xmldoc = new XmlDocument();
+                    xmldoc.Load(xmlpath);
+                    string type = string.Empty, path = string.Empty, controllerName = string.Empty;
+
+                    string[] arrPath;
+                    int length = -1, cCount = "Controller".Length;
+                    XmlNode summaryNode = null;
+                    foreach (XmlNode node in xmldoc.SelectNodes("//member"))
+                    {
+                        type = node.Attributes["name"].Value;
+                        if (type.StartsWith("T:"))
+                        {
+                            //控制器
+                            arrPath = type.Split('.');
+                            length = arrPath.Length;
+                            controllerName = arrPath[length - 1];
+                            if (controllerName.EndsWith("Controller"))
+                            {
+                                //获取控制器注释
+                                summaryNode = node.SelectSingleNode("summary");
+                                string key = controllerName.Remove(controllerName.Length - cCount, cCount);
+                                if (summaryNode != null && !string.IsNullOrEmpty(summaryNode.InnerText) && !controllerDescDict.ContainsKey(key))
+                                {
+                                    controllerDescDict.TryAdd(key, summaryNode.InnerText.Trim());
+                                }
+                            }
+                        }
+                    }
+                }
+                return controllerDescDict;
             }
         }
     }
+    
+
+    
 
 
 }

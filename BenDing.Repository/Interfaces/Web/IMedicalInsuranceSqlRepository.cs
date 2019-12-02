@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Resident;
@@ -22,13 +22,13 @@ namespace BenDing.Repository.Interfaces.Web
         ///// <param name="user"></param>
         ///// <param name="param"></param>
         ///// <returns></returns>
-        //Task<Int32> SaveMedicalInsuranceResidentInfo(MedicalInsuranceResidentInfoParam param);
+        //<Int32> SaveMedicalInsuranceResidentInfo(MedicalInsuranceResidentInfoParam param);
         ///// <summary>
         /////  更新医保病人信息
         ///// </summary>
         ///// <param name="param"></param>
         ///// <returns></returns>
-        //Task<int> UpdateMedicalInsuranceResidentInfo(
+        //<int> UpdateMedicalInsuranceResidentInfo(
         //    UpdateMedicalInsuranceResidentInfoParam param);
         ///// <summary>
         ///// 单病种下载
@@ -36,72 +36,72 @@ namespace BenDing.Repository.Interfaces.Web
         ///// <param name="user"></param>
         ///// <param name="param"></param>
         ///// <returns></returns>
-        //Task<Int32> SingleResidentInfoDownload(UserInfoDto user, List<SingleResidentInfoDto> param);
+        //<Int32> SingleResidentInfoDownload(UserInfoDto user, List<SingleResidentInfoDto> param);
 
         #endregion
-        Task<int> UpdateMedicalInsuranceResidentSettlement(UpdateMedicalInsuranceResidentSettlementParam param);
+        int UpdateMedicalInsuranceResidentSettlement(UpdateMedicalInsuranceResidentSettlementParam param);
         /// <summary>
         /// 医保中心端查询
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task<Dictionary<int, List<ResidentProjectDownloadRow>>> QueryProjectDownload(QueryProjectUiParam param);
+        Dictionary<int, List<ResidentProjectDownloadRow>> QueryProjectDownload(QueryProjectUiParam param);
         /// <summary>
         /// 下载医保项目 DownloadD
         /// </summary>
         /// <param name="user"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task<Int32> ProjectDownload(UserInfoDto user, List<ResidentProjectDownloadRowDataRowDto> param);
+        Int32 ProjectDownload(UserInfoDto user, List<ResidentProjectDownloadRowDataRowDto> param);
         /// <summary>
         /// 获取医保项目更新时间
         /// </summary>
         /// <returns></returns>
-        Task<string> ProjectDownloadTimeMax();
+        string ProjectDownloadTimeMax();
         /// <summary>
         /// 医保信息保存
         /// </summary>
         /// <param name="user"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task SaveMedicalInsurance(UserInfoDto user, MedicalInsuranceDto param);
+        void SaveMedicalInsurance(UserInfoDto user, MedicalInsuranceDto param);
         /// <summary>
         /// 医保病人信息查询
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task<MedicalInsuranceResidentInfoDto> QueryMedicalInsuranceResidentInfo(
+        MedicalInsuranceResidentInfoDto QueryMedicalInsuranceResidentInfo(
             QueryMedicalInsuranceResidentInfoParam param);
         /// <summary>
         /// 医保对码
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        Task MedicalInsurancePairCode(MedicalInsurancePairCodesUiParam param);
+        void MedicalInsurancePairCode(MedicalInsurancePairCodesUiParam param);
 
         /// <summary>
         /// 医保对码查询
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-       Task<List<QueryMedicalInsurancePairCodeDto>> QueryMedicalInsurancePairCode(
-            QueryMedicalInsurancePairCodeParam param);
+        List<QueryMedicalInsurancePairCodeDto> QueryMedicalInsurancePairCode(
+             QueryMedicalInsurancePairCodeParam param);
         /// <summary>
         /// 目录对照管理
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
 
-         Task<Dictionary<int, List<DirectoryComparisonManagementDto>>> DirectoryComparisonManagement(
-            DirectoryComparisonManagementUiParam param);
-         Task<List<QueryThreeCataloguePairCodeUploadDto>> ThreeCataloguePairCodeUpload(
-            string organizationCode);
+        Dictionary<int, List<DirectoryComparisonManagementDto>> DirectoryComparisonManagement(
+           DirectoryComparisonManagementUiParam param);
+        List<QueryThreeCataloguePairCodeUploadDto> ThreeCataloguePairCodeUpload(
+           string organizationCode);
         /// <summary>
         /// 三大目录对码
         /// </summary>
         /// <param name="organizationCode"></param>
         /// <returns></returns>
-        Task<int> UpdateThreeCataloguePairCodeUpload(string organizationCode);
+        int UpdateThreeCataloguePairCodeUpload(string organizationCode);
         /// <summary>
         /// 更新批次号
         /// </summary>
@@ -109,7 +109,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="batchConfirmFail">是否确认失败</param>
         /// <param name="user"></param>
         /// <returns></returns>
-        Task<int> UpdateHospitalizationFee(List<UpdateHospitalizationFeeParam> param, bool batchConfirmFail, UserInfoDto user);
+        int UpdateHospitalizationFee(List<UpdateHospitalizationFeeParam> param, bool batchConfirmFail, UserInfoDto user);
 
 
     }

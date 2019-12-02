@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Mvc;
+using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.Base;
@@ -20,15 +19,15 @@ namespace NFine.Web.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public class BenDingController : BaseAsyncController
+    public class BenDingController : ApiController
     {
-        private IWebBasicRepository _webServiceBasic;
-        private IHisSqlRepository _hisSqlRepository;
-        private IWebServiceBasicService _webServiceBasicService;
-        private IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
-        private ISystemManageRepository _systemManage;
-        private IResidentMedicalInsuranceRepository _residentMedicalInsurance;
-        private IResidentMedicalInsuranceService _residentService;
+        private readonly IWebBasicRepository _webServiceBasic;
+        private readonly IHisSqlRepository _hisSqlRepository;
+        private readonly IWebServiceBasicService _webServiceBasicService;
+        private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
+        private readonly ISystemManageRepository _systemManage;
+        private readonly IResidentMedicalInsuranceRepository _residentMedicalInsurance;
+        private readonly IResidentMedicalInsuranceService _residentService;
         /// <summary>
         /// 
         /// </summary>
@@ -61,94 +60,93 @@ namespace NFine.Web.Controllers
         /// 获取登陆信息
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetLoginInfo(QueryHospitalOperatorParam param)
+        [HttpGet]
+        public ApiJsonResultData GetLoginInfo([FromUri]QueryHospitalOperatorParam param)
         {
-            return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {
+            return new ApiJsonResultData(ModelState, new UserInfoDto()).RunWithTry(y =>
+           {
+             
+               var data = _systemManage.QueryHospitalOperator(param);
+               if (string.IsNullOrWhiteSpace(data.HisUserAccount))
+               {
+                   throw new Exception("当前用户未授权,基层账户信息,请重新授权!!!");
+               }
+               else
+               {
+                   var inputParam = new UserInfoParam()
+                   {
+                       UserName = data.HisUserAccount,
+                       Pwd = data.HisUserPwd,
+                       ManufacturerNumber = data.ManufacturerNumber,
+                   };
+                   string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
+                   var verificationCode = _webServiceBasicService.GetVerificationCode("01", inputParamJson);
+                   y.Data = verificationCode;
+               }
 
-                var data = await _systemManage.QueryHospitalOperator(param);
-                if (string.IsNullOrWhiteSpace(data.HisUserAccount))
-                {
-                    throw new Exception("当前用户未授权,基层账户信息,请重新授权!!!");
-                }
-                else
-                {
-                    var inputParam = new UserInfoParam()
-                    {
-                        UserName = data.HisUserAccount,
-                        Pwd = data.HisUserPwd,
-                        ManufacturerNumber = data.ManufacturerNumber,
-                    };
-                    string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
-                    var verificationCode = await _webServiceBasicService.GetVerificationCode("01", inputParamJson);
-                    y.Data = verificationCode;
-                }
+           });
 
-            }), JsonRequestBehavior.AllowGet);
-
+           
         }
         /// <summary>
         /// 获取三大目录
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetCatalog(UiCatalogParam param)
+        [HttpGet]
+        public ApiJsonResultData GetCatalog([FromUri]UiCatalogParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                if (userBase != null)
-                {
-                    var inputInpatientInfo = new CatalogParam()
-                    {
-                        AuthCode = userBase.AuthCode,
-                        CatalogType = param.CatalogType,
-                        OrganizationCode = userBase.OrganizationCode,
-                        Nums = 1000,
-                    };
-
-
-                    var inputInpatientInfoData = await _webServiceBasicService.GetCatalog(userBase, inputInpatientInfo);
-                    if (inputInpatientInfoData.Any())
-                    {
-                        y.Data = inputInpatientInfoData;
-                    }
-                }
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+             {
+                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                 if (userBase != null)
+                 {
+                     var inputInpatientInfo = new CatalogParam()
+                     {
+                         AuthCode = userBase.AuthCode,
+                         CatalogType = param.CatalogType,
+                         OrganizationCode = userBase.OrganizationCode,
+                         Nums = 1000,
+                     };
+                     var inputInpatientInfoData = _webServiceBasicService.GetCatalog(userBase, inputInpatientInfo);
+                     if (inputInpatientInfoData.Any())
+                     {
+                         y.Data = inputInpatientInfoData;
+                     }
+                 }
 
 
 
-            });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+             });
+
         }
         /// <summary>
         /// 删除三大目录
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> DeleteCatalog(UiCatalogParam param)
+        [HttpGet]
+        public ApiJsonResultData DeleteCatalog([FromUri]UiCatalogParam param)
         {
-            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var data = await _webServiceBasicService.DeleteCatalog(userBase, Convert.ToInt16(param.CatalogType));
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var data = _webServiceBasicService.DeleteCatalog(userBase, Convert.ToInt16(param.CatalogType));
                 y.Data = data;
 
 
-            }));
+            });
         }
         /// <summary>
         /// 获取ICD10
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetIcd10(UiCatalogParam param)
+        [HttpGet]
+        public ApiJsonResultData GetIcd10([FromUri]UiCatalogParam param)
         {
-            return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var data = await _webServiceBasicService.GetICD10(userBase, new CatalogParam()
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var data = _webServiceBasicService.GetICD10(userBase, new CatalogParam()
                 {
                     OrganizationCode = userBase.OrganizationCode,
                     AuthCode = userBase.AuthCode,
@@ -158,110 +156,110 @@ namespace NFine.Web.Controllers
                 y.Data = data;
 
 
-            }), JsonRequestBehavior.AllowGet);
+            });
         }
         /// <summary>
         /// 查询ICD10
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> QueryIcd10(QueryICD10UiParam param)
+        [HttpPost]
+        public ApiJsonResultData QueryIcd10([FromBody]QueryICD10UiParam param)
         {
-            return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {
+            return new ApiJsonResultData(ModelState, new QueryICD10InfoDto()).RunWithTry(y =>
+             {
 
-                var data = await _hisSqlRepository.QueryICD10(param);
-                y.Data = data;
-            }));
+                 var data = _hisSqlRepository.QueryICD10(param);
+                 y.Data = data;
+             });
         }
         /// <summary>
         /// 更新机构
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetOrg(OrgParam param)
+        [HttpGet]
+        public ApiJsonResultData GetOrg([FromUri]OrgParam param)
         {
-            return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var data = await _webServiceBasicService.GetOrg(userBase, param.Name);
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var data = _webServiceBasicService.GetOrg(userBase, param.Name);
                 y.Data = "更新机构" + data + "条";
-            }), JsonRequestBehavior.AllowGet);
+            });
         }
         /// <summary>
         /// 获取HIS系统中科室、医师、病区、床位的基本信息
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetInformation(GetInformationUiParam param)
+        [HttpGet]
+        public ApiJsonResultData GetInformation([FromUri]GetInformationUiParam param)
         {
-            return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                if (userBase != null)
-                {
-                    var inputInpatientInfo = new InformationParam()
-                    {
-                        AuthCode = userBase.AuthCode,
-                        OrganizationCode = userBase.OrganizationCode,
-                        DirectoryType = param.DirectoryType
-                    };
-                    var inputInpatientInfoData = await _webServiceBasicService.SaveInformation(userBase, inputInpatientInfo);
-                    if (inputInpatientInfoData.Any())
-                    {
-                        y.Data = inputInpatientInfoData;
-                    }
-                }
-            }), JsonRequestBehavior.AllowGet);
+            return new ApiJsonResultData(ModelState, new InformationDto()).RunWithTry(y =>
+           {
+               var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               if (userBase != null)
+               {
+                   var inputInpatientInfo = new InformationParam()
+                   {
+                       AuthCode = userBase.AuthCode,
+                       OrganizationCode = userBase.OrganizationCode,
+                       DirectoryType = param.DirectoryType
+                   };
+                   var inputInpatientInfoData = _webServiceBasicService.SaveInformation(userBase, inputInpatientInfo);
+                   if (inputInpatientInfoData.Any())
+                   {
+                       y.Data = inputInpatientInfoData;
+                   }
+               }
+           });
         }
         /// <summary>
         /// 查询HIS系统中科室、医师、病区、床位的基本信息
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> QueryInformationInfo(GetInformationUiParam param)
+        [HttpGet]
+        public ApiJsonResultData QueryInformationInfo([FromUri]GetInformationUiParam param)
         {
-            return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                if (userBase != null)
-                {
-                    var queryParam = new InformationParam()
-                    {
-                        OrganizationCode = userBase.OrganizationCode,
-                        DirectoryType = param.DirectoryType
-                    };
-                    var data = await _hisSqlRepository.QueryInformationInfo(queryParam);
-                    y.Data = data;
-                }
-            }), JsonRequestBehavior.AllowGet);
+            return new ApiJsonResultData(ModelState, new QueryInformationInfoDto()).RunWithTry(y =>
+           {
+               var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               if (userBase != null)
+               {
+                   var queryParam = new InformationParam()
+                   {
+                       OrganizationCode = userBase.OrganizationCode,
+                       DirectoryType = param.DirectoryType
+                   };
+                   var data = _hisSqlRepository.QueryInformationInfo(queryParam);
+                   y.Data = data;
+               }
+           });
         }
         /// <summary>
         /// 住院病人信息查询
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> QueryMedicalInsuranceResidentInfo([FromBody] QueryMedicalInsuranceResidentInfoParam param)
+        [HttpPost]
+        public ApiJsonResultData QueryMedicalInsuranceResidentInfo([FromBody] QueryMedicalInsuranceResidentInfoParam param)
         {
-            return Json(await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new MedicalInsuranceResidentInfoDto()).RunWithTry(y =>
            {
-               var data = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(param);
+               var data = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(param);
                y.Data = data;
 
-           }));
+           });
         }
         /// <summary>
         /// 获取住院病人
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> GetInpatientInfo(InpatientInfoUiParam param)
+        [HttpPost]
+        public ApiJsonResultData GetInpatientInfo([FromBody]InpatientInfoUiParam param)
         {
-            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new ResidentUserInfoDto()).RunWithTry(y =>
            {
-               var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                var inputInpatientInfo = new InpatientInfoParam()
                {
                    AuthCode = verificationCode.AuthCode,
@@ -280,12 +278,12 @@ namespace NFine.Web.Controllers
                    BusinessId = param.BusinessId,
                    InfoParam = inputInpatientInfo,
                };
-               var inpatientData = await _webServiceBasicService.GetInpatientInfo(infoData);
+               var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
                if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
                {//获取医保个人信息
-                   await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                   _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
 
-                   var userBase = await _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
+                   var userBase = _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
                    {
                        IdentityMark = "1",
                        InformationNumber = param.IdCardNo,
@@ -296,21 +294,19 @@ namespace NFine.Web.Controllers
                    y.Data = data;
 
                }
-           }));
+           });
         }
         /// <summary>
         /// 获取病人诊断
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> GetInpatientDiagnosis(InpatientInfoUiParam param)
+        [HttpPost]
+        public ApiJsonResultData GetInpatientDiagnosis([FromBody]InpatientInfoUiParam param)
         {
-            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new InpatientDiagnosisDto()).RunWithTry(y =>
             {
-
-
-                var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var inputInpatientInfo = new InpatientInfoParam()
                 {
                     AuthCode = verificationCode.AuthCode,
@@ -326,7 +322,7 @@ namespace NFine.Web.Controllers
                     BusinessId = param.BusinessId,
                     InfoParam = inputInpatientInfo,
                 };
-                var inpatientData = await _webServiceBasicService.GetInpatientInfo(infoData);
+                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
                 if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
                 {
 
@@ -351,51 +347,51 @@ namespace NFine.Web.Controllers
                     y.Data = diagnosisData;
 
                 }
-            }));
+            });
         }
         /// <summary>
         /// 获取住院病人明细费用
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetInpatientInfoDetail(GetInpatientInfoDetailParam param)
+        [HttpGet]
+        public ApiJsonResultData GetInpatientInfoDetail([FromUri]GetInpatientInfoDetailParam param)
         {
-            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
-            {
+            return new ApiJsonResultData(ModelState, new InpatientInfoDetailDto()).RunWithTry(y =>
+           {
 
-                var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                if (verificationCode != null)
-                {
-                    var inpatientData = await _hisSqlRepository.QueryInpatientInfo(new QueryInpatientInfoParam() { BusinessId = param.BusinessId });
+               var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               if (verificationCode != null)
+               {
+                   var inpatientData = _hisSqlRepository.QueryInpatientInfo(new QueryInpatientInfoParam() { BusinessId = param.BusinessId });
+                   if (inpatientData == null) throw new Exception("该病人未在中心库中,请检查是否办理医保入院!!!");
+                   var InpatientInfoDetail = new InpatientInfoDetailParam()
+                   {
+                       AuthCode = verificationCode.AuthCode,
+                       HospitalizationNo = inpatientData.HospitalizationNo,
+                       BusinessId = inpatientData.BusinessId,
+                       StartTime = inpatientData.AdmissionDate,
+                       EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                       State = "0"
+                   };
+                   var data = _webServiceBasicService.GetInpatientInfoDetail(verificationCode,
+                       InpatientInfoDetail, param.BusinessId);
+                   y.Data = data;
 
-                    var InpatientInfoDetail = new InpatientInfoDetailParam()
-                    {
-                        AuthCode = verificationCode.AuthCode,
-                        HospitalizationNo = inpatientData.HospitalizationNo,
-                        BusinessId = inpatientData.BusinessId,
-                        StartTime = inpatientData.AdmissionDate,
-                        EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                        State = "0"
-                    };
-                    var data = await _webServiceBasicService.GetInpatientInfoDetail(verificationCode,
-                        InpatientInfoDetail, param.BusinessId);
-                    y.Data = data;
+               }
 
-                }
-
-            }), JsonRequestBehavior.AllowGet);
+           });
 
         }
         /// <summary>
         /// 获取门诊病人明细
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> GetOutpatientDetailPerson(UiInIParam param)
+        [HttpGet]
+        public ApiJsonResultData GetOutpatientDetailPerson([FromUri]UiInIParam param)
         {
-            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new OutpatientDetailDto()).RunWithTry(y =>
           {
-              var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+              var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
               if (verificationCode != null)
               {
                   var outPatient = new OutpatientParam()
@@ -407,7 +403,7 @@ namespace NFine.Web.Controllers
                       结束时间 = "2020-04-27 11:09:00",
 
                   };
-                  var inputInpatientInfoData = await _webServiceBasicService.GetOutpatientPerson(verificationCode, outPatient);
+                  var inputInpatientInfoData = _webServiceBasicService.GetOutpatientPerson(verificationCode, outPatient);
                   if (inputInpatientInfoData.Any())
                   {
                       var inputInpatientInfoFirst = inputInpatientInfoData.FirstOrDefault();
@@ -417,27 +413,27 @@ namespace NFine.Web.Controllers
                           门诊号 = inputInpatientInfoFirst.门诊号,
                           业务ID = inputInpatientInfoFirst.业务ID
                       };
-                      var inputInpatientInfoDatas = await _webServiceBasicService.
+                      var inputInpatientInfoDatas = _webServiceBasicService.
                           GetOutpatientDetailPerson(verificationCode, outpatientDetailParam);
                       y.Data = inputInpatientInfoDatas;
                   }
               }
 
-              //var data = await webService.ExecuteSp(param.Params);
+              //var data =  webService.ExecuteSp(param.Params);
 
-          }), JsonRequestBehavior.AllowGet);
+          });
         }
         /// <summary>
         /// 医保信息回写至基层系统
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> SaveXmlData(UiInIParam param)
+        [HttpGet]
+        public ApiJsonResultData SaveXmlData([FromUri]UiInIParam param)
         {
-            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var dataInfo = new ResidentUserInfoParam()
                 {
                     IdentityMark = "1",
@@ -454,7 +450,7 @@ namespace NFine.Web.Controllers
                 data.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmls);
                 data.MedicalInsuranceCode = "21";
                 data.UserId = userBase.UserId;
-                //await _webServiceBasicService.SaveXmlData(data);
+                // _webServiceBasicService.SaveXmlData(data);
                 var xmlData = new XmlData();
                 xmlData.业务ID = data.BusinessId;
                 xmlData.医保交易码 = "23";
@@ -462,24 +458,24 @@ namespace NFine.Web.Controllers
                 xmlData.验证码 = data.AuthCode;
                 xmlData.操作人员ID = data.UserId;
                 xmlData.机构ID = data.OrganizationCode;
-                await _webServiceBasicService.GetXmlData(xmlData);
+                _webServiceBasicService.GetXmlData(xmlData);
 
-            }), JsonRequestBehavior.AllowGet);
+            });
         }
         /// <summary>
         /// 基层入院登记取消
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> HospitalizationRegisterCancel(BaseUiBusinessIdDataParam param)
+        [HttpGet]
+        public ApiJsonResultData HospitalizationRegisterCancel([FromUri]BaseUiBusinessIdDataParam param)
         {
-            return Json(await new ApiJsonResultData().RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
                 var dd = new ResidentUserInfoParam();
                 dd.IdentityMark = "1";
                 dd.InformationNumber = "111";
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(dd);
                 var strXmlBackParam = XmlSerializeHelper.XmlSerialize(dd);
                 var saveXmlData = new SaveXmlData();
@@ -492,9 +488,9 @@ namespace NFine.Web.Controllers
                 saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                 saveXmlData.MedicalInsuranceCode = "22";
                 saveXmlData.UserId = param.UserId;
-                await _webServiceBasic.HIS_InterfaceListAsync("38", JsonConvert.SerializeObject(saveXmlData), userBase.UserId);
+                _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData), userBase.UserId);
 
-            }), JsonRequestBehavior.AllowGet);
+            });
         }
         #endregion
         #region 医保对码
@@ -503,22 +499,22 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> QueryCatalog(QueryCatalogUiParam param)
+        [HttpGet]
+        public ApiJsonResultData QueryCatalog([FromUri]QueryCatalogUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {
-                var queryData = await _hisSqlRepository.QueryCatalog(param);
-                var data = new
-                {
-                    data = queryData.Values.FirstOrDefault(),
-                    count = queryData.Keys.FirstOrDefault()
-                };
-                y.Data = data;
+            return new ApiJsonResultData(ModelState, new QueryCatalogDto()).RunWithTry(y =>
+           {
+               var queryData = _hisSqlRepository.QueryCatalog(param);
+               var data = new
+               {
+                   data = queryData.Values.FirstOrDefault(),
+                   count = queryData.Keys.FirstOrDefault()
+               };
+               y.Data = data;
 
-            });
+           });
 
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+
 
         }
         /// <summary>
@@ -526,14 +522,12 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> QueryProjectDownload(QueryProjectUiParam param)
+        [HttpGet]
+        public ApiJsonResultData QueryProjectDownload([FromUri]QueryProjectUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new ResidentProjectDownloadRow()).RunWithTry(y =>
             {
-                var queryData = await _medicalInsuranceSqlRepository.QueryProjectDownload(param);
-
-
+                var queryData = _medicalInsuranceSqlRepository.QueryProjectDownload(param);
                 var data = new
                 {
                     data = queryData.Values.FirstOrDefault(),
@@ -541,88 +535,75 @@ namespace NFine.Web.Controllers
                 };
                 y.Data = data;
             });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+
         }
         /// <summary>
         /// 医保对码
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> MedicalInsurancePairCode([FromBody]MedicalInsurancePairCodesUiParam param)
+        [HttpPost]
+        public ApiJsonResultData MedicalInsurancePairCode([FromBody]MedicalInsurancePairCodesUiParam param)
         {
-            var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
-            {
-                if (param.PairCodeList == null)
-                {
-                    throw new Exception("对码数据不能为空");
-                }
+            return new ApiJsonResultData(ModelState, new MedicalInsurancePairCodesUiParam()).RunWithTry(y =>
+           {
+               if (param.PairCodeList == null)
+               {
+                   throw new Exception("对码数据不能为空");
+               }
 
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                if (userBase != null && string.IsNullOrWhiteSpace(userBase.OrganizationCode) == false)
-                {
-                    param.OrganizationCode = userBase.OrganizationCode;
-                    param.OrganizationName = userBase.OrganizationName;
-                    await _medicalInsuranceSqlRepository.MedicalInsurancePairCode(param);
-                    y.Data = param;
-                }
-            });
-            return Json(resultData);
+               var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               if (userBase != null && string.IsNullOrWhiteSpace(userBase.OrganizationCode) == false)
+               {
+                   param.OrganizationCode = userBase.OrganizationCode;
+                   param.OrganizationName = userBase.OrganizationName;
+                   _medicalInsuranceSqlRepository.MedicalInsurancePairCode(param);
+                   y.Data = param;
+               }
+           });
+
         }
+
         /// <summary>
         ///对照目录中心管理 
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> DirectoryComparisonManagement(DirectoryComparisonManagementUiParam param)
+        [HttpGet]
+        public ApiJsonResultData DirectoryComparisonManagement([FromUri]DirectoryComparisonManagementUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {
-                var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                param.OrganizationCode = verificationCode.OrganizationCode;
-                param.State = 0;
-                var queryData = await _medicalInsuranceSqlRepository.DirectoryComparisonManagement(param);
-                var data = new
-                {
-                    data = queryData.Values.FirstOrDefault(),
-                    count = queryData.Keys.FirstOrDefault()
-                };
-                y.Data = data;
-            });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+            return new ApiJsonResultData(ModelState, new DirectoryComparisonManagementDto()).RunWithTry(y =>
+             {
+                 var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                 param.OrganizationCode = verificationCode.OrganizationCode;
+                 param.State = 0;
+                 var queryData = _medicalInsuranceSqlRepository.DirectoryComparisonManagement(param);
+                 var data = new
+                 {
+                     data = queryData.Values.FirstOrDefault(),
+                     count = queryData.Keys.FirstOrDefault()
+                 };
+                 y.Data = data;
+             });
         }
-        /// <summary>
-        /// 目录对码页面
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public ActionResult MedicalDirectoryPairCode(MedicalDirectoryCodePairUiParam param)
-        {
-            //参数可查询医保中心目录
-            ViewBag.DirectoryName = param.ProjectName;
-            ViewBag.DirectoryCode = param.ProjectCode;
-            ViewBag.DirectoryCategoryCode = param.ProjectCodeType;
-            ViewBag.empid = param.UserId;
-            return View();
-        }
+
         /// <summary>
         /// 三大目录对码信息回写至基层系统
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> ThreeCataloguePairCodeUpload(UiInIParam param)
+        [HttpGet]
+        public ApiJsonResultData ThreeCataloguePairCodeUpload([FromUri]UiInIParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
-                var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
 
-                var data = await _webServiceBasicService.ThreeCataloguePairCodeUpload(verificationCode);
+                var data = _webServiceBasicService.ThreeCataloguePairCodeUpload(verificationCode);
 
                 y.Data = "[" + data + "] 条回写成功!!!";
             });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+
         }
         #endregion
         #region 居民医保
@@ -631,44 +612,44 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> GetUserInfo(ResidentUserInfoParam param)
+        [HttpPost]
+        public ApiJsonResultData GetUserInfo([FromBody]ResidentUserInfoParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
                 //医保登陆
-                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                var userBase = await _residentMedicalInsurance.GetUserInfo(param);
+                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                var userBase = _residentMedicalInsurance.GetUserInfo(param);
                 y.Data = userBase;
             });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+
         }
         /// <summary>
         /// 项目下载
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> ProjectDownload(ResidentProjectDownloadParam param)
+        [HttpGet]
+        public ApiJsonResultData ProjectDownload([FromUri]ResidentProjectDownloadParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
                 //医保登陆
-                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                var data = await _residentService.ProjectDownload(param);
+                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                var data = _residentService.ProjectDownload(param);
                 y.Data = data;
             });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+
         }
         /// <summary>
         /// 居民入院登记
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> HospitalizationRegister([FromBody]ResidentHospitalizationRegisterParam param)
+        [HttpPost]
+        public ApiJsonResultData HospitalizationRegister([FromBody]ResidentHospitalizationRegisterParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
                 {   //主诊断
@@ -685,7 +666,7 @@ namespace NFine.Web.Controllers
                         if (num == 2) param.DiagnosisIcd10Three = item.DiagnosisCode;
                         num++;
                     }
-                    var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                    var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                     var inputInpatientInfo = new InpatientInfoParam()
                     {
                         AuthCode = userBase.AuthCode,
@@ -702,19 +683,19 @@ namespace NFine.Web.Controllers
                         InfoParam = inputInpatientInfo,
                         IsSave = false,
                     };
-                    var inpatientData = await _webServiceBasicService.GetInpatientInfo(infoData);
+                    var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
                     if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
                     {  //医保登录
-                        await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                        _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                         param.Operators = param.UserId;
                         //入院登记
-                        await _residentMedicalInsurance.HospitalizationRegister(param, userBase);
+                        _residentMedicalInsurance.HospitalizationRegister(param, userBase);
                     }
                     else
                     {
                         infoData.IsSave = true;
                         //保存病人信息
-                        await _webServiceBasicService.GetInpatientInfo(infoData);
+                        _webServiceBasicService.GetInpatientInfo(infoData);
                     }
 
                 }
@@ -723,37 +704,37 @@ namespace NFine.Web.Controllers
                     throw new Exception("诊断不能为空!!!");
                 }
             });
-            return Json(resultData);
+
         }
         /// <summary>
         /// 居民入院登记查询
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> QueryMedicalInsurance(QueryMedicalInsuranceUiParam param)
+        [HttpGet]
+        public ApiJsonResultData QueryMedicalInsurance([FromUri]QueryMedicalInsuranceUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new QueryMedicalInsuranceDetailInfoDto()).RunWithTry(y =>
             {
-                var data = await _webServiceBasicService.QueryMedicalInsuranceDetail(param);
+                var data = _webServiceBasicService.QueryMedicalInsuranceDetail(param);
                 y.Data = data;
 
             });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+
         }
         /// <summary>
         /// 居民入院登记修改
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> HospitalizationModify([FromBody]HospitalizationModifyUiParam param)
+        [HttpPost]
+        public ApiJsonResultData HospitalizationModify([FromBody]HospitalizationModifyUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {  //his登陆
-                var verificationCode = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //医保登陆
-                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
                 {   //主诊断
                     //医保修改
@@ -784,91 +765,91 @@ namespace NFine.Web.Controllers
                         if (num == 2) modifyParam.DiagnosisIcd10Three = item.DiagnosisCode;
                         num++;
                     }
-                    await _residentMedicalInsurance.HospitalizationModify(modifyParam, verificationCode);
+                    _residentMedicalInsurance.HospitalizationModify(modifyParam, verificationCode);
                 }
                 else
                 {
                     throw new Exception("诊断不能为空!!!");
                 }
             });
-            return Json(resultData);
+
         }
         /// <summary>
         /// 住院清单查询
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> QueryHospitalizationFee(QueryHospitalizationFeeUiParam param)
+        [HttpGet]
+        public ApiJsonResultData QueryHospitalizationFee(QueryHospitalizationFeeUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {
-                var queryData = await _hisSqlRepository.QueryHospitalizationFee(param);
-                var data = new
-                {
-                    data = queryData.Values.FirstOrDefault(),
-                    count = queryData.Keys.FirstOrDefault()
-                };
-                y.Data = data;
-            });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+            return new ApiJsonResultData(ModelState, new QueryHospitalizationFeeDto()).RunWithTry(y =>
+           {
+               var queryData = _hisSqlRepository.QueryHospitalizationFee(param);
+               var data = new
+               {
+                   data = queryData.Values.FirstOrDefault(),
+                   count = queryData.Keys.FirstOrDefault()
+               };
+               y.Data = data;
+           });
+
         }
         /// <summary>
         /// 处方上传
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpPost]
-        public async Task<ActionResult> PrescriptionUpload([FromBody]PrescriptionUploadUiParam param)
+        [HttpPost]
+        public ApiJsonResultData PrescriptionUpload([FromBody]PrescriptionUploadUiParam param)
         {
-            var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
-            {
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                //医保登录
-                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                //处方上传
-                var data = await _residentMedicalInsurance.PrescriptionUpload(param, userBase);
-                if (!string.IsNullOrWhiteSpace(data.Msg))
-                {
-                    throw new Exception(data.Msg);
-                }
-                else
-                {
-                    if (data.Num > 0)
-                    {
-                        y.Data = "处方上传成功" + data.Num + " 条,失败" + (data.Count - data.Num) + " 条";
-                    }
-                }
-            });
-            return Json(resultData);
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+           {
+               var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               //医保登录
+               _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               //处方上传
+               var data = _residentMedicalInsurance.PrescriptionUpload(param, userBase);
+               if (!string.IsNullOrWhiteSpace(data.Msg))
+               {
+                   throw new Exception(data.Msg);
+               }
+               else
+               {
+                   if (data.Num > 0)
+                   {
+                       y.Data = "处方上传成功" + data.Num + " 条,失败" + (data.Count - data.Num) + " 条";
+                   }
+               }
+           });
+
         }
         /// <summary>
         /// 处方自动上传
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> PrescriptionUploadAutomatic(PrescriptionUploadAutomaticUiParam param)
+        [HttpGet]
+        public ApiJsonResultData PrescriptionUploadAutomatic([FromUri]PrescriptionUploadAutomaticUiParam param)
         {
-            var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //医保登录
-                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                await _residentService.PrescriptionUploadAutomatic(new PrescriptionUploadAutomaticParam()
+                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentService.PrescriptionUploadAutomatic(new PrescriptionUploadAutomaticParam()
                 { IsTodayUpload = param.IsTodayUpload }, userBase);
 
             });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+
         }
         /// <summary>
         /// 删除处方数据
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> DeletePrescriptionUpload(BaseUiBusinessIdDataParam param)
+        [HttpGet]
+        public ApiJsonResultData DeletePrescriptionUpload([FromUri]BaseUiBusinessIdDataParam param)
         {
-            var resultData = await new ApiJsonResultData().RunWithTryAsync(async y =>
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //获取医保病人信息
                 var residentDataParam = new QueryMedicalInsuranceResidentInfoParam()
                 {
@@ -876,9 +857,9 @@ namespace NFine.Web.Controllers
                     OrganizationCode = userBase.OrganizationCode,
                 };
                 //获取病人明细
-                var queryData = await _hisSqlRepository.InpatientInfoDetailQuery
-                              (new InpatientInfoDetailQueryParam() { BusinessId = param.BusinessId });
-                var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(residentDataParam);
+                var queryData = _hisSqlRepository.InpatientInfoDetailQuery
+                             (new InpatientInfoDetailQueryParam() { BusinessId = param.BusinessId });
+                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(residentDataParam);
                 if (queryData.Any())
                 {
                     //获取已上传数据、
@@ -892,238 +873,238 @@ namespace NFine.Web.Controllers
                             MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo
                         };
                         //医保登录
-                        await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                        await _residentMedicalInsurance.DeletePrescriptionUpload(deleteParam, uploadDataId, userBase);
+                        _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                        _residentMedicalInsurance.DeletePrescriptionUpload(deleteParam, uploadDataId, userBase);
                     }
                 }
             });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+
         }
         /// <summary>
         /// 医保处方明细查询
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> QueryPrescriptionDetail(BaseUiBusinessIdDataParam param)
+        [HttpGet]
+        public ApiJsonResultData QueryPrescriptionDetail([FromUri]BaseUiBusinessIdDataParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {
-                //var queryData = await _medicalInsuranceSqlRepository.QueryProjectDownload(param);
-                //var data = new 
-                //{
-                //    data = queryData.Values.FirstOrDefault(),
-                //    count = queryData.Keys.FirstOrDefault()
-                //};
-                //获取操作人员信息
+            return new ApiJsonResultData(ModelState, new QueryPrescriptionDetailListDto()).RunWithTry(y =>
+          {
+              //获取操作人员信息
+              var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+              var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+              {
+                  BusinessId = param.BusinessId,
+                  OrganizationCode = userBase.OrganizationCode
+              };
+              //医保登录
+              _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+              //获取医保病人信息
+              var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+              var queryData = _residentMedicalInsurance.QueryPrescriptionDetail(new QueryPrescriptionDetailParam()
+              { MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo });
+              //分页
+              var data = new
+              {
+                  data = queryData.Skip(param.Limit * (param.Page - 1)).Take(param.Limit),
+                  count = queryData.Count()
+              };
+              y.Data = data;
+          });
 
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
-                {
-                    BusinessId = param.BusinessId,
-                    OrganizationCode = userBase.OrganizationCode
-                };
-                //医保登录
-                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                //获取医保病人信息
-                var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-                var data = await _residentMedicalInsurance.QueryPrescriptionDetail(new QueryPrescriptionDetailParam()
-                { MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo });
-                y.Data = data;
-            });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
         }
         /// <summary>
         /// 医保住院费用预结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> HospitalizationPreSettlement(HospitalizationPresettlementUiParam param)
+        [HttpGet]
+        public ApiJsonResultData HospitalizationPreSettlement([FromUri]HospitalizationPresettlementUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {   //获取操作人员信息
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
-                {
-                    BusinessId = param.BusinessId,
-                    OrganizationCode = userBase.OrganizationCode
-                };
-                //获取医保病人信息
-                var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-                if (residentData.MedicalInsuranceState == MedicalInsuranceState.医保结算) throw new Exception("当前病人已医保结算,不能预结算");
-                //医保登录
-                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                var presettlementParam = new HospitalizationPresettlementParam()
-                {
-                    MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                    LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
-                };
-                var infoParam = new HospitalizationPreSettlementInfoParam()
-                {
-                    User = userBase,
-                    Id = residentData.Id,
-                    BusinessId = param.BusinessId,
-                };
-                var data = await _residentMedicalInsurance.HospitalizationPreSettlement(presettlementParam, infoParam);
-               
-                y.Data = data;
-            });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+         {   //获取操作人员信息
+             var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+             var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+             {
+                 BusinessId = param.BusinessId,
+                 OrganizationCode = userBase.OrganizationCode
+             };
+             //获取医保病人信息
+             var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+             if (residentData.MedicalInsuranceState == MedicalInsuranceState.医保结算) throw new Exception("当前病人已医保结算,不能预结算");
+             //医保登录
+             _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+             var presettlementParam = new HospitalizationPresettlementParam()
+             {
+                 MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                 LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
+             };
+             var infoParam = new HospitalizationPreSettlementInfoParam()
+             {
+                 User = userBase,
+                 Id = residentData.Id,
+                 BusinessId = param.BusinessId,
+             };
+             var data = _residentMedicalInsurance.HospitalizationPreSettlement(presettlementParam, infoParam);
+
+             y.Data = data;
+         });
+
         }
         /// <summary>
         /// 医保出院费用结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> LeaveHospitalSettlement(LeaveHospitalSettlementUiParam param)
+        [HttpGet]
+        public ApiJsonResultData LeaveHospitalSettlement([FromUri]LeaveHospitalSettlementUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {   //获取操作人员信息
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+           {   //获取操作人员信息
 
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
-                {
-                    BusinessId = param.BusinessId,
-                    OrganizationCode = userBase.OrganizationCode
-                };
-                //获取医保病人信息
-                var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-                if (residentData.MedicalInsuranceState == MedicalInsuranceState.医保结算) throw new Exception("当前病人已医保结算,不能预结算!!!");
-                if (residentData.MedicalInsuranceState == MedicalInsuranceState.医保入院) throw new Exception("当前病人未预结算,不能结算!!!");
-                var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
-                //获取住院病人
-                var inpatientInfoData = await _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
-                if (Convert.ToInt32(inpatientInfoData.InpatientHospitalState)<2 ) throw new Exception("当前病人基层系统未办理出院,不能办理医保结算!!!");
-                //医保登录
-                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                var presettlementParam = new LeaveHospitalSettlementParam()
-                {
-                    MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                    LeaveHospitalDate = (!string.IsNullOrWhiteSpace(inpatientInfoData.LeaveHospitalDate)) == true ? Convert.ToDateTime(inpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd") : DateTime.Now.ToString("yyyyMMdd"),
-                    LeaveHospitalMainDiagnosisIcd10 = inpatientInfoData.LeaveHospitalMainDiagnosisIcd10,
-                    LeaveHospitalDiagnosisIcd10Two = inpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
-                    LeaveHospitalMainDiagnosis = inpatientInfoData.LeaveHospitalMainDiagnosis,
-                    //LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
-                    //LeaveHospitalMainDiagnosisIcd10 = InpatientInfoData.AdmissionMainDiagnosisIcd10,
-                    ////LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
-                    //LeaveHospitalMainDiagnosis = InpatientInfoData.AdmissionSecondaryDiagnosis,
-                    UserId = CommonHelp.GuidToStr(userBase.UserId),
-                    LeaveHospitalInpatientState = param.LeaveHospitalInpatientState
-                };
-                var infoParam = new LeaveHospitalSettlementInfoParam()
-                {
-                    User = userBase,
-                    Id = residentData.Id,
-                    InsuranceNo = residentData.InsuranceNo,
-                    BusinessId = inpatientInfoData.BusinessId,
-                };
-                var data = await _residentMedicalInsurance.LeaveHospitalSettlement(presettlementParam, infoParam);
-                y.Data = data;
+               var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+               {
+                   BusinessId = param.BusinessId,
+                   OrganizationCode = userBase.OrganizationCode
+               };
+               //获取医保病人信息
+               var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+               if (residentData.MedicalInsuranceState == MedicalInsuranceState.医保结算) throw new Exception("当前病人已办理医保结算,不能办理预结算!!!");
+               if (residentData.MedicalInsuranceState == MedicalInsuranceState.医保入院) throw new Exception("当前病人未办理预结算,不能办理结算!!!");
+               var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
+               //获取住院病人
+               var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
+               if (inpatientInfoData == null) throw new Exception("该病人未在中心库中,请检查是否办理医保入院!!!");
+               if (Convert.ToInt32(inpatientInfoData.InpatientHospitalState) < 2) throw new Exception("当前病人基层系统未办理出院,不能办理医保结算!!!");
+               //医保登录
+               _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               var presettlementParam = new LeaveHospitalSettlementParam()
+               {
+                   MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                   LeaveHospitalDate = (!string.IsNullOrWhiteSpace(inpatientInfoData.LeaveHospitalDate)) ? Convert.ToDateTime(inpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd") : DateTime.Now.ToString("yyyyMMdd"),
+                   LeaveHospitalMainDiagnosisIcd10 = inpatientInfoData.LeaveHospitalMainDiagnosisIcd10,
+                   LeaveHospitalDiagnosisIcd10Two = inpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
+                   LeaveHospitalMainDiagnosis = inpatientInfoData.LeaveHospitalMainDiagnosis,
+                   //LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
+                   //LeaveHospitalMainDiagnosisIcd10 = InpatientInfoData.AdmissionMainDiagnosisIcd10,
+                   ////LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
+                   //LeaveHospitalMainDiagnosis = InpatientInfoData.AdmissionSecondaryDiagnosis,
+                   UserId = CommonHelp.GuidToStr(userBase.UserId),
+                   LeaveHospitalInpatientState = param.LeaveHospitalInpatientState
+               };
+               var infoParam = new LeaveHospitalSettlementInfoParam()
+               {
+                   User = userBase,
+                   Id = residentData.Id,
+                   InsuranceNo = residentData.InsuranceNo,
+                   BusinessId = inpatientInfoData.BusinessId,
+               };
+               var data = _residentMedicalInsurance.LeaveHospitalSettlement(presettlementParam, infoParam);
+               y.Data = data;
 
 
-            });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+           });
+
         }
         /// <summary>
         /// 查询医保出院费用结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> QueryLeaveHospitalSettlement(QueryHospitalizationPresettlementUiParam param)
+        [HttpGet]
+        public ApiJsonResultData QueryLeaveHospitalSettlement([FromUri]QueryHospitalizationPresettlementUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {   //获取操作人员信息
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+           {   //获取操作人员信息
 
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
-                {
-                    BusinessId = param.BusinessId,
-                    OrganizationCode = userBase.OrganizationCode
-                };
-                //医保登录
-                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                //获取医保病人信息
-                var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-                if (residentData != null)
-                {
-                    var data = await _residentMedicalInsurance.QueryLeaveHospitalSettlement(new QueryLeaveHospitalSettlementParam() { MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo });
-                    y.Data = data;
+               var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+               {
+                   BusinessId = param.BusinessId,
+                   OrganizationCode = userBase.OrganizationCode
+               };
+               //医保登录
+               _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               //获取医保病人信息
+               var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+               if (residentData != null)
+               {
+                   var data = _residentMedicalInsurance.QueryLeaveHospitalSettlement(new QueryLeaveHospitalSettlementParam() { MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo });
+                   y.Data = data;
 
-                }
+               }
 
-            });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+           });
+
         }
         /// <summary>
         /// 取消医保出院费用结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> LeaveHospitalSettlementCancel(LeaveHospitalSettlementCancelUiParam param)
+        [HttpGet]
+        public ApiJsonResultData LeaveHospitalSettlementCancel([FromUri]LeaveHospitalSettlementCancelUiParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {   //获取操作人员信息
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+           {   //获取操作人员信息
 
-                var userBase = await _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
-                {
-                    BusinessId = param.BusinessId,
-                    OrganizationCode = userBase.OrganizationCode
-                };
-                //医保登录
-                await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                //获取医保病人信息
-                var residentData = await _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-                if (residentData != null)
-                {
-                    var settlementCancelParam = new LeaveHospitalSettlementCancelParam()
-                    {
-                        MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                        SettlementNo = residentData.SettlementNo,
-                        Operators = CommonHelp.GuidToStr(userBase.UserId),
-                        CancelLimit = param.CancelLimit,
-                    };
-                    var cancelParam = new LeaveHospitalSettlementCancelInfoParam()
-                    {
-                        BusinessId = param.BusinessId,
-                        Id = residentData.Id,
-                        User = userBase,
-                    };
-                    await _residentMedicalInsurance.LeaveHospitalSettlementCancel(settlementCancelParam, cancelParam);
+               var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+               {
+                   BusinessId = param.BusinessId,
+                   OrganizationCode = userBase.OrganizationCode
+               };
+               //医保登录
+               _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               //获取医保病人信息
+               var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+               if (residentData != null)
+               {
+                   var settlementCancelParam = new LeaveHospitalSettlementCancelParam()
+                   {
+                       MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                       SettlementNo = residentData.SettlementNo,
+                       Operators = CommonHelp.GuidToStr(userBase.UserId),
+                       CancelLimit = param.CancelLimit,
+                   };
+                   var cancelParam = new LeaveHospitalSettlementCancelInfoParam()
+                   {
+                       BusinessId = param.BusinessId,
+                       Id = residentData.Id,
+                       User = userBase,
+                   };
+                   _residentMedicalInsurance.LeaveHospitalSettlementCancel(settlementCancelParam, cancelParam);
 
 
-                }
+               }
 
-            });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+           });
+
         }
         /// <summary>
         /// 医保连接
         /// </summary>
         /// <returns></returns>
-        [System.Web.Mvc.HttpGet]
-        public async Task<ActionResult> HospitalizationRegister(QueryHospitalOperatorParam param)
+        [HttpGet]
+        public ApiJsonResultData HospitalizationRegister([FromUri]QueryHospitalOperatorParam param)
         {
-            var resultData = await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
-            {
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+           {
 
-                var data = await _systemManage.QueryHospitalOperator(param);
-                if (string.IsNullOrWhiteSpace(data.MedicalInsuranceAccount))
-                {
-                    throw new Exception("当前用户未授权,医保账户信息,请重新授权!!!");
-                }
-                else
-                {
-                    await _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               var data = _systemManage.QueryHospitalOperator(param);
+               if (string.IsNullOrWhiteSpace(data.MedicalInsuranceAccount))
+               {
+                   throw new Exception("当前用户未授权,医保账户信息,请重新授权!!!");
+               }
+               else
+               {
+                   _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
 
-                }
+               }
 
-            });
-            return Json(resultData, JsonRequestBehavior.AllowGet);
+           });
+
         }
         #endregion
     }
