@@ -50,7 +50,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData AddHospitalOperator(AddHospitalOperatorParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(async y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(async y =>
              {
                  if (param.IsHis)
                  {
@@ -98,7 +98,7 @@ namespace NFine.Web.Controllers
         [HttpPost]
         public ApiJsonResultData AddHospitalOrganizationGrade([FromBody]HospitalOrganizationGradeParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(async y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(async y =>
                  {
                      _systemManage.AddHospitalOrganizationGrade(param);
                  });
