@@ -95,7 +95,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData GetCatalog([FromUri]UiCatalogParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
              {
                  var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                  if (userBase != null)
@@ -127,7 +127,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData DeleteCatalog([FromUri]UiCatalogParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var data = _webServiceBasicService.DeleteCatalog(userBase, Convert.ToInt16(param.CatalogType));
@@ -143,7 +143,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData GetIcd10([FromUri]UiCatalogParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var data = _webServiceBasicService.GetICD10(userBase, new CatalogParam()
@@ -180,7 +180,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData GetOrg([FromUri]OrgParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var data = _webServiceBasicService.GetOrg(userBase, param.Name);
@@ -431,7 +431,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData SaveXmlData([FromUri]UiInIParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var dataInfo = new ResidentUserInfoParam()
@@ -470,7 +470,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData HospitalizationRegisterCancel([FromUri]BaseUiBusinessIdDataParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 var dd = new ResidentUserInfoParam();
                 dd.IdentityMark = "1";
@@ -595,7 +595,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData ThreeCataloguePairCodeUpload([FromUri]UiInIParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
 
@@ -615,7 +615,7 @@ namespace NFine.Web.Controllers
         [HttpPost]
         public ApiJsonResultData GetUserInfo([FromBody]ResidentUserInfoParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 //医保登陆
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
@@ -632,7 +632,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData ProjectDownload([FromUri]ResidentProjectDownloadParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 //医保登陆
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
@@ -649,7 +649,7 @@ namespace NFine.Web.Controllers
         [HttpPost]
         public ApiJsonResultData HospitalizationRegister([FromBody]ResidentHospitalizationRegisterParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
                 {   //主诊断
@@ -730,7 +730,7 @@ namespace NFine.Web.Controllers
         [HttpPost]
         public ApiJsonResultData HospitalizationModify([FromBody]HospitalizationModifyUiParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {  //his登陆
                 var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //医保登陆
@@ -801,7 +801,7 @@ namespace NFine.Web.Controllers
         [HttpPost]
         public ApiJsonResultData PrescriptionUpload([FromBody]PrescriptionUploadUiParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
            {
                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                //医保登录
@@ -829,7 +829,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData PrescriptionUploadAutomatic([FromUri]PrescriptionUploadAutomaticUiParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //医保登录
@@ -847,7 +847,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData DeletePrescriptionUpload([FromUri]BaseUiBusinessIdDataParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //获取医保病人信息
@@ -921,7 +921,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData HospitalizationPreSettlement([FromUri]HospitalizationPresettlementUiParam param)
         {
-            return new ApiJsonResultData(ModelState,new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState,new HospitalizationPresettlementDto()).RunWithTry(y =>
          {   //获取操作人员信息
              var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
              var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
@@ -959,7 +959,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData LeaveHospitalSettlement([FromUri]LeaveHospitalSettlementUiParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
            {   //获取操作人员信息
 
                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
@@ -1015,7 +1015,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData QueryLeaveHospitalSettlement([FromUri]QueryHospitalizationPresettlementUiParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState,new HospitalizationPresettlementDto()).RunWithTry(y =>
            {   //获取操作人员信息
 
                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
@@ -1046,7 +1046,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData LeaveHospitalSettlementCancel([FromUri]LeaveHospitalSettlementCancelUiParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
            {   //获取操作人员信息
 
                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
@@ -1089,7 +1089,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData HospitalizationRegister([FromUri]QueryHospitalOperatorParam param)
         {
-            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
            {
 
                var data = _systemManage.QueryHospitalOperator(param);

@@ -24,14 +24,28 @@ namespace NFine.Web
             Messages = new string[0];
             Success = true;
             //DataDescribe = CommonHelp.GetPropertyAliasDict(obj);
+        }/// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modelState"></param>
+        public ApiJsonResultData(ModelStateDictionary modelState) : this()
+        {
+
+
+            this.AddModelState(modelState);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modelState"></param>
+        /// <param name="obj"></param>
         public ApiJsonResultData( ModelStateDictionary modelState, Object obj):this() 
         {
-            Messages = new string[0];
-            Success = true;
+            
             DataDescribe = CommonHelp.GetPropertyAliasDict(obj);
             this.AddModelState(modelState);
         }
+      
         #endregion
 
         #region Properties
