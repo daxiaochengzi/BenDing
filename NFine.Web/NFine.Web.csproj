@@ -702,6 +702,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\ReportManage\Views\Echarts\" />
+    <Folder Include="Views\BenDing\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\ReportManage\Views\Highcharts\Sample1.cshtml" />
@@ -766,7 +767,7 @@
     <Content Include="Views\Insurance\AdmissionRegistration.cshtml" />
     <Content Include="Views\Insurance\AdmissionRegistrationUpdate.cshtml" />
     <Content Include="Views\Insurance\MedicalDirectoryCode.cshtml" />
-    <Content Include="Views\BenDing\MedicalDirectoryPairCode.cshtml" />
+    <Content Include="Views\Insurance\MedicalDirectoryPairCode.cshtml" />
     <Content Include="Views\Shared\_Base.cshtml" />
     <Content Include="Views\Insurance\HospitalizationExpensesManagement.cshtml" />
     <Content Include="Views\Insurance\HospitalizationExpensesManagementReceive.cshtml" />

@@ -114,20 +114,22 @@ namespace NFine.Web.Controllers
             return View();
         }
 
-        ///// <summary>
-        ///// 目录对码页面
-        ///// </summary>
-        ///// <param name="param"></param>
-        ///// <returns></returns>
-        //public ActionResult MedicalDirectoryPairCode(MedicalDirectoryCodePairUiParam param)
-        //{
-        //    //参数可查询医保中心目录
-        //    ViewBag.DirectoryName = param.ProjectName;
-        //    ViewBag.DirectoryCode = param.ProjectCode;
-        //    ViewBag.DirectoryCategoryCode = param.ProjectCodeType;
-        //    ViewBag.empid = param.UserId;
-        //    return View();
-        //}
+        /// <summary>
+        /// 目录对码页面
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public ActionResult MedicalDirectoryPairCode(MedicalDirectoryCodePairUiParam param)
+        {
+            //参数可查询医保中心目录
+            ViewBag.DirectoryName = param.ProjectName;
+            ViewBag.DirectoryCode = param.ProjectCode;
+            ViewBag.DirectoryCategoryCode = param.ProjectCodeType;
+            ViewBag.empid = param.UserId;
+            return View();
+        }
+
+
 
 
         /// <summary>
