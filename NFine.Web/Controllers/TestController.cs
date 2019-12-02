@@ -16,7 +16,9 @@ using NFine.Web.Model;
 
 
 namespace NFine.Web.Controllers
-{
+{/// <summary>
+/// 测试
+/// </summary>
     public class TestController : ApiController
     {
         private readonly IUserService userService;

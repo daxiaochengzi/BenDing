@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 namespace NFine.Web.Controllers
 {
     /// <summary>
-    /// 
+    /// 本鼎接口
     /// </summary>
     public class BenDingController : ApiController
     {

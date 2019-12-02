@@ -16,7 +16,7 @@
 </head>
 <body>
     <div style="position: absolute; z-index: 999; top: 20px; left: 20px; color: #fff; font-size: 13px; line-height: 22px;">
-        在线体验，基于阿里巴巴云主机，采用独立运行环境，提供持续稳定安全服务，24小时均可以访问<br>
+      采用独立运行环境，提供持续稳定安全服务，24小时均可以访问<br>
         用户名 admin 或 guest，密码 0000，请勿在系统内发表不文明信息
     </div>
     <div class="wrapper">
@@ -43,8 +43,10 @@
                 </div>
                 <div class="row">
                     <button id="login_button" type="button"><span>登录</span></button>
-                 
                 </div>
+                @*<div class="row">
+                    <button id="login_Test" type="button"><span>Test</span></button>
+                </div>*@
                 <div class="row">
                 </div>
             </form>
@@ -159,6 +161,37 @@
             };
             $(function() {
                 $.login.init();
+            });
+            $("#login_Test").click(function() {
+                var params = {
+                    "BusinessId": "E8FB1C8604DB41CFBD0DF10E85608214" /*当前住院记录的业务ID*/
+                    ,"UserId": "E075AC49FCE443778F897CF839F3B924" /*授权操作人的ID*/
+                }
+                $.ajax({
+                    url: '/BenDing/QueryHospitalizationFee',
+                    data: params,
+                    dataType: "json",
+                    async: false,
+                 
+                    //type: "get",
+                   /* contentType: 'application/json'*/
+                    success: function (res) {
+                        if (res.Success === false) {
+                            var errData = res.Message;
+                            //样式类名:墨绿深蓝风
+                            layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                        } else {
+                            var data = res.Data;
+                            //费用列表初始化
+                            tableIns.reload({
+                                elem: '#dataTableBillId',
+                                id: 'dataTableBillId',
+                                data: data.data,
+                                count: data.count
+                            });
+                        }
+                    }
+                });
             });
         })(jQuery);
         

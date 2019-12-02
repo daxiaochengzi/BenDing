@@ -589,11 +589,12 @@ namespace BenDing.Repository.Providers.Web
                 List<QueryHospitalizationFeeDto> dataList;
                 var dataListNew = new List<QueryHospitalizationFeeDto>();
                 var resultData = new Dictionary<int, List<QueryHospitalizationFeeDto>>();
+               
                 sqlConnection.Open();
 
                 string querySql = $@"
                              select Id,[CostItemCode] as DirectoryCode,[CostItemName] as DirectoryName,[CostItemCategoryCode] as DirectoryCategoryCode,
-                             Quantity,UnitPrice,Amount,BillTime,RecipeCode,BillDepartment,OperateDoctorName,OrganizationCode from [dbo].[HospitalizationFee] 
+                             Quantity,UnitPrice,Amount,BillTime,UploadTime,RecipeCode,UploadUserName,[Specification],BillDepartment,OperateDoctorName,OrganizationCode,UploadMark from [dbo].[HospitalizationFee] 
                              where HospitalizationNo=(select top 1 a.HospitalizationNo from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
                 string countSql = $@"select COUNT(*) from [dbo].[HospitalizationFee] 
                               where HospitalizationNo=(select top 1 a.HospitalizationNo from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
@@ -616,7 +617,7 @@ namespace BenDing.Repository.Providers.Web
                                 DirectoryCode = t.DirectoryCode,
                                 DirectoryName = t.DirectoryName,
                                 DirectoryCategoryCode = t.DirectoryCategoryCode != null
-                                            ? ((CatalogTypeEnum)Convert.ToInt32(t.ProjectLevel)).ToString()
+                                            ? ((CatalogTypeEnum)Convert.ToInt32(t.DirectoryCategoryCode)).ToString()
                                             : t.DirectoryCategoryCode,
                                 UnitPrice = t.UnitPrice,
                                 UploadUserName = t.UploadUserName,
@@ -627,6 +628,7 @@ namespace BenDing.Repository.Providers.Web
                                 UploadMark = t.UploadMark,
                                 AdjustmentDifferenceValue = t.AdjustmentDifferenceValue,
                                 UploadAmount = t.UploadAmount,
+                                UploadTime = t.UploadTime,
                                 OrganizationCode = t.OrganizationCode
                             }
                              ).ToList();
@@ -660,9 +662,7 @@ namespace BenDing.Repository.Providers.Web
                                 BillDepartment = c.BillDepartment,
                                 DirectoryCode = c.DirectoryCode,
                                 DirectoryName = c.DirectoryName,
-                                DirectoryCategoryCode = c.DirectoryCategoryCode != null
-                                    ? ((CatalogTypeEnum)Convert.ToInt32(c.ProjectLevel)).ToString()
-                                    : c.DirectoryCategoryCode,
+                                DirectoryCategoryCode = c.DirectoryCategoryCode,
                                 UnitPrice = c.UnitPrice,
                                 UploadUserName = c.UploadUserName,
                                 Quantity = c.Quantity,
@@ -671,29 +671,27 @@ namespace BenDing.Repository.Providers.Web
                                 OperateDoctorName = c.OperateDoctorName,
                                 UploadMark = c.UploadMark,
                                 AdjustmentDifferenceValue = c.AdjustmentDifferenceValue,
-                                BlockPrice = itemPairCode != null ? GetBlockPrice(itemPairCode, gradeData) : 0,
+                                BlockPrice = itemPairCode!=null? GetBlockPrice(itemPairCode, gradeData):0,
                                 ProjectCode = itemPairCode?.ProjectCode,
-                                ProjectLevel = c.ProjectLevel != null
-                                    ? ((ProjectLevel)Convert.ToInt32(c.ProjectLevel)).ToString()
-                                    : c.ProjectLevel,
-                                ProjectCodeType = c.ProjectCodeType != null
-                                    ? ((ProjectCodeType)Convert.ToInt32(c.ProjectCodeType)).ToString()
-                                    : c.ProjectCodeType,
-                                SelfPayProportion = (itemPairCode != null && residentInfoData != null) ? GetSelfPayProportion(itemPairCode, residentInfoData) : 0,
-                                UploadAmount = c.UploadAmount
+                                ProjectLevel = itemPairCode != null?((ProjectLevel)Convert.ToInt32(itemPairCode.ProjectLevel)).ToString(): null,
+                                ProjectCodeType = itemPairCode != null ? ((ProjectCodeType)Convert.ToInt32(itemPairCode.ProjectCodeType)).ToString() : null,
+                                SelfPayProportion = (residentInfoData != null && itemPairCode!=null)
+                                    ? GetSelfPayProportion(itemPairCode, residentInfoData)
+                                    : 0,
+                                UploadAmount = c.UploadAmount,
+                                OrganizationCode = c.OrganizationCode,
+                                UploadTime = c.UploadTime,
                             };
-                            dataListNew.Add(item);
-
+                             dataListNew.Add(item);
                         }
-
-
-
-
                     }
+                    else
+                    {
+                        dataListNew = dataList;
+                    }
+
                 }
-                {
-                    dataListNew = dataList;
-                }
+               
                 sqlConnection.Close();
                 resultData.Add(totalPageCount, dataListNew);
                 return resultData;

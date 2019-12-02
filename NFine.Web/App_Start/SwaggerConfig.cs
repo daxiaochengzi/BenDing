@@ -30,18 +30,20 @@ namespace NFine.Web
                         System.AppDomain.CurrentDomain.BaseDirectory));
                     c.IncludeXmlComments(string.Format("{0}/bin/BenDing.Domain.xml",
                         System.AppDomain.CurrentDomain.BaseDirectory));
+                    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
                     c.CustomProvider((defaultProvider) => new CachingSwaggerProvider(defaultProvider));
                     //// c.OperationFilter<HttpAuthHeaderFilter>();
                     // //解决同样的接口名 传递不同参数
-                    // c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
 
-                    // c.CustomProvider((defaultProvider) => new SwaggerCacheProvider(defaultProvider,string.Format("{0}/bin/NFine.Web.xml", System.AppDomain.CurrentDomain.BaseDirectory)));
                     // c.CustomProvider((defaultProvider) => new SwaggerCacheProvider(defaultProvider, string.Format("{0}/bin/BenDing.Domain.xml", System.AppDomain.CurrentDomain.BaseDirectory)));
 
                     // c.DocumentFilter<HiddenApiFilter>(); //隐藏Swagger 自带API及隐藏具体Api
 
                 })
-                .EnableSwaggerUi(c => { c.InjectJavaScript(thisAssembly, "NFine.Web.script.swagger_lang.js"); });
+                .EnableSwaggerUi(c =>
+                {
+                    c.InjectJavaScript(thisAssembly, "NFine.Web.script.swagger_lang.js");
+                });
         }
 
         public class CachingSwaggerProvider : ISwaggerProvider

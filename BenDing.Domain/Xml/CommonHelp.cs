@@ -166,7 +166,7 @@ namespace BenDing.Domain.Xml
             var pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\BenDing.Domain.xml";
             if (!System.IO.File.Exists(pathXml))
             {
-                throw new SystemException("BenDing.Domain.xml文件不存在!!!");
+                throw new SystemException("BenDing.Domain.xml文件不存在!!!"+ pathXml);
             }
             string keyName = string.Format("//doc/members/member[@name='P:{0}']/summary", classPropertyName);
 

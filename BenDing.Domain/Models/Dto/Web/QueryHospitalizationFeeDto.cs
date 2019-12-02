@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BenDing.Domain.Models.Dto.Web
-{
+{/// <summary>
+/// 
+/// </summary>
    public class QueryHospitalizationFeeDto
     {
         /// <summary>
@@ -78,9 +80,13 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
         public  DateTime BillTime { get; set; }
         /// <summary>
-        /// 操作员
+        /// 上传操作员
         /// </summary>
         public  string UploadUserName { get; set; }
+        /// <summary>
+        /// 上传时间
+        /// </summary>
+        public DateTime? UploadTime { get; set; }
         /// <summary>
         /// 处方号
         /// </summary>
