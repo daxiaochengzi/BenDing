@@ -594,7 +594,7 @@ namespace BenDing.Repository.Providers.Web
 
                 string querySql = $@"
                              select Id,[CostItemCode] as DirectoryCode,[CostItemName] as DirectoryName,[CostItemCategoryCode] as DirectoryCategoryCode,
-                             Quantity,UnitPrice,Amount,BillTime,UploadTime,RecipeCode,UploadUserName,[Specification],BillDepartment,OperateDoctorName,OrganizationCode,UploadMark from [dbo].[HospitalizationFee] 
+                             Quantity,UnitPrice,Amount,BillTime,UploadTime,UploadAmount,RecipeCode,UploadUserName,[Specification],BillDepartment,OperateDoctorName,OrganizationCode,UploadMark from [dbo].[HospitalizationFee] 
                              where HospitalizationNo=(select top 1 a.HospitalizationNo from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
                 string countSql = $@"select COUNT(*) from [dbo].[HospitalizationFee] 
                               where HospitalizationNo=(select top 1 a.HospitalizationNo from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
