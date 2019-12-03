@@ -17,18 +17,11 @@ namespace NFine.Web
         /// </summary>
         protected void Application_Start()
         {
-
-            //if (Request.Headers.AllKeys.Contains("Origin") && Request.HttpMethod == "OPTIONS")
-            //{
-            //    Response.End();
-            //}
             Bootstrapper.Start();
             AreaRegistration.RegisterAllAreas();
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-         
-
             //HttpConfiguration config = GlobalConfiguration.Configuration;
             //config.Formatters.JsonFormatter.SerializerSettings.Formatting =
             //    Newtonsoft.Json.Formatting.Indented;

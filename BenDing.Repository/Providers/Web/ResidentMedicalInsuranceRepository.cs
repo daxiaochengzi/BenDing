@@ -644,7 +644,7 @@ namespace BenDing.Repository.Providers.Web
 
                     var queryPairCodeParam = new QueryMedicalInsurancePairCodeParam()
                     {
-                        DirectoryCodeList = queryData.Select(d => d.CostItemCode).Distinct().ToList(),
+                        DirectoryCodeList = queryData.Select(d => d.DirectoryCode).Distinct().ToList(),
                         OrganizationCode = user.OrganizationCode,
                     };
                     //获取医保对码数据
@@ -752,7 +752,7 @@ namespace BenDing.Repository.Providers.Web
         {
 
 
-            var Resultdata = new List<QueryPrescriptionDetailListDto>();
+            var resultdata = new List<QueryPrescriptionDetailListDto>();
 
             var xmlStr = XmlHelp.SaveXml(param);
             if (xmlStr)
@@ -765,7 +765,7 @@ namespace BenDing.Repository.Providers.Web
                     var data = XmlHelp.DeSerializer<QueryPrescriptionDetailDto>(strXml);
                     if (data.RowDataList == null && data.RowDataList.Any())
                     {
-                        Resultdata = data.RowDataList.Select(c => new QueryPrescriptionDetailListDto()
+                        resultdata = data.RowDataList.Select(c => new QueryPrescriptionDetailListDto()
                         {
                             ProjectName = c.ProjectName,
                             ProjectCode = c.ProjectCode,
@@ -796,7 +796,7 @@ namespace BenDing.Repository.Providers.Web
                             DirectoryDate = c.DirectoryDate != null
                                 ? Convert.ToDateTime(c.DirectoryDate)
                                 : (DateTime?)null,
-                            DirectorySettlementDate = c.DirectoryDate != null
+                            DirectorySettlementDate = c.DirectorySettlementDate != null
                                 ? Convert.ToDateTime(c.DirectorySettlementDate)
                                 : (DateTime?)null,
 
@@ -809,7 +809,7 @@ namespace BenDing.Repository.Providers.Web
                 }
             }
 
-            return Resultdata;
+            return resultdata;
 
 
 
@@ -913,7 +913,7 @@ namespace BenDing.Repository.Providers.Web
             var rowDataList = new List<PrescriptionUploadRowParam>();
             foreach (var item in param)
             {
-                var pairCodeData = pairCodeList.FirstOrDefault(c => c.DirectoryCode == item.CostItemCode);
+                var pairCodeData = pairCodeList.FirstOrDefault(c => c.DirectoryCode == item.DirectoryCode);
 
                 if (pairCodeData != null)
                 {
@@ -1005,7 +1005,7 @@ namespace BenDing.Repository.Providers.Web
             string msg = "";
             foreach (var item in param)
             {
-                var queryData = pairCode.FirstOrDefault(c => c.DirectoryCode == item.CostItemCode);
+                var queryData = pairCode.FirstOrDefault(c => c.DirectoryCode == item.DirectoryCode);
                 if (queryData != null)
                 {
                     decimal queryAmount = 0;
@@ -1027,7 +1027,7 @@ namespace BenDing.Repository.Providers.Web
                         }
                         else
                         {
-                            msg += item.CostItemName + ",";
+                            msg += item.DirectoryCode + ",";
                         }
                     }
                     else

@@ -343,115 +343,136 @@ namespace BenDing.Repository.Providers.Web
             }
         }
         /// <summary>
-        /// 获取门诊病人信息
+        /// 保存门诊病人信息
         /// </summary>
         /// <param name="user"></param>
         /// <param name="param"></param>
-        public void GetOutpatientPerson(UserInfoDto user, List<OutpatientInfoDto> param)
+        public void SaveOutpatient(UserInfoDto user, BaseOutpatientInfoDto param)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-
                 sqlConnection.Open();
-                if (param.Any())
-                {
-                    IDbTransaction transaction = sqlConnection.BeginTransaction();
-                    try
-                    {
-                        var ywId = CommonHelp.ListToStr(param.Select(c => c.业务ID).ToList());
-                        var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.门诊号).ToList());
-                        string strSql =
-                            $@"update [dbo].[outpatient] set  [IsDelete] =1 ,DeleteTime=getDate(),DeleteUserId='{user.UserId}' where [IsDelete]=0 and [businessid] in(" +
-                            ywId + ") and [outpatientNumber] in(" + outpatientNum + ")";
-                        sqlConnection.Execute(strSql, null, transaction);
-                        string insertSql = "";
-                        foreach (var item in param)
-                        {
-                            string str = $@"INSERT INTO [dbo].[outpatient](
-                               id, [patientname],[idcardno],[patientsex],[businessid],[outpatientnumber],[visitdate]
-                               ,[departmentname],[department_id],[diagnosticdoctor],[diagnosticdisease_code],[diagnosticdiseasename]
-                               ,[diseasedesc],[operator] ,[medicaltreatmenttotalcost],[remark],[reception_status]
-                               ,[createtime],[IsDelete],[DeleteTime],organizationcode,CreateUserId)
-                               VALUES('{Guid.NewGuid()}','{item.姓名}','{item.身份证号码}','{item.性别}','{item.业务ID}','{item.门诊号}','{item.就诊日期}'
-                                     ,'{item.科室}','{item.科室编码}','{item.诊断医生}','{item.诊断疾病编码}','{item.诊断疾病名称}'
-                                     ,'{item.主要病情描述}','{item.经办人}','{item.就诊总费用}','{item.备注}','{item.接诊状态}'
-                                     ,getDate(),0,null,'{user.OrganizationCode}','{user.UserId}'
-                                );";
-                            insertSql += str;
-
-                        }
-
-                        sqlConnection.Execute(insertSql, null, transaction);
-                        transaction.Commit();
-                    }
-                    catch (Exception exception)
-                    {
-
-                        transaction.Rollback();
-                        throw new Exception(exception.Message);
-                    }
-                }
-
+                string sqlStr = $@"update [dbo].[outpatient] set  [IsDelete] =1 ,DeleteTime=getDate(),DeleteUserId='{user.UserId}' where [IsDelete]=0 and [businessid]='{param.BusinessId}';
+                   INSERT INTO [dbo].[outpatient](
+                   Id,[PatientName],[IdCardNo],[PatientSex],[BusinessId],[OutpatientNumber],[VisitDate]
+                   ,[DepartmentId],[DepartmentName],[DiagnosticDoctor],[DiagnosticDiseaseCode],[DiagnosticDiseaseName]
+                   ,[DiseaseDesc],[Operator] ,[MedicalTreatmentTotalCost],[Remark],[ReceptionStatus]
+                   ,[CreateTime],[IsDelete],[DeleteTime],OrganizationCode,OrganizationName,CreateUserId)
+                   VALUES('{Guid.NewGuid()}','{param.PatientName}','{param.IdCardNo}','{param.PatientSex}','{param.BusinessId}','{param.OutpatientNumber}','{param.VisitDate}'
+                         ,'{param.DepartmentId}','{param.DepartmentName}','{param.DiagnosticDoctor}','{param.DiagnosticDiseaseCode}','{param.DiagnosticDiseaseName}'
+                         ,'{param.DiseaseDesc}','{param.Operator}','{param.MedicalTreatmentTotalCost}','{param.Remark}','{param.ReceptionStatus}'
+                         ,getDate(),0,null,'{user.OrganizationCode}','{user.OrganizationName}','{user.UserId}'
+                    );";
+                sqlConnection.Execute(sqlStr);
+                sqlConnection.Close();
             }
 
 
         }
         /// <summary>
-        /// 获取门诊病人明细
+        /// 查询门诊病人信息
         /// </summary>
-        /// <param name="user"></param>
         /// <param name="param"></param>
-        public void GetOutpatientDetailPerson(UserInfoDto user, List<OutpatientDetailDto> param)
+        /// <returns></returns>
+        public QueryOutpatientDto QueryOutpatient(QueryOutpatientParam param)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
 
                 sqlConnection.Open();
+                string strSql = $"select top 1 * from [dbo].[Outpatient] where IsDelete=0 and BusinessId='{param.BusinessId}'";
+                var data = sqlConnection.QueryFirstOrDefault<QueryOutpatientDto>(strSql);
+                sqlConnection.Close();
+                return data;
+            }
+
+
+
+        }
+        /// <summary>
+        /// 保存门诊病人明细
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="param"></param>
+        public void SaveOutpatientDetail(UserInfoDto user, List<BaseOutpatientDetailDto> param)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+
+                sqlConnection.Open();
+
                 if (param.Any())
                 {
-                    IDbTransaction transaction = sqlConnection.BeginTransaction();
+
                     try
                     {
 
-                        var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.门诊号).ToList());
-                        string strSql =
-                            $@"update [dbo].[outpatientfee] set  [IsDelete] =1 ,DeleteTime=getDate(),DeleteUserId='{user.UserId}' where [IsDelete]=0 
-                                and [outpatientnumber] in(" + outpatientNum + ")";
-                        sqlConnection.Execute(strSql, null, transaction);
-                        string insertSql = "";
-                        foreach (var item in param)
+                        var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.CostDetailId).ToList());
+                        var paramFirst = param.FirstOrDefault();
+                        if (paramFirst != null)
                         {
-                            string str = $@"INSERT INTO [dbo].[outpatientfee](
-                                id,[outpatientnumber] ,[costdetailid] ,[costitemname],[cost_item_code] ,[costitemcategoryname] ,[costitemcategorycode]
-                               ,[unit] ,[formulation] ,[specification] ,[unitprice],[quantity],[amount] ,[dosage] ,[usage] ,[medicatedays]
-		                       ,[hospitalpricingunit] ,[isimporteddrugs] ,[drugproducingarea] ,[recipecode],[costdocumenttype] ,[billdepartment]
-			                   ,[billdepartmentid] ,[billdoctorname],[billdoctorid] ,[billtime] ,[operatedepartmentname],[operatedepartmentid]
-                               ,[operatedoctorname] ,[operate_doctor_id],[operatetime] ,[prescriptiondoctor] ,[operator],[practicedoctornumber]
-                               ,[costwriteoffid],[organizationcode],[organizationname] ,[createtime] ,[IsDelete],[DeleteTime],CreateUserId)
-                           VALUES('{Guid.NewGuid()}','{item.门诊号}','{item.费用明细ID}','{item.项目名称}','{item.项目编码}','{item.项目类别名称}','{item.项目类别编码}'
-                                 ,'{item.单位}','{item.剂型}','{item.规格}',{item.单价},{item.数量},{item.金额},'{item.用量}','{item.用法}','{item.用药天数}',
-                                 '{item.医院计价单位}','{item.是否进口药品}','{item.药品产地}','{item.处方号}','{item.费用单据类型}','{item.开单科室名称}'
-                                 ,'{item.开单科室编码}','{item.开单医生姓名}','{item.开单医生编码}','{item.开单时间}','{item.执行科室名称}','{item.执行科室编码}'
-                                 ,'{item.执行医生姓名}','{item.执行医生编码}','{item.执行时间}','{item.处方医师}','{item.经办人}','{item.执业医师证号}'
-                                 ,'{item.费用冲销ID}','{item.机构编码}','{item.机构名称}',getDate(),0,null,'{user.UserId}'
+                            string strSql =
+                                $@" select [CostDetailId],[DataSort] from [dbo].[OutpatientFee] where [OutpatientNo]={paramFirst.OutpatientNo}
+                                 and [CostDetailId] in({outpatientNum})";
+                            var data = sqlConnection.Query<InpatientInfoDetailQueryDto>(strSql);
+                            int sort = 0;
+                            List<BaseOutpatientDetailDto> paramNew;
+                            if (data.Any())
+                            {    //获取最大排序号
+                                sort = data.Select(c => c.DataSort).Max();
+                                var costDetailIdList = data.Select(c => c.CostDetailId).ToList();
+                                //排除已包含的明细id
+                                paramNew = param.Where(c => !costDetailIdList.Contains(c.CostDetailId)).ToList();
+                            }
+                            else
+                            {
+                                paramNew = param.OrderBy(d => d.BillTime).ToList();
+                            }
+
+                            string insertSql = "";
+
+                            foreach (var item in paramNew)
+                            {
+                                sort++;
+                                var businessTime = item.BillTime.Substring(0, 10) + " 00:00:00.000";
+                                string str = $@"INSERT INTO [dbo].[OutpatientFee](
+                               id,[OutpatientNo] ,[CostDetailId] ,[DirectoryName],[DirectoryCode] ,[DirectoryCategoryName] ,[DirectoryCategoryCode]
+                               ,[Unit] ,[Formulation] ,[Specification] ,[UnitPrice],[Quantity],[Amount] ,[Dosage] ,[Usage] ,[MedicateDays]
+		                       ,[HospitalPricingUnit] ,[IsImportedDrugs] ,[DrugProducingArea] ,[RecipeCode]  ,[CostDocumentType] ,[BillDepartment]
+			                   ,[BillDepartmentId] ,[BillDoctorName],[BillDoctorId] ,[BillTime] ,[OperateDepartmentName],[OperateDepartmentId]
+                               ,[OperateDoctorName] ,[OperateDoctorId],[OperateTime] ,[PrescriptionDoctor] ,[Operators],[PracticeDoctorNumber]
+                               ,[CostWriteOffId],[OrganizationCode],[OrganizationName] ,[CreateTime] ,[IsDelete],[DeleteTime],CreateUserId
+                               ,DataSort,UploadMark,RecipeCodeFixedEncoding,BillDoctorIdFixedEncoding,BusinessTime)
+                           VALUES('{Guid.NewGuid()}','{item.OutpatientNo}','{item.CostDetailId}','{item.DirectoryName}','{item.DirectoryCode}','{item.DirectoryCategoryName}','{item.DirectoryCategoryCode}'
+                                 ,'{item.Unit}','{item.Formulation}','{item.Specification}',{item.UnitPrice},{item.Quantity},{item.Amount},'{item.Dosage}','{item.Usage}','{item.MedicateDays}',
+                                 '{item.HospitalPricingUnit}','{item.IsImportedDrugs}','{item.DrugProducingArea}','{item.RecipeCode}','{item.CostDocumentType}','{item.BillDepartment}'
+                                 ,'{item.BillDepartmentId}','{item.BillDoctorName}','{item.BillDoctorId}','{item.BillTime}','{item.OperateDepartmentName}','{item.OperateDepartmentId}'
+                                 ,'{item.OperateDoctorName}','{item.OperateDoctorId}','{item.OperateTime}','{item.PrescriptionDoctor}','{item.Operators}','{item.PracticeDoctorNumber}'
+                                 ,'{item.CostWriteOffId}','{item.OrganizationCode}','{item.OrganizationName}',getDate(),0,null,'{user.UserId}'
+                                 ,{sort},0,'{CommonHelp.GuidToStr(item.RecipeCode)}','{CommonHelp.GuidToStr(item.BillDoctorId)}','{businessTime}'
                                  );";
-                            insertSql += str;
+                                insertSql += str;
+                            }
+
+                            if (paramNew.Count > 0)
+                            {
+                                sqlConnection.Execute(insertSql);
 
 
-
+                            }
                         }
-                        sqlConnection.Execute(insertSql, null, transaction);
-                        transaction.Commit();
                     }
                     catch (Exception exception)
                     {
-                        transaction.Rollback();
+
                         throw new Exception(exception.Message);
                     }
                 }
 
+
             }
         }
+      
         /// <summary>
         /// 保存住院病人明细
         /// </summary>
@@ -499,14 +520,14 @@ namespace BenDing.Repository.Providers.Web
                                 sort++;
                                 var businessTime = item.BillTime.Substring(0, 10) + " 00:00:00.000";
                                 string str = $@"INSERT INTO [dbo].[HospitalizationFee](
-                               id,[HospitalizationNo] ,[CostDetailId] ,[CostItemName],[CostItemCode] ,[CostItemCategoryName] ,[CostItemCategoryCode]
+                               id,[HospitalizationNo] ,[CostDetailId] ,[DirectoryName],[DirectoryCode] ,[DirectoryCategoryName] ,[DirectoryCategoryCode]
                                ,[Unit] ,[Formulation] ,[Specification] ,[UnitPrice],[Quantity],[Amount] ,[Dosage] ,[Usage] ,[MedicateDays]
 		                       ,[HospitalPricingUnit] ,[IsImportedDrugs] ,[DrugProducingArea] ,[RecipeCode]  ,[CostDocumentType] ,[BillDepartment]
 			                   ,[BillDepartmentId] ,[BillDoctorName],[BillDoctorId] ,[BillTime] ,[OperateDepartmentName],[OperateDepartmentId]
                                ,[OperateDoctorName] ,[OperateDoctorId],[OperateTime] ,[PrescriptionDoctor] ,[Operators],[PracticeDoctorNumber]
                                ,[CostWriteOffId],[OrganizationCode],[OrganizationName] ,[CreateTime] ,[IsDelete],[DeleteTime],CreateUserId
                                ,DataSort,UploadMark,RecipeCodeFixedEncoding,BillDoctorIdFixedEncoding,BusinessTime)
-                           VALUES('{Guid.NewGuid()}','{item.HospitalizationNo}','{item.CostDetailId}','{item.CostItemName}','{item.CostItemCode}','{item.CostItemCategoryName}','{item.CostItemCategoryCode}'
+                           VALUES('{Guid.NewGuid()}','{item.HospitalizationNo}','{item.CostDetailId}','{item.DirectoryName}','{item.DirectoryCode}','{item.DirectoryCategoryName}','{item.DirectoryCategoryCode}'
                                  ,'{item.Unit}','{item.Formulation}','{item.Specification}',{item.UnitPrice},{item.Quantity},{item.Amount},'{item.Dosage}','{item.Usage}','{item.MedicateDays}',
                                  '{item.HospitalPricingUnit}','{item.IsImportedDrugs}','{item.DrugProducingArea}','{item.RecipeCode}','{item.CostDocumentType}','{item.BillDepartment}'
                                  ,'{item.BillDepartmentId}','{item.BillDoctorName}','{item.BillDoctorId}','{item.BillTime}','{item.OperateDepartmentName}','{item.OperateDepartmentId}'
@@ -593,8 +614,7 @@ namespace BenDing.Repository.Providers.Web
                 sqlConnection.Open();
 
                 string querySql = $@"
-                             select Id,[CostItemCode] as DirectoryCode,[CostItemName] as DirectoryName,[CostItemCategoryCode] as DirectoryCategoryCode,
-                             Quantity,UnitPrice,Amount,BillTime,UploadTime,UploadAmount,RecipeCode,UploadUserName,[Specification],BillDepartment,OperateDoctorName,OrganizationCode,UploadMark from [dbo].[HospitalizationFee] 
+                             select * from [dbo].[HospitalizationFee] 
                              where HospitalizationNo=(select top 1 a.HospitalizationNo from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
                 string countSql = $@"select COUNT(*) from [dbo].[HospitalizationFee] 
                               where HospitalizationNo=(select top 1 a.HospitalizationNo from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";

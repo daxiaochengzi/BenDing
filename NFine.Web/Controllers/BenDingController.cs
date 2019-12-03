@@ -383,44 +383,50 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
+        /// 获取门诊病人
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData GetOutpatient([FromUri] GetOutpatientUiParam param)
+        {
+            return new ApiJsonResultData(ModelState, new BaseOutpatientInfoDto()).RunWithTry(y =>
+            {
+                var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                if (baseUser != null)
+                {
+                    var data = _webServiceBasicService.GetOutpatientPerson(baseUser, param,true);
+                    y.Data = data;
+                  
+                }
+
+            });
+        }
+
+        /// <summary>
         /// 获取门诊病人明细
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public ApiJsonResultData GetOutpatientDetailPerson([FromUri]UiInIParam param)
+        public ApiJsonResultData GetOutpatientDetail([FromUri]BaseUiBusinessIdDataParam param)
         {
-            return new ApiJsonResultData(ModelState, new OutpatientDetailDto()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState, new BaseOutpatientInfoDto()).RunWithTry(y =>
           {
-              var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-              if (verificationCode != null)
+              var queryData = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam(){BusinessId = param.BusinessId });
+              if (queryData != null)
               {
-                  var outPatient = new OutpatientParam()
-                  {
-                      验证码 = verificationCode.AuthCode,
-                      机构编码 = verificationCode.OrganizationCode,
-                      身份证号码 = "511526199610225518",
-                      开始时间 = "2019-04-27 11:09:00",
-                      结束时间 = "2020-04-27 11:09:00",
+                  var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
 
-                  };
-                  var inputInpatientInfoData = _webServiceBasicService.GetOutpatientPerson(verificationCode, outPatient);
-                  if (inputInpatientInfoData.Any())
-                  {
-                      var inputInpatientInfoFirst = inputInpatientInfoData.FirstOrDefault();
-                      var outpatientDetailParam = new OutpatientDetailParam()
+                  var outpatientDetailParam = new OutpatientDetailParam()
                       {
-                          验证码 = verificationCode.AuthCode,
-                          门诊号 = inputInpatientInfoFirst.门诊号,
-                          业务ID = inputInpatientInfoFirst.业务ID
+                          AuthCode = baseUser.AuthCode,
+                          OutpatientNo = queryData.OutpatientNumber,
+                          BusinessId = param.BusinessId
                       };
-                      var inputInpatientInfoDatas = _webServiceBasicService.
-                          GetOutpatientDetailPerson(verificationCode, outpatientDetailParam);
-                      y.Data = inputInpatientInfoDatas;
-                  }
+                      var data = _webServiceBasicService.GetOutpatientDetailPerson(baseUser, outpatientDetailParam);
+                      y.Data = data;
+                  
               }
-
-              //var data =  webService.ExecuteSp(param.Params);
-
           });
         }
         /// <summary>

@@ -45,15 +45,16 @@ namespace BenDing.Service.Interfaces
         /// <summary>
         /// 获取门诊病人
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        List<OutpatientInfoDto> GetOutpatientPerson(UserInfoDto user, OutpatientParam param);
+        BaseOutpatientInfoDto GetOutpatientPerson(UserInfoDto user, GetOutpatientUiParam param,bool isSave);
         /// <summary>
         /// 获取门诊病人明细
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        List<OutpatientDetailDto> GetOutpatientDetailPerson(UserInfoDto user, OutpatientDetailParam param);
+        List<BaseOutpatientDetailDto> GetOutpatientDetailPerson(UserInfoDto user, OutpatientDetailParam param);
         /// <summary>
         /// 获取住院病人明细
         /// </summary>

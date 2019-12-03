@@ -198,21 +198,35 @@ namespace BenDing.Service.Providers
         /// <summary>
         /// 获取门诊病人
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
+        /// <param name="isSave"></param>
         /// <returns></returns>
-        public List<OutpatientInfoDto> GetOutpatientPerson(UserInfoDto user, OutpatientParam param)
+        public BaseOutpatientInfoDto GetOutpatientPerson(UserInfoDto user, GetOutpatientUiParam param, bool isSave)
         {
-            List<OutpatientInfoDto> result;
-            var init = new OutpatientInfoDto();
+            var resultData = new BaseOutpatientInfoDto();
+            List<BaseOutpatientInfoDto>  result;
+            var outPatient = new OutpatientParam()
+            {
+                AuthCode = user.AuthCode,
+                OrganizationCode = user.OrganizationCode,
+                IdCardNo = param.IdCardNo,
+                StartTime = Convert.ToDateTime(param.StartTime).ToString("yyyy-MM-dd HH:mm:ss"),
+                EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+
+            };
+            var init = new BaseOutpatientInfoDto();
             var data = _webServiceBasic.HIS_InterfaceList("12", JsonConvert.SerializeObject(param),
                 user.UserId);
             result = GetResultData(init, data);
             if (result.Any())
             {
-                _hisSqlRepository.GetOutpatientPerson(user, result);
+                resultData= result.FirstOrDefault(c => c.BusinessId == param.BusinessId);
+                if (isSave) _hisSqlRepository.SaveOutpatient(user, resultData);
+
             }
 
-            return result;
+            return resultData;
         }
 
         /// <summary>
@@ -220,11 +234,10 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public List<OutpatientDetailDto> GetOutpatientDetailPerson(UserInfoDto user,
-            OutpatientDetailParam param)
+        public List<BaseOutpatientDetailDto> GetOutpatientDetailPerson(UserInfoDto user,OutpatientDetailParam param)
         {
-            List<OutpatientDetailDto> result;
-            var init = new OutpatientDetailDto();
+            List<BaseOutpatientDetailDto> result;
+            var init = new BaseOutpatientDetailDto();
             var data = _webServiceBasic.HIS_InterfaceList("16", JsonConvert.SerializeObject(param),
                 user.UserId);
 
@@ -232,7 +245,7 @@ namespace BenDing.Service.Providers
 
             if (result.Any())
             {
-                _hisSqlRepository.GetOutpatientDetailPerson(user, result);
+               _hisSqlRepository.SaveOutpatientDetail(user, result);
             }
 
             return result;

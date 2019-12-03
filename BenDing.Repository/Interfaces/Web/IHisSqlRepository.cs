@@ -45,13 +45,20 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        void GetOutpatientPerson(UserInfoDto user, List<OutpatientInfoDto> param);
+        void SaveOutpatient(UserInfoDto user, BaseOutpatientInfoDto param);
         /// <summary>
-        /// 获取门诊病人明细
+        /// 查询门诊病人信息
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        void GetOutpatientDetailPerson(UserInfoDto user, List<OutpatientDetailDto> param);
+        QueryOutpatientDto QueryOutpatient(QueryOutpatientParam param);
+
+        /// <summary>
+        /// 保存门诊病人明细
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="param"></param>
+        void SaveOutpatientDetail(UserInfoDto user, List<BaseOutpatientDetailDto> param);
         /// <summary>
         /// 基层端三大目录查询
         /// </summary>

@@ -15,10 +15,10 @@ namespace NFine.Web.App_Start
            
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "{controller}/{action}/{id}",
+                routeTemplate: "api/{controller}/{action}/{id}",
                 defaults: new {id = RouteParameter.Optional}
             );
-           // config.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
+           config.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
             //var jsonSettings = config.Formatters.JsonFormatter.SerializerSettings;
             ////获取或设置在序列化和反序列化期间如何处理空值。
             //jsonSettings.NullValueHandling = NullValueHandling.Ignore;//在序列化和反序列化对象时忽略空值。

@@ -78,6 +78,7 @@
     <Compile Include="Models\Dto\Web\QueryMedicalInsuranceDetailDto.cs" />
     <Compile Include="Models\Dto\Web\QueryMedicalInsuranceDetailInfoDto.cs" />
     <Compile Include="Models\Dto\Web\QueryMedicalInsuranceDto.cs" />
+    <Compile Include="Models\Dto\Web\QueryOutpatientDto.cs" />
     <Compile Include="Models\Dto\Web\ThreeCataloguePairCodeUploadDto.cs" />
     <Compile Include="Models\Dto\Web\UiIniParam.cs" />
     <Compile Include="Models\Enums\MedicalInsuranceState.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="Models\Params\UI\AddHospitalOrganizationGradeUiParam.cs" />
     <Compile Include="Models\Params\UI\DirectoryComparisonManagementUiParam.cs" />
     <Compile Include="Models\Params\UI\GetInformationUiParam.cs" />
+    <Compile Include="Models\Params\UI\GetOutpatientUiParam.cs" />
     <Compile Include="Models\Params\UI\HospitalizationModifyUiParam.cs" />
     <Compile Include="Models\Params\UI\HospitalizationPresettlementUiParam.cs" />
     <Compile Include="Models\Params\UI\HospitalizationRegisterCancelUi.cs" />
@@ -134,9 +136,9 @@
     <Compile Include="Models\Dto\Web\MedicalInsuranceDto.cs" />
     <Compile Include="Models\Dto\Web\MedicalInsuranceResidentInfoDto.cs" />
     <Compile Include="Models\Dto\Web\OrgDto.cs" />
-    <Compile Include="Models\Dto\Web\OutpatientDetailDto.cs" />
+    <Compile Include="Models\Dto\Web\BaseOutpatientDetailDto.cs" />
     <Compile Include="Models\Dto\Web\OutpatientDetailQuery.cs" />
-    <Compile Include="Models\Dto\Web\OutpatientInfoDto.cs" />
+    <Compile Include="Models\Dto\Web\BaseOutpatientInfoDto.cs" />
     <Compile Include="Models\Dto\Web\PairCodeDto.cs" />
     <Compile Include="Models\Dto\Web\QueryInpatientInfoDto.cs" />
     <Compile Include="Models\Dto\Web\ResultDataDto.cs" />
@@ -185,6 +187,7 @@
     <Compile Include="Models\Params\Web\QueryICD10UiParam.cs" />
     <Compile Include="Models\Params\Web\QueryInpatientInfoParam.cs" />
     <Compile Include="Models\Params\Web\QueryMedicalInsuranceResidentInfoParam.cs" />
+    <Compile Include="Models\Params\Web\QueryOutpatientParam.cs" />
     <Compile Include="Models\Params\Web\SaveXmlData.cs" />
     <Compile Include="Models\Params\Web\SingleResidentInfQueryUiParam.cs" />
     <Compile Include="Models\Params\Web\UiCatalogParam.cs" />

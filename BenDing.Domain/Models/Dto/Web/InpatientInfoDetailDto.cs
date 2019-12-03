@@ -21,22 +21,22 @@ namespace BenDing.Domain.Models.Dto.Web
             /// 项目名称
             /// </summary>
             [JsonProperty(PropertyName = "项目名称")]
-            public string CostItemName { get; set; }
+            public string DirectoryName { get; set; }
             /// <summary>
             /// 项目编码
             /// </summary>
             [JsonProperty(PropertyName = "项目编码")]
-            public string CostItemCode { get; set; }
+            public string DirectoryCode { get; set; }
             /// <summary>
             /// 项目类别名称
             /// </summary>
             [JsonProperty(PropertyName = "项目类别名称")]
-            public string CostItemCategoryName { get; set; }
+            public string DirectoryCategoryName { get; set; }
             /// <summary>
             /// 项目类别编码
             /// </summary>
             [JsonProperty(PropertyName = "项目类别编码")]
-            public string CostItemCategoryCode { get; set; }
+            public string DirectoryCategoryCode { get; set; }
             /// <summary>
             /// 单位
             /// </summary>
