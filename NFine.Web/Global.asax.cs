@@ -22,6 +22,7 @@ namespace NFine.Web
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+            AutoMapperConfig.Config();
             //HttpConfiguration config = GlobalConfiguration.Configuration;
             //config.Formatters.JsonFormatter.SerializerSettings.Formatting =
             //    Newtonsoft.Json.Formatting.Indented;
