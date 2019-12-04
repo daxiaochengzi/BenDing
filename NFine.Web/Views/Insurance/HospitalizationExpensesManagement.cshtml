@@ -240,7 +240,7 @@
                 , "UserId": $("#empid").val() /*授权操作人的ID*/
             }
             $.ajax({
-                url: '/api/BenDing/QueryHospitalizationFee',
+                url: host+'/QueryHospitalizationFee',
                 data: params,
                 dataType: "json",
                 async: false,
