@@ -37,7 +37,7 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button class="layui-btn" lay-submit lay-filter="">查询</button>
+                        <button class="layui-btn" lay-submit lay-filter="LAY-bill-data-list">查询</button>
                         <button class="layui-btn" data-type="cleanSearch">清除</button>
                     </div>
                 </div>
@@ -96,7 +96,7 @@
         //数据表格实例化
         var layTableId = "dataTableBillId"; //默认
         var tableIns = table.render({
-            elem: '#dataTableBillId',
+            elem: '#' + layTableId,
             id: layTableId,
             limits: [10, 20, 50],
             page: true,
@@ -135,8 +135,64 @@
                 }
             ]]
         });
-
-
+       
+        var tableDataLoad = function (tableId) {
+            //默认tab1选中执行
+            var params = {
+                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
+                , "UserId": $("#empid").val() /*授权操作人的ID*/
+            };
+            $.ajax({
+                url: host + "/QueryHospitalizationFee",
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (res) {
+                    if (res.Success === false) {
+                        var errData = res.Message;
+                        //样式类名:墨绿深蓝风
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                    } else {
+                        var data = res.Data;
+                        //费用列表初始化
+                        tableIns.reload({
+                            elem: '#' + tableId,
+                            id: tableId,
+                            data: data.data,
+                            count: data.count
+                        });
+                    }
+                },
+                complete: function () {
+                    form.render();
+                }
+            });
+        }
+        var tableDataQuery = function (method, url, params, reloadTable,tableId) {
+            $.ajax({
+                type: method,
+                url: host + url,
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (res) {
+                    if (res.Success === false) {
+                        var errData = res.Message;
+                        //样式类名:墨绿深蓝风
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                    } else {
+                        if (reloadTable) {
+                            tableDataLoad(tableId)
+                        } else {
+                            layer.alert("操作成功", { skin: 'layui-layer-molv', icon: 6, title: '提示' });
+                        }
+                    }
+                },
+                complete: function () {
+                    form.render();
+                }
+            });
+        }
         //定义事件集合
         var active = {
             updateRow: function (obj) {
@@ -179,23 +235,18 @@
                 active[type] ? active[type].call(this) : '';
             }
         }
-        //监听工具条
-        table.on('tool(dataTable)', function (obj) {
-            var data = obj.data, event = obj.event, tr = obj.tr; //获得当前行 tr 的DOM对象;
-            switch (event) {
-                case "diagnosis":
-                    var stateVal = tr.find("input[name='IsMainDiagnosis']").prop('checked') ? true : false;
-                    $.extend(obj.data, { 'IsMainDiagnosis': stateVal })
-                    activeByType('updateRow', obj.data);	//更新行记录对象
-                    break;
-                case "del":
-                    layer.confirm('真的删除行么？', function (index) {
-                        obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                        layer.close(index);
-                        activeByType('removeEmptyTableCache');
-                    });
-                    break;
+        /**处方明细查询*/
+        form.on('submit(LAY-bill-data-list)', function (data) {
+            console.log(data.field)
+            var params = {
+                "UploadMark": data.field.UploadMark /*上传状态*/
+                , "DirectoryName": data.field.DirectoryName /*药品名称*/
+                , "BillTime": $("#date1").val() /*费用日期*/
+                , "BusinessId": $("#bid").val() /*业务ID*/
+                , "UserId": $("#empid").val() /*授权操作人的ID*/
             }
+            tableDataQuery("GET", "/QueryPrescriptionDetail", params, true, layTableId);
+            return false;//阻止表单跳转
         });
         //处方上传（费用清单上传）
         var PrescriptionUpload = function (tableData) {
@@ -204,22 +255,7 @@
                 , "UserId": $("#empid").val() /*授权操作人的ID*/
                 , "DataIdList": tableData
             }
-            $.ajax({
-                url: host + '/PrescriptionUpload',
-                data: params,
-                dataType: "json",
-                async: false,
-                success: function (res) {
-                    if (res.Success === false) {
-                        var errData = res.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                    } else {
-                        console.log(res);
-                        layer.msg(res);
-                    }
-                }
-            });
+            tableDataLoad("POST", "/PrescriptionUpload", params, true,layTableId)
         }
         //头工具栏事件
         table.on('toolbar(dataTableBillId)', function (obj) {
@@ -237,61 +273,16 @@
                     console.log(dataIds);
                     layer.msg('选中了：' + dataIds.length + ' 个未上传的数据');
                     PrescriptionUpload(dataIds);
+                    
                     //layer.alert(JSON.stringify(dataUp));
-                    break;
-                case 'getCheckData':
-                    var data = checkStatus.data;
-                    layer.alert(JSON.stringify(data));
-                    break;
-                case 'getCheckLength':
-                    var data = checkStatus.data;
-                    layer.msg('选中了：' + data.length + ' 个');
-                    break;
-                case 'isAll':
-                    layer.msg(checkStatus.isAll ? '全选' : '未全选');
-                    break;
-
-                //自定义头工具栏右侧图标 - 提示
-                case 'LAYTABLE_TIPS':
-                    layer.alert('这是工具栏右侧自定义的一个图标按钮');
                     break;
             };
         });
-        //页面一加载就发送ajax
+        //页面初始化加载默认数据
         $(function () {
-            //默认tab1选中执行
-            var params = {
-                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
-                , "UserId": $("#empid").val() /*授权操作人的ID*/
-            }
-            $.ajax({
-                url: host+'/QueryHospitalizationFee',
-                data: params,
-                dataType: "json",
-                async: false,
-                success: function (res) {
-                    if (res.Success === false) {
-                        var errData = res.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                    } else {
-                        var data = res.Data;
-                        console.log(res);
-                        //费用列表初始化
-                        tableIns.reload({
-                            elem: '#dataTableBillId',
-                            id: 'dataTableBillId',
-                            data: data.data,
-                            count: data.count
-                        });
-                    }
-                }
-            });
+            var tableId = layTableId;
+            tableDataLoad(tableId);
         });
-
-
-
-
     });
 </script>
 
