@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BenDing.Domain.Models.Dto;
+using BenDing.Domain.Models.Dto.JsonEntiy;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
@@ -67,18 +68,19 @@ namespace BenDing.Repository.Providers.Web
         public ResidentUserInfoDto GetUserInfo(ResidentUserInfoParam param)
         {
 
-            var data = new ResidentUserInfoDto();
+            var resulData = new ResidentUserInfoDto();
 
             var xmlStr = XmlHelp.SaveXml(param);
             if (xmlStr)
             {
                 int result = MedicalInsuranceDll.CallService_cxjb("CXJB001");
-                data = XmlHelp.DeSerializerModel(new ResidentUserInfoDto(), true);
+                var  data = XmlHelp.DeSerializerModel(new ResidentUserInfoJsonDto(), true);
+                resulData= AutoMapper.Mapper.Map<ResidentUserInfoDto>(data);
 
             }
 
 
-            return data;
+            return resulData;
 
 
         }
@@ -306,7 +308,12 @@ namespace BenDing.Repository.Providers.Web
                 int result = MedicalInsuranceDll.CallService_cxjb("CXJB009");
                 if (result == 1)
                 {
-                    data = XmlHelp.DeSerializerModel(new HospitalizationPresettlementDto(), true);
+                   var dataIni = XmlHelp.DeSerializerModel(new HospitalizationPresettlementJsonDto(), true);
+                    if (dataIni != null) //var c = AutoMapper.Mapper.Map<b>(a);
+                    {
+                        data=AutoMapper.Mapper.Map<HospitalizationPresettlementDto>(dataIni);
+                    }
+
                     //报销金额 =统筹支付+补充险支付+生育补助+民政救助+民政重大疾病救助+精准扶贫+民政优抚+其它支付
                     decimal reimbursementExpenses =
                         data.BasicOverallPay + data.SupplementPayAmount + data.BirthAallowance +
@@ -383,7 +390,12 @@ namespace BenDing.Repository.Providers.Web
                 int result = MedicalInsuranceDll.CallService_cxjb("CXJB010");
                 if (result == 1)
                 {
-                    data = XmlHelp.DeSerializerModel(new HospitalizationPresettlementDto(), true);
+                    
+                    var dataIni = XmlHelp.DeSerializerModel(new HospitalizationPresettlementJsonDto(), true);
+                    if (dataIni != null) //var c = AutoMapper.Mapper.Map<b>(a);
+                    {
+                        data = AutoMapper.Mapper.Map<HospitalizationPresettlementDto>(dataIni);
+                    }
                     //报销金额 =统筹支付+补充险支付+生育补助+民政救助+民政重大疾病救助+精准扶贫+民政优抚+其它支付
                     decimal reimbursementExpenses =
                         data.BasicOverallPay + data.SupplementPayAmount + data.BirthAallowance +
@@ -478,7 +490,12 @@ namespace BenDing.Repository.Providers.Web
                 int result = MedicalInsuranceDll.CallService_cxjb("CXJB012");
                 if (result == 1)
                 {
-                    data = XmlHelp.DeSerializerModel(new HospitalizationPresettlementDto(), true);
+                    var dataIni = XmlHelp.DeSerializerModel(new HospitalizationPresettlementJsonDto(), true);
+                    if (dataIni != null) //var c = AutoMapper.Mapper.Map<b>(a);
+                    {
+                        data = AutoMapper.Mapper.Map<HospitalizationPresettlementDto>(dataIni);
+                    }
+                    //data = XmlHelp.DeSerializerModel(new HospitalizationPresettlementDto(), true);
                 }
                 else
                 {

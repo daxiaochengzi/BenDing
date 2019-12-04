@@ -404,38 +404,35 @@ namespace BenDing.Repository.Providers.Web
                 if (param.Any())
                 {
 
-                    try
+                    var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.CostDetailId).ToList());
+                    var paramFirst = param.FirstOrDefault();
+                    if (paramFirst != null)
                     {
-
-                        var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.CostDetailId).ToList());
-                        var paramFirst = param.FirstOrDefault();
-                        if (paramFirst != null)
-                        {
-                            string strSql =
-                                $@" select [CostDetailId],[DataSort] from [dbo].[OutpatientFee] where [OutpatientNo]={paramFirst.OutpatientNo}
+                        string strSql =
+                            $@" select [CostDetailId],[DataSort] from [dbo].[OutpatientFee] where [OutpatientNo]='{paramFirst.OutpatientNo}'
                                  and [CostDetailId] in({outpatientNum})";
-                            var data = sqlConnection.Query<InpatientInfoDetailQueryDto>(strSql);
-                            int sort = 0;
-                            List<BaseOutpatientDetailDto> paramNew;
-                            if (data.Any())
-                            {    //获取最大排序号
-                                sort = data.Select(c => c.DataSort).Max();
-                                var costDetailIdList = data.Select(c => c.CostDetailId).ToList();
-                                //排除已包含的明细id
-                                paramNew = param.Where(c => !costDetailIdList.Contains(c.CostDetailId)).ToList();
-                            }
-                            else
-                            {
-                                paramNew = param.OrderBy(d => d.BillTime).ToList();
-                            }
+                        var data = sqlConnection.Query<InpatientInfoDetailQueryDto>(strSql);
+                        int sort = 0;
+                        List<BaseOutpatientDetailDto> paramNew;
+                        if (data.Any())
+                        {    //获取最大排序号
+                            sort = data.Select(c => c.DataSort).Max();
+                            var costDetailIdList = data.Select(c => c.CostDetailId).ToList();
+                            //排除已包含的明细id
+                            paramNew = param.Where(c => !costDetailIdList.Contains(c.CostDetailId)).ToList();
+                        }
+                        else
+                        {
+                            paramNew = param.OrderBy(d => d.BillTime).ToList();
+                        }
 
-                            string insertSql = "";
+                        string insertSql = "";
 
-                            foreach (var item in paramNew)
-                            {
-                                sort++;
-                                var businessTime = item.BillTime.Substring(0, 10) + " 00:00:00.000";
-                                string str = $@"INSERT INTO [dbo].[OutpatientFee](
+                        foreach (var item in paramNew)
+                        {
+                            sort++;
+                            var businessTime = item.BillTime.Substring(0, 10) + " 00:00:00.000";
+                            string str = $@"INSERT INTO [dbo].[OutpatientFee](
                                id,[OutpatientNo] ,[CostDetailId] ,[DirectoryName],[DirectoryCode] ,[DirectoryCategoryName] ,[DirectoryCategoryCode]
                                ,[Unit] ,[Formulation] ,[Specification] ,[UnitPrice],[Quantity],[Amount] ,[Dosage] ,[Usage] ,[MedicateDays]
 		                       ,[HospitalPricingUnit] ,[IsImportedDrugs] ,[DrugProducingArea] ,[RecipeCode]  ,[CostDocumentType] ,[BillDepartment]
@@ -451,24 +448,18 @@ namespace BenDing.Repository.Providers.Web
                                  ,'{item.CostWriteOffId}','{item.OrganizationCode}','{item.OrganizationName}',getDate(),0,null,'{user.UserId}'
                                  ,{sort},0,'{CommonHelp.GuidToStr(item.RecipeCode)}','{CommonHelp.GuidToStr(item.BillDoctorId)}','{businessTime}'
                                  );";
-                                insertSql += str;
-                            }
+                            insertSql += str;
+                        }
 
-                            if (paramNew.Count > 0)
-                            {
-                                sqlConnection.Execute(insertSql);
+                        if (paramNew.Count > 0)
+                        {
+                            sqlConnection.Execute(insertSql);
 
 
-                            }
                         }
                     }
-                    catch (Exception exception)
-                    {
-
-                        throw new Exception(exception.Message);
-                    }
                 }
-
+                sqlConnection.Close();
 
             }
         }

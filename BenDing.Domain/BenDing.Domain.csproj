@@ -50,6 +50,15 @@
   <ItemGroup>
     <Compile Include="Models\Dto\Base\PaginationDto.cs" />
     <Compile Include="Models\Dto\Base\PaginationUserDto.cs" />
+    <Compile Include="Models\Dto\JsonEntiy\BaseOutpatientDetailJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntiy\HospitalizationPresettlementJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntiy\InformationJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntiy\InpatientInfoDetailJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntiy\InpatientInfoJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntiy\OutpatientInfoJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntiy\QueryInpatientInfoJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntiy\ResidentUserInfoJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntiy\UserInfoJsonDto.cs" />
     <Compile Include="Models\Dto\Resident\DirectoryComparisonManagementDto.cs" />
     <Compile Include="Models\Dto\Resident\HospitalizationPresettlementDto.cs" />
     <Compile Include="Models\Dto\Resident\IniXmlDto.cs" />

@@ -621,7 +621,7 @@ namespace NFine.Web.Controllers
         [HttpPost]
         public ApiJsonResultData GetUserInfo([FromBody]ResidentUserInfoParam param)
         {
-            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState,new ResidentUserInfoDto()).RunWithTry(y =>
             {
                 //医保登陆
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });

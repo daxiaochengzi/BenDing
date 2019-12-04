@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Dto.JsonEntiy;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.UI;
@@ -47,12 +48,19 @@ namespace BenDing.Service.Providers
         public UserInfoDto GetVerificationCode(string tradeCode, string inputParameter)
         {
 
-            var ini = new UserInfoDto();
-
-            List<UserInfoDto> resultList;
+            var resultData = new UserInfoDto();
+            var ini = new UserInfoJsonDto();
+            List<UserInfoJsonDto> resultList;
+            var iniData = new UserInfoDto();
             var data = _webServiceBasic.HIS_InterfaceList(tradeCode, inputParameter, "");
             resultList = GetResultData(ini, data);
-            return resultList.FirstOrDefault();
+            if (resultList.Any())
+            {
+               var resultValueJson=  resultList.FirstOrDefault();
+                resultData= AutoMapper.Mapper.Map<UserInfoDto>(resultValueJson);
+            }
+
+            return resultData;
 
         }
 
@@ -205,7 +213,7 @@ namespace BenDing.Service.Providers
         public BaseOutpatientInfoDto GetOutpatientPerson(UserInfoDto user, GetOutpatientUiParam param, bool isSave)
         {
             var resultData = new BaseOutpatientInfoDto();
-            List<BaseOutpatientInfoDto>  result;
+            List<OutpatientInfoJsonDto>  result;
             var outPatient = new OutpatientParam()
             {
                 AuthCode = user.AuthCode,
@@ -215,13 +223,17 @@ namespace BenDing.Service.Providers
                 EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
 
             };
-            var init = new BaseOutpatientInfoDto();
+            var init = new OutpatientInfoJsonDto();
             var data = _webServiceBasic.HIS_InterfaceList("12", JsonConvert.SerializeObject(param),
                 user.UserId);
             result = GetResultData(init, data);
             if (result.Any())
             {
-                resultData= result.FirstOrDefault(c => c.BusinessId == param.BusinessId);
+               var  resultDataIni= result.FirstOrDefault(c => c.BusinessId == param.BusinessId);
+                if (resultDataIni != null)
+                {
+                    resultData = AutoMapper.Mapper.Map<BaseOutpatientInfoDto>(resultDataIni);
+                }
                 if (isSave) _hisSqlRepository.SaveOutpatient(user, resultData);
 
             }
@@ -236,8 +248,9 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public List<BaseOutpatientDetailDto> GetOutpatientDetailPerson(UserInfoDto user,OutpatientDetailParam param)
         {
-            List<BaseOutpatientDetailDto> result;
-            var init = new BaseOutpatientDetailDto();
+            List<BaseOutpatientDetailJsonDto> result;
+           var resultData= new List<BaseOutpatientDetailDto>();
+            var init = new BaseOutpatientDetailJsonDto();
             var data = _webServiceBasic.HIS_InterfaceList("16", JsonConvert.SerializeObject(param),
                 user.UserId);
 
@@ -245,10 +258,11 @@ namespace BenDing.Service.Providers
 
             if (result.Any())
             {
-               _hisSqlRepository.SaveOutpatientDetail(user, result);
+                resultData = AutoMapper.Mapper.Map<List<BaseOutpatientDetailDto>>(result);
+                _hisSqlRepository.SaveOutpatientDetail(user, resultData);
             }
 
-            return result;
+            return resultData;
         }
 
         /// <summary>
@@ -259,17 +273,24 @@ namespace BenDing.Service.Providers
         public InpatientInfoDto GetInpatientInfo(GetInpatientInfoParam param)
         {
             var resultData = new InpatientInfoDto();
-            List<InpatientInfoDto> result;
-            var init = new InpatientInfoDto();
+            var resultDataIni = new InpatientInfoJsonDto();
+            List<InpatientInfoJsonDto> result;
+            var init = new InpatientInfoJsonDto();
             var data = _webServiceBasic.HIS_InterfaceList("10", JsonConvert.SerializeObject(param.InfoParam, Formatting.Indented), param.User.UserId);
             result = GetResultData(init, data);
             if (result.Any())
             {
-                resultData = result.FirstOrDefault(c => c.BusinessId == param.BusinessId);
-                if (param.IsSave == true)
+                resultDataIni = result.FirstOrDefault(c => c.BusinessId == param.BusinessId);
+                if (resultDataIni != null)
                 {
-                    _hisSqlRepository.SaveInpatientInfo(param.User, resultData);
+                    resultData = AutoMapper.Mapper.Map<InpatientInfoDto>(resultDataIni);
+                    if (param.IsSave == true)
+                    {
+                        _hisSqlRepository.SaveInpatientInfo(param.User, resultData);
+                    }
+
                 }
+
 
 
             }
@@ -287,21 +308,22 @@ namespace BenDing.Service.Providers
         public List<InpatientInfoDetailDto> GetInpatientInfoDetail(UserInfoDto user,
             InpatientInfoDetailParam param, string businessId)
         {
-            var result = new List<InpatientInfoDetailDto>();
-
-            var init = new InpatientInfoDetailDto();
+            var resultData = new List<InpatientInfoDetailDto>();
+            var result = new List<InpatientInfoDetailJsonDto>();
+            var init = new InpatientInfoDetailJsonDto();
             var data = _webServiceBasic.HIS_InterfaceList("14", JsonConvert.SerializeObject(param),
                 user.UserId);
             result = GetResultData(init, data);
 
             if (result.Any())
             {
-                _hisSqlRepository.SaveInpatientInfoDetail(user, result);
+                var resultIni = AutoMapper.Mapper.Map<List<InpatientInfoDetailDto>>(result);
+                _hisSqlRepository.SaveInpatientInfoDetail(user, resultIni);
                 //  var msg = "获取住院号【" + resultFirst.住院号 + "】，业务ID【" + param.业务ID + "】的时间段内的住院费用成功，共" + result.Count +
                 //          "条记录";
             }
 
-            return result;
+            return resultData;
         }
 
         /// <summary>
@@ -374,18 +396,25 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public List<InformationDto> SaveInformation(UserInfoDto user, InformationParam param)
         {
+          var  resultDataIni=  new List<InformationDto>();
             var resultData =
                  _webServiceBasic.HIS_InterfaceList("03", JsonConvert.SerializeObject(param), user.UserId);
-            var result = new List<InformationDto>();
-            var init = new InformationDto();
+            var result = new List<InformationJsonDto>();
+            var init = new InformationJsonDto();
             if (resultData.Result == "1")
             {
                 result = GetResultData(init, resultData);
-                //保存基础信息
-                _hisSqlRepository.SaveInformationInfo(user, result, param);
+                if (result.Any())
+                {
+                    resultDataIni  = AutoMapper.Mapper.Map<List<InformationDto>>(result);
+                    //保存基础信息
+                    _hisSqlRepository.SaveInformationInfo(user, resultDataIni, param);
+                }
+
+               
             }
 
-            return result;
+            return resultDataIni;
         }
 
         /// <summary>
