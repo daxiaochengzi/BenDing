@@ -255,7 +255,7 @@
                 , "UserId": $("#empid").val() /*授权操作人的ID*/
                 , "DataIdList": tableData
             }
-            tableDataLoad("POST", "/PrescriptionUpload", params, true,layTableId)
+            tableDataQuery("POST", "/PrescriptionUpload", params, true,layTableId)
         }
         //头工具栏事件
         table.on('toolbar(dataTableBillId)', function (obj) {
