@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace BenDing.Domain.Models.Params.UI
 {
+    /// <summary>
+    /// 
+    /// </summary>
    public class PrescriptionUploadUiParam:UiInIParam
     {/// <summary>
      /// 根据病人业务id上传

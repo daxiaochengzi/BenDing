@@ -197,6 +197,30 @@
                     break;
             }
         });
+        //处方上传（费用清单上传）
+        var PrescriptionUpload = function (tableData) {
+            var params = {
+                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
+                , "UserId": $("#empid").val() /*授权操作人的ID*/
+                , "DataIdList": tableData
+            }
+            $.ajax({
+                url: host + '/PrescriptionUpload',
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (res) {
+                    if (res.Success === false) {
+                        var errData = res.Message;
+                        //样式类名:墨绿深蓝风
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                    } else {
+                        console.log(res);
+                        layer.msg(res);
+                    }
+                }
+            });
+        }
         //头工具栏事件
         table.on('toolbar(dataTableBillId)', function (obj) {
             var checkStatus = table.checkStatus(obj.config.id);
@@ -204,14 +228,15 @@
                 case 'batchUpdateData':
                     var data = checkStatus.data;//选中行的数据
                     //排除已经上传了的数据
-                    var dataUp = [];
+                    var dataIds = [];
                     for (var i in data) {
                         if (data[i].UploadMark == '0') {
-                            dataUp.push(data[i]);
+                            dataIds.push(data[i].Id);
                         }                        
                     }
-                    console.log(dataUp);
-                    layer.msg('选中了：' + dataUp.length + ' 个未上传的数据');
+                    console.log(dataIds);
+                    layer.msg('选中了：' + dataIds.length + ' 个未上传的数据');
+                    PrescriptionUpload(dataIds);
                     //layer.alert(JSON.stringify(dataUp));
                     break;
                 case 'getCheckData':
