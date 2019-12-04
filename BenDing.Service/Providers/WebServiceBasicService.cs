@@ -422,10 +422,10 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public void GetXmlData(XmlData param)
+        public void GetXmlData(MedicalInsuranceXmlDto param)
         {
             var data = _webServiceBasic.HIS_InterfaceList("39", JsonConvert.SerializeObject(param),
-                param.操作人员ID);
+                param.UserId);
         }
 
         /// <summary>

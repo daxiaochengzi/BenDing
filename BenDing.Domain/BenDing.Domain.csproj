@@ -77,6 +77,7 @@
     <Compile Include="Models\Dto\Web\AddHospitalOperatorParam.cs" />
     <Compile Include="Models\Dto\Web\HospitalThreeCatalogueCodeDto.cs" />
     <Compile Include="Models\Dto\Web\InpatientDiagnosisDto.cs" />
+    <Compile Include="Models\Dto\Web\MedicalInsuranceXmlDto.cs" />
     <Compile Include="Models\Dto\Web\QueryCatalogDto.cs" />
     <Compile Include="Models\Dto\Web\QueryHospitalizationFeeDto.cs" />
     <Compile Include="Models\Dto\Web\QueryHospitalOperatorAll.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="Models\Params\UI\GetInpatientInfoDetailUIParam.cs" />
     <Compile Include="Models\Params\UI\InpatientInfoUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalInsuranceDataAllParamUIQuery.cs" />
+    <Compile Include="Models\Params\UI\MedicalInsuranceXmlUiParam.cs" />
     <Compile Include="Models\Params\UI\PrescriptionUploadAutomaticUiParam.cs" />
     <Compile Include="Models\Params\UI\PrescriptionUploadUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryCatalogUiParam.cs" />

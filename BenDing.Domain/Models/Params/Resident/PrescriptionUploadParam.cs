@@ -25,7 +25,6 @@ namespace BenDing.Domain.Models.Params.Resident
         public List<PrescriptionUploadRowParam> RowDataList { get; set; }
     }
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-  
     public class PrescriptionUploadRowParam
     {/// <summary>
     /// 行号

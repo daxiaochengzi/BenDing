@@ -439,32 +439,32 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var dataInfo = new ResidentUserInfoParam()
-                {
-                    IdentityMark = "1",
-                    InformationNumber = "512501195802085180"
-                };
-                var strXmls = XmlSerializeHelper.XmlSerialize(dataInfo);
-                var data = new SaveXmlData();
-                data.OrganizationCode = userBase.OrganizationCode;
-                data.AuthCode = userBase.AuthCode;
-                data.BusinessId = "FFE6ADE4D0B746C58B972C7824B8C9DF";
-                data.TransactionId = Guid.Parse("05D3BE09-1ED6-484F-9807-1462101F02BF").ToString("N");
-                data.MedicalInsuranceBackNum = Guid.Parse("05D3BE09-1ED6-484F-9807-1462101F02BF").ToString("N");
-                data.BackParam = CommonHelp.EncodeBase64("utf-8", strXmls);
-                data.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmls);
-                data.MedicalInsuranceCode = "21";
-                data.UserId = userBase.UserId;
-                // _webServiceBasicService.SaveXmlData(data);
-                var xmlData = new XmlData();
-                xmlData.业务ID = data.BusinessId;
-                xmlData.医保交易码 = "23";
-                xmlData.发起交易的动作ID = data.TransactionId;
-                xmlData.验证码 = data.AuthCode;
-                xmlData.操作人员ID = data.UserId;
-                xmlData.机构ID = data.OrganizationCode;
-                _webServiceBasicService.GetXmlData(xmlData);
+                //var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //var dataInfo = new ResidentUserInfoParam()
+                //{
+                //    IdentityMark = "1",
+                //    InformationNumber = "512501195802085180"
+                //};
+                //var strXmls = XmlSerializeHelper.XmlSerialize(dataInfo);
+                //var data = new SaveXmlData();
+                //data.OrganizationCode = userBase.OrganizationCode;
+                //data.AuthCode = userBase.AuthCode;
+                //data.BusinessId = "FFE6ADE4D0B746C58B972C7824B8C9DF";
+                //data.TransactionId = Guid.Parse("05D3BE09-1ED6-484F-9807-1462101F02BF").ToString("N");
+                //data.MedicalInsuranceBackNum = Guid.Parse("05D3BE09-1ED6-484F-9807-1462101F02BF").ToString("N");
+                //data.BackParam = CommonHelp.EncodeBase64("utf-8", strXmls);
+                //data.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmls);
+                //data.MedicalInsuranceCode = "21";
+                //data.UserId = userBase.UserId;
+                //// _webServiceBasicService.SaveXmlData(data);
+                //var xmlData = new XmlData();
+                //xmlData.业务ID = data.BusinessId;
+                //xmlData.医保交易码 = "23";
+                //xmlData.发起交易的动作ID = data.TransactionId;
+                //xmlData.验证码 = data.AuthCode;
+                //xmlData.操作人员ID = data.UserId;
+                //xmlData.机构ID = data.OrganizationCode;
+                //_webServiceBasicService.GetXmlData(xmlData);
 
             });
         }

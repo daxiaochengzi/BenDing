@@ -86,7 +86,7 @@ namespace BenDing.Service.Interfaces
         /// <param name="CatalogParam"></param>
         /// <returns></returns>
         string GetICD10(UserInfoDto user, CatalogParam param);
-        void GetXmlData(XmlData param);
+        void GetXmlData(MedicalInsuranceXmlDto param);
         void SaveXmlData(SaveXmlData param);
 
         UserInfoDto GetUserBaseInfo(string param);
