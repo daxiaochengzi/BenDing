@@ -62,6 +62,14 @@
       <Project>{d7318877-cfd7-46fd-a506-e868e70d0a04}</Project>
       <Name>BenDing.Repository</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NFine.Application\NFine.Application.csproj">
+      <Project>{F2035EE2-B73D-4FB8-A433-CAB465DE6A2A}</Project>
+      <Name>NFine.Application</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NFine.Domain\NFine.Domain.csproj">
+      <Project>{7DC886CD-B8A0-44E8-AADD-57FCB0CFECB8}</Project>
+      <Name>NFine.Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -11,7 +11,7 @@ namespace NFine.Domain._03_Entity.BenDingManage
 {
    public class HospitalOrganizationGradeEntity: IEntity<HospitalOrganizationGradeEntity>, IBenDingCreationAudited, IBenDingModificationAudited, IBenDingDeleteAudited
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// 医院Id
@@ -25,6 +25,18 @@ namespace NFine.Domain._03_Entity.BenDingManage
         [DisplayName("等级")]
         public long? OrganizationGrade { get; set; }
         /// <summary>
+        /// 组织机构
+        /// </summary>
+        [DisplayName("组织机构")]
+        [StringLength(50)]
+        public string OrganizationCode { get; set; }
+        /// <summary>
+        /// 组织机构名称
+        /// </summary>
+        [DisplayName("组织机构名称")]
+        [StringLength(500)]
+        public string OrganizationName { get; set; }
+        /// <summary>
         /// 创建时间
         /// </summary>
         [DisplayName("创建时间")]
@@ -33,7 +45,7 @@ namespace NFine.Domain._03_Entity.BenDingManage
         /// 删除标记
         /// </summary>
         [DisplayName("删除标记")]
-        public bool? IsDelete { get; set; }
+        public bool IsDelete { get; set; }
         /// <summary>
         /// 更新时间
         /// </summary>

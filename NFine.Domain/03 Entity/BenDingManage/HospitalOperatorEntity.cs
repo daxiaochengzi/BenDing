@@ -13,8 +13,7 @@ namespace NFine.Domain._03_Entity.BenDingManage
     {/// <summary>
     /// Id
     /// </summary>
-        public string Id { get; set; }
-
+        public Guid Id { get; set; }
         /// <summary>
         /// 固定编号
         /// </summary>
@@ -69,6 +68,13 @@ namespace NFine.Domain._03_Entity.BenDingManage
         [DisplayName("组织机构")]
         [StringLength(50)]
         public string OrganizationCode { get; set; }
+
+        /// <summary>
+        /// 组织机构名称
+        /// </summary>
+        [DisplayName("组织机构名称")]
+        [StringLength(500)]
+        public string OrganizationName { get; set; }
         /// <summary>
         /// 创建时间
         /// </summary>
@@ -78,7 +84,7 @@ namespace NFine.Domain._03_Entity.BenDingManage
         /// 
         /// </summary>
         [DisplayName("")]
-        public bool? IsDelete { get; set; }
+        public bool IsDelete { get; set; }
         /// <summary>
         /// 更新时间
         /// </summary>

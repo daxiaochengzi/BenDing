@@ -20,7 +20,6 @@ namespace BenDing.Domain.Models.Params.UI
         [Display(Name = "用户id")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         [XmlIgnore]
-        [JsonIgnore]
         public string UserId { get; set; }
        
         

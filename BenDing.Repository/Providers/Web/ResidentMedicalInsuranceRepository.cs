@@ -105,15 +105,12 @@ namespace BenDing.Repository.Providers.Web
                 var saveData = new MedicalInsuranceDto
                 {
                     AdmissionInfoJson = JsonConvert.SerializeObject(param),
-                    HisHospitalizationId = param.HospitalizationNo,
+                    BusinessId = param.BusinessId,
                     Id = Guid.NewGuid(),
                     IsModify = false,
-                    InsuranceNo = param.MedicalInsuranceCardNo,
                     InsuranceType = (!string.IsNullOrWhiteSpace(param.InsuranceType)) == true
                         ? Convert.ToInt32(param.InsuranceType)
                         : 0
-
-
                 };
                 //保存医保信息
                 _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
@@ -126,7 +123,7 @@ namespace BenDing.Repository.Providers.Web
 
 
                     //更新医保信息
-                    var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(paramIni);
+                    var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
                     var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
                     var saveXmlData = new SaveXmlData();
                     saveXmlData.OrganizationCode = user.OrganizationCode;
@@ -139,7 +136,7 @@ namespace BenDing.Repository.Providers.Web
                     saveXmlData.MedicalInsuranceCode = "21";
                     saveXmlData.UserId = user.UserId;
                     //存基层
-                    _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData), param.UserId);
+                    _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
                     //存中间库
                     _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
                 }
@@ -147,9 +144,6 @@ namespace BenDing.Repository.Providers.Web
                 {
                     XmlHelp.DeSerializerModel(new IniDto(), true);
                 }
-
-
-
             }
         }
 
@@ -169,19 +163,18 @@ namespace BenDing.Repository.Providers.Web
                 {
                     var resultData = XmlHelp.DeSerializerModel(new IniDto(), true);
                     var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
-                    var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(param);
+                    var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
                     var saveXmlData = new SaveXmlData();
                     saveXmlData.OrganizationCode = user.OrganizationCode;
                     saveXmlData.AuthCode = user.AuthCode;
                     saveXmlData.BusinessId = param.BusinessId;
                     saveXmlData.TransactionId = param.TransactionId.ToString("N");
-                    saveXmlData.MedicalInsuranceBackNum = "CXJB002";
+                    saveXmlData.MedicalInsuranceBackNum = "CXJB003";
                     saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
                     saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                     saveXmlData.MedicalInsuranceCode = "23";
                     saveXmlData.UserId = user.UserId;
-                    _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData),
-                        param.UserId);
+                    _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
                     var paramStr = "";
                     var queryData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(
                         new QueryMedicalInsuranceResidentInfoParam
@@ -217,7 +210,7 @@ namespace BenDing.Repository.Providers.Web
                     var saveData = new MedicalInsuranceDto
                     {
                         AdmissionInfoJson = paramStr,
-                        HisHospitalizationId = queryData.HisHospitalizationId,
+                        BusinessId = queryData.BusinessId,
                         Id = queryData.Id,
                         IsModify = true,
                         MedicalInsuranceHospitalizationNo = queryData.MedicalInsuranceHospitalizationNo
@@ -570,8 +563,7 @@ namespace BenDing.Repository.Providers.Web
                     saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                     saveXmlData.MedicalInsuranceCode = "22";
                     saveXmlData.UserId = infoParam.User.UserId;
-                    _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData),
-                        infoParam.User.UserId);
+                    _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
                 }
             }
 
@@ -645,7 +637,7 @@ namespace BenDing.Repository.Providers.Web
                 var medicalInsurance =
                     _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(medicalInsuranceParam);
                 if (medicalInsurance == null &&
-                    (!string.IsNullOrWhiteSpace(medicalInsurance.HisHospitalizationId)) == false)
+                    (!string.IsNullOrWhiteSpace(medicalInsurance.BusinessId)) == false)
                 {
                     if (!string.IsNullOrWhiteSpace(queryParam.BusinessId))
                     {
@@ -956,7 +948,7 @@ namespace BenDing.Repository.Providers.Web
                         PrescriptionSort = item.DataSort,
                         ProjectCode = pairCodeData.ProjectCode,
                         FixedEncoding = pairCodeData.FixedEncoding,
-                        DirectoryDate = CommonHelp.FormatDateTime(item.BillTime),
+                        DirectoryDate = CommonHelp.FormatDateTime(item.OperateTime),
                         DirectorySettlementDate = CommonHelp.FormatDateTime(item.OperateTime),
                         ProjectCodeType = pairCodeData.ProjectCodeType,
                         ProjectName = pairCodeData.ProjectName,

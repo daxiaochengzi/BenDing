@@ -9,20 +9,26 @@ using NFine.Domain.BenDing.Infrastructure;
 
 namespace NFine.Domain._03_Entity.BenDingManage
 {
-   public class InpatientEntity:IEntity<InpatientEntity>, IBenDingCreationAudited,IBenDingDeleteAudited, IBenDingModificationAudited
+   public class InpatientEntity: IBenDingEntity<InpatientEntity>, IBenDingCreationAudited,IBenDingDeleteAudited, IBenDingModificationAudited
     {
         /// <summary>
         /// 初始化住院病人
         /// </summary>
         /// <param name="id">住院病人标识</param>
-        public string Id { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
-        /// 医院名称
+        /// 住院Id
         /// </summary>
-        [DisplayName("医院名称")]
-        [StringLength(100)]
-        public string HospitalName { get; set; }
+        [DisplayName("住院Id")]
+        [StringLength(32)]
+        public string HospitalizationId { get; set; }
+        /// <summary>
+        /// 住院号
+        /// </summary>
+        [DisplayName("住院号")]
+        [StringLength(50)]
+        public string HospitalizationNo { get; set; }
         /// <summary>
         /// 入院日期
         /// </summary>
@@ -33,12 +39,6 @@ namespace NFine.Domain._03_Entity.BenDingManage
         /// </summary>
         [DisplayName("出院日期")]
         public DateTime? LeaveHospitalDate { get; set; }
-        /// <summary>
-        /// 住院号
-        /// </summary>
-        [DisplayName("住院号")]
-        [StringLength(50)]
-        public string HospitalizationNo { get; set; }
         /// <summary>
         /// 业务ID/住院ID
         /// </summary>
@@ -64,10 +64,28 @@ namespace NFine.Domain._03_Entity.BenDingManage
         [StringLength(2)]
         public string PatientSex { get; set; }
         /// <summary>
-        /// 出生日期
+        /// 诊断Json
         /// </summary>
-        [DisplayName("出生日期")]
-        public DateTime? Birthday { get; set; }
+        [DisplayName("诊断Json")]
+        public string DiagnosisJson { get; set; }
+        /// <summary>
+        /// 主要诊断
+        /// </summary>
+        [DisplayName("主要诊断")]
+        [StringLength(1000)]
+        public string AdmissionMainDiagnosis { get; set; }
+        /// <summary>
+        /// 入院诊断
+        /// </summary>
+        [DisplayName("入院诊断")]
+        [StringLength(100)]
+        public string AdmissionMainDiagnosisIcd10 { get; set; }
+        /// <summary>
+        /// 单据号
+        /// </summary>
+        [DisplayName("单据号")]
+        [StringLength(32)]
+        public string DocumentNo { get; set; }
         /// <summary>
         /// 联系人姓名
         /// </summary>
@@ -111,36 +129,6 @@ namespace NFine.Domain._03_Entity.BenDingManage
         [StringLength(50)]
         public string AdmissionBed { get; set; }
         /// <summary>
-        /// 入院主诊断
-        /// </summary>
-        [DisplayName("入院主诊断")]
-        [StringLength(200)]
-        public string AdmissionMainDiagnosis { get; set; }
-        /// <summary>
-        /// 入院主诊断ICD10
-        /// </summary>
-        [DisplayName("入院主诊断ICD10")]
-        [StringLength(50)]
-        public string AdmissionMainDiagnosisIcd10 { get; set; }
-        /// <summary>
-        /// 入院次诊断
-        /// </summary>
-        [DisplayName("入院次诊断")]
-        [StringLength(50)]
-        public string AdmissionSecondaryDiagnosis { get; set; }
-        /// <summary>
-        /// 入院次诊断ICD10
-        /// </summary>
-        [DisplayName("入院次诊断ICD10")]
-        [StringLength(50)]
-        public string AdmissionSecondaryDiagnosisIcd10 { get; set; }
-        /// <summary>
-        /// 入院病区
-        /// </summary>
-        [DisplayName("入院病区")]
-        [StringLength(50)]
-        public string AdmissionWard { get; set; }
-        /// <summary>
         /// 入院经办人
         /// </summary>
         [DisplayName("入院经办人")]
@@ -168,101 +156,22 @@ namespace NFine.Domain._03_Entity.BenDingManage
         [StringLength(100)]
         public string Remark { get; set; }
         /// <summary>
-        /// 出院科室名称
-        /// </summary>
-        [DisplayName("出院科室名称")]
-        [StringLength(100)]
-        public string LeaveDepartmentName { get; set; }
-        /// <summary>
-        /// 出院科室编码
-        /// </summary>
-        [DisplayName("出院科室编码")]
-        [StringLength(50)]
-        public string LeaveDepartmentId { get; set; }
-        /// <summary>
-        /// 出院病区
-        /// </summary>
-        [DisplayName("出院病区")]
-        [StringLength(50)]
-        public string LeaveHospitalWard { get; set; }
-        /// <summary>
-        /// 出院床位
-        /// </summary>
-        [DisplayName("出院床位")]
-        [StringLength(50)]
-        public string LeaveHospitalBed { get; set; }
-        /// <summary>
-        /// 出院主诊断
-        /// </summary>
-        [DisplayName("出院主诊断")]
-        [StringLength(100)]
-        public string LeaveHospitalMainDiagnosis { get; set; }
-        /// <summary>
-        /// 出院主诊断ICD10
-        /// </summary>
-        [DisplayName("出院主诊断ICD10")]
-        [StringLength(100)]
-        public string LeaveHospitalMainDiagnosisIcd10 { get; set; }
-        /// <summary>
-        /// 出院次诊断
-        /// </summary>
-        [DisplayName("出院次诊断")]
-        [StringLength(100)]
-        public string LeaveHospitalSecondaryDiagnosis { get; set; }
-        /// <summary>
-        /// 出院次诊断ICD10
-        /// </summary>
-        [DisplayName("出院次诊断ICD10")]
-        [StringLength(100)]
-        public string LeaveHospitalSecondaryDiagnosisIcd10 { get; set; }
-        /// <summary>
-        /// 在院状态[0在院无床、1在院有床、2出院未结算、3出院已结算、-1撤销入院]
-        /// </summary>
-        [DisplayName("在院状态[0在院无床、1在院有床、2出院未结算、3出院已结算、-1撤销入院]")]
-        [StringLength(2)]
-        public string InpatientHospitalState { get; set; }
-        /// <summary>
         /// 入院诊断医生编码
         /// </summary>
         [DisplayName("入院诊断医生编码")]
         [StringLength(50)]
         public string AdmissionDiagnosticDoctorId { get; set; }
         /// <summary>
-        /// 入院床位编码
-        /// </summary>
-        [DisplayName("入院床位编码")]
-        [StringLength(50)]
-        public string AdmissionBedId { get; set; }
-        /// <summary>
-        /// 入院病区编码
-        /// </summary>
-        [DisplayName("入院病区编码")]
-        [StringLength(50)]
-        public string AdmissionWardId { get; set; }
-        /// <summary>
-        /// 出院床位编码
-        /// </summary>
-        [DisplayName("出院床位编码")]
-        [StringLength(50)]
-        public string LeaveHospitalBedId { get; set; }
-        /// <summary>
-        /// 出院病区编码
-        /// </summary>
-        [DisplayName("出院病区编码")]
-        [StringLength(50)]
-        public string LeaveHospitalWardId { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        [DisplayName("")]
-        [StringLength(20)]
-        public string FixedEncoding { get; set; }
-        /// <summary>
         /// 
         /// </summary>
         [DisplayName("")]
         [StringLength(50)]
         public string OrganizationCode { get; set; }
+        /// <summary>
+        /// 组织机构名称
+        /// </summary>
+        [DisplayName("组织机构名称")]
+        public string OrganizationName { get; set; }
         /// <summary>
         /// 创建时间
         /// </summary>
@@ -272,7 +181,7 @@ namespace NFine.Domain._03_Entity.BenDingManage
         /// 删除标记[0:默认,1:删除]
         /// </summary>
         [DisplayName("删除标记[0:默认,1:删除]")]
-        public bool? IsDelete { get; set; }
+        public bool IsDelete { get; set; }
         /// <summary>
         /// 更新时间
         /// </summary>

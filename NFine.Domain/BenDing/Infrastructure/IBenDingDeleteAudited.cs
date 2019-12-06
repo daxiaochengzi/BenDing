@@ -11,7 +11,7 @@ namespace NFine.Domain.BenDing.Infrastructure
         /// <summary>
         /// 逻辑删除标记
         /// </summary>
-        bool? IsDelete { get; set; }
+        bool IsDelete { get; set; }
 
         /// <summary>
         /// 删除实体的用户
@@ -26,6 +26,6 @@ namespace NFine.Domain.BenDing.Infrastructure
         /// id
         /// </summary>
 
-        string Id { get; set; }
+        Guid Id { get; set; }
     }
 }

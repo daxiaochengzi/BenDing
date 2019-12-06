@@ -8,12 +8,15 @@ using System.Text.RegularExpressions;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
+using BenDing.Domain.Models.Params;
+using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using Dapper;
+using NFine.Code;
 
 namespace BenDing.Repository.Providers.Web
 {
@@ -463,32 +466,32 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
-      
+
         /// <summary>
         /// 保存住院病人明细
         /// </summary>
         /// <param name="user"></param>
         /// <param name="param"></param>
-        public void SaveInpatientInfoDetail(UserInfoDto user, List<InpatientInfoDetailDto> param)
+        public void SaveInpatientInfoDetail(SaveInpatientInfoDetailParam param)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
 
                 sqlConnection.Open();
 
-                if (param.Any())
+                if (param.DataList.Any())
                 {
-
+                    string insertSql = "";
                     try
                     {
 
-                        var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.CostDetailId).ToList());
-                        var paramFirst = param.FirstOrDefault();
+                        var outpatientNum = CommonHelp.ListToStr(param.DataList.Select(c => c.DetailId).ToList());
+                        var paramFirst = param.DataList.FirstOrDefault();
                         if (paramFirst != null)
                         {
                             string strSql =
-                                $@" select [CostDetailId],[DataSort] from [dbo].[HospitalizationFee] where [HospitalizationNo]={paramFirst.HospitalizationNo}
-                                 and [CostDetailId] in({outpatientNum})";
+                                $@" select [DetailId],[DataSort] from [dbo].[HospitalizationFee] where [HospitalizationId]='{param.HospitalizationId}'
+                                 and [DetailId] in({outpatientNum})";
                             var data = sqlConnection.Query<InpatientInfoDetailQueryDto>(strSql);
                             int sort = 0;
                             List<InpatientInfoDetailDto> paramNew;
@@ -497,35 +500,33 @@ namespace BenDing.Repository.Providers.Web
                                 sort = data.Select(c => c.DataSort).Max();
                                 var costDetailIdList = data.Select(c => c.CostDetailId).ToList();
                                 //排除已包含的明细id
-                                paramNew = param.Where(c => !costDetailIdList.Contains(c.CostDetailId)).ToList();
+                                paramNew = param.DataList.Where(c => !costDetailIdList.Contains(c.DetailId)).ToList();
                             }
                             else
                             {
-                                paramNew = param.OrderBy(d => d.BillTime).ToList();
+                                paramNew = param.DataList.OrderBy(d => d.OperateTime).ToList();
                             }
 
-                            string insertSql = "";
+                          
 
                             foreach (var item in paramNew)
                             {
+                               
                                 sort++;
-                                var businessTime = item.BillTime.Substring(0, 10) + " 00:00:00.000";
-                                string str = $@"INSERT INTO [dbo].[HospitalizationFee](
-                               id,[HospitalizationNo] ,[CostDetailId] ,[DirectoryName],[DirectoryCode] ,[DirectoryCategoryName] ,[DirectoryCategoryCode]
-                               ,[Unit] ,[Formulation] ,[Specification] ,[UnitPrice],[Quantity],[Amount] ,[Dosage] ,[Usage] ,[MedicateDays]
-		                       ,[HospitalPricingUnit] ,[IsImportedDrugs] ,[DrugProducingArea] ,[RecipeCode]  ,[CostDocumentType] ,[BillDepartment]
-			                   ,[BillDepartmentId] ,[BillDoctorName],[BillDoctorId] ,[BillTime] ,[OperateDepartmentName],[OperateDepartmentId]
-                               ,[OperateDoctorName] ,[OperateDoctorId],[OperateTime] ,[PrescriptionDoctor] ,[Operators],[PracticeDoctorNumber]
-                               ,[CostWriteOffId],[OrganizationCode],[OrganizationName] ,[CreateTime] ,[IsDelete],[DeleteTime],CreateUserId
-                               ,DataSort,UploadMark,RecipeCodeFixedEncoding,BillDoctorIdFixedEncoding,BusinessTime)
-                           VALUES('{Guid.NewGuid()}','{item.HospitalizationNo}','{item.CostDetailId}','{item.DirectoryName}','{item.DirectoryCode}','{item.DirectoryCategoryName}','{item.DirectoryCategoryCode}'
-                                 ,'{item.Unit}','{item.Formulation}','{item.Specification}',{item.UnitPrice},{item.Quantity},{item.Amount},'{item.Dosage}','{item.Usage}','{item.MedicateDays}',
-                                 '{item.HospitalPricingUnit}','{item.IsImportedDrugs}','{item.DrugProducingArea}','{item.RecipeCode}','{item.CostDocumentType}','{item.BillDepartment}'
-                                 ,'{item.BillDepartmentId}','{item.BillDoctorName}','{item.BillDoctorId}','{item.BillTime}','{item.OperateDepartmentName}','{item.OperateDepartmentId}'
-                                 ,'{item.OperateDoctorName}','{item.OperateDoctorId}','{item.OperateTime}','{item.PrescriptionDoctor}','{item.Operators}','{item.PracticeDoctorNumber}'
-                                 ,'{item.CostWriteOffId}','{item.OrganizationCode}','{item.OrganizationName}',getDate(),0,null,'{user.UserId}'
-                                 ,{sort},0,'{CommonHelp.GuidToStr(item.RecipeCode)}','{CommonHelp.GuidToStr(item.BillDoctorId)}','{businessTime}'
-                                 );";
+                                var businessTime = item.OperateTime.Substring(0, 10) + " 00:00:00.000";
+                                string str = $@"INSERT INTO [dbo].[HospitalizationFee]
+                                           ([Id],[HospitalizationId],[DetailId],[DocumentNo],[BillDepartment] ,[DirectoryName],[DirectoryCode]
+                                           ,[ProjectCode] ,[Formulation],[Specification],[UnitPrice],[Usage] ,[Quantity],[Amount],[DocumentType]
+                                           ,[BillDepartmentId] ,[BillDoctorId] ,[BillDoctorName] ,[Dosage] ,[Unit]
+                                           ,[OperateDepartmentName],[OperateDepartmentId],[OperateDoctorName],[OperateDoctorId] ,[DoorEmergencyFeeMark]
+                                           ,[HospitalAuditMark],[OperateTime],[OutHospitalInspectMark] ,[OrganizationCode] ,[OrganizationName]
+                                           ,[UploadMark] ,[DataSort] ,[AdjustmentDifferenceValue],[BusinessTime],[CreateTime],[CreateUserId])
+                                           VALUES('{Guid.NewGuid()}','{param.HospitalizationId}','{item.DetailId}','{item.DocumentNo}','{item.BillDepartment}','{item.DirectoryName}','{item.DirectoryCode}',
+                                                  '{item.ProjectCode}','{item.Formulation}','{item.Specification}',{item.UnitPrice},'{item.Usage}',{item.Quantity},{item.Amount},'{item.DocumentType}',
+                                                  '{item.BillDepartmentId}','{item.BillDoctorId}','{item.BillDoctorName}','{item.Dosage}','{item.Unit}',
+                                                  '{item.OperateDepartmentName}','{item.OperateDepartmentId}','{item.OperateDoctorName}','{item.OperateDoctorId}','{item.DoorEmergencyFeeMark}',
+                                                  '{item.HospitalAuditMark}','{item.OperateTime}','{item.OutHospitalInspectMark}','{param.User.OrganizationCode}','{param.User.OrganizationName}',
+                                                  0,{sort},0,'{businessTime}',getDate(),'{param.User.UserId}');";
                                 insertSql += str;
                             }
 
@@ -539,11 +540,13 @@ namespace BenDing.Repository.Providers.Web
                     }
                     catch (Exception exception)
                     {
-
+                       
+                        var log = LogFactory.GetLogger("ini".GetType().ToString());
+                        log.Debug(insertSql);
                         throw new Exception(exception.Message);
                     }
                 }
-
+                sqlConnection.Close();
 
             }
         }
@@ -601,7 +604,7 @@ namespace BenDing.Repository.Providers.Web
                 List<QueryHospitalizationFeeDto> dataList;
                 var dataListNew = new List<QueryHospitalizationFeeDto>();
                 var resultData = new Dictionary<int, List<QueryHospitalizationFeeDto>>();
-               
+
                 sqlConnection.Open();
 
                 string querySql = $@"
@@ -682,18 +685,18 @@ namespace BenDing.Repository.Providers.Web
                                 OperateDoctorName = c.OperateDoctorName,
                                 UploadMark = c.UploadMark,
                                 AdjustmentDifferenceValue = c.AdjustmentDifferenceValue,
-                                BlockPrice = itemPairCode!=null? GetBlockPrice(itemPairCode, gradeData):0,
+                                BlockPrice = itemPairCode != null ? GetBlockPrice(itemPairCode, gradeData) : 0,
                                 ProjectCode = itemPairCode?.ProjectCode,
-                                ProjectLevel = itemPairCode != null?((ProjectLevel)Convert.ToInt32(itemPairCode.ProjectLevel)).ToString(): null,
+                                ProjectLevel = itemPairCode != null ? ((ProjectLevel)Convert.ToInt32(itemPairCode.ProjectLevel)).ToString() : null,
                                 ProjectCodeType = itemPairCode != null ? ((ProjectCodeType)Convert.ToInt32(itemPairCode.ProjectCodeType)).ToString() : null,
-                                SelfPayProportion = (residentInfoData != null && itemPairCode!=null)
+                                SelfPayProportion = (residentInfoData != null && itemPairCode != null)
                                     ? GetSelfPayProportion(itemPairCode, residentInfoData)
                                     : 0,
                                 UploadAmount = c.UploadAmount,
                                 OrganizationCode = c.OrganizationCode,
                                 UploadTime = c.UploadTime,
                             };
-                             dataListNew.Add(item);
+                            dataListNew.Add(item);
                         }
                     }
                     else
@@ -702,7 +705,7 @@ namespace BenDing.Repository.Providers.Web
                     }
 
                 }
-               
+
                 sqlConnection.Close();
                 resultData.Add(totalPageCount, dataListNew);
                 return resultData;
@@ -730,23 +733,7 @@ namespace BenDing.Repository.Providers.Web
                         leaveHospitalDate = param.LeaveHospitalDate;
                     }
                 }
-                string insertSql = $@"
-                                INSERT INTO [dbo].[inpatient]
-                                           (id,[HospitalName] ,[AdmissionDate]  ,[LeaveHospitalDate] ,[HospitalizationNo] ,[BusinessId] ,[PatientName] ,[IdCardNo]
-                                           ,[PatientSex],[Birthday] ,[ContactName],[ContactPhone] ,[FamilyAddress] ,[InDepartmentName] ,[InDepartmentId]
-                                           ,[AdmissionDiagnosticDoctor] ,[AdmissionBed] ,[AdmissionMainDiagnosis] ,[AdmissionMainDiagnosisIcd10] ,[AdmissionSecondaryDiagnosis] ,[AdmissionSecondaryDiagnosisIcd10]
-                                           ,[AdmissionWard] ,[AdmissionOperator] ,[AdmissionOperateTime] ,[HospitalizationTotalCost] ,[Remark] ,[LeaveDepartmentName] ,[LeaveDepartmentId] 
-		                                   ,[LeaveHospitalWard] ,[LeaveHospitalBed]  ,[LeaveHospitalMainDiagnosis] ,[LeaveHospitalMainDiagnosisIcd10] ,[LeaveHospitalSecondaryDiagnosis] ,[LeaveHospitalSecondaryDiagnosisIcd10]
-                                           ,[InpatientHospitalState] ,[AdmissionDiagnosticDoctorId] ,[AdmissionBedId]  ,[AdmissionWardId],[LeaveHospitalBedId] ,[LeaveHospitalWardId]
-                                           ,[CreateTime]  ,[IsDelete] ,[DeleteTime],OrganizationCode,CreateUserId,FixedEncoding)
-                                     VALUES ('{Guid.NewGuid()}','{param.HospitalName}','{param.AdmissionDate}','{leaveHospitalDate}','{param.HospitalizationNo}','{param.BusinessId}','{param.PatientName}','{param.IdCardNo}',
-                                             '{param.PatientSex}','{param.Birthday}','{param.ContactName}','{param.ContactPhone}','{param.FamilyAddress}','{param.InDepartmentName}','{param.InDepartmentId}',
-                                             '{param.AdmissionDiagnosticDoctor}','{param.AdmissionBed}','{param.AdmissionMainDiagnosis}','{param.AdmissionMainDiagnosisIcd10}','{param.AdmissionSecondaryDiagnosis}','{param.AdmissionSecondaryDiagnosisIcd10}',
-                                             '{param.AdmissionWard}','{param.AdmissionOperator}','{param.AdmissionOperateTime}',{Convert.ToDecimal(param.HospitalizationTotalCost)},'{param.Remark}','{param.LeaveDepartmentName}','{param.LeaveDepartmentId}',
-                                             '{param.LeaveHospitalWard}','{param.LeaveHospitalBed}','{param.LeaveHospitalMainDiagnosis}','{param.LeaveHospitalMainDiagnosisIcd10}','{param.LeaveHospitalSecondaryDiagnosis}','{param.LeaveHospitalSecondaryDiagnosisIcd10}',
-                                             '{param.InpatientHospitalState}','{param.AdmissionDiagnosticDoctorId}','{param.AdmissionBedId}','{param.AdmissionWardId}','{param.LeaveHospitalBedId}','{param.LeaveHospitalWardId}',
-                                               getDate(),0,null,'{user.OrganizationCode}','{user.UserId}','{BitConverter.ToInt64(Guid.Parse(param.BusinessId).ToByteArray(), 0)}'
-                                              );";
+                string insertSql = $@"";
                 insertSql = insertSql + strSql;
                 sqlConnection.Execute(insertSql);
                 sqlConnection.Close();
@@ -898,6 +885,33 @@ namespace BenDing.Repository.Providers.Web
                 if (data != null) resultData = data.ToList();
                 sqlConnection.Close();
                 return resultData;
+            }
+        }
+
+        public int DeleteDatabase(DeleteDatabaseParam param)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+
+                sqlConnection.Open();
+                string sqlStr = $@" update {param.TableName} set IsDelete=1 ,UpdateUserId='{param.User.UserId}',DeleteTime=GETDATE() 
+                               where {param.Field}='{param.Value}' and IsDelete=0";
+                var data = sqlConnection.Execute(sqlStr);
+
+                sqlConnection.Close();
+                return data;
+            }
+        }
+        public List<T> QueryDatabase<T>(T t, DatabaseParam param)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+
+                sqlConnection.Open();
+                string sqlStr = $@"select * from {param.TableName} where {param.Field}='{param.Value}' and IsDelete=0";
+                var data = sqlConnection.Query<T>(sqlStr);
+                sqlConnection.Close();
+                return (data != null && data.Any()) == true ? data.ToList() : null;
             }
         }
 

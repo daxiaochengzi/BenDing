@@ -8,14 +8,25 @@ namespace BenDing.Domain.Models.Dto.Web
 /// 住院病人查询
 /// </summary>
   public  class QueryInpatientInfoDto
-    {  /// <summary>
-    /// 
-    /// </summary>
+    {
+     
+
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid? Id { get; set; }
-     /// <summary>
-     /// 医院名称
-     /// </summary>
-        
+        /// <summary>
+        /// 诊断json
+        /// </summary>
+        public string DiagnosisJson { get; set; }
+        /// <summary>
+        /// 诊断描述
+        /// </summary>
+        public string DiagnosisDescribe { get; set; }
+        /// <summary>
+        /// 医院名称
+        /// </summary>
+
         public string HospitalName { get; set; }
         /// <summary>
         /// 入院日期

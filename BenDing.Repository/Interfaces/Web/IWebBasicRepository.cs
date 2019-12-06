@@ -10,6 +10,7 @@ namespace BenDing.Repository.Interfaces.Web
 {
     public interface IWebBasicRepository
     {
-        BasicResultDto HIS_InterfaceList(string tradeCode, string inputParameter, string operatorId);
+        BasicResultDto HIS_InterfaceList(string tradeCode, string inputParameter);
+        ResultDataDto HIS_Interface(string tradeCode, string inputParameter);
     }
 }

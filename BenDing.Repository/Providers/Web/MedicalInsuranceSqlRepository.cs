@@ -192,13 +192,13 @@ namespace BenDing.Repository.Providers.Web
                 }
                 else
                 {
-                    insertSql = $@"INSERT INTO [dbo].[MedicalInsurance]([Id],[HisHospitalizationId],[InsuranceNo],[MedicalInsuranceAllAmount]
+                    insertSql = $@"INSERT INTO [dbo].[MedicalInsurance]([Id],[BusinessId],[InsuranceNo],[MedicalInsuranceAllAmount]
                                ,[AdmissionInfoJson],[ReimbursementExpensesAmount] ,[SelfPayFeeAmount],[OtherInfo] 
 		                       ,[CreateTime],[IsDelete] ,OrganizationCode,CreateUserId,OrganizationName,InsuranceType,MedicalInsuranceState)
-                           VALUES('{param.Id}','{param.HisHospitalizationId}','{param.InsuranceNo}', 0,
+                           VALUES('{param.Id}','{param.BusinessId}','{param.InsuranceNo}', 0,
                                  '{param.AdmissionInfoJson}',0,0,NULL,
                                  GETDATE(),1,'{user.OrganizationCode}','{user.UserId}','{user.OrganizationName }',{param.InsuranceType},0);";
-                    insertSql = $"update [dbo].[MedicalInsurance] set [IsDelete]=1,DeleteUserId='{user.UserId}',DeleteTime=GETDATE() where [HisHospitalizationId]='{param.HisHospitalizationId}';" + insertSql;
+                    insertSql = $"update [dbo].[MedicalInsurance] set [IsDelete]=1,DeleteUserId='{user.UserId}',DeleteTime=GETDATE() where [BusinessId]='{param.BusinessId}';" + insertSql;
 
                 }
                 //var log = LogFactory.GetLogger("ini".GetType().ToString());

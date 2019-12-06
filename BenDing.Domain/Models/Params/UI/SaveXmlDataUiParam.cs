@@ -7,7 +7,7 @@ using BenDing.Domain.Models.Params.Base;
 
 namespace BenDing.Domain.Models.Params.UI
 {
-  public  class SaveXmlDataUiParam:BaseIniParam
+  public  class SaveXmlDataUiParam
     {/// <summary>
         /// 入参
         /// </summary>

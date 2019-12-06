@@ -7,7 +7,7 @@ using BenDing.Domain.Models.Params.Base;
 
 namespace BenDing.Domain.Models.Params.UI
 {
-  public  class MedicalInsuranceDataAllParamUIQueryParam: BaseIniParam
+  public  class MedicalInsuranceDataAllParamUIQueryParam
     {/// <summary>
      /// 机构编号
      /// </summary>

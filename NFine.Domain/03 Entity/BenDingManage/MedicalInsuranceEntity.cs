@@ -13,7 +13,7 @@ namespace NFine.Domain._03_Entity.BenDingManage
     {/// <summary>
     /// Id
     /// </summary>
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         /// <summary>
         /// 业务ID
         /// </summary>
@@ -83,7 +83,7 @@ namespace NFine.Domain._03_Entity.BenDingManage
         /// 删除标记[0:默认,1:删除]
         /// </summary>
         [DisplayName("删除标记[0:默认,1:删除]")]
-        public bool? IsDelete { get; set; }
+        public bool IsDelete { get; set; }
         /// <summary>
         /// 更新时间
         /// </summary>

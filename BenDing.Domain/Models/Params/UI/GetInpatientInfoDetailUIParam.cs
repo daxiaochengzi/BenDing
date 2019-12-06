@@ -6,7 +6,7 @@ using BenDing.Domain.Models.Params.Base;
 
 namespace BenDing.Domain.Models.Params.UI
 {
-  public  class GetInpatientInfoDetailUIParam: BaseIniParam
+  public  class GetInpatientInfoDetailUIParam
     {
         public  List<string> IdCardList { get; set; }
 

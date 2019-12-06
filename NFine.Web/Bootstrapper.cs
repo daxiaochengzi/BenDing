@@ -6,9 +6,7 @@ using System.Web.Http.Dependencies;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Repository.Providers.Web;
 using BenDing.Service.Interfaces;
-
 using BenDing.Service.Providers;
-
 using NFine.Web.Model;
 using StructureMap;
 
@@ -58,6 +56,7 @@ namespace NFine.Web
                 x.For<IWebBasicRepository>().Use<WebBasicRepository>();
                 x.For<IHisSqlRepository>().Use<HisSqlRepository>();
                 x.For<ISystemManageRepository>().Use<SystemManageRepository>();
+              
                 ////
                 #endregion
 

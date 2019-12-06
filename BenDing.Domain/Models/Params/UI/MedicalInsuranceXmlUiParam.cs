@@ -13,11 +13,6 @@ namespace BenDing.Domain.Models.Params.UI
         /// </summary>
        
         public string BusinessId { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-     
-        public string TransactionId { get; set; }
        
         /// <summary>
         /// 操作人员ID
@@ -25,12 +20,6 @@ namespace BenDing.Domain.Models.Params.UI
 
       
         public string UserId { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-      
-
-     
         /// <summary>
         /// 
         /// </summary>

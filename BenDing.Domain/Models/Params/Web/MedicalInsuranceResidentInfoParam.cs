@@ -7,7 +7,7 @@ using BenDing.Domain.Models.Params.Base;
 
 namespace BenDing.Domain.Models.Params.Web
 {
-   public class MedicalInsuranceResidentInfoParam: BaseIniParam
+   public class MedicalInsuranceResidentInfoParam
     {/// <summary>
      /// id
      /// </summary>

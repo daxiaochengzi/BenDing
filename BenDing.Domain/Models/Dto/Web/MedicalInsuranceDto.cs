@@ -15,7 +15,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// <summary>
         /// 基层His住院Id
         /// </summary>
-        public string HisHospitalizationId { get; set;}
+        public string BusinessId { get; set;}
         /// <summary>
         /// 医保住院号
         /// </summary>

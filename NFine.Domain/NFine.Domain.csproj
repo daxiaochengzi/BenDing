@@ -46,6 +46,7 @@
     <Compile Include="01 Infrastructure\IDeleteAudited.cs" />
     <Compile Include="01 Infrastructure\IEntity.cs" />
     <Compile Include="01 Infrastructure\IModificationAudited.cs" />
+    <Compile Include="03 Entity\BenDingManage\HospitalizationFeeEntity.cs" />
     <Compile Include="03 Entity\BenDingManage\HospitalLogEntity.cs" />
     <Compile Include="03 Entity\BenDingManage\HospitalOperatorEntity.cs" />
     <Compile Include="03 Entity\BenDingManage\HospitalOrganizationGradeEntity.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="03 Entity\SystemSecurity\FilterIPEntity.cs" />
     <Compile Include="03 Entity\SystemSecurity\LogEntity.cs" />
     <Compile Include="02 ViewModel\AuthorizeActionModel.cs" />
+    <Compile Include="04 IRepository\BenDingManage\IInpatientRepository.cs" />
     <Compile Include="04 IRepository\SystemManage\IAreaRepository.cs" />
     <Compile Include="04 IRepository\SystemManage\IItemsDetailRepository.cs" />
     <Compile Include="04 IRepository\SystemManage\IItemsRepository.cs" />
@@ -93,6 +95,10 @@
     <Compile Include="03 Entity\SystemManage\UserEntity.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BenDing.Domain\BenDing.Domain.csproj">
+      <Project>{4941FBD9-9C5C-46CE-93B4-A41BBBF09622}</Project>
+      <Name>BenDing.Domain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NFine.Code\NFine.Code.csproj">
       <Project>{db19ce03-c307-43fe-a209-08aa4ae10e21}</Project>
       <Name>NFine.Code</Name>

@@ -77,7 +77,7 @@ namespace NFine.Web.Controllers
                 var xmlData = new MedicalInsuranceXmlDto();
                 xmlData.BusinessId = param.BusinessId;
                 xmlData.HealthInsuranceNo = param.HealthInsuranceNo;
-                xmlData.TransactionId = param.TransactionId;
+                xmlData.TransactionId = Guid.NewGuid().ToString("N");
                 xmlData.AuthCode = userBase.AuthCode;
                 xmlData.UserId = param.UserId;
                 xmlData.OrganizationCode = userBase.OrganizationCode;
@@ -113,7 +113,7 @@ namespace NFine.Web.Controllers
                 saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                 saveXmlData.MedicalInsuranceCode = "43";
                 saveXmlData.UserId = param.UserId;
-                webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData), userBase.UserId);
+                webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
 
             });
         }
@@ -143,7 +143,7 @@ namespace NFine.Web.Controllers
                 saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                 saveXmlData.MedicalInsuranceCode = "41";
                 saveXmlData.UserId = param.UserId;
-                webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData), userBase.UserId);
+                webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
                 
                
 

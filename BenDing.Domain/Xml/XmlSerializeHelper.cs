@@ -57,7 +57,10 @@ namespace BenDing.Domain.Xml
                 throw new Exception("将XML转换成实体对象异常", ex);
             }
         }
-
+        /// <summary>
+        /// 回参
+        /// </summary>
+        /// <returns></returns>
         public static string XmlBackParam()
         {
             var result = "";
@@ -76,7 +79,7 @@ namespace BenDing.Domain.Xml
                 var resultData = JsonConvert.DeserializeObject<ResultData>(jsonText);
                 if (resultData?.Row != null && resultData.Row.ToString() != "")
                 {
-                    var jsonStr = JsonConvert.SerializeObject(resultData.Row);
+                 
                     result = doc.InnerXml;
                 }
             }
@@ -84,7 +87,23 @@ namespace BenDing.Domain.Xml
             {
                 throw new SystemException(valid.PO_MSG);
             }
-
+            doc = null;
+            return result;
+        }
+        /// <summary>
+        /// 入参
+        /// </summary>
+        /// <returns></returns>
+        public static string XmlParticipationParam()
+        {
+            var result = "";
+            string pathXml = null;
+            var valid = new ValidXmlDto();
+            pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\RequestParams.xml";
+            XmlDocument doc = new XmlDocument();
+            doc.Load(pathXml);
+            result = doc.InnerXml;
+            doc = null;
             return result;
         }
     }

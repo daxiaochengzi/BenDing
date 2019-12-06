@@ -5,15 +5,32 @@ using System.Text;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
+using BenDing.Domain.Models.Params;
+using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
+
 
 namespace BenDing.Repository.Interfaces.Web
 {
     public interface IHisSqlRepository
     {
         void ChangeOrg(UserInfoDto userInfo, List<OrgDto> param);
+        /// <summary>
+        /// 数据库公共删除
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        int DeleteDatabase(DeleteDatabaseParam param);
+        /// <summary>
+        /// 数据库公共查询
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        List<T> QueryDatabase<T>(T t, DatabaseParam param);
         /// <summary>
         /// 获取三大目录更新时间
         /// </summary>
@@ -79,7 +96,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        void SaveInpatientInfoDetail(UserInfoDto user, List<InpatientInfoDetailDto> param);
+        void SaveInpatientInfoDetail(SaveInpatientInfoDetailParam param);
         /// <summary>
         /// 获取所有未传费用的住院病人
         /// </summary>

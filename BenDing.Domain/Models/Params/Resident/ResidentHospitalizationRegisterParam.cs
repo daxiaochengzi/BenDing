@@ -14,7 +14,7 @@ namespace BenDing.Domain.Models.Params.Resident
 /// 入院登记参数
 /// </summary>
     [XmlRootAttribute("ROW", IsNullable = false)]
-    public class ResidentHospitalizationRegisterParam: InpatientInfosUiParam
+    public class ResidentHospitalizationRegisterParam
     {
         ///<summary>
         /// 身份标识
@@ -76,8 +76,8 @@ namespace BenDing.Domain.Models.Params.Resident
         /// 入院诊断疾病名称
         /// </summary>
         [XmlElementAttribute("PI_RYZD", IsNullable = false)]
-        //[Display(Name = "入院诊断疾病名称")]
-        //[Required(ErrorMessage = "{0}不能为空!!!")]
+        [Display(Name = "入院诊断疾病名称")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
         public string AdmissionMainDiagnosis { get; set; }
         /// <summary>
         /// 住院科室编号 
@@ -89,7 +89,7 @@ namespace BenDing.Domain.Models.Params.Resident
         /// <summary>
         /// 床位号
         /// </summary>
-         [XmlElementAttribute("PI_CWH", IsNullable = false)]
+        [XmlElementAttribute("PI_CWH", IsNullable = false)]
         public string BedNumber { get; set; }
         /// <summary>
         /// 医院住院号
@@ -112,19 +112,13 @@ namespace BenDing.Domain.Models.Params.Resident
         [Required(ErrorMessage = "{0}不能为空!!!")]
         [XmlIgnoreAttribute]
         public string InsuranceType { get; set; }
-        /// <summary>
-        /// 医保卡号
-        /// </summary>
-        //[Display(Name = "医保卡号")]
-        //[Required(ErrorMessage = "{0}不能为空!!!")]
-        [XmlIgnoreAttribute]
-        public string MedicalInsuranceCardNo { get; set; }
-        /// <summary>
-        /// 诊断
-        /// </summary>
-        [XmlIgnoreAttribute]
-        public List<InpatientDiagnosisDto> DiagnosisList { get; set; } = null;
 
+        /// <summary>
+        /// 业务id
+        /// </summary>
+       
+        [XmlIgnoreAttribute]
+        public string BusinessId { get; set; }
 
 
 

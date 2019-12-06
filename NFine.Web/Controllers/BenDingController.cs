@@ -13,6 +13,7 @@ using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces;
 using Newtonsoft.Json;
+using NFine.Domain._03_Entity.BenDingManage;
 
 namespace NFine.Web.Controllers
 {
@@ -80,8 +81,8 @@ namespace NFine.Web.Controllers
                        ManufacturerNumber = data.ManufacturerNumber,
                    };
                    string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
-                   var verificationCode = _webServiceBasicService.GetVerificationCode("01", inputParamJson);
-                   y.Data = verificationCode;
+                   var userBase = _webServiceBasicService.GetVerificationCode("01", inputParamJson);
+                   y.Data = userBase;
                }
 
            });
@@ -259,38 +260,27 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new ResidentUserInfoDto()).RunWithTry(y =>
            {
-               var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-               var inputInpatientInfo = new InpatientInfoParam()
-               {
-                   AuthCode = verificationCode.AuthCode,
-                   OrganizationCode = verificationCode.OrganizationCode,
-                   IdCardNo = param.IdCardNo,
-                   StartTime = param.StartTime,
-                   EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                   State = "0"
-               };
-
-               string inputInpatientInfoJson =
-                   JsonConvert.SerializeObject(inputInpatientInfo, Formatting.Indented);
+               var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                var infoData = new GetInpatientInfoParam()
                {
-                   User = verificationCode,
+                   User = userBase,
                    BusinessId = param.BusinessId,
-                   InfoParam = inputInpatientInfo,
+                   IsSave = true
                };
                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
+
                if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
                {//获取医保个人信息
                    _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
 
-                   var userBase = _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
+                   var residentUserBase = _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
                    {
                        IdentityMark = "1",
-                       InformationNumber = param.IdCardNo,
+                       InformationNumber = inpatientData.IdCardNo,
                    });
                    var data = inpatientData;
 
-                   data.MedicalInsuranceResidentInfo = userBase;
+                   data.MedicalInsuranceResidentInfo = residentUserBase;
                    y.Data = data;
 
                }
@@ -306,46 +296,17 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new InpatientDiagnosisDto()).RunWithTry(y =>
             {
-                var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var inputInpatientInfo = new InpatientInfoParam()
-                {
-                    AuthCode = verificationCode.AuthCode,
-                    OrganizationCode = verificationCode.OrganizationCode,
-                    IdCardNo = param.IdCardNo,
-                    StartTime = param.StartTime,
-                    EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                    State = "0"
-                };
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               
                 var infoData = new GetInpatientInfoParam()
                 {
-                    User = verificationCode,
+                    User = userBase,
                     BusinessId = param.BusinessId,
-                    InfoParam = inputInpatientInfo,
                 };
                 var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
-                if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
+                if (inpatientData.DiagnosisList != null && inpatientData.DiagnosisList.Any())
                 {
-
-                    var diagnosisData = new List<InpatientDiagnosisDto>();
-                    diagnosisData.Add(new InpatientDiagnosisDto()
-                    {
-                        DiagnosisName = inpatientData.AdmissionMainDiagnosis,
-                        DiagnosisCode = inpatientData.AdmissionMainDiagnosisIcd10,
-                        IsMainDiagnosis = true
-                    });
-                    if (!string.IsNullOrWhiteSpace(inpatientData.LeaveHospitalMainDiagnosisIcd10))
-                    {
-                        diagnosisData.Add(new InpatientDiagnosisDto()
-                        {
-                            DiagnosisName = inpatientData.LeaveHospitalMainDiagnosis,
-                            DiagnosisCode = inpatientData.LeaveHospitalMainDiagnosisIcd10,
-                            IsMainDiagnosis = false
-                        });
-                    }
-
-
-                    y.Data = diagnosisData;
-
+                    y.Data = inpatientData.DiagnosisList;
                 }
             });
         }
@@ -359,22 +320,10 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new InpatientInfoDetailDto()).RunWithTry(y =>
            {
 
-               var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-               if (verificationCode != null)
+               var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               if (userBase != null)
                {
-                   var inpatientData = _hisSqlRepository.QueryInpatientInfo(new QueryInpatientInfoParam() { BusinessId = param.BusinessId });
-                   if (inpatientData == null) throw new Exception("该病人未在中心库中,请检查是否办理医保入院!!!");
-                   var InpatientInfoDetail = new InpatientInfoDetailParam()
-                   {
-                       AuthCode = verificationCode.AuthCode,
-                       HospitalizationNo = inpatientData.HospitalizationNo,
-                       BusinessId = inpatientData.BusinessId,
-                       StartTime = inpatientData.AdmissionDate,
-                       EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                       State = "0"
-                   };
-                   var data = _webServiceBasicService.GetInpatientInfoDetail(verificationCode,
-                       InpatientInfoDetail, param.BusinessId);
+                   var data = _webServiceBasicService.GetInpatientInfoDetail(userBase, param.BusinessId);
                    y.Data = data;
 
                }
@@ -494,7 +443,7 @@ namespace NFine.Web.Controllers
                 saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                 saveXmlData.MedicalInsuranceCode = "22";
                 saveXmlData.UserId = param.UserId;
-                _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData), userBase.UserId);
+                _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
 
             });
         }
@@ -569,7 +518,6 @@ namespace NFine.Web.Controllers
            });
 
         }
-
         /// <summary>
         ///对照目录中心管理 
         /// </summary>
@@ -580,8 +528,8 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new DirectoryComparisonManagementDto()).RunWithTry(y =>
              {
-                 var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                 param.OrganizationCode = verificationCode.OrganizationCode;
+                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                 param.OrganizationCode = userBase.OrganizationCode;
                  param.State = 0;
                  var queryData = _medicalInsuranceSqlRepository.DirectoryComparisonManagement(param);
                  var data = new
@@ -592,7 +540,6 @@ namespace NFine.Web.Controllers
                  y.Data = data;
              });
         }
-
         /// <summary>
         /// 三大目录对码信息回写至基层系统
         /// </summary>
@@ -603,9 +550,9 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-                var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
 
-                var data = _webServiceBasicService.ThreeCataloguePairCodeUpload(verificationCode);
+                var data = _webServiceBasicService.ThreeCataloguePairCodeUpload(userBase);
 
                 y.Data = "[" + data + "] 条回写成功!!!";
             });
@@ -653,49 +600,55 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData HospitalizationRegister([FromBody]ResidentHospitalizationRegisterParam param)
+        public ApiJsonResultData HospitalizationRegister([FromBody]ResidentHospitalizationRegisterUiParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
+                var iniParam = new ResidentHospitalizationRegisterParam();
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
                 {   //主诊断
                     var mainDiagnosis = param.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis);
                     if (mainDiagnosis == null) throw new Exception("主诊断不能为空!!!");
-                    param.AdmissionMainDiagnosisIcd10 = mainDiagnosis.DiagnosisCode;
-                    param.AdmissionMainDiagnosis = mainDiagnosis.DiagnosisName;
+                    iniParam.AdmissionMainDiagnosisIcd10 = mainDiagnosis.DiagnosisCode;
+                    iniParam.AdmissionMainDiagnosis = mainDiagnosis.DiagnosisName;
                     //次诊断
                     var nextDiagnosis = param.DiagnosisList.Where(c => c.IsMainDiagnosis == false).ToList();
                     int num = 1;
                     foreach (var item in nextDiagnosis)
                     {
-                        if (num == 1) param.DiagnosisIcd10Two = item.DiagnosisCode;
-                        if (num == 2) param.DiagnosisIcd10Three = item.DiagnosisCode;
+                        if (num == 1) iniParam.DiagnosisIcd10Two = item.DiagnosisCode;
+                        if (num == 2) iniParam.DiagnosisIcd10Three = item.DiagnosisCode;
                         num++;
                     }
                     var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                    var inputInpatientInfo = new InpatientInfoParam()
-                    {
-                        AuthCode = userBase.AuthCode,
-                        OrganizationCode = userBase.OrganizationCode,
-                        IdCardNo = param.IdCardNo,
-                        StartTime = Convert.ToDateTime(param.StartTime).ToString("yyyy-MM-dd HH:mm:ss"),
-                        EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                        State = "0",
-                    };
+
                     var infoData = new GetInpatientInfoParam()
                     {
                         User = userBase,
                         BusinessId = param.BusinessId,
-                        InfoParam = inputInpatientInfo,
                         IsSave = false,
                     };
                     var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
                     if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
                     {  //医保登录
                         _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                        param.Operators = param.UserId;
+
+                        
+                        iniParam.IdentityMark = param.IdentityMark;
+                        iniParam.AfferentSign = param.AfferentSign;
+                        iniParam.MedicalCategory = param.MedicalCategory;
+                        iniParam.FetusNumber = param.FetusNumber;
+                        iniParam.HouseholdNature = param.HouseholdNature;
+                        iniParam.AdmissionDate = Convert.ToDateTime(inpatientData.AdmissionDate).ToString("yyyyMMdd");
+                        iniParam.AdmissionMainDiagnosis = inpatientData.AdmissionMainDiagnosis;
+                        iniParam.InpatientDepartmentCode = inpatientData.InDepartmentId;
+                        iniParam.BedNumber = inpatientData.AdmissionBed;
+                        iniParam.HospitalizationNo = inpatientData.HospitalizationNo;
+                        iniParam.Operators = inpatientData.AdmissionOperator;
+                        iniParam.InsuranceType= param.InsuranceType;
+
                         //入院登记
-                        _residentMedicalInsurance.HospitalizationRegister(param, userBase);
+                        _residentMedicalInsurance.HospitalizationRegister(iniParam, userBase);
                     }
                     else
                     {
@@ -738,7 +691,7 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {  //his登陆
-                var verificationCode = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //医保登陆
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
@@ -747,7 +700,6 @@ namespace NFine.Web.Controllers
                     var modifyParam = new HospitalizationModifyParam()
                     {
                         AdmissionDate = Convert.ToDateTime(param.AdmissionDate).ToString("yyyyMMdd"),
-
                         BedNumber = param.BedNumber,
                         BusinessId = param.BusinessId,
                         FetusNumber = param.FetusNumber,
@@ -771,7 +723,7 @@ namespace NFine.Web.Controllers
                         if (num == 2) modifyParam.DiagnosisIcd10Three = item.DiagnosisCode;
                         num++;
                     }
-                    _residentMedicalInsurance.HospitalizationModify(modifyParam, verificationCode);
+                    _residentMedicalInsurance.HospitalizationModify(modifyParam, userBase);
                 }
                 else
                 {
@@ -982,16 +934,16 @@ namespace NFine.Web.Controllers
                //获取住院病人
                var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
                if (inpatientInfoData == null) throw new Exception("该病人未在中心库中,请检查是否办理医保入院!!!");
-               if (Convert.ToInt32(inpatientInfoData.InpatientHospitalState) < 2) throw new Exception("当前病人基层系统未办理出院,不能办理医保结算!!!");
+              
                //医保登录
                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                var presettlementParam = new LeaveHospitalSettlementParam()
                {
                    MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                   LeaveHospitalDate = (!string.IsNullOrWhiteSpace(inpatientInfoData.LeaveHospitalDate)) ? Convert.ToDateTime(inpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd") : DateTime.Now.ToString("yyyyMMdd"),
-                   LeaveHospitalMainDiagnosisIcd10 = inpatientInfoData.LeaveHospitalMainDiagnosisIcd10,
-                   LeaveHospitalDiagnosisIcd10Two = inpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
-                   LeaveHospitalMainDiagnosis = inpatientInfoData.LeaveHospitalMainDiagnosis,
+                   //LeaveHospitalDate = (!string.IsNullOrWhiteSpace(inpatientInfoData.LeaveHospitalDate)) ? Convert.ToDateTime(inpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd") : DateTime.Now.ToString("yyyyMMdd"),
+                   //LeaveHospitalMainDiagnosisIcd10 = inpatientInfoData.LeaveHospitalMainDiagnosisIcd10,
+                   //LeaveHospitalDiagnosisIcd10Two = inpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
+                   //LeaveHospitalMainDiagnosis = inpatientInfoData.LeaveHospitalMainDiagnosis,
                    //LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
                    //LeaveHospitalMainDiagnosisIcd10 = InpatientInfoData.AdmissionMainDiagnosisIcd10,
                    ////LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,

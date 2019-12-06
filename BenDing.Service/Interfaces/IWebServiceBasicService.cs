@@ -60,7 +60,7 @@ namespace BenDing.Service.Interfaces
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>string businessId
-        List<InpatientInfoDetailDto> GetInpatientInfoDetail(UserInfoDto user, InpatientInfoDetailParam param, string businessId);
+        List<InpatientInfoDetailDto> GetInpatientInfoDetail(UserInfoDto user, string businessId);
         /// <summary>
         /// 医保信息保存
         /// </summary>

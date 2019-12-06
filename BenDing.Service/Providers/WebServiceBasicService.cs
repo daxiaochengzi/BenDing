@@ -6,11 +6,16 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.JsonEntiy;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
+using BenDing.Domain.Models.Params;
+using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
+using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces;
 using Newtonsoft.Json;
+using NFine.Application.BenDingManage;
+using NFine.Domain._03_Entity.BenDingManage;
 
 namespace BenDing.Service.Providers
 {
@@ -19,6 +24,7 @@ namespace BenDing.Service.Providers
         private readonly IHisSqlRepository _hisSqlRepository;
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private readonly IWebBasicRepository _webServiceBasic;
+        private  InpatientBase inpatientBaseService = new InpatientBase();
         private readonly ISystemManageRepository _systemManageRepository;
         /// <summary>
         /// 
@@ -31,12 +37,14 @@ namespace BenDing.Service.Providers
             IHisSqlRepository hisSqlRepository,
             IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
             ISystemManageRepository iSystemManageRepository
+         
         )
         {
             _webServiceBasic = iWebServiceBasic;
             _hisSqlRepository = hisSqlRepository;
             _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
             _systemManageRepository = iSystemManageRepository;
+         
         }
 
         /// <summary>
@@ -52,7 +60,7 @@ namespace BenDing.Service.Providers
             var ini = new UserInfoJsonDto();
             List<UserInfoJsonDto> resultList;
             var iniData = new UserInfoDto();
-            var data = _webServiceBasic.HIS_InterfaceList(tradeCode, inputParameter, "");
+            var data = _webServiceBasic.HIS_InterfaceList(tradeCode, inputParameter);
             resultList = GetResultData(ini, data);
             if (resultList.Any())
             {
@@ -76,8 +84,7 @@ namespace BenDing.Service.Providers
             List<OrgDto> result;
             var init = new OrgDto();
             var info = new { 验证码 = userInfo.AuthCode, 医院名称 = name };
-            var data = _webServiceBasic.HIS_InterfaceList("30", JsonConvert.SerializeObject(info),
-                userInfo.UserId);
+            var data = _webServiceBasic.HIS_InterfaceList("30", JsonConvert.SerializeObject(info));
             result = GetResultData(init, data);
             if (result.Any())
             {
@@ -109,8 +116,7 @@ namespace BenDing.Service.Providers
                 验证码 = param.AuthCode,
                 机构编码 = param.OrganizationCode,
             };
-            var data = _webServiceBasic.HIS_InterfaceList("06", JsonConvert.SerializeObject(oCatalogInfo),
-                user.UserId);
+            var data = _webServiceBasic.HIS_InterfaceList("06", JsonConvert.SerializeObject(oCatalogInfo));
             List<ListCount> nums;
             var init = new ListCount();
             nums = GetResultData(init, data);
@@ -121,8 +127,7 @@ namespace BenDing.Service.Providers
             {
                 oCatalogInfo.开始行数 = i;
                 oCatalogInfo.结束行数 = i + param.Nums;
-                var catalogDtoData = _webServiceBasic.HIS_InterfaceList("05",
-                    JsonConvert.SerializeObject(oCatalogInfo), user.UserId);
+                var catalogDtoData = _webServiceBasic.HIS_InterfaceList("05",JsonConvert.SerializeObject(oCatalogInfo));
                 List<CatalogDto> resultCatalogDto;
                 var initCatalogDto = new CatalogDto();
                 resultCatalogDto = GetResultData(initCatalogDto, catalogDtoData);
@@ -175,7 +180,7 @@ namespace BenDing.Service.Providers
                 病种名称 = ""
             };
             var data = _webServiceBasic.HIS_InterfaceList("08",
-                Newtonsoft.Json.JsonConvert.SerializeObject(oICD10Info), user.UserId);
+                Newtonsoft.Json.JsonConvert.SerializeObject(oICD10Info));
             List<ListCount> nums;
             var init = new ListCount();
             nums = GetResultData(init, data);
@@ -187,8 +192,7 @@ namespace BenDing.Service.Providers
                 oICD10Info.开始行数 = i;
                 oICD10Info.结束行数 = i + param.Nums;
                 var catalogDtoData =
-                     _webServiceBasic.HIS_InterfaceList("07", JsonConvert.SerializeObject(oICD10Info),
-                        user.UserId);
+                     _webServiceBasic.HIS_InterfaceList("07", JsonConvert.SerializeObject(oICD10Info));
                 List<ICD10InfoDto> resultCatalogDto;
                 var initCatalogDto = new ICD10InfoDto();
                 resultCatalogDto = GetResultData(initCatalogDto, catalogDtoData);
@@ -224,8 +228,7 @@ namespace BenDing.Service.Providers
 
             };
             var init = new OutpatientInfoJsonDto();
-            var data = _webServiceBasic.HIS_InterfaceList("12", JsonConvert.SerializeObject(param),
-                user.UserId);
+            var data = _webServiceBasic.HIS_InterfaceList("12", JsonConvert.SerializeObject(param));
             result = GetResultData(init, data);
             if (result.Any())
             {
@@ -251,8 +254,7 @@ namespace BenDing.Service.Providers
             List<BaseOutpatientDetailJsonDto> result;
            var resultData= new List<BaseOutpatientDetailDto>();
             var init = new BaseOutpatientDetailJsonDto();
-            var data = _webServiceBasic.HIS_InterfaceList("16", JsonConvert.SerializeObject(param),
-                user.UserId);
+            var data = _webServiceBasic.HIS_InterfaceList("16", JsonConvert.SerializeObject(param));
 
             result = GetResultData(init, data);
 
@@ -273,56 +275,120 @@ namespace BenDing.Service.Providers
         public InpatientInfoDto GetInpatientInfo(GetInpatientInfoParam param)
         {
             var resultData = new InpatientInfoDto();
-            var resultDataIni = new InpatientInfoJsonDto();
-            List<InpatientInfoJsonDto> result;
-            var init = new InpatientInfoJsonDto();
-            var data = _webServiceBasic.HIS_InterfaceList("10", JsonConvert.SerializeObject(param.InfoParam, Formatting.Indented), param.User.UserId);
-            result = GetResultData(init, data);
-            if (result.Any())
+            var transactionId = Guid.NewGuid().ToString("N");
+            var xmlData = new MedicalInsuranceXmlDto();
+            xmlData.BusinessId = param.BusinessId;
+            xmlData.HealthInsuranceNo = "21";
+            xmlData.TransactionId = transactionId;
+            xmlData.AuthCode = param.User.AuthCode;
+            xmlData.UserId = param.User.UserId;
+            xmlData.OrganizationCode = param.User.OrganizationCode;
+            var data= _webServiceBasic.HIS_Interface("39", JsonConvert.SerializeObject(xmlData));
+            InpatientInfoJsonDto dataValue = JsonConvert.DeserializeObject<InpatientInfoJsonDto>(data.Msg);
+            if (dataValue != null && dataValue.InpatientInfoJsonData!=null)
             {
-                resultDataIni = result.FirstOrDefault(c => c.BusinessId == param.BusinessId);
-                if (resultDataIni != null)
-                {
-                    resultData = AutoMapper.Mapper.Map<InpatientInfoDto>(resultDataIni);
-                    if (param.IsSave == true)
+                var diagnosisList = dataValue.DiagnosisJson.Select(c => new InpatientDiagnosisDto()
+                { DiagnosisCode = c.DiagnosisCode,
+                  DiagnosisName = c.DiagnosisName,
+                  IsMainDiagnosis = c.IsMainDiagnosis=="是"?true:false,
+                  DiagnosisMedicalInsuranceCode = c.DiagnosisMedicalInsuranceCode
+                }).ToList();
+                resultData = new InpatientInfoDto()
+                {   DiagnosisList = diagnosisList,
+                    HospitalizationId= dataValue.InpatientInfoJsonData.HospitalizationId,
+                    BusinessId = param.BusinessId,
+                    DiagnosisJson = JsonConvert.SerializeObject(dataValue.DiagnosisJson),
+                    AdmissionBed = dataValue.InpatientInfoJsonData.AdmissionBed,
+                    AdmissionDate = dataValue.InpatientInfoJsonData.AdmissionDate,
+                    AdmissionDiagnosticDoctor = dataValue.InpatientInfoJsonData.AdmissionDiagnosticDoctor,
+                    AdmissionDiagnosticDoctorId = dataValue.InpatientInfoJsonData.AdmissionDiagnosticDoctorId,
+                    AdmissionMainDiagnosis = dataValue.InpatientInfoJsonData.AdmissionMainDiagnosis,
+                    AdmissionMainDiagnosisIcd10 = dataValue.InpatientInfoJsonData.AdmissionMainDiagnosisIcd10,
+                    AdmissionOperateTime = dataValue.InpatientInfoJsonData.AdmissionOperateTime,
+                    AdmissionOperator = dataValue.InpatientInfoJsonData.AdmissionOperator,
+                    AdmissionWard = dataValue.InpatientInfoJsonData.AdmissionWard,
+                    FamilyAddress = dataValue.InpatientInfoJsonData.FamilyAddress,
+                    IdCardNo = dataValue.InpatientInfoJsonData.IdCardNo,
+                    PatientName = dataValue.InpatientInfoJsonData.PatientName,
+                    PatientSex = dataValue.InpatientInfoJsonData.PatientSex,
+                    ContactName = dataValue.InpatientInfoJsonData.ContactName,
+                    ContactPhone = dataValue.InpatientInfoJsonData.ContactPhone,
+                    Remark = dataValue.InpatientInfoJsonData.Remark,
+                    HospitalName= param.User.OrganizationName,
+                    HospitalizationNo = dataValue.InpatientInfoJsonData.HospitalizationNo,
+                    TransactionId= transactionId,
+                    InDepartmentName= dataValue.InpatientInfoJsonData.InDepartmentName,
+                    InDepartmentId = dataValue.InpatientInfoJsonData.InDepartmentId,
+                    DocumentNo = dataValue.InpatientInfoJsonData.DocumentNo,
+                };
+                if (param.IsSave == true)
+                {  //删除以前记录
+                    var deleteData = _hisSqlRepository.DeleteDatabase(new DeleteDatabaseParam()
                     {
-                        _hisSqlRepository.SaveInpatientInfo(param.User, resultData);
-                    }
-
+                        User = param.User,
+                        Field = "BusinessId",
+                        Value = param.BusinessId,
+                        TableName = "Inpatient"
+                    });
+                   //添加病人信息
+                    var inpatientEntity = new InpatientEntity();
+                    var insertEntity = AutoMapper.Mapper.Map<InpatientEntity>(resultData);
+                    insertEntity.Id = Guid.NewGuid();
+                    inpatientBaseService.Insert(insertEntity, param.User);
+                   
                 }
 
-
-
             }
-
             return resultData;
         }
-
 
 
         /// <summary>
         /// 获取住院明细
         /// </summary>
-        /// <param name="param"></param>
+        /// <param name="user"></param>
+        /// <param name="businessId"></param>
         /// <returns></returns>
-        public List<InpatientInfoDetailDto> GetInpatientInfoDetail(UserInfoDto user,
-            InpatientInfoDetailParam param, string businessId)
+        public List<InpatientInfoDetailDto> GetInpatientInfoDetail(UserInfoDto user, string businessId)
         {
             var resultData = new List<InpatientInfoDetailDto>();
-            var result = new List<InpatientInfoDetailJsonDto>();
-            var init = new InpatientInfoDetailJsonDto();
-            var data = _webServiceBasic.HIS_InterfaceList("14", JsonConvert.SerializeObject(param),
-                user.UserId);
-            result = GetResultData(init, data);
 
-            if (result.Any())
+            var queryParam = new DatabaseParam()
             {
-                var resultIni = AutoMapper.Mapper.Map<List<InpatientInfoDetailDto>>(result);
-                _hisSqlRepository.SaveInpatientInfoDetail(user, resultIni);
-                //  var msg = "获取住院号【" + resultFirst.住院号 + "】，业务ID【" + param.业务ID + "】的时间段内的住院费用成功，共" + result.Count +
-                //          "条记录";
-            }
+                Field = "BusinessId",
+                Value = businessId,
+                TableName = "Inpatient"
+            };
+            var inpatientData = _hisSqlRepository.QueryDatabase(new InpatientEntity(), queryParam);
+            if (inpatientData == null) throw new Exception("该病人未在中心库中,请检查是否办理医保入院!!!");
+            //获取当前病人
+            var inpatient = inpatientData.FirstOrDefault();
+            var transactionId = Guid.NewGuid().ToString("N");
+            var xmlData = new MedicalInsuranceXmlDto();
+            xmlData.BusinessId = businessId;
+            xmlData.HealthInsuranceNo = "31";
+            xmlData.TransactionId = transactionId;
+            xmlData.AuthCode = user.AuthCode;
+            xmlData.UserId = user.UserId;
+            xmlData.OrganizationCode = user.OrganizationCode;
+            var data = _webServiceBasic.HIS_Interface("39", JsonConvert.SerializeObject(xmlData));
+            InpatientDetailListJsonDto dataValue = JsonConvert.DeserializeObject<InpatientDetailListJsonDto>(data.Msg);
+            if (dataValue != null)
+            {
+                 resultData = AutoMapper.Mapper.Map<List<InpatientInfoDetailDto>>(dataValue.DetailList);
+                var saveParam=new SaveInpatientInfoDetailParam()
+                {
+                    DataList = resultData,
+                    HospitalizationId = inpatient.HospitalizationId,
+                    User = user
+                };
+                   _hisSqlRepository.SaveInpatientInfoDetail(saveParam);
+                //    //  var msg = "获取住院号【" + resultFirst.住院号 + "】，业务ID【" + param.业务ID + "】的时间段内的住院费用成功，共" + result.Count +
+                //    //          "条记录";
+                //}
 
+               
+            }
             return resultData;
         }
 
@@ -353,8 +419,7 @@ namespace BenDing.Service.Providers
 
             List<MedicalInsuranceDto> result;
             var init = new MedicalInsuranceDto();
-            var data = _webServiceBasic.HIS_InterfaceList("36", JsonConvert.SerializeObject(param),
-                user.UserId);
+            var data = _webServiceBasic.HIS_InterfaceList("36", JsonConvert.SerializeObject(param));
             result = GetResultData(init, data);
             var resultFirst = result.FirstOrDefault();
             if (resultFirst != null)
@@ -382,7 +447,7 @@ namespace BenDing.Service.Providers
             }
 
             var resultData = _webServiceBasic.HIS_InterfaceList("37",
-                "{'验证码':'" + param.验证码 + "','业务ID':'" + param.业务ID + "'}", user.UserId);
+                "{'验证码':'" + param.验证码 + "','业务ID':'" + param.业务ID + "'}");
             if (resultData.Result == "1")
             {
                 var count = _hisSqlRepository.DeleteMedicalInsurance(user, param.业务ID);
@@ -398,7 +463,7 @@ namespace BenDing.Service.Providers
         {
           var  resultDataIni=  new List<InformationDto>();
             var resultData =
-                 _webServiceBasic.HIS_InterfaceList("03", JsonConvert.SerializeObject(param), user.UserId);
+                 _webServiceBasic.HIS_InterfaceList("03", JsonConvert.SerializeObject(param));
             var result = new List<InformationJsonDto>();
             var init = new InformationJsonDto();
             if (resultData.Result == "1")
@@ -424,8 +489,7 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public void GetXmlData(MedicalInsuranceXmlDto param)
         {
-            var data = _webServiceBasic.HIS_InterfaceList("39", JsonConvert.SerializeObject(param),
-                param.UserId);
+            var data = _webServiceBasic.HIS_InterfaceList("39", JsonConvert.SerializeObject(param));
         }
 
         /// <summary>
@@ -436,8 +500,7 @@ namespace BenDing.Service.Providers
         public void SaveXmlData(SaveXmlData param)
         {
 
-            var data = _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(param),
-                param.UserId);
+            var data = _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(param));
             //if (data.Result == "1")
             //{
             //    var saveParam = new MedicalInsuranceDataAllParam()
@@ -542,8 +605,7 @@ namespace BenDing.Service.Providers
                     PairCodeRow = uploadDataRow,
                     VersionNumber = ""
                 };
-                _webServiceBasic.HIS_InterfaceList("35", JsonConvert.SerializeObject(uploadData),
-                   user.UserId);
+                _webServiceBasic.HIS_InterfaceList("35", JsonConvert.SerializeObject(uploadData));
                 resultData = _medicalInsuranceSqlRepository.UpdateThreeCataloguePairCodeUpload(user.OrganizationCode);
             }
 

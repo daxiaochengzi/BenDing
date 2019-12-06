@@ -5,17 +5,30 @@ using BenDing.Domain.Models.Dto.Resident;
 using Newtonsoft.Json;
 
 namespace BenDing.Domain.Models.Dto.Web
-{
+{/// <summary>
+/// 病人信息
+/// </summary>
    public class InpatientInfoDto
     {/// <summary>
-     /// 医院名称
-     /// </summary>
-    
+    /// 诊断列表
+    /// </summary>
+        public List<InpatientDiagnosisDto> DiagnosisList { get; set; }
+        /// <summary>
+        /// 住院id
+        /// </summary>
+        public string HospitalizationId { get; set; }
+        /// <summary>
+        /// 医院名称
+        /// </summary>
         public string HospitalName { get; set; }
+        /// <summary>
+        /// 诊断json
+        /// </summary>
+        public string DiagnosisJson { get; set; }
         /// <summary>
         /// 入院日期
         /// </summary>
-        
+
         public string AdmissionDate { get; set; }
         /// <summary>
         /// 出院日期
@@ -98,16 +111,6 @@ namespace BenDing.Domain.Models.Dto.Web
       
         public string AdmissionMainDiagnosisIcd10 { get; set; }
         /// <summary>
-        /// 入院次诊断
-        /// </summary>
-       
-        public string AdmissionSecondaryDiagnosis { get; set; }
-        /// <summary>
-        /// 入院次诊断ICD10
-        /// </summary>
-        
-        public string AdmissionSecondaryDiagnosisIcd10 { get; set; }
-        /// <summary>
         /// 入院病区
         /// </summary>
        
@@ -132,79 +135,70 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
        
         public string Remark { get; set; }
+
         /// <summary>
-        /// 出院科室
-        /// </summary>
-     
-        public string LeaveDepartmentName { get; set; }
-        /// <summary>
-        /// 出院科室编码
-        /// </summary>
-      
-        public string LeaveDepartmentId { get; set; }
-        /// <summary>
-        /// 出院病区
+        /// 单据号
         /// </summary>
        
-        public string LeaveHospitalWard { get; set; }
-        /// <summary>
-        /// 出院床位
-        /// </summary>
-        
-        public string LeaveHospitalBed { get; set; }
-        /// <summary>
-        /// 出院主诊断
-        /// </summary>
-        
-        public string LeaveHospitalMainDiagnosis { get; set; }
-        /// <summary>
-        /// 出院主诊断ICD10
-        /// </summary>
-        
-        public string LeaveHospitalMainDiagnosisIcd10 { get; set; }
-        /// <summary>
-        /// 出院次诊断
-        /// </summary>
-      
-        public string LeaveHospitalSecondaryDiagnosis { get; set; }
-        /// <summary>
-        /// 出院次诊断ICD10
-        /// </summary>
-      
-        public string LeaveHospitalSecondaryDiagnosisIcd10 { get; set; }
-        /// <summary>
-        /// 在院状态
-        /// </summary>
-        
-        public string InpatientHospitalState { get; set; }
+        public string DocumentNo { get; set; }
+        ///// <summary>
+        ///// 出院科室
+        ///// </summary>
+
+        //public string LeaveDepartmentName { get; set; }
+        ///// <summary>
+        ///// 出院科室编码
+        ///// </summary>
+
+        //public string LeaveDepartmentId { get; set; }
+        ///// <summary>
+        ///// 出院病区
+        ///// </summary>
+
+        //public string LeaveHospitalWard { get; set; }
+        ///// <summary>
+        ///// 出院床位
+        ///// </summary>
+
+        //public string LeaveHospitalBed { get; set; }
+        ///// <summary>
+        ///// 出院主诊断
+        ///// </summary>
+
+        //public string LeaveHospitalMainDiagnosis { get; set; }
+        ///// <summary>
+        ///// 出院主诊断ICD10
+        ///// </summary>
+
+        //public string LeaveHospitalMainDiagnosisIcd10 { get; set; }
+        ///// <summary>
+        ///// 出院次诊断
+        ///// </summary>
+
+        //public string LeaveHospitalSecondaryDiagnosis { get; set; }
+        ///// <summary>
+        ///// 出院次诊断ICD10
+        ///// </summary>
+
+        //public string LeaveHospitalSecondaryDiagnosisIcd10 { get; set; }
+        ///// <summary>
+        ///// 在院状态
+        ///// </summary>
+
+        //public string InpatientHospitalState { get; set; }
         /// <summary>
         /// 入院诊断医生编码
         /// </summary>
-        
+
         public string AdmissionDiagnosticDoctorId { get; set; }
+
         /// <summary>
-        /// 入院床位编码
+        /// 交易码
         /// </summary>
-       
-        public string AdmissionBedId { get; set; }
+        public  string TransactionId { get; set; }
         /// <summary>
-        /// 入院病区编码
+        /// 
         /// </summary>
-      
-        public string AdmissionWardId { get; set; }
-        /// <summary>
-        /// 出院床位编码
-        /// </summary>
-      
-        public string LeaveHospitalBedId { get; set; }
-        /// <summary>
-        /// 出院病区编码
-        /// </summary>
-        
-        public string LeaveHospitalWardId { get; set; }
-       /// <summary>
-       /// 
-       /// </summary>
         public ResidentUserInfoDto MedicalInsuranceResidentInfo { get; set; }
     }
 }

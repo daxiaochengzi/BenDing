@@ -6,6 +6,8 @@
 *********************************************************************************/
 using NFine.Code;
 using System;
+using NFine.Domain.BenDing.Infrastructure;
+using BenDing.Domain.Models.Dto.Web;
 
 namespace NFine.Domain
 {
@@ -22,6 +24,38 @@ namespace NFine.Domain
             }
             entity.F_CreatorTime = DateTime.Now;
         }
+        //public void BenDingCreate(UserInfoDto user)
+        //{
+        //    var entity = this as IBenDingCreationAudited;
+        //    if (entity != null)
+        //    {
+        //        entity.CreateUserId = user.UserId;
+        //        entity.CreateTime = DateTime.Now;
+               
+        //    }
+        //}
+        //public void BenDingModify(UserInfoDto user,string id)
+        //{
+        //    var entity = this as IBenDingModificationAudited;
+        //    if (entity != null)
+        //    {
+        //        entity.UpdateUserId = user.UserId;
+        //        entity.UpdateTime = DateTime.Now;
+        //        entity.Id = id;
+              
+        //    }
+        //}
+        //public void BenDingRemove(UserInfoDto user, string id)
+        //{
+        //    var entity = this as IBenDingDeleteAudited;
+        //    if (entity != null)
+        //    {
+        //        entity.DeleteUserId = user.UserId;
+        //        entity.DeleteTime = DateTime.Now;
+        //        entity.IsDelete = true;
+        //        entity.Id = id;
+        //    }
+        //}
         public void Modify(string keyValue)
         {
             var entity = this as IModificationAudited;

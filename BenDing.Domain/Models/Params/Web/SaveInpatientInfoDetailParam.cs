@@ -6,22 +6,19 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
 
 namespace BenDing.Domain.Models.Params.Web
-{/// <summary>
-/// 获取病人查询
-/// </summary>
-  public  class GetInpatientInfoParam
-    {
+{
+  public  class SaveInpatientInfoDetailParam
+    {/// <summary>
+    /// 数据
+    /// </summary>
+        public List<InpatientInfoDetailDto> DataList { get; set; }
         /// <summary>
-        /// 是否保存数据
+        /// 住院id
         /// </summary>
-        public  bool IsSave { get; set; }
-        /// <summary>
-        /// 业务
-        /// </summary>
-        public  string BusinessId { get; set; }
+        public string HospitalizationId { get; set; }
         /// <summary>
         /// 用户
         /// </summary>
         public UserInfoDto User { get; set; }
-    } 
+    }
 }

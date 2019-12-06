@@ -8,8 +8,10 @@ namespace NFine.Domain.BenDing.Infrastructure
 {
   public  interface IBenDingCreationAudited
     {
-        string Id { get; set; }
+        Guid Id { get; set; }
         string CreateUserId { get; set; }
         DateTime? CreateTime { get; set; }
+        string OrganizationCode { get; set; }
+        string OrganizationName { get; set; }
     }
 }
