@@ -407,7 +407,7 @@ namespace BenDing.Repository.Providers.Web
                 if (param.Any())
                 {
 
-                    var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.CostDetailId).ToList());
+                    var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.DetailId).ToList());
                     var paramFirst = param.FirstOrDefault();
                     if (paramFirst != null)
                     {
@@ -420,9 +420,9 @@ namespace BenDing.Repository.Providers.Web
                         if (data.Any())
                         {    //获取最大排序号
                             sort = data.Select(c => c.DataSort).Max();
-                            var costDetailIdList = data.Select(c => c.CostDetailId).ToList();
+                            var costDetailIdList = data.Select(c => c.DetailId).ToList();
                             //排除已包含的明细id
-                            paramNew = param.Where(c => !costDetailIdList.Contains(c.CostDetailId)).ToList();
+                            paramNew = param.Where(c => !costDetailIdList.Contains(c.DetailId)).ToList();
                         }
                         else
                         {
@@ -443,7 +443,7 @@ namespace BenDing.Repository.Providers.Web
                                ,[OperateDoctorName] ,[OperateDoctorId],[OperateTime] ,[PrescriptionDoctor] ,[Operators],[PracticeDoctorNumber]
                                ,[CostWriteOffId],[OrganizationCode],[OrganizationName] ,[CreateTime] ,[IsDelete],[DeleteTime],CreateUserId
                                ,DataSort,UploadMark,RecipeCodeFixedEncoding,BillDoctorIdFixedEncoding,BusinessTime)
-                           VALUES('{Guid.NewGuid()}','{item.OutpatientNo}','{item.CostDetailId}','{item.DirectoryName}','{item.DirectoryCode}','{item.DirectoryCategoryName}','{item.DirectoryCategoryCode}'
+                           VALUES('{Guid.NewGuid()}','{item.OutpatientNo}','{item.DetailId}','{item.DirectoryName}','{item.DirectoryCode}','{item.DirectoryCategoryName}','{item.DirectoryCategoryCode}'
                                  ,'{item.Unit}','{item.Formulation}','{item.Specification}',{item.UnitPrice},{item.Quantity},{item.Amount},'{item.Dosage}','{item.Usage}','{item.MedicateDays}',
                                  '{item.HospitalPricingUnit}','{item.IsImportedDrugs}','{item.DrugProducingArea}','{item.RecipeCode}','{item.CostDocumentType}','{item.BillDepartment}'
                                  ,'{item.BillDepartmentId}','{item.BillDoctorName}','{item.BillDoctorId}','{item.BillTime}','{item.OperateDepartmentName}','{item.OperateDepartmentId}'
@@ -498,34 +498,30 @@ namespace BenDing.Repository.Providers.Web
                             if (data.Any())
                             {    //获取最大排序号
                                 sort = data.Select(c => c.DataSort).Max();
-                                var costDetailIdList = data.Select(c => c.CostDetailId).ToList();
+                                var costDetailIdList = data.Select(c => c.DetailId).ToList();
                                 //排除已包含的明细id
                                 paramNew = param.DataList.Where(c => !costDetailIdList.Contains(c.DetailId)).ToList();
                             }
                             else
                             {
-                                paramNew = param.DataList.OrderBy(d => d.OperateTime).ToList();
+                                paramNew = param.DataList.OrderBy(d => d.BillTime).ToList();
                             }
-
-                          
-
                             foreach (var item in paramNew)
                             {
-                               
                                 sort++;
-                                var businessTime = item.OperateTime.Substring(0, 10) + " 00:00:00.000";
+                                var businessTime = item.BillTime.Substring(0, 10) + " 00:00:00.000";
                                 string str = $@"INSERT INTO [dbo].[HospitalizationFee]
                                            ([Id],[HospitalizationId],[DetailId],[DocumentNo],[BillDepartment] ,[DirectoryName],[DirectoryCode]
                                            ,[ProjectCode] ,[Formulation],[Specification],[UnitPrice],[Usage] ,[Quantity],[Amount],[DocumentType]
                                            ,[BillDepartmentId] ,[BillDoctorId] ,[BillDoctorName] ,[Dosage] ,[Unit]
                                            ,[OperateDepartmentName],[OperateDepartmentId],[OperateDoctorName],[OperateDoctorId] ,[DoorEmergencyFeeMark]
-                                           ,[HospitalAuditMark],[OperateTime],[OutHospitalInspectMark] ,[OrganizationCode] ,[OrganizationName]
+                                           ,[HospitalAuditMark],[BillTime],[OutHospitalInspectMark] ,[OrganizationCode] ,[OrganizationName]
                                            ,[UploadMark] ,[DataSort] ,[AdjustmentDifferenceValue],[BusinessTime],[CreateTime],[CreateUserId])
                                            VALUES('{Guid.NewGuid()}','{param.HospitalizationId}','{item.DetailId}','{item.DocumentNo}','{item.BillDepartment}','{item.DirectoryName}','{item.DirectoryCode}',
                                                   '{item.ProjectCode}','{item.Formulation}','{item.Specification}',{item.UnitPrice},'{item.Usage}',{item.Quantity},{item.Amount},'{item.DocumentType}',
                                                   '{item.BillDepartmentId}','{item.BillDoctorId}','{item.BillDoctorName}','{item.Dosage}','{item.Unit}',
                                                   '{item.OperateDepartmentName}','{item.OperateDepartmentId}','{item.OperateDoctorName}','{item.OperateDoctorId}','{item.DoorEmergencyFeeMark}',
-                                                  '{item.HospitalAuditMark}','{item.OperateTime}','{item.OutHospitalInspectMark}','{param.User.OrganizationCode}','{param.User.OrganizationName}',
+                                                  '{item.HospitalAuditMark}','{item.BillTime}','{item.OutHospitalInspectMark}','{param.User.OrganizationCode}','{param.User.OrganizationName}',
                                                   0,{sort},0,'{businessTime}',getDate(),'{param.User.UserId}');";
                                 insertSql += str;
                             }
@@ -609,9 +605,9 @@ namespace BenDing.Repository.Providers.Web
 
                 string querySql = $@"
                              select * from [dbo].[HospitalizationFee] 
-                             where HospitalizationNo=(select top 1 a.HospitalizationNo from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
+                             where HospitalizationId=(select top 1 a.HospitalizationId from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
                 string countSql = $@"select COUNT(*) from [dbo].[HospitalizationFee] 
-                              where HospitalizationNo=(select top 1 a.HospitalizationNo from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
+                              where HospitalizationId=(select top 1 a.HospitalizationId from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
                 string whereSql = "";
                 if (param.Limit != 0 && param.Page > 0)
                 {
@@ -630,9 +626,6 @@ namespace BenDing.Repository.Providers.Web
                                 BillDepartment = t.BillDepartment,
                                 DirectoryCode = t.DirectoryCode,
                                 DirectoryName = t.DirectoryName,
-                                DirectoryCategoryCode = t.DirectoryCategoryCode != null
-                                            ? ((CatalogTypeEnum)Convert.ToInt32(t.DirectoryCategoryCode)).ToString()
-                                            : t.DirectoryCategoryCode,
                                 UnitPrice = t.UnitPrice,
                                 UploadUserName = t.UploadUserName,
                                 Quantity = t.Quantity,
@@ -676,7 +669,7 @@ namespace BenDing.Repository.Providers.Web
                                 BillDepartment = c.BillDepartment,
                                 DirectoryCode = c.DirectoryCode,
                                 DirectoryName = c.DirectoryName,
-                                DirectoryCategoryCode = c.DirectoryCategoryCode,
+                              
                                 UnitPrice = c.UnitPrice,
                                 UploadUserName = c.UploadUserName,
                                 Quantity = c.Quantity,
@@ -685,6 +678,7 @@ namespace BenDing.Repository.Providers.Web
                                 OperateDoctorName = c.OperateDoctorName,
                                 UploadMark = c.UploadMark,
                                 AdjustmentDifferenceValue = c.AdjustmentDifferenceValue,
+                                DirectoryCategoryCode = itemPairCode != null ? ((CatalogTypeEnum)Convert.ToInt32(itemPairCode.DirectoryCategoryCode)).ToString() : null,
                                 BlockPrice = itemPairCode != null ? GetBlockPrice(itemPairCode, gradeData) : 0,
                                 ProjectCode = itemPairCode?.ProjectCode,
                                 ProjectLevel = itemPairCode != null ? ((ProjectLevel)Convert.ToInt32(itemPairCode.ProjectLevel)).ToString() : null,

@@ -126,7 +126,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 执行时间
         /// </summary>
         
-        public string OperateTime { get; set; }
+        public string BillTime { get; set; }
         /// <summary>
         /// 门急费用标志
         /// </summary>

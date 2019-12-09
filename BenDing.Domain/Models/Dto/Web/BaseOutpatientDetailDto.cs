@@ -16,7 +16,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 费用明细ID
         /// </summary>
       
-        public string CostDetailId { get; set; }
+        public string DetailId { get; set; }
         /// <summary>
         /// 项目名称
         /// </summary>

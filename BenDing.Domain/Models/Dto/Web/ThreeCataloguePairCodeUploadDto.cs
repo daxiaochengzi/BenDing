@@ -127,15 +127,40 @@ namespace BenDing.Domain.Models.Dto.Web
     public class QueryThreeCataloguePairCodeUploadDto
     {
         public Guid Id { get; set; }
+        /// <summary>
+        /// 项目编码
+        /// </summary>
         public string ProjectCode { get; set; }
+        /// <summary>
+        /// 项目名称
+        /// </summary>
         public string ProjectName { get; set; }
+        /// <summary>
+        /// 项目类型
+        /// </summary>
         public string ProjectCodeType { get; set; }
+        /// <summary>
+        /// 项目等级
+        /// </summary>
+        public string ProjectLevel { get; set; }
+        /// <summary>
+        /// 限制标志
+        /// </summary>
 
         public  string RestrictionSign { get; set; }
+       /// <summary>
+       /// 备注
+       /// </summary>
         public  string Remark { get; set; }
+        /// <summary>
+        /// 目录类型
+        /// </summary>
      
-        public  string DirectoryType { get; set; }
+        public  string DirectoryCategoryCode { get; set; }
+        /// <summary>
+        /// 目录编码
+        /// </summary>
         public string DirectoryCode { get; set; }
-        public  string ProjectLevel { get; set; }
+       
     }
 }

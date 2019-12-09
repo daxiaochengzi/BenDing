@@ -167,7 +167,7 @@ namespace BenDing.Service.Providers
         /// <param name="code"></param>
         /// <param name="num"></param>
         /// <returns></returns>
-        public string GetICD10(UserInfoDto user, CatalogParam param)
+        public string GetIcd10(UserInfoDto user, CatalogParam param)
         {
             var time = _hisSqlRepository.GetICD10Time();
             var timeNew = Convert.ToDateTime(time).ToString("yyyy-MM-dd HH:ss:mm") ??
@@ -493,14 +493,15 @@ namespace BenDing.Service.Providers
         }
 
         /// <summary>
-        /// 获取医保构建参数
+        /// 医保信息回写至基层系统
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
         public void SaveXmlData(SaveXmlData param)
         {
+       
 
-            var data = _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(param));
+            //var data = _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(param));
             //if (data.Result == "1")
             //{
             //    var saveParam = new MedicalInsuranceDataAllParam()
@@ -575,11 +576,15 @@ namespace BenDing.Service.Providers
 
             return result;
         }
-
-        public int ThreeCataloguePairCodeUpload(UserInfoDto user)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public int ThreeCataloguePairCodeUpload(UpdateThreeCataloguePairCodeUploadParam param)
         {
             int resultData = 0;
-            var data = _medicalInsuranceSqlRepository.ThreeCataloguePairCodeUpload(user.OrganizationCode);
+            var data = _medicalInsuranceSqlRepository.ThreeCataloguePairCodeUpload(param);
             if (data.Any())
             {
                 var uploadDataRow = data.Select(c => new ThreeCataloguePairCodeUploadRowDto()
@@ -589,7 +594,7 @@ namespace BenDing.Service.Providers
                     Manufacturer = "",
                     ProjectName = c.ProjectName,
                     ProjectCode = c.ProjectCode,
-                    ProjectCodeType = c.DirectoryType,
+                    ProjectCodeType = c.DirectoryCategoryCode,
                     ProjectCodeTypeDetail = c.ProjectCodeType,
                     Remark = c.Remark,
                     ProjectLevel = ((ProjectLevel)Convert.ToInt32(c.ProjectLevel)).ToString(),
@@ -598,15 +603,17 @@ namespace BenDing.Service.Providers
                 }).ToList();
                 var uploadData = new ThreeCataloguePairCodeUploadDto()
                 {
-                    AuthCode = user.AuthCode,
+                    AuthCode = param.User.AuthCode,
                     CanCelState = "0",
-                    UserName = user.UserName,
-                    OrganizationCode = user.OrganizationCode,
+                    UserName = param.User.UserName,
+                    OrganizationCode = param.User.OrganizationCode,
                     PairCodeRow = uploadDataRow,
                     VersionNumber = ""
                 };
-                _webServiceBasic.HIS_InterfaceList("35", JsonConvert.SerializeObject(uploadData));
-                resultData = _medicalInsuranceSqlRepository.UpdateThreeCataloguePairCodeUpload(user.OrganizationCode);
+                _webServiceBasic.HIS_Interface("35", JsonConvert.SerializeObject(uploadData));
+              
+               
+                resultData = _medicalInsuranceSqlRepository.UpdateThreeCataloguePairCodeUpload(param);
             }
 
             //限制用药

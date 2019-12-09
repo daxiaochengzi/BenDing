@@ -172,6 +172,7 @@
     <Compile Include="Models\Params\UI\QueryHospitalizationFeeUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryHospitalizationPresettlementUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryMedicalInsuranceUiParam.cs" />
+    <Compile Include="Models\Params\UI\QueryPrescriptionDetailUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryProjectUiParam.cs" />
     <Compile Include="Models\Params\UI\ResidentHospitalizationRegisterUiParam.cs" />
     <Compile Include="Models\Params\UI\SaveXmlDataUiParam.cs" />
@@ -206,10 +207,12 @@
     <Compile Include="Models\Params\Web\QueryOutpatientParam.cs" />
     <Compile Include="Models\Params\Web\SaveInpatientInfoDetailParam.cs" />
     <Compile Include="Models\Params\Web\SaveXmlData.cs" />
+    <Compile Include="Models\Params\Web\SaveXmlDataParam.cs" />
     <Compile Include="Models\Params\Web\SingleResidentInfQueryUiParam.cs" />
     <Compile Include="Models\Params\Web\UiCatalogParam.cs" />
     <Compile Include="Models\Params\Web\UpdateHospitalizationFeeParam.cs" />
     <Compile Include="Models\Params\Web\UpdateMedicalInsuranceResidentInfoParam.cs" />
+    <Compile Include="Models\Params\Web\UpdateThreeCataloguePairCodeUploadParam.cs" />
     <Compile Include="Models\Params\Web\UserInfoParam.cs" />
     <Compile Include="Models\Params\Web\XmlData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

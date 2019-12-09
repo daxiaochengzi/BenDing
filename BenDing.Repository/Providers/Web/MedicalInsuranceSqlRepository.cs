@@ -219,7 +219,7 @@ namespace BenDing.Repository.Providers.Web
             {
                 sqlConnection.Open();
                 string strSql = @" SELECT [Id]
-                              ,[HisHospitalizationId]
+                              ,[BusinessId]
                               ,[InsuranceNo]
                               ,[MedicalInsuranceAllAmount]
                               ,[MedicalInsuranceHospitalizationNo]
@@ -231,13 +231,12 @@ namespace BenDing.Repository.Providers.Web
                               ,[OrganizationName]
                               ,[InsuranceType]
                               ,[SettlementNo]
-                             
                             FROM [dbo].[MedicalInsurance]
                             where  IsDelete=0";
                 if (!string.IsNullOrWhiteSpace(param.DataId))
                     strSql += $" and Id='{param.DataId}'";
                 if (!string.IsNullOrWhiteSpace(param.BusinessId))
-                    strSql += $" and HisHospitalizationId='{CommonHelp.GuidToStr(param.BusinessId)}'";
+                    strSql += $" and BusinessId='{CommonHelp.GuidToStr(param.BusinessId)}'";
                 if (!string.IsNullOrWhiteSpace(param.OrganizationCode))
                     strSql += $" and OrganizationCode='{param.OrganizationCode}'";
                 var data = sqlConnection.QueryFirstOrDefault<MedicalInsuranceResidentInfoDto>(strSql);
@@ -465,7 +464,7 @@ namespace BenDing.Repository.Providers.Web
                     var updateId = CommonHelp.ListToStr(param.DirectoryCodeList);
                     string sqlStr = $@"
                             select a.FixedEncoding,a.DirectoryCode,b.ProjectCode,b.ProjectCodeType,
-                            b.ProjectName,b.ProjectLevel,b.Formulation,b.Specification,b.Unit,
+                            b.ProjectName,b.ProjectLevel,b.Formulation,b.Specification,b.Unit,a.DirectoryCategoryCode,
                             b.OneBlock,b.TwoBlock,b.ThreeBlock,b.FourBlock,b.Manufacturer,b.LimitPaymentScope,b.NewCodeMark,
                             b.ResidentOutpatientBlock,b.ResidentOutpatientSign,b.ResidentSelfPayProportion,b.WorkersSelfPayProportion
                             from [dbo].[ThreeCataloguePairCode] as a
@@ -611,22 +610,37 @@ namespace BenDing.Repository.Providers.Web
             }
         }
         /// <summary>
-        /// 三大目录查询
+        /// 
         /// </summary>
         /// <param name="organizationCode"></param>
         /// <returns></returns>
-        public List<QueryThreeCataloguePairCodeUploadDto> ThreeCataloguePairCodeUpload(
-            string organizationCode)
+        public List<QueryThreeCataloguePairCodeUploadDto> ThreeCataloguePairCodeUpload(UpdateThreeCataloguePairCodeUploadParam param)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 var resultData = new List<QueryThreeCataloguePairCodeUploadDto>();
                 sqlConnection.Open();
-                string querySql = $@"select a.[Id],[ProjectCode],[ProjectName],[ProjectCodeType],ProjectLevel,
-                                    [RestrictionSign],[Remark],b.DirectoryCode,[DirectoryType]
+                string querySql = null;
+                if (param.ProjectCodeList.Any())
+                {
+                    var projectCodeList = CommonHelp.ListToStr(param.ProjectCodeList);
+                 
+                    querySql = $@"select a.[Id],a.[ProjectCode],a.[ProjectName],[ProjectCodeType],ProjectLevel,
+                                    [RestrictionSign],[Remark],b.DirectoryCode,[DirectoryCategoryCode]
                                     from [dbo].[MedicalInsuranceProject] as a inner join [dbo].[ThreeCataloguePairCode] as b
-                                    on a.ProjectCode=b.MedicalInsuranceDirectoryCode where b.UploadState=0 and OrganizationCode='{organizationCode}'
-                                    and IsDelete=0";
+                                    on a.ProjectCode=b.ProjectCode where b.UploadState=0 and a.ProjectCode in({projectCodeList})
+                                    and a.IsDelete=0 and b.IsDelete=0 and OrganizationCode='{param.User.OrganizationCode}'";
+                }
+                else
+                {
+                    querySql = $@"select a.[Id],a.[ProjectCode],a.[ProjectName],[ProjectCodeType],ProjectLevel,
+                                    [RestrictionSign],[Remark],b.DirectoryCode,[DirectoryCategoryCode]
+                                    from [dbo].[MedicalInsuranceProject] as a inner join [dbo].[ThreeCataloguePairCode] as b
+                                    on a.ProjectCode=b.ProjectCode where b.UploadState=0 
+                                    and a.IsDelete=0 and b.IsDelete=0 and OrganizationCode='{param.User.OrganizationCode}'";
+
+                }
+              
                 var data = sqlConnection.Query<QueryThreeCataloguePairCodeUploadDto>(querySql);
                 if (data != null && data.Any())
                 {
@@ -640,17 +654,27 @@ namespace BenDing.Repository.Providers.Web
         /// <summary>
         /// his上传更新数据
         /// </summary>
-        /// <param name="organizationCode"></param>
+        /// <param name="param"></param>
         /// <returns></returns>
-        public int UpdateThreeCataloguePairCodeUpload(string organizationCode)
+        public int UpdateThreeCataloguePairCodeUpload(UpdateThreeCataloguePairCodeUploadParam param)
         {
             Int32 resultData;
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
 
                 sqlConnection.Open();
-                string querySql = $@"update [dbo].[ThreeCataloguePairCode] set UploadState=1 where 
-                                 UploadState=0 and OrganizationCode='{organizationCode}' and IsDelete=0";
+                string querySql = "";
+                if (param.ProjectCodeList.Any())
+                {
+                    var projectCodeId = CommonHelp.ListToStr(param.ProjectCodeList);
+                    querySql = $@"update [dbo].[ThreeCataloguePairCode] set UploadState=1 where  ProjectCode in({projectCodeId}) and
+                                 UploadState=0 and OrganizationCode='{param.User.OrganizationCode}' and IsDelete=0";
+                }
+                else
+                {
+                    querySql = $@"update [dbo].[ThreeCataloguePairCode] set UploadState=1 where 
+                                 UploadState=0 and OrganizationCode='{param.User.OrganizationCode}' and IsDelete=0";
+                }
                 resultData = sqlConnection.Execute(querySql);
 
                 sqlConnection.Close();

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -8,14 +7,12 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using BenDing.Domain.Models.Dto.Base;
 
-namespace BenDing.Domain.Models.Params.Base
-{/// <summary>
-    /// 根据业务id查询数据
-    /// </summary>
-    public class BaseUiBusinessIdDataParam 
-    { /// <summary>
-      /// 用户id
-      /// </summary>
+namespace BenDing.Domain.Models.Params.UI
+{
+  public  class QueryPrescriptionDetailUiParam: PaginationDto
+    {/// <summary>
+     /// 用户id
+     /// </summary>
         //[JsonProperty(PropertyName = "操作人员ID")]
         [XmlElement("用户ids", IsNullable = false)]
         [Display(Name = "用户id")]

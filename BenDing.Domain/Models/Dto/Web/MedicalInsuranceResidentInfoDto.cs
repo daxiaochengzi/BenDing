@@ -13,6 +13,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// id
         /// </summary>
         public Guid Id { get; set; }
+       
         /// <summary>
         /// his住院id
         /// </summary>

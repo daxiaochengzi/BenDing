@@ -2,9 +2,6 @@
 using BenDing.Domain.Models.Params.Web;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using BenDing.Domain.Models.Params.UI;
 
 namespace BenDing.Service.Interfaces
@@ -18,64 +15,75 @@ namespace BenDing.Service.Interfaces
      /// <returns></returns>
         UserInfoDto GetVerificationCode(string tradeCode, string inputParameter);
         /// <summary>
-        /// 获取住院病人      GetCatalog(UserInfoDto user, CatalogParam param)
+        /// 获取住院病人
         /// </summary>
-        /// <param name="infoParam"></param>
+        /// <param name="param"></param>
         /// <returns></returns>
         InpatientInfoDto GetInpatientInfo(GetInpatientInfoParam param);
         /// <summary>
         /// 获取机构
         /// </summary>
-        /// <param name="verCode"></param>
+        /// <param name="userinfo"></param>
         /// <param name="name"></param>
         /// <returns></returns>
         Int32 GetOrg(UserInfoDto userinfo, string name);
+
         /// <summary>
         /// 获取三大目录
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
         /// <returns></returns>
         string GetCatalog(UserInfoDto user, CatalogParam param);
+
         /// <summary>
         /// 删除三大目录
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="catalog"></param>
         /// <returns></returns>
         string DeleteCatalog(UserInfoDto user, int catalog);
+
         /// <summary>
         /// 获取门诊病人
         /// </summary>
         /// <param name="user"></param>
         /// <param name="param"></param>
+        /// <param name="isSave"></param>
         /// <returns></returns>
         BaseOutpatientInfoDto GetOutpatientPerson(UserInfoDto user, GetOutpatientUiParam param,bool isSave);
+
         /// <summary>
         /// 获取门诊病人明细
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
         /// <returns></returns>
         List<BaseOutpatientDetailDto> GetOutpatientDetailPerson(UserInfoDto user, OutpatientDetailParam param);
         /// <summary>
         /// 获取住院病人明细
         /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>string businessId
+        /// <param name="user"></param>
+        /// <param name="businessId"></param>
+        /// <returns></returns>
         List<InpatientInfoDetailDto> GetInpatientInfoDetail(UserInfoDto user, string businessId);
         /// <summary>
         /// 医保信息保存
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
-        /// <returns></returns>
         void MedicalInsuranceSave(UserInfoDto user, MedicalInsuranceParam param);
         /// <summary>
         /// 删除医保保存信息
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
-        /// <returns></returns>
         void DeleteMedicalInsurance(UserInfoDto user, DeleteMedicalInsuranceParam param);
+
         /// <summary>
         ///  获取HIS系统中科室、医师、病区、床位的基本信息
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
         /// <returns></returns>
         List<InformationDto> SaveInformation(UserInfoDto user, InformationParam param);
@@ -83,20 +91,19 @@ namespace BenDing.Service.Interfaces
         /// 获取ICD10
         /// </summary>
         /// <param name="user"></param>
-        /// <param name="CatalogParam"></param>
+        /// <param name="param"></param>
         /// <returns></returns>
-        string GetICD10(UserInfoDto user, CatalogParam param);
+        string GetIcd10(UserInfoDto user, CatalogParam param);
         void GetXmlData(MedicalInsuranceXmlDto param);
         void SaveXmlData(SaveXmlData param);
 
         UserInfoDto GetUserBaseInfo(string param);
-
         /// <summary>
-        /// 三大目录对码信息回写至基层系统6
+        /// 三大目录对码信息回写至基层系统
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="param"></param>
         /// <returns></returns>
-        int ThreeCataloguePairCodeUpload(UserInfoDto user);
+        int ThreeCataloguePairCodeUpload(UpdateThreeCataloguePairCodeUploadParam param);
         /// <summary>
         /// 住院医保查询
         /// </summary>

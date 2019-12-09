@@ -147,7 +147,7 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var data = _webServiceBasicService.GetICD10(userBase, new CatalogParam()
+                var data = _webServiceBasicService.GetIcd10(userBase, new CatalogParam()
                 {
                     OrganizationCode = userBase.OrganizationCode,
                     AuthCode = userBase.AuthCode,
@@ -513,7 +513,14 @@ namespace NFine.Web.Controllers
                    param.OrganizationCode = userBase.OrganizationCode;
                    param.OrganizationName = userBase.OrganizationName;
                    _medicalInsuranceSqlRepository.MedicalInsurancePairCode(param);
-                   y.Data = param;
+                  _webServiceBasicService.ThreeCataloguePairCodeUpload(
+                       new UpdateThreeCataloguePairCodeUploadParam()
+                       {
+                           User = userBase,
+                           ProjectCodeList = param.PairCodeList.Select(c=>c.ProjectCode).ToList()
+                       }
+                   );
+                   
                }
            });
 
@@ -552,9 +559,15 @@ namespace NFine.Web.Controllers
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
 
-                var data = _webServiceBasicService.ThreeCataloguePairCodeUpload(userBase);
+                var data = _webServiceBasicService.ThreeCataloguePairCodeUpload(
+                    new UpdateThreeCataloguePairCodeUploadParam()
+                    {
+                        User = userBase,
+                        ProjectCodeList = new List<string>()
+                    }
+                    );
 
-                y.Data = "[" + data + "] 条回写成功!!!";
+                y.Data = "[" + data + "] 条数据回写成功!!!";
             });
 
         }
@@ -632,8 +645,6 @@ namespace NFine.Web.Controllers
                     if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
                     {  //医保登录
                         _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-
-                        
                         iniParam.IdentityMark = param.IdentityMark;
                         iniParam.AfferentSign = param.AfferentSign;
                         iniParam.MedicalCategory = param.MedicalCategory;
@@ -844,7 +855,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet]
-        public ApiJsonResultData QueryPrescriptionDetail([FromUri]BaseUiBusinessIdDataParam param)
+        public ApiJsonResultData QueryPrescriptionDetail([FromUri]QueryPrescriptionDetailUiParam param)
         {
             return new ApiJsonResultData(ModelState, new QueryPrescriptionDetailListDto()).RunWithTry(y =>
           {
@@ -940,10 +951,10 @@ namespace NFine.Web.Controllers
                var presettlementParam = new LeaveHospitalSettlementParam()
                {
                    MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                   //LeaveHospitalDate = (!string.IsNullOrWhiteSpace(inpatientInfoData.LeaveHospitalDate)) ? Convert.ToDateTime(inpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd") : DateTime.Now.ToString("yyyyMMdd"),
-                   //LeaveHospitalMainDiagnosisIcd10 = inpatientInfoData.LeaveHospitalMainDiagnosisIcd10,
+                   LeaveHospitalDate = (!string.IsNullOrWhiteSpace(inpatientInfoData.LeaveHospitalDate)) ? Convert.ToDateTime(inpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd") : DateTime.Now.ToString("yyyyMMdd"),
+                   LeaveHospitalMainDiagnosisIcd10 = inpatientInfoData.LeaveHospitalMainDiagnosisIcd10,
                    //LeaveHospitalDiagnosisIcd10Two = inpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
-                   //LeaveHospitalMainDiagnosis = inpatientInfoData.LeaveHospitalMainDiagnosis,
+                   LeaveHospitalMainDiagnosis = inpatientInfoData.LeaveHospitalMainDiagnosis,
                    //LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
                    //LeaveHospitalMainDiagnosisIcd10 = InpatientInfoData.AdmissionMainDiagnosisIcd10,
                    ////LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,

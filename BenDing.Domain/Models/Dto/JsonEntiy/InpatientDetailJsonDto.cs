@@ -135,7 +135,7 @@ namespace BenDing.Domain.Models.Dto.JsonEntiy
         /// 执行时间
         /// </summary>
         [JsonProperty(PropertyName = "费用发生时间")]
-        public string OperateTime { get; set; }
+        public string BillTime { get; set; }
         /// <summary>
         /// 门急费用标志
         /// </summary>

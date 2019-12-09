@@ -15,6 +15,7 @@ namespace BenDing.Domain.Models.Params.UI
         [Display(Name = "业务id")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string BusinessId { get; set; }
-       
+        
+
     }
 }
