@@ -570,7 +570,7 @@ namespace BenDing.Repository.Providers.Web
                     if (!string.IsNullOrWhiteSpace(param.BusinessId))
                     {
                         strSql +=
-                            $@" and HospitalizationNo =(select top 1 HospitalizationNo from [dbo].[Inpatient] where BusinessId='{param.BusinessId}' and IsDelete=0)";
+                            $@" and HospitalizationId =(select top 1 HospitalizationId from [dbo].[Inpatient] where BusinessId='{param.BusinessId}' and IsDelete=0)";
                     }
                     else
                     {
@@ -770,19 +770,18 @@ namespace BenDing.Repository.Providers.Web
                 if (param.IsTodayUpload)
                 {
                     string day = DateTime.Now.ToString("yyyy-MM-dd") + " 00:00:00.000";
-                    strSql = $@"
-                            select a.OrganizationCode,a.HospitalizationNo,a.BusinessId,b.InsuranceType from [dbo].[Inpatient]  as a 
-                            inner join [dbo].[MedicalInsurance] as b on b.HisHospitalizationId=a.FixedEncoding
-                            where a.IsDelete=0 and b.IsDelete=0 and a.HospitalizationNo 
-                            in(select HospitalizationNo from [dbo].[HospitalizationFee] where BusinessTime='{day}' and  IsDelete=0 and UploadMark=0 Group by HospitalizationNo)";
+                    strSql = $@"select a.OrganizationCode,a.HospitalizationNo,a.BusinessId,b.InsuranceType from [dbo].[Inpatient]  as a 
+                                inner join [dbo].[MedicalInsurance] as b on b.BusinessId=a.BusinessId
+                                where a.IsDelete=0 and b.IsDelete=0 and a.HospitalizationId 
+                                in(select HospitalizationId from [dbo].[HospitalizationFee] where  BusinessTime='{day}' and IsDelete=0 and UploadMark=0 Group by HospitalizationId)";
                 }
                 else
                 {
                     strSql = @"
                                 select a.OrganizationCode,a.HospitalizationNo,a.BusinessId,b.InsuranceType from [dbo].[Inpatient]  as a 
-                                inner join [dbo].[MedicalInsurance] as b on b.HisHospitalizationId=a.FixedEncoding
-                                where a.IsDelete=0 and b.IsDelete=0 and a.HospitalizationNo 
-                                in(select HospitalizationNo from [dbo].[HospitalizationFee] where IsDelete=0 and UploadMark=0 Group by HospitalizationNo) ";
+                                inner join [dbo].[MedicalInsurance] as b on b.BusinessId=a.BusinessId
+                                where a.IsDelete=0 and b.IsDelete=0 and a.HospitalizationId 
+                                in(select HospitalizationId from [dbo].[HospitalizationFee] where IsDelete=0 and UploadMark=0 Group by HospitalizationId)";
                 }
                 var data = sqlConnection.Query<QueryAllHospitalizationPatientsDto>(strSql);
 

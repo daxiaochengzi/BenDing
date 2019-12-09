@@ -651,12 +651,14 @@ namespace NFine.Web.Controllers
                         iniParam.FetusNumber = param.FetusNumber;
                         iniParam.HouseholdNature = param.HouseholdNature;
                         iniParam.AdmissionDate = Convert.ToDateTime(inpatientData.AdmissionDate).ToString("yyyyMMdd");
-                        iniParam.AdmissionMainDiagnosis = inpatientData.AdmissionMainDiagnosis;
-                        iniParam.InpatientDepartmentCode = inpatientData.InDepartmentId;
+                        iniParam.AdmissionMainDiagnosis = inpatientData.AdmissionMainDiagnosis.Substring(0, inpatientData.AdmissionMainDiagnosis.Length>100?100: inpatientData.AdmissionMainDiagnosis.Length); 
+                        iniParam.InpatientDepartmentCode = inpatientData.InDepartmentName;
                         iniParam.BedNumber = inpatientData.AdmissionBed;
                         iniParam.HospitalizationNo = inpatientData.HospitalizationNo;
                         iniParam.Operators = inpatientData.AdmissionOperator;
                         iniParam.InsuranceType= param.InsuranceType;
+                        iniParam.BusinessId = param.BusinessId;
+
 
                         //入院登记
                         _residentMedicalInsurance.HospitalizationRegister(iniParam, userBase);

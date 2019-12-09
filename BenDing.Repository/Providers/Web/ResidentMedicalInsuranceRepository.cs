@@ -91,11 +91,7 @@ namespace BenDing.Repository.Providers.Web
         {
 
             var paramIni = param;
-            paramIni.Operators = BitConverter.ToInt64(Guid.Parse(param.Operators).ToByteArray(), 0).ToString();
-            paramIni.InpatientDepartmentCode =
-                BitConverter.ToInt64(Guid.Parse(param.InpatientDepartmentCode).ToByteArray(), 0).ToString();
-            paramIni.HospitalizationNo = BitConverter.ToInt64(Guid.Parse(param.BusinessId).ToByteArray(), 0).ToString();
-            paramIni.AdmissionDate = Convert.ToDateTime(param.AdmissionDate).ToString("yyyyMMdd");
+         
             var xmlStr = XmlHelp.SaveXml(paramIni);
             if (xmlStr)
             {
