@@ -666,6 +666,7 @@ namespace BenDing.Repository.Providers.Web
                         //新的数据上传参数
                         var uploadDataParam = paramIni;
                         uploadDataParam.RowDataList = rowDataListAll.Where(c => sendList.Contains(c.Id)).ToList();
+                        //数据上传
                         var uploadData = PrescriptionUploadData(uploadDataParam, param.BusinessId, user);
                         if (uploadData.ReturnState != "1")
                         {
@@ -920,7 +921,7 @@ namespace BenDing.Repository.Providers.Web
                     var rowData = new PrescriptionUploadRowParam()
                     {
                         ColNum = 0,
-                        PrescriptionNum = item.RecipeCodeFixedEncoding,
+                        PrescriptionNum = item.DocumentNo,
                         PrescriptionSort = item.DataSort,
                         ProjectCode = pairCodeData.ProjectCode,
                         FixedEncoding = pairCodeData.FixedEncoding,
@@ -943,7 +944,7 @@ namespace BenDing.Repository.Providers.Web
                         Unit = item.Unit,
                         UseDays = 0,
                         Remark = "",
-                        DoctorJobNumber = item.BillDoctorIdFixedEncoding,
+                        DoctorJobNumber = item.OperateDoctorId,
                         Id = item.Id,
                         LimitApprovalDate = "",
                         LimitApprovalUser = "",
@@ -957,7 +958,7 @@ namespace BenDing.Repository.Providers.Web
                         rowData.LimitApprovalDate = CommonHelp.FormatDateTime(item.BillTime);
                         rowData.LimitApprovalUser = rowData.DoctorJobNumber;
                         rowData.LimitApprovalMark = "1";
-                        rowData.LimitApprovalRemark = item.BillDoctorIdFixedEncoding;
+                      
                     }
 
                     rowDataList.Add(rowData);

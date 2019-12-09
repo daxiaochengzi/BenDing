@@ -25,14 +25,14 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 序号
         /// </summary>
         public  int DataSort { get; set; }
-        /// <summary>
-        /// 处方固定码
-        /// </summary>
-        public  string RecipeCodeFixedEncoding { get; set; }
-        /// <summary>
-        /// 开单医生固定编码
-        /// </summary>
-        public string BillDoctorIdFixedEncoding { get; set; }
+        ///// <summary>
+        ///// 处方固定码
+        ///// </summary>
+        //public  string RecipeCodeFixedEncoding { get; set; }
+        ///// <summary>
+        ///// 开单医生固定编码
+        ///// </summary>
+        //public string BillDoctorIdFixedEncoding { get; set; }
         /// <summary>
         /// 调整差值
         /// </summary>
