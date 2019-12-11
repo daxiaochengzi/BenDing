@@ -27,7 +27,6 @@ namespace BenDing.Service.Interfaces
         /// <param name="name"></param>
         /// <returns></returns>
         Int32 GetOrg(UserInfoDto userinfo, string name);
-
         /// <summary>
         /// 获取三大目录
         /// </summary>
@@ -35,7 +34,6 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
         string GetCatalog(UserInfoDto user, CatalogParam param);
-
         /// <summary>
         /// 删除三大目录
         /// </summary>
@@ -51,7 +49,7 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <param name="isSave"></param>
         /// <returns></returns>
-        BaseOutpatientInfoDto GetOutpatientPerson(UserInfoDto user, GetOutpatientUiParam param,bool isSave);
+        BaseOutpatientInfoDto GetOutpatientPerson(GetOutpatientPersonParam param);
 
         /// <summary>
         /// 获取门诊病人明细
@@ -73,12 +71,6 @@ namespace BenDing.Service.Interfaces
         /// <param name="user"></param>
         /// <param name="param"></param>
         void MedicalInsuranceSave(UserInfoDto user, MedicalInsuranceParam param);
-        /// <summary>
-        /// 删除医保保存信息
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="param"></param>
-        void DeleteMedicalInsurance(UserInfoDto user, DeleteMedicalInsuranceParam param);
 
         /// <summary>
         ///  获取HIS系统中科室、医师、病区、床位的基本信息

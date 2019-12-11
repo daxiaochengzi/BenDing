@@ -214,31 +214,48 @@ namespace BenDing.Service.Providers
         /// <param name="param"></param>
         /// <param name="isSave"></param>
         /// <returns></returns>
-        public BaseOutpatientInfoDto GetOutpatientPerson(UserInfoDto user, GetOutpatientUiParam param, bool isSave)
+        public BaseOutpatientInfoDto GetOutpatientPerson(GetOutpatientPersonParam param)
         {
             var resultData = new BaseOutpatientInfoDto();
             List<OutpatientInfoJsonDto>  result;
             var outPatient = new OutpatientParam()
             {
-                AuthCode = user.AuthCode,
-                OrganizationCode = user.OrganizationCode,
-                IdCardNo = param.IdCardNo,
-                StartTime = Convert.ToDateTime(param.StartTime).ToString("yyyy-MM-dd HH:mm:ss"),
+                AuthCode = param.User.AuthCode,
+                OrganizationCode = param.User.OrganizationCode,
+                IdCardNo = param.UiParam.IdCardNo,
+                StartTime = Convert.ToDateTime(param.UiParam.StartTime).ToString("yyyy-MM-dd HH:mm:ss"),
                 EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-
             };
             var init = new OutpatientInfoJsonDto();
-            var data = _webServiceBasic.HIS_InterfaceList("12", JsonConvert.SerializeObject(param));
+            var data = _webServiceBasic.HIS_InterfaceList("12", JsonConvert.SerializeObject(outPatient));
+           
             result = GetResultData(init, data);
             if (result.Any())
             {
-               var  resultDataIni= result.FirstOrDefault(c => c.BusinessId == param.BusinessId);
+                var resultDataIni = result.FirstOrDefault(c => c.BusinessId == param.UiParam.BusinessId);
                 if (resultDataIni != null)
                 {
                     resultData = AutoMapper.Mapper.Map<BaseOutpatientInfoDto>(resultDataIni);
                 }
-                if (isSave) _hisSqlRepository.SaveOutpatient(user, resultData);
 
+                if (resultData.ReceptionStatus < 2) throw  new  Exception("门诊病人需要已接诊才能结算!!!");
+
+                    if (param.IsSave)
+                    {
+                        resultData.ReturnJson = param.ReturnJson;
+                        resultData.Id =  param.Id;
+                     
+                        _hisSqlRepository.SaveOutpatient(param.User, resultData);
+                        //门诊病人明细下载
+                        GetOutpatientDetailPerson(param.User, new OutpatientDetailParam()
+                        {
+                            AuthCode = param.User.AuthCode,
+                            OutpatientNo = resultData.OutpatientNumber,
+                            BusinessId = resultData.BusinessId
+                        });
+                    }
+              
+               
             }
 
             return resultData;
@@ -247,6 +264,7 @@ namespace BenDing.Service.Providers
         /// <summary>
         /// 获取门诊病人费用明细
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
         /// <returns></returns>
         public List<BaseOutpatientDetailDto> GetOutpatientDetailPerson(UserInfoDto user,OutpatientDetailParam param)
@@ -395,8 +413,8 @@ namespace BenDing.Service.Providers
         /// <summary>
         /// 医保信息保存
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
-        /// <returns></returns>
         public void MedicalInsuranceSave(UserInfoDto user, MedicalInsuranceParam param)
         {
             // var num =  _hisSqlRepository.QueryMedicalInsurance(param.业务ID);
@@ -429,34 +447,11 @@ namespace BenDing.Service.Providers
             }
         }
 
-        /// <summary>
-        /// 医保信息删除
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public void DeleteMedicalInsurance(UserInfoDto user, DeleteMedicalInsuranceParam param)
-        {
-            if (param.CheckLocal)
-            {
-
-                var num = 0; // _hisSqlRepository.QueryMedicalInsurance(param.业务ID);
-                if (num == 0)
-                {
-                    var msg = "数据库中未找到相应的住院业务ID的医保信息！";
-                }
-            }
-
-            var resultData = _webServiceBasic.HIS_InterfaceList("37",
-                "{'验证码':'" + param.验证码 + "','业务ID':'" + param.业务ID + "'}");
-            if (resultData.Result == "1")
-            {
-                var count = _hisSqlRepository.DeleteMedicalInsurance(user, param.业务ID);
-            }
-        }
 
         /// <summary>
         /// 保存HIS系统中科室、医师、病区、床位的基本信息
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
         /// <returns></returns>
         public List<InformationDto> SaveInformation(UserInfoDto user, InformationParam param)

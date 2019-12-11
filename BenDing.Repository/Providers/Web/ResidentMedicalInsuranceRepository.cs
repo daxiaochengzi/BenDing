@@ -71,7 +71,7 @@ namespace BenDing.Repository.Providers.Web
             var xmlStr = XmlHelp.SaveXml(param);
             if (xmlStr)
             {
-                int result = MedicalInsuranceDll.CallService_cxjb("CXJB001");
+                MedicalInsuranceDll.CallService_cxjb("CXJB001");
                 var  data = XmlHelp.DeSerializerModel(new ResidentUserInfoJsonDto(), true);
                 resulData= AutoMapper.Mapper.Map<ResidentUserInfoDto>(data);
 
@@ -102,7 +102,7 @@ namespace BenDing.Repository.Providers.Web
                     BusinessId = param.BusinessId,
                     Id = Guid.NewGuid(),
                     IsModify = false,
-                    InsuranceType = (!string.IsNullOrWhiteSpace(param.InsuranceType)) == true
+                    InsuranceType = (!string.IsNullOrWhiteSpace(param.InsuranceType))
                         ? Convert.ToInt32(param.InsuranceType)
                         : 0
                 };
@@ -145,7 +145,7 @@ namespace BenDing.Repository.Providers.Web
         /// 修改入院登记
         /// </summary>
         /// <param name="param"></param>
-        /// <returns></returns>
+        /// <param name="user"></param>
         public void HospitalizationModify(HospitalizationModifyParam param, UserInfoDto user)
         {
 
@@ -212,8 +212,8 @@ namespace BenDing.Repository.Providers.Web
                     _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
                     //日志
                     var logParam = new AddHospitalLogParam();
-                    logParam.UserId = user.UserId;
-                    logParam.OrganizationCode = user.OrganizationCode;
+                    logParam.User = user;
+                  
                     logParam.RelationId = queryData.Id;
                     logParam.JoinOrOldJson = queryData.AdmissionInfoJson;
                     logParam.ReturnOrNewJson = paramStr;
@@ -325,8 +325,8 @@ namespace BenDing.Repository.Providers.Web
                     {
                         JoinOrOldJson = JsonConvert.SerializeObject(param),
                         ReturnOrNewJson = JsonConvert.SerializeObject(data),
-                        OrganizationCode = infoParam.User.OrganizationCode,
-                        UserId = infoParam.User.UserId,
+                        User = infoParam.User,
+                   
                         Remark = "住院病人预结算"
                     };
                     _systemManageRepository.AddHospitalLog(logParam);
@@ -423,8 +423,8 @@ namespace BenDing.Repository.Providers.Web
                     {
                         JoinOrOldJson = JsonConvert.SerializeObject(param),
                         ReturnOrNewJson = JsonConvert.SerializeObject(data),
-                        OrganizationCode = infoParam.User.OrganizationCode,
-                        UserId = infoParam.User.UserId,
+                        User = infoParam.User,
+                      
                         Remark = "住院病人出院结算",
                         RelationId = infoParam.Id,
                     };
@@ -604,7 +604,7 @@ namespace BenDing.Repository.Providers.Web
             queryData = _hisSqlRepository.InpatientInfoDetailQuery(queryParam);
             if (queryData.Any())
             {
-                var queryBusinessId = (!string.IsNullOrWhiteSpace(queryParam.BusinessId)) == true
+                var queryBusinessId = (!string.IsNullOrWhiteSpace(queryParam.BusinessId))
                     ? param.BusinessId
                     : queryData.Select(c => c.BusinessId).FirstOrDefault();
                 var medicalInsuranceParam = new QueryMedicalInsuranceResidentInfoParam()
@@ -612,8 +612,7 @@ namespace BenDing.Repository.Providers.Web
                 //获取病人医保信息
                 var medicalInsurance =
                     _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(medicalInsuranceParam);
-                if (medicalInsurance == null &&
-                    (!string.IsNullOrWhiteSpace(medicalInsurance.BusinessId)) == false)
+                if (medicalInsurance == null)
                 {
                     if (!string.IsNullOrWhiteSpace(queryParam.BusinessId))
                     {
@@ -707,7 +706,7 @@ namespace BenDing.Repository.Providers.Web
                 int result = 1; //MedicalInsuranceDll.CallService_cxjb("CXJB005");
                 if (result == 1)
                 {
-                    var data = XmlHelp.DeSerializerModel(new IniDto(), true);
+                    XmlHelp.DeSerializerModel(new IniDto(), true);
                     //添加批次
                     var updateFeeParam =
                         ids.Select(c => new UpdateHospitalizationFeeParam { Id = c })
@@ -718,8 +717,7 @@ namespace BenDing.Repository.Providers.Web
                     {
                         JoinOrOldJson = JsonConvert.SerializeObject(param),
                         ReturnOrNewJson = JsonConvert.SerializeObject(ids),
-                        OrganizationCode = user.OrganizationCode,
-                        UserId = user.UserId,
+                        User = user,
                         Remark = "[R][HospitalizationFee]删除处方数据",
                     };
                     _systemManageRepository.AddHospitalLog(logParam);
@@ -745,11 +743,11 @@ namespace BenDing.Repository.Providers.Web
             {
                 int result = MedicalInsuranceDll.CallService_cxjb("CXJB006");
                 if (result == 1)
-                {
+                { 
 
                     string strXml = XmlHelp.DeSerializerModelStr("CFMX");
                     var data = XmlHelp.DeSerializer<QueryPrescriptionDetailDto>(strXml);
-                    if (data.RowDataList == null && data.RowDataList.Any())
+                    if (data.RowDataList == null && (data.RowDataList ?? throw new InvalidOperationException()).Any())
                     {
                         resultdata = data.RowDataList.Select(c => new QueryPrescriptionDetailListDto()
                         {

@@ -42,8 +42,6 @@ namespace NFine.Web
                 //    scan.TheCallingAssembly();
                 //    scan.WithDefaultConventions();
                 //});
-
-
                 #region Service
                 x.For<IWebServiceBasicService>().Use<WebServiceBasicService>();
                 x.For<IResidentMedicalInsuranceService>().Use<ResidentMedicalInsuranceService>();
@@ -56,8 +54,9 @@ namespace NFine.Web
                 x.For<IWebBasicRepository>().Use<WebBasicRepository>();
                 x.For<IHisSqlRepository>().Use<HisSqlRepository>();
                 x.For<ISystemManageRepository>().Use<SystemManageRepository>();
-              
-                ////
+                x.For<IOutpatientDepartmentRepository>().Use<OutpatientDepartmentRepository>();
+                x.For<IOutpatientDepartmentService>().Use<OutpatientDepartmentService>();
+                //
                 #endregion
 
                 //x.For<IUserService>().Use<UserService>(); //这里是手动，二者取其一

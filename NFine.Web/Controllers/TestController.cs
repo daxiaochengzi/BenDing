@@ -26,6 +26,7 @@ namespace NFine.Web.Controllers
         private readonly IUserService userService;
         private readonly IWebServiceBasicService webServiceBasicService;
         private readonly IWebBasicRepository webServiceBasic;
+        private readonly IHisSqlRepository hisSqlRepository;
 
         /// <summary>
         /// 
@@ -33,11 +34,13 @@ namespace NFine.Web.Controllers
         /// <param name="_userService"></param>
         public TestController(IUserService _userService,
             IWebServiceBasicService _webServiceBasicService,
-            IWebBasicRepository iWebBasicRepository)
+            IWebBasicRepository _WebBasicRepository,
+            IHisSqlRepository _hisSqlRepository)
         {
             userService = _userService;
             webServiceBasicService = _webServiceBasicService;
-            webServiceBasic = iWebBasicRepository;
+            webServiceBasic = _WebBasicRepository;
+            hisSqlRepository = _hisSqlRepository;
         }
 
         [HttpGet]
@@ -74,14 +77,26 @@ namespace NFine.Web.Controllers
                 //data.MedicalInsuranceCode = "21";
                 //data.UserId = userBase.UserId;
                 // _webServiceBasicService.SaveXmlData(data);
-                var xmlData = new MedicalInsuranceXmlDto();
-                xmlData.BusinessId = param.BusinessId;
-                xmlData.HealthInsuranceNo = param.HealthInsuranceNo;
-                xmlData.TransactionId = Guid.NewGuid().ToString("N");
-                xmlData.AuthCode = userBase.AuthCode;
-                xmlData.UserId = param.UserId;
-                xmlData.OrganizationCode = userBase.OrganizationCode;
-                webServiceBasicService.GetXmlData(xmlData);
+
+
+                //var xmlData = new MedicalInsuranceXmlDto();
+                //xmlData.BusinessId = param.BusinessId;
+                //xmlData.HealthInsuranceNo = param.HealthInsuranceNo;
+                //xmlData.TransactionId = Guid.NewGuid().ToString("N");
+                //xmlData.AuthCode = userBase.AuthCode;
+                //xmlData.UserId = param.UserId;
+                //xmlData.OrganizationCode = userBase.OrganizationCode;
+                //webServiceBasicService.GetXmlData(xmlData);
+
+
+
+              var data=  hisSqlRepository.InpatientInfoDetailQuery(new InpatientInfoDetailQueryParam()
+                    {BusinessId = "88D323D8ADCD41B3A8DCD9B3C42E64D1"});
+                if (data.Any())
+                {
+                    string aa = "123";
+
+                }
 
             });
 

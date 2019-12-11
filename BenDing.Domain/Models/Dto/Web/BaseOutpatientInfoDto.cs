@@ -4,9 +4,16 @@ using System.Text;
 using Newtonsoft.Json;
 
 namespace BenDing.Domain.Models.Dto.Web
-{
+{/// <summary>
+/// 
+/// </summary>
    public class BaseOutpatientInfoDto
     {/// <summary>
+    /// id
+    /// </summary>
+        public Guid Id { get; set; }=Guid.Empty;
+
+        /// <summary>
      /// 姓名
      /// </summary>
       
@@ -82,10 +89,17 @@ namespace BenDing.Domain.Models.Dto.Web
        
         public string Remark { get; set; }
         /// <summary>
-        /// 接诊状态
+        /// 接诊状态0未截至、1接诊中、2已接诊
         /// </summary>
-      
-        public int ReceptionStatus { get; set; }
 
+        public int ReceptionStatus { get; set; }
+        /// <summary>
+        /// 回参json
+        /// </summary>
+        public string ReturnJson { get; set; }
+        /// <summary>
+        /// 是否删除
+        /// </summary>
+        public bool IsDelete { get; set; }
     }
 }

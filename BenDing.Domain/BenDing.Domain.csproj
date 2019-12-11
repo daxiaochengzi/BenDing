@@ -57,10 +57,15 @@
     <Compile Include="Models\Dto\JsonEntiy\InpatientDiagnosisDataDto.cs" />
     <Compile Include="Models\Dto\JsonEntiy\InpatientInfoDetailJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntiy\InpatientInfoJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntiy\MonthlyHospitalizationJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntiy\OutpatientInfoJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntiy\QueryInpatientInfoJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntiy\QueryOutpatientDepartmentCostjsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntiy\ResidentUserInfoJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntiy\UserInfoJsonDto.cs" />
+    <Compile Include="Models\Dto\OutpatientDepartment\MonthlyHospitalizationDto.cs" />
+    <Compile Include="Models\Dto\OutpatientDepartment\OutpatientDepartmentCostInputDto.cs" />
+    <Compile Include="Models\Dto\OutpatientDepartment\QueryOutpatientDepartmentCostDto.cs" />
     <Compile Include="Models\Dto\Resident\DirectoryComparisonManagementDto.cs" />
     <Compile Include="Models\Dto\Resident\HospitalizationPresettlementDto.cs" />
     <Compile Include="Models\Dto\Resident\IniXmlDto.cs" />
@@ -101,6 +106,11 @@
     <Compile Include="Models\Params\Base\BaseUiIniParam.cs" />
     <Compile Include="Models\Params\Base\DatabaseParam.cs" />
     <Compile Include="Models\Params\Base\UiBaseDataParam.cs" />
+    <Compile Include="Models\Params\OutpatientDepartment\CancelMonthlyHospitalizationParam.cs" />
+    <Compile Include="Models\Params\OutpatientDepartment\CancelOutpatientDepartmentCostParam.cs" />
+    <Compile Include="Models\Params\OutpatientDepartment\MonthlyHospitalizationParam.cs" />
+    <Compile Include="Models\Params\OutpatientDepartment\OutpatientDepartmentCostInputParam.cs" />
+    <Compile Include="Models\Params\OutpatientDepartment\QueryOutpatientDepartmentCostParam.cs" />
     <Compile Include="Models\Params\Resident\AddProjectBatchParam.cs" />
     <Compile Include="Models\Params\Resident\BatchConfirmParam.cs" />
     <Compile Include="Models\Params\Resident\DeletePrescriptionUploadParam.cs" />
@@ -120,6 +130,8 @@
     <Compile Include="Models\Params\Resident\QueryPrescriptionDetailParam.cs" />
     <Compile Include="Models\Params\SystemManage\AddHospitalLogParam.cs" />
     <Compile Include="Models\Params\UI\AddHospitalOrganizationGradeUiParam.cs" />
+    <Compile Include="Models\Params\UI\CancelMonthlyHospitalizationUiParam.cs" />
+    <Compile Include="Models\Params\UI\CancelOutpatientDepartmentCostUiParam.cs" />
     <Compile Include="Models\Params\UI\DirectoryComparisonManagementUiParam.cs" />
     <Compile Include="Models\Params\UI\GetInformationUiParam.cs" />
     <Compile Include="Models\Params\UI\GetOutpatientUiParam.cs" />
@@ -166,12 +178,14 @@
     <Compile Include="Models\Params\UI\InpatientInfoUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalInsuranceDataAllParamUIQuery.cs" />
     <Compile Include="Models\Params\UI\MedicalInsuranceXmlUiParam.cs" />
+    <Compile Include="Models\Params\UI\MonthlyHospitalizationUiParam.cs" />
     <Compile Include="Models\Params\UI\PrescriptionUploadAutomaticUiParam.cs" />
     <Compile Include="Models\Params\UI\PrescriptionUploadUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryCatalogUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryHospitalizationFeeUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryHospitalizationPresettlementUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryMedicalInsuranceUiParam.cs" />
+    <Compile Include="Models\Params\UI\QueryOutpatientDepartmentCostUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryPrescriptionDetailUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryProjectUiParam.cs" />
     <Compile Include="Models\Params\UI\ResidentHospitalizationRegisterUiParam.cs" />
@@ -187,6 +201,7 @@
     <Compile Include="Models\Params\Web\ExecuteSpParam.cs" />
     <Compile Include="Models\Params\Web\GetInpatientInfoDetailParam.cs" />
     <Compile Include="Models\Params\Web\GetInpatientInfoParam.cs" />
+    <Compile Include="Models\Params\Web\GetOutpatientPersonParam.cs" />
     <Compile Include="Models\Params\Web\HospitalOrganizationGradeParam.cs" />
     <Compile Include="Models\Params\Web\ICD10InfoParam.cs" />
     <Compile Include="Models\Params\Web\InformationParam.cs" />
@@ -212,6 +227,7 @@
     <Compile Include="Models\Params\Web\UiCatalogParam.cs" />
     <Compile Include="Models\Params\Web\UpdateHospitalizationFeeParam.cs" />
     <Compile Include="Models\Params\Web\UpdateMedicalInsuranceResidentInfoParam.cs" />
+    <Compile Include="Models\Params\Web\UpdateOutpatientParam.cs" />
     <Compile Include="Models\Params\Web\UpdateThreeCataloguePairCodeUploadParam.cs" />
     <Compile Include="Models\Params\Web\UserInfoParam.cs" />
     <Compile Include="Models\Params\Web\XmlData.cs" />

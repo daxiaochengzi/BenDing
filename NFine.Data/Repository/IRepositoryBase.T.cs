@@ -29,6 +29,7 @@ namespace NFine.Data
         IQueryable<TEntity> IQueryable();
         IQueryable<TEntity> IQueryable(Expression<Func<TEntity, bool>> predicate);
         List<TEntity> FindList(string strSql);
+        int ExecuteSqlCommand(string strSql);
         List<TEntity> FindList(string strSql, DbParameter[] dbParameter);
         List<TEntity> FindList(Pagination pagination);
         List<TEntity> FindList(Expression<Func<TEntity, bool>> predicate, Pagination pagination);

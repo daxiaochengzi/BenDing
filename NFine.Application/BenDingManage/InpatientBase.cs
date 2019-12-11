@@ -34,6 +34,8 @@ namespace NFine.Application.BenDingManage
              inpatientEntity.Create(user);
              service.Insert(inpatientEntity);
         }
+
+ 
         //public void SubmitForm(InpatientEntity areaEntity, string keyValue)
         //{
         //    if (!string.IsNullOrEmpty(keyValue))

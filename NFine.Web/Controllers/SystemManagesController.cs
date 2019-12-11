@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Web.Http;
 using BenDing.Domain.Models.Dto.Web;
-using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces;
 using Newtonsoft.Json;
-using NFine.Web;
 
 namespace NFine.Web.Controllers
 {
@@ -50,7 +47,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ApiJsonResultData AddHospitalOperator(AddHospitalOperatorParam param)
         {
-            return new ApiJsonResultData(ModelState).RunWithTry(async y =>
+            return new ApiJsonResultData(ModelState).RunWithTry( y =>
              {
                  if (param.IsHis)
                  {
@@ -81,10 +78,8 @@ namespace NFine.Web.Controllers
                      {
                          throw new Exception("医保登陆失败,请核对账户与密码!!!");
                      }
-                     else
-                     {
-                         _systemManage.AddHospitalOperator(param);
-                     }
+
+                     _systemManage.AddHospitalOperator(param);
                  }
 
 
@@ -98,7 +93,7 @@ namespace NFine.Web.Controllers
         [HttpPost]
         public ApiJsonResultData AddHospitalOrganizationGrade([FromBody]HospitalOrganizationGradeParam param)
         {
-            return new ApiJsonResultData(ModelState).RunWithTry(async y =>
+            return new ApiJsonResultData(ModelState).RunWithTry( y =>
                  {
                      _systemManage.AddHospitalOrganizationGrade(param);
                  });
