@@ -52,6 +52,7 @@
     <Compile Include="03 Entity\BenDingManage\HospitalOrganizationGradeEntity.cs" />
     <Compile Include="03 Entity\BenDingManage\InpatientEntity.cs" />
     <Compile Include="03 Entity\BenDingManage\MedicalInsuranceEntity.cs" />
+    <Compile Include="03 Entity\BenDingManage\MonthlyHospitalizationEntity.cs" />
     <Compile Include="03 Entity\SystemManage\AreaEntity.cs" />
     <Compile Include="03 Entity\SystemManage\ModuleButtonEntity.cs" />
     <Compile Include="03 Entity\SystemManage\ModuleEntity.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="03 Entity\SystemSecurity\LogEntity.cs" />
     <Compile Include="02 ViewModel\AuthorizeActionModel.cs" />
     <Compile Include="04 IRepository\BenDingManage\IInpatientRepository.cs" />
+    <Compile Include="04 IRepository\BenDingManage\IMonthlyHospitalizationRepository.cs" />
     <Compile Include="04 IRepository\SystemManage\IAreaRepository.cs" />
     <Compile Include="04 IRepository\SystemManage\IItemsDetailRepository.cs" />
     <Compile Include="04 IRepository\SystemManage\IItemsRepository.cs" />

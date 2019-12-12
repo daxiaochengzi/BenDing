@@ -32,16 +32,9 @@ namespace BenDing.Repository.Providers.Web
                 {
                     throw new Exception(resultDto.Msg);
                 }
-                if (tradeCode == "35"|| tradeCode == "39")
-                {
-                   
-                    result.Msg.Add(resultDto.Msg);
-                }
-                else
-                {
-                    var basicResultDto = JsonConvert.DeserializeObject<BasicResultDto>(resultData);
-                    result = basicResultDto;
-                }
+
+                var basicResultDto = JsonConvert.DeserializeObject<BasicResultDto>(resultData);
+                result = basicResultDto;
 
 
                 return result;

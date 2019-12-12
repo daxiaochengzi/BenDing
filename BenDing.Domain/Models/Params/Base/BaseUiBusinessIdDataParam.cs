@@ -12,7 +12,7 @@ namespace BenDing.Domain.Models.Params.Base
 {/// <summary>
     /// 根据业务id查询数据
     /// </summary>
-    public class BaseUiBusinessIdDataParam : PaginationDto
+    public class BaseUiBusinessIdDataParam 
     { /// <summary>
       /// 用户id
       /// </summary>

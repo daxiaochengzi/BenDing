@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Dto.Web;
 
 namespace BenDing.Domain.Models.Params.SystemManage
 {/// <summary>
@@ -25,13 +26,10 @@ namespace BenDing.Domain.Models.Params.SystemManage
         /// 备注
         /// </summary>
         public string Remark { get; set; }
-        /// <summary>
-        /// 组织机构
-        /// </summary>
-        public string OrganizationCode { get; set; }
+       
         /// <summary>
         /// 用户id
         /// </summary>
-        public string UserId { get; set; }
+        public UserInfoDto User { get; set; }
     }
 }

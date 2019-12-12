@@ -15,7 +15,7 @@ namespace BenDing.Domain.Models.Dto.Web
         [JsonProperty(PropertyName = "业务ID")]
         public string BusinessId { get; set; }
         /// <summary>
-        /// 
+        /// 发起交易的动作ID
         /// </summary>
         [JsonProperty(PropertyName = "发起交易的动作ID")]
         public string TransactionId { get; set; }
@@ -32,13 +32,13 @@ namespace BenDing.Domain.Models.Dto.Web
         [JsonProperty(PropertyName = "操作人员ID")]
         public string UserId { get; set; }
         /// <summary>
-        /// 
+        /// 机构ID
         /// </summary>
         [JsonProperty(PropertyName = "机构ID")]
 
         public string OrganizationCode { get; set; }
         /// <summary>
-        /// 
+        /// 医保交易码
         /// </summary>
         [JsonProperty(PropertyName = "医保交易码")]
         public string HealthInsuranceNo { get; set; }

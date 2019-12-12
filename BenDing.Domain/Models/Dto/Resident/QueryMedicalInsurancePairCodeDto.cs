@@ -7,12 +7,18 @@ using System.Threading.Tasks;
 namespace BenDing.Domain.Models.Dto.Resident
 {
   public  class QueryMedicalInsurancePairCodeDto
-    {  
+    {  /// <summary>
+    /// 
+    /// </summary>
         public string FixedEncoding { get; set; }
         /// <summary>
         /// his项目编码
         /// </summary>
         public string DirectoryCode { get; set; }
+        /// <summary>
+        /// his项目类别编码
+        /// </summary>
+        public string DirectoryCategoryCode { get; set; }
         /// <summary>
         /// 医保编码
         /// </summary>

@@ -43,12 +43,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         int DeleteCatalog(UserInfoDto user, int param);
-        /// <summary>
-        /// 删除医保信息
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        Int32 DeleteMedicalInsurance(UserInfoDto user, string param);
+        
         /// <summary>
         /// 获取HIS系统中科室、医师、病区、床位的基本信息
         /// </summary>
@@ -56,13 +51,26 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="info"></param>
         /// <returns></returns>
         Int32 SaveInformationInfo(UserInfoDto user, List<InformationDto> param, InformationParam info);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         List<QueryInformationInfoDto> QueryInformationInfo(InformationParam param);
         /// <summary>
         /// 获取门诊病人信息
         /// </summary>
+        /// <param name="user"></param>
         /// <param name="param"></param>
-        /// <returns></returns>
         void SaveOutpatient(UserInfoDto user, BaseOutpatientInfoDto param);
+
+        /// <summary>
+        /// 更新门诊病人
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="param"></param>
+
+        void UpdateOutpatient(UserInfoDto user, UpdateOutpatientParam param);
         /// <summary>
         /// 查询门诊病人信息
         /// </summary>
@@ -90,13 +98,6 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
 
         void AddCatalog(UserInfoDto user, List<CatalogDto> param, CatalogTypeEnum type);
-
-        /// <summary>
-        /// 保存住院病人明细
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        void SaveInpatientInfoDetail(SaveInpatientInfoDetailParam param);
         /// <summary>
         /// 获取所有未传费用的住院病人
         /// </summary>
@@ -134,12 +135,13 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         List<QueryICD10InfoDto> QueryICD10(QueryICD10UiParam param);
+       
+
         /// <summary>
-        /// 保存住院病人信息
+        /// 保存住院病人明细
         /// </summary>
         /// <param name="param"></param>
-        /// <returns></returns>
-        void SaveInpatientInfo(UserInfoDto user, InpatientInfoDto param);
+        void SaveInpatientInfoDetail(SaveInpatientInfoDetailParam param);
         /// <summary>
         /// 住院病人查询
         /// </summary>

@@ -9,6 +9,7 @@ using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Repository.Interfaces.Web;
 using Dapper;
+using NFine.Code;
 
 namespace BenDing.Repository.Providers.Web
 {
@@ -17,12 +18,14 @@ namespace BenDing.Repository.Providers.Web
      /// 
      /// </summary>
         private readonly string _connectionString;
+        private readonly Log _log;
         /// <summary>
         /// 构造函数
         /// </summary>
 
         public SystemManageRepository()
         {
+            _log = LogFactory.GetLogger("ini".GetType().ToString());
             string conStr = ConfigurationManager.ConnectionStrings["NFineDbContext"].ToString();
             _connectionString = !string.IsNullOrWhiteSpace(conStr) ? conStr : throw new ArgumentNullException(nameof(conStr));
 
@@ -37,43 +40,50 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-
-                sqlConnection.Open();
-
-                string querySql = $"select COUNT(*) from [dbo].[HospitalOperator] where [HisUserId]='{param.UserId}' ";
-                var resultNum = sqlConnection.QueryFirst<int>(querySql);
-                if (resultNum > 0)
+                string insertSql=null;
+                try
                 {
-                    var updateSql = param.IsHis ? $"update [dbo].[HospitalOperator] set HisUserAccount='{param.UserAccount}',HisUserPwd='{param.UserPwd}',UpdateTime=GETDATE(),UpdateUserId='{param.UserId}',OrganizationCode='{param.OrganizationCode}',ManufacturerNumber='{param.ManufacturerNumber}' where [HisUserId]='{param.UserId}'"
-                        : $"update [dbo].[HospitalOperator] set [MedicalInsuranceAccount]='{param.UserAccount}',[MedicalInsurancePwd]='{param.UserPwd}',UpdateTime=GETDATE(),UpdateUserId='{param.UserId}' where [HisUserId]='{param.UserId}'";
-                    sqlConnection.Execute(updateSql);
-                }
-                else
-                {
-                    string insertSql;
-                    if (param.IsHis)
+                    sqlConnection.Open();
+                    string querySql = $"select COUNT(*) from [dbo].[HospitalOperator] where [HisUserId]='{param.UserId}' ";
+                    var resultNum = sqlConnection.QueryFirst<int>(querySql);
+                    if (resultNum > 0)
                     {
-                        insertSql = $@"
+                        var updateSql = param.IsHis ? $"update [dbo].[HospitalOperator] set HisUserAccount='{param.UserAccount}',HisUserPwd='{param.UserPwd}',UpdateTime=GETDATE(),UpdateUserId='{param.UserId}',OrganizationCode='{param.OrganizationCode}',ManufacturerNumber='{param.ManufacturerNumber}' where [HisUserId]='{param.UserId}'"
+                            : $"update [dbo].[HospitalOperator] set [MedicalInsuranceAccount]='{param.UserAccount}',[MedicalInsurancePwd]='{param.UserPwd}',UpdateTime=GETDATE(),UpdateUserId='{param.UserId}' where [HisUserId]='{param.UserId}'";
+                        sqlConnection.Execute(updateSql);
+                    }
+                    else
+                    {
+                        if (param.IsHis)
+                        {
+                            insertSql = $@"
                                    INSERT INTO [dbo].[HospitalOperator]
                                    ([Id] ,[FixedEncoding],[HisUserId],ManufacturerNumber,
                                    [HisUserAccount],[HisUserPwd],[CreateTime],[CreateUserId],[HisUserName],[IsDelete]
                                    )
                              VALUES('{Guid.NewGuid()}','{BitConverter.ToInt64(Guid.Parse(param.UserId).ToByteArray(), 0)}','{param.UserId}','{param.ManufacturerNumber}',
                                      '{param.UserAccount}','{param.UserPwd}',GETDATE(),'{param.UserId}','{param.HisUserName}',0)";
-                    }
-                    else
-                    {
-                        insertSql = $@"
+                        }
+                        else
+                        {
+                            insertSql = $@"
                                    INSERT INTO [dbo].[HospitalOperator]
                                    ([Id] ,[FixedEncoding],[HisUserId],
                                    [MedicalInsuranceAccount],[MedicalInsurancePwd] ,[CreateTime],[CreateUserId],[IsDelete]
                                    )
                              VALUES('{Guid.NewGuid()}','{BitConverter.ToInt64(Guid.Parse(param.UserId).ToByteArray(), 0)}','{param.UserId}',
                                       '{param.UserAccount}','{param.UserPwd}',GETDATE(),'{param.UserId}',0)";
-                    }
-                    sqlConnection.Execute(insertSql);
+                        }
+                        sqlConnection.Execute(insertSql);
 
+                    }
                 }
+                catch (Exception e)
+                {
+                    _log.Debug(insertSql);
+                    throw new Exception(e.Message);
+                }
+               
             }
         }
         /// <summary>
@@ -86,25 +96,35 @@ namespace BenDing.Repository.Providers.Web
             //医院等级
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                sqlConnection.Open();
-                string sqlStr;
-                string querySql =
-                    $"select COUNT(*) from [dbo].[HospitalOrganizationGrade] where [HospitalId]='{param.HospitalId}' ";
-                var resultNum = sqlConnection.QueryFirst<int>(querySql);
-                if (resultNum > 0)
+                string sqlStr=null;
+                try
                 {
-                    sqlStr = $@"update  [dbo].[HospitalOrganizationGrade] 
+                    sqlConnection.Open();
+                 
+                    string querySql =
+                        $"select COUNT(*) from [dbo].[HospitalOrganizationGrade] where [HospitalId]='{param.HospitalId}' ";
+                    var resultNum = sqlConnection.QueryFirst<int>(querySql);
+                    if (resultNum > 0)
+                    {
+                        sqlStr = $@"update  [dbo].[HospitalOrganizationGrade] 
                                 set [OrganizationGrade]={(int)param.OrganizationGrade},[UpdateTime]=GETDATE(),UpdateUserId='{param.UserId}'
                                 where IsDelete=0 and HospitalId='{param.HospitalId}'";
-                }
-                else
-                {
-                    sqlStr = $@"INSERT INTO [dbo].[HospitalOrganizationGrade] (Id,HospitalId,[OrganizationGrade],[UpdateTime],[CreateUserId],IsDelete)
+                    }
+                    else
+                    {
+                        sqlStr = $@"INSERT INTO [dbo].[HospitalOrganizationGrade] (Id,HospitalId,[OrganizationGrade],[UpdateTime],[CreateUserId],IsDelete)
                                  values('{Guid.NewGuid()}','{param.HospitalId}',{(int)param.OrganizationGrade},GETDATE(),'{param.UserId}',0)";
-                }
-                sqlConnection.Execute(sqlStr);
+                    }
+                    sqlConnection.Execute(sqlStr);
 
-                sqlConnection.Close();
+                    sqlConnection.Close();
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(sqlStr);
+                    throw new Exception(e.Message);
+                }
+                
             }
         }
         /// <summary>
@@ -157,17 +177,12 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                var resultData = new List<QueryHospitalOperatorAll>();
+                
                 sqlConnection.Open();
                 string querySql = @"select HisUserId,[HisUserName] from [dbo].[HospitalOperator]";
-                var data = sqlConnection.Query<QueryHospitalOperatorAll>(querySql);
-                if (data != null && data.Any())
-                {
-                    resultData = data.ToList();
-                }
-
+                var data = sqlConnection.Query<QueryHospitalOperatorAll>(querySql).ToList();
                 sqlConnection.Close();
-                return resultData;
+                return data;
             }
         }
 
@@ -179,24 +194,33 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-
-                sqlConnection.Open();
-                string querySql = $@"insert into  [dbo].[HospitalLog](
+                string querySql = null;
+                try
+                {
+                    sqlConnection.Open();
+                         querySql = $@"insert into  [dbo].[HospitalLog](
                                 [Id]
                                ,[RelationId]
                                ,[JoinOrOldJson]
                                ,[ReturnOrNewJson]
                                ,[Remark]
                                ,[OrganizationCode]
+                               ,[OrganizationName]
                                ,[CreateTime]
                                ,[IsDelete]
                                ,[CreateUserId]
                               )
                              values('{Guid.NewGuid()}','{param.RelationId}','{param.JoinOrOldJson}','{param.ReturnOrNewJson}',
-                              '{param.Remark}','{param.OrganizationCode}',GETDATE(),0,'{param.UserId}')";
-                var data = sqlConnection.Execute(querySql);
-                sqlConnection.Close();
-                return data;
+                              '{param.Remark}','{param.User.OrganizationCode}',,'{param.User.OrganizationName}',getDate(),0,'{param.User.UserId}')";
+                    var data = sqlConnection.Execute(querySql);
+                    sqlConnection.Close();
+                    return data;
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(querySql);
+                    throw new Exception(e.Message);
+                }
             }
         }
     }

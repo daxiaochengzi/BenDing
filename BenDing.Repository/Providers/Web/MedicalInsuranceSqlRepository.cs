@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using BenDing.Domain.Models.Dto.Resident;
@@ -20,7 +19,7 @@ namespace BenDing.Repository.Providers.Web
     public class MedicalInsuranceSqlRepository : IMedicalInsuranceSqlRepository
     {
         private readonly string _connectionString;
-
+        private readonly Log _log;
         private readonly ISystemManageRepository _iSystemManageRepository;
 
         /// <summary>
@@ -30,6 +29,7 @@ namespace BenDing.Repository.Providers.Web
         {
             _iSystemManageRepository = iSystemManageRepository;
             string conStr = ConfigurationManager.ConnectionStrings["NFineDbContext"].ToString();
+            _log = LogFactory.GetLogger("ini".GetType().ToString());
             _connectionString = !string.IsNullOrWhiteSpace(conStr)
                 ? conStr
                 : throw new ArgumentNullException(nameof(conStr));
@@ -37,91 +37,7 @@ namespace BenDing.Repository.Providers.Web
         }
 
         #region 备用
-        ///// <summary>
-        ///// 医保病人信息保存
-        ///// </summary>
-        ///// <param name="user"></param>
-        ///// <param name="param"></param>
-        ///// <returns></returns>
-        //public  <Int32> SaveMedicalInsuranceResidentInfo(
-        //    MedicalInsuranceResidentInfoParam param)
-        //{
-        //    Int32 counts = 0;
-        //    using (var _sqlConnection = new SqlConnection(_connectionString))
-        //    {
-        //        _sqlConnection.Open();
-        //        IDbTransaction transaction = _sqlConnection.BeginTransaction();
-        //        try
-        //        {
-        //            string insertSql =
-        //                $@"update [dbo].[MedicalInsuranceResidentInfo] set  [IsDelete] =1 ,DeleteTime=GETDATE(),DeleteUserId='{param.EmpID}' where [IsDelete]=0 
-        //                        and BusinessId='{param.BusinessId}' and OrgCode='{param.OrgCode}' and DataId='{param.DataId}'";
-        //             _sqlConnection.Execute(insertSql, null, transaction);
-        //            string strSql = $@"
-        //            INSERT INTO [dbo].[MedicalInsuranceResidentInfo]
-        //                       ([DataAllId]
-        //                       ,[ContentJson]
-        //                       ,[ResultData]
-        //                       ,[DataType]
-        //                       ,[DataId]
-        //                       ,IsDelete
-        //                       ,[BusinessId]
-        //                       ,[IdCard]
-        //                       ,[OrgCode]
-        //                       ,[CreateUserId]
-        //                       ,[CreateTime]
-        //                     )
-        //                 VALUES
-        //                       ('{param.DataAllId}','{param.ContentJson}',,'{param.ResultDatajson}','{param.DataType}','{param.DataId}',0,
-        //                         '{param.BusinessId}','{param.IdCard}','{param.OrgCode}','{param.EmpID}',GETDATE())";
-        //            counts =  _sqlConnection.Execute(strSql, null, transaction);
 
-        //            transaction.Commit();
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            transaction.Rollback();
-        //            throw new Exception(e.Message);
-        //        }
-
-        //        _sqlConnection.Close();
-        //    }
-
-        //    return counts;
-        //}
-
-
-
-        ///// <summary>
-        ///// 单病种下载
-        ///// </summary>
-        ///// <param name="user"></param>
-        ///// <param name="param"></param>
-        ///// <returns></returns>
-        //public  <Int32> SingleResidentInfoDownload(UserInfoDto user, List<SingleResidentInfoDto> param)
-        //{
-        //    using (var _sqlConnection = new SqlConnection(_connectionString))
-        //    {
-        //        int result = 0;
-
-        //        _sqlConnection.Open();
-        //        if (param.Any())
-        //        {
-        //            string insertSql = null;
-        //            foreach (var item in param)
-        //            {
-        //                insertSql += $@"
-        //                        INSERT INTO [dbo].[SingleResidentInfo]
-        //                        ([Id],[SpecialDiseasesCode],[Name],[ProjectCode] ,[CreateTime],[CreateUserId])
-        //                        VALUES( '{item.Id}','{item.SpecialDiseasesCode}','{item.Name}','{item.ProjectCode}',GETDATE())";
-        //            }
-
-        //            result =  _sqlConnection.Execute(insertSql);
-        //        }
-
-        //        return result;
-        //    }
-        //}
         #endregion
         /// <summary>
         ///  更新医保病人结算
@@ -132,37 +48,47 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-
-                sqlConnection.Open();
-                string strSql = "";
-                if (!string.IsNullOrWhiteSpace(param.CancelTransactionId))
+                string strSql = null;
+                try
                 {
-                    strSql = $@" update MedicalInsurance set SettlementUserId='{param.UserId}',SettlementTime=NULL,SettlementCancelTime=GETDATE(),[MedicalInsuranceState]=0, 
+                    sqlConnection.Open();
+
+                    if (!string.IsNullOrWhiteSpace(param.CancelTransactionId))
+                    {
+                        strSql = $@" update MedicalInsurance set SettlementUserId='{param.UserId}',SettlementTime=NULL,SettlementCancelTime=GETDATE(),[MedicalInsuranceState]=0, 
                                     SettlementCancelUserId='{param.UserId}',OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
                                     SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
                                     SettlementNo='{param.SettlementNo}',CancelTransactionId='{param.CancelTransactionId}',CancelTransactionId='{param.CancelTransactionId}'
                                     where Id='{param.Id}' ";
-                }
-                else if (!string.IsNullOrWhiteSpace(param.SettlementTransactionId))
-                {
-                    strSql = $@" update MedicalInsurance set SettlementUserId='{param.UserId}',SettlementTime=GETDATE(),MedicalInsuranceState=2,
+                    }
+                    else if (!string.IsNullOrWhiteSpace(param.SettlementTransactionId))
+                    {
+                        strSql = $@" update MedicalInsurance set SettlementUserId='{param.UserId}',SettlementTime=GETDATE(),MedicalInsuranceState=2,
                                     OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
                                     SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
                                     SettlementNo='{param.SettlementNo}',SettlementTransactionId='{param.SettlementTransactionId}'
                                     where Id='{param.Id}' ";
-                }
-                else if (!string.IsNullOrWhiteSpace(param.PreSettlementTransactionId))
-                {
-                    strSql = $@" update MedicalInsurance set PreSettlementUserId='{param.UserId}',PreSettlementTime=GETDATE(),MedicalInsuranceState=1,
+                    }
+                    else if (!string.IsNullOrWhiteSpace(param.PreSettlementTransactionId))
+                    {
+                        strSql = $@" update MedicalInsurance set PreSettlementUserId='{param.UserId}',PreSettlementTime=GETDATE(),MedicalInsuranceState=1,
                                     OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
                                     SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
                                     SettlementNo='{param.SettlementNo}',PreSettlementTransactionId='{param.SettlementTransactionId}'
                                     where Id='{param.Id}' ";
 
+                    }
+                    var data = sqlConnection.Execute(strSql);
+                    sqlConnection.Close();
+                    return data;
                 }
-                var data = sqlConnection.Execute(strSql);
-                sqlConnection.Close();
-                return data;
+                catch (Exception e)
+                {
+                    _log.Debug(strSql);
+                    throw new Exception(e.Message);
+                }
+
+
             }
         }
 
@@ -217,9 +143,12 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                sqlConnection.Open();
-                string strSql = @" SELECT [Id]
-                              ,[HisHospitalizationId]
+                string strSql = null;
+                try
+                {
+                    sqlConnection.Open();
+                    strSql = @" SELECT [Id]
+                              ,[BusinessId]
                               ,[InsuranceNo]
                               ,[MedicalInsuranceAllAmount]
                               ,[MedicalInsuranceHospitalizationNo]
@@ -231,19 +160,25 @@ namespace BenDing.Repository.Providers.Web
                               ,[OrganizationName]
                               ,[InsuranceType]
                               ,[SettlementNo]
-                             
                             FROM [dbo].[MedicalInsurance]
                             where  IsDelete=0";
-                if (!string.IsNullOrWhiteSpace(param.DataId))
-                    strSql += $" and Id='{param.DataId}'";
-                if (!string.IsNullOrWhiteSpace(param.BusinessId))
-                    strSql += $" and HisHospitalizationId='{CommonHelp.GuidToStr(param.BusinessId)}'";
-                if (!string.IsNullOrWhiteSpace(param.OrganizationCode))
-                    strSql += $" and OrganizationCode='{param.OrganizationCode}'";
-                var data = sqlConnection.QueryFirstOrDefault<MedicalInsuranceResidentInfoDto>(strSql);
-                sqlConnection.Close();
-                if (data == null) throw new Exception("当前用未进行医保登记!!!");
-                return data;
+                    if (!string.IsNullOrWhiteSpace(param.DataId))
+                        strSql += $" and Id='{param.DataId}'";
+                    if (!string.IsNullOrWhiteSpace(param.BusinessId))
+                        strSql += $" and BusinessId='{param.BusinessId}'";
+                    if (!string.IsNullOrWhiteSpace(param.OrganizationCode))
+                        strSql += $" and OrganizationCode='{param.OrganizationCode}'";
+                    var data = sqlConnection.QueryFirstOrDefault<MedicalInsuranceResidentInfoDto>(strSql);
+                    sqlConnection.Close();
+
+                    return data;
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(strSql);
+                    throw new Exception(e.Message);
+                }
+
             }
         }
         /// <summary>
@@ -257,60 +192,71 @@ namespace BenDing.Repository.Providers.Web
             var resultData = new Dictionary<int, List<ResidentProjectDownloadRow>>();
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                sqlConnection.Open();
-                string querySql = @"
+                string executeSql = null;
+                try
+                {
+                    sqlConnection.Open();
+                    string querySql = @"
                              select [Id],[ProjectCode],[ProjectName],[ProjectCodeType],Unit,MnemonicCode,Formulation,ProjectLevel,
                              Manufacturer,QuasiFontSize,Specification,Remark,NewCodeMark,NewUpdateTime from [dbo].[MedicalInsuranceProject] 
                              where  IsDelete=0 and RestrictionSign=1";
-                string countSql = @"select count(*) from [dbo].[MedicalInsuranceProject] where  IsDelete=0";
-                string whereSql = "";
-                if (!string.IsNullOrWhiteSpace(param.ProjectCodeType))
-                {   //西药
-                    if (param.ProjectCodeType == "1")
-                    {
-                        whereSql += $" and ProjectCodeType in('11','91','92')";
-                    }//中药
-                    if (param.ProjectCodeType == "0")
-                    {
-                        whereSql += $" and ProjectCodeType in('12','13','91','92')";
-                    }//耗材
-                    if (param.ProjectCodeType == "3")
-                    {
-                        whereSql += $" and ProjectCodeType in('41','81','91','92')";
+                    string countSql = @"select count(*) from [dbo].[MedicalInsuranceProject] where  IsDelete=0";
+                    string whereSql = "";
+                    if (!string.IsNullOrWhiteSpace(param.ProjectCodeType))
+                    {   //西药
+                        if (param.ProjectCodeType == "1")
+                        {
+                            whereSql += $" and ProjectCodeType in('11','91','92')";
+                        }//中药
+                        if (param.ProjectCodeType == "0")
+                        {
+                            whereSql += $" and ProjectCodeType in('12','13','91','92')";
+                        }//耗材
+                        if (param.ProjectCodeType == "3")
+                        {
+                            whereSql += $" and ProjectCodeType in('41','81','91','92')";
+                        }
+
+                        if (param.ProjectCodeType == "2")
+                        {
+                            whereSql += $" and ProjectCodeType not in('11','12','13','41','81','91','92')";
+                        }
                     }
-
-                    if (param.ProjectCodeType == "2")
+                    if (!string.IsNullOrWhiteSpace(param.ProjectCode))
                     {
-                        whereSql += $" and ProjectCodeType not in('11','12','13','41','81','91','92')";
+                        whereSql += $" and ProjectCode='{param.ProjectCode}'";
                     }
-                }
-                if (!string.IsNullOrWhiteSpace(param.ProjectCode))
-                {
-                    whereSql += $" and ProjectCode='{param.ProjectCode}'";
-                }
-                if (!string.IsNullOrWhiteSpace(param.ProjectName))
-                {
-                    whereSql += "  and ProjectName like '" + param.ProjectName + "%'";
-                }
-                if (param.Limit != 0 && param.Page > 0)
-                {
-                    var skipCount = param.Limit * (param.Page - 1);
-                    querySql += whereSql + " order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.Limit + " ROWS ONLY;";
-                }
-                string executeSql = countSql + whereSql + ";" + querySql;
+                    if (!string.IsNullOrWhiteSpace(param.ProjectName))
+                    {
+                        whereSql += "  and ProjectName like '" + param.ProjectName + "%'";
+                    }
+                    if (param.Limit != 0 && param.Page > 0)
+                    {
+                        var skipCount = param.Limit * (param.Page - 1);
+                        querySql += whereSql + " order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.Limit + " ROWS ONLY;";
+                    }
+                    executeSql = countSql + whereSql + ";" + querySql;
 
-                var result = sqlConnection.QueryMultiple(executeSql);
+                    var result = sqlConnection.QueryMultiple(executeSql);
 
-                int totalPageCount = result.Read<int>().FirstOrDefault();
-                dataList = (from t in result.Read<ResidentProjectDownloadRow>()
-                            select t).ToList();
-                resultData.Add(totalPageCount, dataList);
-                sqlConnection.Close();
+                    int totalPageCount = result.Read<int>().FirstOrDefault();
+                    dataList = (from t in result.Read<ResidentProjectDownloadRow>()
+                                select t).ToList();
+                    resultData.Add(totalPageCount, dataList);
+                    sqlConnection.Close();
+                    return resultData;
+
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(executeSql);
+                    throw new Exception(e.Message);
+                }
 
             }
 
 
-            return resultData;
+
 
         }
         /// <summary>
@@ -321,14 +267,14 @@ namespace BenDing.Repository.Providers.Web
         /// <returns></returns>
         public Int32 ProjectDownload(UserInfoDto user, List<ResidentProjectDownloadRowDataRowDto> param)
         {
-            string insertSql = null;
-            int result = 0;
-            try
+
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                using (var sqlConnection = new SqlConnection(_connectionString))
+                string insertSql = null;
+                try
                 {
-
-
+                    int result = 0;
                     sqlConnection.Open();
                     if (param.Any())
                     {
@@ -357,17 +303,20 @@ namespace BenDing.Repository.Providers.Web
 
                         }
                         result = sqlConnection.Execute(insertSql);
-                    }
+                        sqlConnection.Close();
 
+                    }
+                    return result;
                 }
+                catch (Exception e)
+                {
+                    _log.Debug(insertSql);
+                    throw new Exception(e.Message);
+                }
+
+
             }
-            catch (Exception e)
-            {
-                var log = LogFactory.GetLogger("ini".GetType().ToString());
-                log.Debug(insertSql);
-                throw new Exception(e.Message + "医保项目下载出错!!!");
-            }
-            return result;
+
 
         }
         /// <summary>
@@ -394,13 +343,11 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-
-                sqlConnection.Open();
-
-                if (param.PairCodeList.Any())
+                string insertSql = null;
+                try
                 {
-                    IDbTransaction transaction = sqlConnection.BeginTransaction();
-                    try
+                    sqlConnection.Open();
+                    if (param.PairCodeList.Any())
                     {
                         string updateSql = "";
                         var pairCodeIdList = param.PairCodeList.Where(c => c.PairCodeId != null)
@@ -411,12 +358,10 @@ namespace BenDing.Repository.Providers.Web
                         {
                             updateSql += $@"update [dbo].[ThreeCataloguePairCode] set [IsDelete]=1,
                              [DeleteUserId]='{param.UserId}',DeleteTime=GETDATE() where [Id] in ({updateId});";
-                            sqlConnection.Execute(updateSql, null, transaction);
+                            sqlConnection.Execute(updateSql);
 
                         }
-
                         var insertParam = param.PairCodeList.ToList();
-                        string insertSql = "";
                         //新增对码
                         if (insertParam.Any())
                         {
@@ -429,22 +374,16 @@ namespace BenDing.Repository.Providers.Web
                                            '{BitConverter.ToInt64(Guid.Parse(items.DirectoryCode).ToByteArray(), 0)}',GETDATE(),0,'{param.UserId}',0,'{items.DirectoryCode}') ";
 
                             }
-
-                            sqlConnection.Execute(insertSql, null, transaction);
+                            sqlConnection.Execute(insertSql);
+                            sqlConnection.Close();
                         }
-
-                        transaction.Commit();
-
-                    }
-                    catch (Exception e)
-                    {
-                        transaction.Rollback();
-                        throw new Exception(e.Message);
                     }
                 }
-
-                sqlConnection.Close();
-
+                catch (Exception e)
+                {
+                    _log.Debug(insertSql);
+                    throw new Exception(e.Message);
+                }
             }
         }
         /// <summary>
@@ -457,30 +396,34 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                var resultData = new List<QueryMedicalInsurancePairCodeDto>();
-                sqlConnection.Open();
-
-                if (param.DirectoryCodeList.Any())
+                string sqlStr = null;
+                try
                 {
-                    var updateId = CommonHelp.ListToStr(param.DirectoryCodeList);
-                    string sqlStr = $@"
+                    var resultData = new List<QueryMedicalInsurancePairCodeDto>();
+                    sqlConnection.Open();
+                    if (param.DirectoryCodeList.Any())
+                    {
+                        var updateId = CommonHelp.ListToStr(param.DirectoryCodeList);
+                         sqlStr = $@"
                             select a.FixedEncoding,a.DirectoryCode,b.ProjectCode,b.ProjectCodeType,
-                            b.ProjectName,b.ProjectLevel,b.Formulation,b.Specification,b.Unit,
+                            b.ProjectName,b.ProjectLevel,b.Formulation,b.Specification,b.Unit,a.DirectoryCategoryCode,
                             b.OneBlock,b.TwoBlock,b.ThreeBlock,b.FourBlock,b.Manufacturer,b.LimitPaymentScope,b.NewCodeMark,
                             b.ResidentOutpatientBlock,b.ResidentOutpatientSign,b.ResidentSelfPayProportion,b.WorkersSelfPayProportion
                             from [dbo].[ThreeCataloguePairCode] as a
                             inner join [dbo].[MedicalInsuranceProject] as b on b.ProjectCode=a.ProjectCode
                             where a.OrganizationCode='{param.OrganizationCode}' and a.[DirectoryCode] in({updateId})
-                             and a.IsDelete=0  and b.IsDelete=0 and b.RestrictionSign=1";
-                    var data = sqlConnection.Query<QueryMedicalInsurancePairCodeDto>(sqlStr);
-                    if (data != null && data.Any() == true)
-                    {
-                        resultData = data.ToList();
+                             and a.IsDelete=0  and b.IsDelete=0 and b.EffectiveSign=1";
+                         resultData = sqlConnection.Query<QueryMedicalInsurancePairCodeDto>(sqlStr).ToList();
+                        sqlConnection.Close();
                     }
+                    return resultData;
                 }
-
-                sqlConnection.Close();
-                return resultData;
+                catch (Exception e)
+                {
+                    _log.Debug(sqlStr);
+                    throw new Exception(e.Message);
+                }
+              
             }
         }
         /// <summary>
@@ -493,171 +436,199 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-
-                sqlConnection.Open();
-                string querySql = "";
-                string countSql = "";
-                string whereSql = "";
-                var resultData = new Dictionary<int, List<DirectoryComparisonManagementDto>>();
-                if (param.State == 1)
+                string executeSql = null;
+                try
                 {
-                    whereSql = $@" where not exists(select b.FixedEncoding from  [dbo].[ThreeCataloguePairCode] as b 
+                    sqlConnection.Open();
+                    string querySql = "";
+                    string countSql = "";
+                    string whereSql = "";
+                    var resultData = new Dictionary<int, List<DirectoryComparisonManagementDto>>();
+                    if (param.State == 1)
+                    {
+                        whereSql = $@" where not exists(select b.FixedEncoding from  [dbo].[ThreeCataloguePairCode] as b 
                                 where b.OrganizationCode='{param.OrganizationCode}' and b.FixedEncoding=a.FixedEncoding and b.IsDelete=0 )";
-                    querySql = @"select  a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
+                        querySql = @"select  a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
                                 a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding
                                  from [dbo].[HospitalThreeCatalogue]  as a ";
-                    countSql = @"select COUNT(*) from[dbo].[HospitalThreeCatalogue] as a ";
-
-
-                }
-                else if (param.State == 2)
-                {
-                    querySql =
-                        $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
+                        countSql = @"select COUNT(*) from[dbo].[HospitalThreeCatalogue] as a ";
+                    }
+                    else if (param.State == 2)
+                    {
+                        querySql =
+                            $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
                              a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
                              c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,b.CreateTime as PairCodeTime,c.ProjectLevel,c.ProjectCodeType
                              from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
                              on b.[FixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
                              on b.ProjectCode=c.ProjectCode
                              where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0 ";
-                    countSql = $@"select COUNT(*)
+                        countSql = $@"select COUNT(*)
                              from [dbo].[HospitalThreeCatalogue]  as a  join  [dbo].[ThreeCataloguePairCode] as b
                              on b.[FixedEncoding]=a.FixedEncoding join [dbo].[MedicalInsuranceProject] as c
                              on b.ProjectCode=c.ProjectCode
                              where b.OrganizationCode ='{param.OrganizationCode}' and b.IsDelete=0 ";
-
-
-                }
-                else if (param.State == 0)
-                {
-                    querySql =
-                        $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
+                    }
+                    else if (param.State == 0)
+                    {
+                        querySql =
+                            $@"select b.Id, a.[DirectoryCode],a.[DirectoryName],a.[MnemonicCode],a.[DirectoryCategoryCode],
                             a.[DirectoryCategoryName],a.[Unit],a.[Formulation],a.[Specification],a.ManufacturerName,a.FixedEncoding,b.CreateUserId as PairCodeUser ,
                             c.ProjectCode,c.ProjectName,c.QuasiFontSize,c.LimitPaymentScope,b.CreateTime as PairCodeTime,c.ProjectLevel,c.ProjectCodeType
                              from [dbo].[HospitalThreeCatalogue]  as a  left join (select * from [dbo].[ThreeCataloguePairCode] where OrganizationCode ='{param.OrganizationCode}'  and IsDelete=0) as b
                              on b.[FixedEncoding]=a.FixedEncoding left join [dbo].[MedicalInsuranceProject] as c
                              on b.ProjectCode=c.ProjectCode
                              where a.IsDelete='0' ";
-                    countSql = $@"select COUNT(*)
+                        countSql = $@"select COUNT(*)
                               from [dbo].[HospitalThreeCatalogue]  as a  left join  (select * from [dbo].[ThreeCataloguePairCode] where OrganizationCode ='{param.OrganizationCode}'  and IsDelete=0) as b
                              on b.[FixedEncoding]=a.FixedEncoding left join [dbo].[MedicalInsuranceProject] as c
                              on b.ProjectCode=c.ProjectCode
                              where a.IsDelete='0' ";
+                    }
 
+                    if (!string.IsNullOrWhiteSpace(param.DirectoryCode))
+                    {
+                        whereSql += $" and a.DirectoryCode='{param.DirectoryCode}'";
+                    }
 
+                    if (!string.IsNullOrWhiteSpace(param.DirectoryCategoryCode))
+                    {
+                        whereSql += $" and a.DirectoryCategoryCode='{param.DirectoryCategoryCode}'";
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(param.DirectoryName))
+                    {
+                        whereSql += "  and a.DirectoryName like '" + param.DirectoryName + "%'";
+                    }
+
+                    if (param.Limit != 0 && param.Page > 0)
+                    {
+                        var skipCount = param.Limit * (param.Page - 1);
+                        querySql += whereSql + " order by a.CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " +
+                                    param.Limit + " ROWS ONLY;";
+                    }
+                      executeSql = countSql + whereSql + ";" + querySql;
+                    var result = sqlConnection.QueryMultiple(executeSql);
+
+                    int totalPageCount = result.Read<int>().FirstOrDefault();
+                    var hospitalOperatorAll = _iSystemManageRepository.QueryHospitalOperatorAll();
+                    var dataList = (from t in result.Read<DirectoryComparisonManagementDto>()
+                                    select new DirectoryComparisonManagementDto
+                                    {
+                                        Id = t.Id,
+                                        DirectoryCode = t.DirectoryCode,
+                                        DirectoryCategoryName = t.DirectoryCategoryName,
+                                        DirectoryName = t.DirectoryName,
+                                        FixedEncoding = t.FixedEncoding,
+                                        Formulation = t.Formulation,
+                                        LimitPaymentScope = t.LimitPaymentScope,
+                                        ManufacturerName = t.ManufacturerName,
+                                        MnemonicCode = t.MnemonicCode,
+                                        PairCodeTime = t.PairCodeTime,
+                                        ProjectName = t.ProjectName,
+                                        ProjectCode = t.ProjectCode,
+                                        ProjectLevel = t.ProjectLevel != null
+                                            ? ((ProjectLevel)Convert.ToInt32(t.ProjectLevel)).ToString()
+                                            : t.ProjectLevel,
+                                        ProjectCodeType = t.ProjectCodeType != null
+                                            ? ((ProjectCodeType)Convert.ToInt32(t.ProjectCodeType)).ToString()
+                                            : t.ProjectCodeType,
+                                        QuasiFontSize = t.QuasiFontSize,
+                                        Unit = t.Unit,
+                                        Specification = t.Specification,
+                                        Remark = t.Remark,
+                                        PairCodeUser = t.PairCodeUser != null
+                                            ? hospitalOperatorAll.Where(c => c.HisUserId == t.PairCodeUser).Select(d => d.HisUserName)
+                                                .FirstOrDefault()
+                                            : t.PairCodeUser,
+                                    }).ToList();
+                    resultData.Add(totalPageCount, dataList);
+                    sqlConnection.Close();
+                    return resultData;
                 }
-
-                if (!string.IsNullOrWhiteSpace(param.DirectoryCode))
+                catch (Exception e)
                 {
-                    whereSql += $" and a.DirectoryCode='{param.DirectoryCode}'";
+                    _log.Debug(executeSql);
+                    throw new Exception(e.Message);
                 }
-
-                if (!string.IsNullOrWhiteSpace(param.DirectoryCategoryCode))
-                {
-                    whereSql += $" and a.DirectoryCategoryCode='{param.DirectoryCategoryCode}'";
-                }
-
-                if (!string.IsNullOrWhiteSpace(param.DirectoryName))
-                {
-                    whereSql += "  and a.DirectoryName like '" + param.DirectoryName + "%'";
-                }
-
-                if (param.Limit != 0 && param.Page > 0)
-                {
-                    var skipCount = param.Limit * (param.Page - 1);
-                    querySql += whereSql + " order by a.CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " +
-                                param.Limit + " ROWS ONLY;";
-                }
-
-                string executeSql = countSql + whereSql + ";" + querySql;
-                var result = sqlConnection.QueryMultiple(executeSql);
-
-                int totalPageCount = result.Read<int>().FirstOrDefault();
-                var hospitalOperatorAll = _iSystemManageRepository.QueryHospitalOperatorAll();
-                var dataList = (from t in result.Read<DirectoryComparisonManagementDto>()
-                                select new DirectoryComparisonManagementDto
-                                {
-                                    Id = t.Id,
-                                    DirectoryCode = t.DirectoryCode,
-                                    DirectoryCategoryName = t.DirectoryCategoryName,
-                                    DirectoryName = t.DirectoryName,
-                                    FixedEncoding = t.FixedEncoding,
-                                    Formulation = t.Formulation,
-                                    LimitPaymentScope = t.LimitPaymentScope,
-                                    ManufacturerName = t.ManufacturerName,
-                                    MnemonicCode = t.MnemonicCode,
-                                    PairCodeTime = t.PairCodeTime,
-                                    ProjectName = t.ProjectName,
-                                    ProjectCode = t.ProjectCode,
-                                    ProjectLevel = t.ProjectLevel != null
-                                        ? ((ProjectLevel)Convert.ToInt32(t.ProjectLevel)).ToString()
-                                        : t.ProjectLevel,
-                                    ProjectCodeType = t.ProjectCodeType != null
-                                        ? ((ProjectCodeType)Convert.ToInt32(t.ProjectCodeType)).ToString()
-                                        : t.ProjectCodeType,
-                                    QuasiFontSize = t.QuasiFontSize,
-                                    Unit = t.Unit,
-                                    Specification = t.Specification,
-                                    Remark = t.Remark,
-                                    PairCodeUser = t.PairCodeUser != null
-                                        ? hospitalOperatorAll.Where(c => c.HisUserId == t.PairCodeUser).Select(d => d.HisUserName)
-                                            .FirstOrDefault()
-                                        : t.PairCodeUser,
-                                }).ToList();
-                resultData.Add(totalPageCount, dataList);
-                sqlConnection.Close();
-                return resultData;
-
             }
         }
-        /// <summary>
-        /// 三大目录查询
-        /// </summary>
-        /// <param name="organizationCode"></param>
-        /// <returns></returns>
-        public List<QueryThreeCataloguePairCodeUploadDto> ThreeCataloguePairCodeUpload(
-            string organizationCode)
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="param"></param>
+      /// <returns></returns>
+        public List<QueryThreeCataloguePairCodeUploadDto> ThreeCataloguePairCodeUpload(UpdateThreeCataloguePairCodeUploadParam param)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                var resultData = new List<QueryThreeCataloguePairCodeUploadDto>();
-                sqlConnection.Open();
-                string querySql = $@"select a.[Id],[ProjectCode],[ProjectName],[ProjectCodeType],ProjectLevel,
-                                    [RestrictionSign],[Remark],b.DirectoryCode,[DirectoryType]
-                                    from [dbo].[MedicalInsuranceProject] as a inner join [dbo].[ThreeCataloguePairCode] as b
-                                    on a.ProjectCode=b.MedicalInsuranceDirectoryCode where b.UploadState=0 and OrganizationCode='{organizationCode}'
-                                    and IsDelete=0";
-                var data = sqlConnection.Query<QueryThreeCataloguePairCodeUploadDto>(querySql);
-                if (data != null && data.Any())
+                string querySql = null;
+                try
                 {
-                    resultData = data.ToList();
-                }
+                    sqlConnection.Open();
+                    if (param.ProjectCodeList.Any())
+                    {
+                        var projectCodeList = CommonHelp.ListToStr(param.ProjectCodeList);
 
-                sqlConnection.Close();
-                return resultData;
+                        querySql = $@"select a.[Id],a.[ProjectCode],a.[ProjectName],[ProjectCodeType],ProjectLevel,
+                                    [RestrictionSign],[Remark],b.DirectoryCode,[DirectoryCategoryCode]
+                                    from [dbo].[MedicalInsuranceProject] as a inner join [dbo].[ThreeCataloguePairCode] as b
+                                    on a.ProjectCode=b.ProjectCode where b.UploadState=0 and a.ProjectCode in({projectCodeList})
+                                    and a.IsDelete=0 and b.IsDelete=0 and OrganizationCode='{param.User.OrganizationCode}'";
+                    }
+                    else
+                    {
+                        querySql = $@"select a.[Id],a.[ProjectCode],a.[ProjectName],[ProjectCodeType],ProjectLevel,
+                                    [RestrictionSign],[Remark],b.DirectoryCode,[DirectoryCategoryCode]
+                                    from [dbo].[MedicalInsuranceProject] as a inner join [dbo].[ThreeCataloguePairCode] as b
+                                    on a.ProjectCode=b.ProjectCode where b.UploadState=0 
+                                    and a.IsDelete=0 and b.IsDelete=0 and OrganizationCode='{param.User.OrganizationCode}'";
+                    }
+                    var data = sqlConnection.Query<QueryThreeCataloguePairCodeUploadDto>(querySql).ToList();
+                    sqlConnection.Close();
+                    return data;
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(querySql);
+                    throw new Exception(e.Message);
+                }
             }
         }
         /// <summary>
         /// his上传更新数据
         /// </summary>
-        /// <param name="organizationCode"></param>
+        /// <param name="param"></param>
         /// <returns></returns>
-        public int UpdateThreeCataloguePairCodeUpload(string organizationCode)
+        public int UpdateThreeCataloguePairCodeUpload(UpdateThreeCataloguePairCodeUploadParam param)
         {
-            Int32 resultData;
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-
-                sqlConnection.Open();
-                string querySql = $@"update [dbo].[ThreeCataloguePairCode] set UploadState=1 where 
-                                 UploadState=0 and OrganizationCode='{organizationCode}' and IsDelete=0";
-                resultData = sqlConnection.Execute(querySql);
-
-                sqlConnection.Close();
-
+                string querySql = null;
+                try
+                {
+                    sqlConnection.Open();
+                    if (param.ProjectCodeList.Any())
+                    {
+                        var projectCodeId = CommonHelp.ListToStr(param.ProjectCodeList);
+                        querySql = $@"update [dbo].[ThreeCataloguePairCode] set UploadState=1 where  ProjectCode in({projectCodeId}) and
+                                 UploadState=0 and OrganizationCode='{param.User.OrganizationCode}' and IsDelete=0";
+                    }
+                    else
+                    {
+                        querySql = $@"update [dbo].[ThreeCataloguePairCode] set UploadState=1 where 
+                                 UploadState=0 and OrganizationCode='{param.User.OrganizationCode}' and IsDelete=0";
+                    }
+                   var resultData = sqlConnection.Execute(querySql);
+                    sqlConnection.Close();
+                    return resultData;
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(querySql);
+                    throw new Exception(e.Message);
+                }
             }
-
-            return resultData;
         }
         /// <summary>
         /// 处方上传数据更新
@@ -671,36 +642,43 @@ namespace BenDing.Repository.Providers.Web
             int resultData = 0;
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-
-                sqlConnection.Open();
-
-                if (param.Any())
+                string querySql = null;
+                try
                 {
-                    string querySql = null;
-                    if (batchConfirmFail == false)
+                    sqlConnection.Open();
+                    if (param.Any())
                     {
-                        foreach (var item in param)
+                        if (batchConfirmFail == false)
                         {
-                            querySql +=
-                               $@"update [dbo].[HospitalizationFee] set [UploadMark]=1,BatchNumber='{item.BatchNumber}',UploadAmount={item.UploadAmount},
+                            foreach (var item in param)
+                            {
+                                querySql +=
+                                    $@"update [dbo].[HospitalizationFee] set [UploadMark]=1,BatchNumber='{item.BatchNumber}',UploadAmount={item.UploadAmount},
                                TransactionId='{item.TransactionId}',UploadUserId='{user.UserId}',UploadUserName='{user.UserName}',UploadTime=GETDATE()
                                where id='{item.Id}' and IsDelete=0;";
+                            }
                         }
-                    }
-                    else //更新批次确认失败
-                    {
-                        var updateId = CommonHelp.ListToStr(param.Select(c => c.Id.ToString()).ToList());
-                        querySql = $"update [dbo].[HospitalizationFee] set [UploadMark]=0 where id in ({updateId});";
+                        else //更新批次确认失败
+                        {
+                            var updateId = CommonHelp.ListToStr(param.Select(c => c.Id.ToString()).ToList());
+                            querySql = $"update [dbo].[HospitalizationFee] set [UploadMark]=0 where id in ({updateId});";
 
+                        }
+                        resultData = sqlConnection.Execute(querySql);
+                        sqlConnection.Close();
                     }
-                    resultData = sqlConnection.Execute(querySql);
+                    return resultData;
                 }
-
-                sqlConnection.Close();
+                catch (Exception e)
+                {
+                    _log.Debug(querySql);
+                    throw new Exception(e.Message);
+                }
+             
 
             }
 
-            return resultData;
+         
         }
         public string FilteSqlStr(string str)
         {

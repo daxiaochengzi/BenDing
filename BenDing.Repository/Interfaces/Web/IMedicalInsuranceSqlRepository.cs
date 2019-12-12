@@ -94,14 +94,13 @@ namespace BenDing.Repository.Interfaces.Web
 
         Dictionary<int, List<DirectoryComparisonManagementDto>> DirectoryComparisonManagement(
            DirectoryComparisonManagementUiParam param);
-        List<QueryThreeCataloguePairCodeUploadDto> ThreeCataloguePairCodeUpload(
-           string organizationCode);
+        List<QueryThreeCataloguePairCodeUploadDto> ThreeCataloguePairCodeUpload(UpdateThreeCataloguePairCodeUploadParam param);
         /// <summary>
         /// 三大目录对码
         /// </summary>
-        /// <param name="organizationCode"></param>
+        /// <param name="param"></param>
         /// <returns></returns>
-        int UpdateThreeCataloguePairCodeUpload(string organizationCode);
+        int UpdateThreeCataloguePairCodeUpload(UpdateThreeCataloguePairCodeUploadParam param);
         /// <summary>
         /// 更新批次号
         /// </summary>
