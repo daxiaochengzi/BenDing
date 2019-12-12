@@ -45,7 +45,9 @@ namespace BenDing.Service.Providers
         public OutpatientDepartmentCostInputDto OutpatientDepartmentCostInput(GetOutpatientPersonParam param)
         {
             var resultData = new OutpatientDepartmentCostInputDto();
-            var outpatientPerson= _webServiceBasic.GetOutpatientPerson(param);
+
+            //医保数据写入
+            var outpatientPerson = _webServiceBasic.GetOutpatientPerson(param);
             if (outpatientPerson != null)
             {
                 var inputParam = new OutpatientDepartmentCostInputParam()
@@ -61,7 +63,7 @@ namespace BenDing.Service.Providers
                 {
                     var transactionId = Guid.NewGuid().ToString("N");
                     param.ReturnJson = JsonConvert.SerializeObject(resultData);
-                    param.Id=Guid.NewGuid();
+                    param.Id = Guid.NewGuid();
                     param.IsSave = true;
                     //中间层数据写入
                     _webServiceBasic.GetOutpatientPerson(param);
@@ -88,19 +90,19 @@ namespace BenDing.Service.Providers
                     saveXmlData.MedicalInsuranceCode = "48";
                     saveXmlData.UserId = param.User.UserId;
                     //存基层
-                   // _webBasicRepository.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
-                  //更新中间层确认基层写入成功
-                    _hisSqlRepository.UpdateOutpatient(param.User,new  UpdateOutpatientParam()
+                    // _webBasicRepository.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                    //更新中间层确认基层写入成功
+                    _hisSqlRepository.UpdateOutpatient(param.User, new UpdateOutpatientParam()
                     {
                         Id = param.Id,
                         SettlementTransactionId = transactionId
                     });
-                  
+
                 }
             }
 
-            
-             return resultData;
+
+            return resultData;
         }
     }
 }

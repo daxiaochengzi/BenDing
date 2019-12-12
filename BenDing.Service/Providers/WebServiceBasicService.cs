@@ -238,7 +238,7 @@ namespace BenDing.Service.Providers
                     resultData = AutoMapper.Mapper.Map<BaseOutpatientInfoDto>(resultDataIni);
                 }
 
-                if (resultData.ReceptionStatus < 2) throw  new  Exception("门诊病人需要已接诊才能结算!!!");
+                //if (resultData.ReceptionStatus < 2) throw  new  Exception("门诊病人需要已接诊才能结算!!!");
 
                     if (param.IsSave)
                     {
