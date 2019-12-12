@@ -148,7 +148,6 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="user"></param>
         public void HospitalizationModify(HospitalizationModifyParam param, UserInfoDto user)
         {
-
             var xmlStr = XmlHelp.SaveXml(param);
             if (xmlStr)
             {
@@ -213,7 +212,6 @@ namespace BenDing.Repository.Providers.Web
                     //日志
                     var logParam = new AddHospitalLogParam();
                     logParam.User = user;
-                  
                     logParam.RelationId = queryData.Id;
                     logParam.JoinOrOldJson = queryData.AdmissionInfoJson;
                     logParam.ReturnOrNewJson = paramStr;

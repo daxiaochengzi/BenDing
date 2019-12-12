@@ -634,7 +634,8 @@ namespace NFine.Web.Controllers
                 var iniParam = new ResidentHospitalizationRegisterParam();
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
                 {   //主诊断
-                    var mainDiagnosis = param.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis);
+                    // var mainDiagnosisList = param.DiagnosisList.Where(c=>c.IsMainDiagnosis==true);
+                    var mainDiagnosis= param.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == true);
                     if (mainDiagnosis == null) throw new Exception("主诊断不能为空!!!");
                     iniParam.AdmissionMainDiagnosisIcd10 = mainDiagnosis.DiagnosisCode;
                     iniParam.AdmissionMainDiagnosis = mainDiagnosis.DiagnosisName;
@@ -648,7 +649,6 @@ namespace NFine.Web.Controllers
                         num++;
                     }
                     var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-
                     var infoData = new GetInpatientInfoParam()
                     {
                         User = userBase,
@@ -672,8 +672,6 @@ namespace NFine.Web.Controllers
                         iniParam.Operators = inpatientData.AdmissionOperator;
                         iniParam.InsuranceType= param.InsuranceType;
                         iniParam.BusinessId = param.BusinessId;
-
-
                         //入院登记
                         _residentMedicalInsurance.HospitalizationRegister(iniParam, userBase);
                     }
@@ -1166,7 +1164,7 @@ namespace NFine.Web.Controllers
                 //医保登录
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 _outpatientDepartmentRepository.QueryOutpatientDepartmentCost(
-                        new QueryOutpatientDepartmentCostParam()
+                 new QueryOutpatientDepartmentCostParam()
                         { DocumentNo = param.DocumentNo});
 
             });
