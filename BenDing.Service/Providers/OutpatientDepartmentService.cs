@@ -90,7 +90,7 @@ namespace BenDing.Service.Providers
                     saveXmlData.MedicalInsuranceCode = "48";
                     saveXmlData.UserId = param.User.UserId;
                     //存基层
-                    // _webBasicRepository.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                     _webBasicRepository.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
                     //更新中间层确认基层写入成功
                     _hisSqlRepository.UpdateOutpatient(param.User, new UpdateOutpatientParam()
                     {

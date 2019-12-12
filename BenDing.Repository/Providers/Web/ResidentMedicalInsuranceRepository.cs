@@ -853,7 +853,7 @@ namespace BenDing.Repository.Providers.Web
                         saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                         saveXmlData.MedicalInsuranceCode = "31";
                         saveXmlData.UserId = user.UserId;
-                        //_webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                        _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
                         var batchConfirmParam = new BatchConfirmParam()
                         {
                             ConfirmType = 1,
