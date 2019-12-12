@@ -50,6 +50,9 @@ namespace BenDing.Repository.Providers.Web
                     resultData = XmlHelp.DeSerializerModel(new OutpatientDepartmentCostInputDto(), true);
 
                 }
+                else {
+                    throw new Exception("门诊费用医保执行失败!!!");
+                }
             }
             return resultData;
         }

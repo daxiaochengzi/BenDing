@@ -211,7 +211,7 @@ namespace BenDing.Repository.Providers.Web
                                ,[CreateUserId]
                               )
                              values('{Guid.NewGuid()}','{param.RelationId}','{param.JoinOrOldJson}','{param.ReturnOrNewJson}',
-                              '{param.Remark}','{param.User.OrganizationCode}',,'{param.User.OrganizationName}',getDate(),0,'{param.User.UserId}')";
+                              '{param.Remark}','{param.User.OrganizationCode}','{param.User.OrganizationName}',getDate(),0,'{param.User.UserId}')";
                     var data = sqlConnection.Execute(querySql);
                     sqlConnection.Close();
                     return data;
