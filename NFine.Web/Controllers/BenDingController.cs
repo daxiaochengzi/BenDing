@@ -1102,7 +1102,7 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData OutpatientDepartmentCostInput([FromUri]GetOutpatientUiParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
-            {
+            {   //
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //医保登录
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
