@@ -1195,7 +1195,7 @@ namespace NFine.Web.Controllers
                         {
                             StartTime = param.StartTime,
                             EndTime = param.EndTime,
-                            SummaryType = "2",
+                            SummaryType = "22",
                             PeopleType =((int)param.PeopleType).ToString()
                         }
                     });
