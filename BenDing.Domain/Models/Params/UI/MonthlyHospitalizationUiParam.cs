@@ -13,18 +13,18 @@ namespace BenDing.Domain.Models.Params.UI
 /// </summary>
    public class MonthlyHospitalizationUiParam:UiInIParam
     {/// <summary>
-     /// 人员类别 
+     /// 人员类别(1:职工,2:居民)
      /// </summary>
      
         public PeopleType PeopleType { get; set; }
 
-        /// <summary>
-        /// 汇总类别 20-单病种住院月结 21-精神病住院结算22-门诊诊查费结
-        /// </summary>
-        ///
-        [Display(Name = "汇总类别")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
-        public string SummaryType { get; set; }
+        ///// <summary>
+        ///// 汇总类别 20-单病种住院月结 21-精神病住院结算22-门诊诊查费结
+        ///// </summary>
+        /////
+        //[Display(Name = "汇总类别")]
+        //[Required(ErrorMessage = "{0}不能为空!!!")]
+        //public string SummaryType { get; set; }
         /// <summary>
         /// 报销开始日期
         /// </summary>
