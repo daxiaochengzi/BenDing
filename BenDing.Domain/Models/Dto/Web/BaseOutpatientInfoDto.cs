@@ -97,9 +97,6 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 回参json
         /// </summary>
         public string ReturnJson { get; set; }
-        /// <summary>
-        /// 是否删除
-        /// </summary>
-        public bool IsDelete { get; set; }
+
     }
 }

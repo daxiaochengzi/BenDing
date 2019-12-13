@@ -90,14 +90,6 @@ namespace NFine.Web.Controllers
 
 
 
-              var data=  hisSqlRepository.InpatientInfoDetailQuery(new InpatientInfoDetailQueryParam()
-                    {BusinessId = "88D323D8ADCD41B3A8DCD9B3C42E64D1"});
-                if (data.Any())
-                {
-                    string aa = "123";
-
-                }
-
             });
 
         }

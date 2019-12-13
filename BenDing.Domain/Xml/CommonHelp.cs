@@ -134,6 +134,17 @@ namespace BenDing.Domain.Xml
             }
             return dict;
         }
+        /// <summary>
+        /// 获取诊断字符串
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static string DiagnosisStr(List<string> param)
+        {
+            string str = string.Join(",", param.ToArray());
+            string resultData = str.Length > 20 ?string.Join(",", param.Take(2).ToArray()) : str;
+            return resultData;
+        }
 
         /// <summary>
         /// 获取类属性的名称和全称字典列表
