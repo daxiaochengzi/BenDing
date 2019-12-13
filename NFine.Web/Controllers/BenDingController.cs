@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -14,7 +13,6 @@ using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
-using BenDing.Repository.Providers.Web;
 using BenDing.Service.Interfaces;
 using Newtonsoft.Json;
 
@@ -1193,8 +1191,9 @@ namespace NFine.Web.Controllers
                         User = userBase,
                         Participation = new MonthlyHospitalizationParticipationParam()
                         {
-                            StartTime = param.StartTime,
-                            EndTime = param.EndTime,
+                            StartTime = Convert.ToDateTime(param.StartTime).ToString("yyyyMMdd"),
+                          
+                            EndTime = Convert.ToDateTime(param.EndTime).ToString("yyyyMMdd"),
                             SummaryType = "22",
                             PeopleType =((int)param.PeopleType).ToString()
                         }
