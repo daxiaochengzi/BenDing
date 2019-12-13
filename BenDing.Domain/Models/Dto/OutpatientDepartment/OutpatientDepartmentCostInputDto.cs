@@ -36,7 +36,7 @@ namespace BenDing.Domain.Models.Dto.OutpatientDepartment
         /// <summary>
         /// 报销说明备注
         /// </summary>
-        [JsonProperty(PropertyName = "PO_XJZF")]
+        [JsonProperty(PropertyName = "PO_SMBZ")]
      
         public string Remark { get; set; }
 

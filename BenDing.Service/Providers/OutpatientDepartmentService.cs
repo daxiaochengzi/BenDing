@@ -55,7 +55,7 @@ namespace BenDing.Service.Providers
                     AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
                     IdentityMark = "1",
                     InformationNumber = outpatientPerson.IdCardNo,
-                    Operators = outpatientPerson.Operator
+                    Operators = "李茜"
                 };
                 //医保数据写入
                 resultData = _outpatientDepartmentRepository.OutpatientDepartmentCostInput(inputParam);
