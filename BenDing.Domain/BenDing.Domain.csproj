@@ -100,8 +100,10 @@
     <Compile Include="Models\Dto\Web\UiIniParam.cs" />
     <Compile Include="Models\Enums\MedicalInsuranceState.cs" />
     <Compile Include="Models\Enums\OrganizationGrade.cs" />
+    <Compile Include="Models\Enums\PeopleType.cs" />
     <Compile Include="Models\Enums\ProjectCodeType.cs" />
     <Compile Include="Models\Enums\ProjectLevel.cs" />
+    <Compile Include="Models\Enums\SummaryType.cs" />
     <Compile Include="Models\Params\Base\BaseUiBusinessIdDataParam.cs" />
     <Compile Include="Models\Params\Base\BaseUiIniParam.cs" />
     <Compile Include="Models\Params\Base\DatabaseParam.cs" />

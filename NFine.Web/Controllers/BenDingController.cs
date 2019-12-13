@@ -1101,7 +1101,7 @@ namespace NFine.Web.Controllers
         /// <returns></returns>
         [HttpGet]
         public ApiJsonResultData OutpatientDepartmentCostInput([FromUri]GetOutpatientUiParam param)
-        {
+        { 
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {   //
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
@@ -1195,8 +1195,8 @@ namespace NFine.Web.Controllers
                         {
                             StartTime = param.StartTime,
                             EndTime = param.EndTime,
-                            SummaryType = param.SummaryType,
-                            PeopleType = param.PeopleType
+                            SummaryType = "2",
+                            PeopleType =((int)param.PeopleType).ToString()
                         }
                     });
 
