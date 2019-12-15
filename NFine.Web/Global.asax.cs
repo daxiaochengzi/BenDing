@@ -17,19 +17,13 @@ namespace NFine.Web
         /// </summary>
         protected void Application_Start()
         {
-            Bootstrapper.Start();
+            Bootstrapper.Initialise();
             AreaRegistration.RegisterAllAreas();
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             AutoMapperConfig.Config();
-            //HttpConfiguration config = GlobalConfiguration.Configuration;
-            //config.Formatters.JsonFormatter.SerializerSettings.Formatting =
-            //    Newtonsoft.Json.Formatting.Indented;
-            //var json = config.Formatters.JsonFormatter;
-            //json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.None;
-            //json.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            //json.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+
 
         }
 

@@ -10,16 +10,23 @@ using NFine.Domain.Entity.SystemManage;
 using System.Collections.Generic;
 using System.Text;
 using System.Web.Mvc;
+using NFine.Web.Model;
 
 namespace NFine.Web.Controllers
 {
     [HandlerLogin]
     public class HomeController : Controller
     {
+       
+
+        public HomeController()
+        {
+            
+        }
         [HttpGet]
         public ActionResult Index()
         {
-
+           
             return View();
         }
         [HttpGet]
