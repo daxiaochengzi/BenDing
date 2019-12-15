@@ -13,5 +13,9 @@ namespace BenDing.Domain.Models.Params.Web
         /// 业务号
         /// </summary>
         public string BusinessId { get; set; }
+        /// <summary>
+        /// 是否上传
+        /// </summary>
+        public int? UploadMark { get; set; }
     }
 }

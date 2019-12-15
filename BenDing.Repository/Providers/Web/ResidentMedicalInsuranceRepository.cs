@@ -592,10 +592,12 @@ namespace BenDing.Repository.Providers.Web
             if (param.DataIdList != null && param.DataIdList.Any())
             {
                 queryParam.IdList = param.DataIdList;
+                queryParam.UploadMark = 0;
             }
             else
             {
                 queryParam.BusinessId = param.BusinessId;
+                queryParam.UploadMark = 0;
             }
 
             //获取病人明细

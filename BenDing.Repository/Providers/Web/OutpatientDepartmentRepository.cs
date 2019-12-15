@@ -48,7 +48,6 @@ namespace BenDing.Repository.Providers.Web
                 if (result == 1)
                 {
                     resultData = XmlHelp.DeSerializerModel(new OutpatientDepartmentCostInputDto(), true);
-
                 }
                 else {
                     throw new Exception("门诊费用医保执行失败!!!");
@@ -145,7 +144,7 @@ namespace BenDing.Repository.Providers.Web
                 var result = MedicalInsuranceDll.CallService_cxjb("TPYP214");
                 if (result == 1)
                 {
-                     data = XmlHelp.DeSerializerModel(new MonthlyHospitalizationDto(), true);
+                    data = XmlHelp.DeSerializerModel(new MonthlyHospitalizationDto(), true);
                     var insertParam = new MonthlyHospitalizationEntity()
                     {   Amount = data.ReimbursementAllAmount,
                         Id = Guid.NewGuid(),

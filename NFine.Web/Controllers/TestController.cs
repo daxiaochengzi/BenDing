@@ -59,7 +59,7 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
-               // var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //var dataInfo = new ResidentUserInfoParam()
                 //{
                 //    IdentityMark = "1",
@@ -77,12 +77,8 @@ namespace NFine.Web.Controllers
                 //data.MedicalInsuranceCode = "21";
                 //data.UserId = userBase.UserId;
                 // _webServiceBasicService.SaveXmlData(data);
-                var diagnosisList = new List<string>();
-                diagnosisList.Add("123");
-                diagnosisList.Add("456");
-                diagnosisList.Add("444");
-                string str = string.Join(",", diagnosisList);
-                //var str= CommonHelp.ListToStr(diagnosisList);
+
+
                 //var xmlData = new MedicalInsuranceXmlDto();
                 //xmlData.BusinessId = param.BusinessId;
                 //xmlData.HealthInsuranceNo = param.HealthInsuranceNo;
@@ -91,8 +87,6 @@ namespace NFine.Web.Controllers
                 //xmlData.UserId = param.UserId;
                 //xmlData.OrganizationCode = userBase.OrganizationCode;
                 //webServiceBasicService.GetXmlData(xmlData);
-
-
 
 
 

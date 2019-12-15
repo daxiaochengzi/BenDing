@@ -644,7 +644,7 @@ namespace BenDing.Repository.Providers.Web
                     if (param.IdList != null && param.IdList.Any())
                     {
                         var idlist = CommonHelp.ListToStr(param.IdList);
-                        strSql += $@" and Id in({idlist})";
+                        strSql += $" and Id in({idlist})";
                     }
                     else
                     {
@@ -653,6 +653,12 @@ namespace BenDing.Repository.Providers.Web
                             strSql += $@" and HospitalizationId =(select top 1 HospitalizationId from [dbo].[Inpatient] where BusinessId='{param.BusinessId}' and IsDelete=0)";
                         }
                     }
+
+                    if (param.UploadMark != null)
+                    {
+                        strSql += $" and UploadMark ={param.UploadMark}";
+                    }
+
                     var data = sqlConnection.Query<QueryInpatientInfoDetailDto>(strSql);
                     sqlConnection.Close();
                     return data.ToList();

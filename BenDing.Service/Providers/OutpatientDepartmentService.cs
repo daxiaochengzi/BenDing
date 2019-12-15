@@ -46,7 +46,7 @@ namespace BenDing.Service.Providers
         {
             var resultData = new OutpatientDepartmentCostInputDto();
 
-            //医保数据写入
+            //获取门诊病人数据
             var outpatientPerson = _webServiceBasic.GetOutpatientPerson(param);
             if (outpatientPerson != null)
             {
@@ -55,7 +55,7 @@ namespace BenDing.Service.Providers
                     AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
                     IdentityMark = "1",
                     InformationNumber = outpatientPerson.IdCardNo,
-                    Operators = outpatientPerson.Operator
+                    Operators = param.User.UserName
                 };
                 //医保数据写入
                 resultData = _outpatientDepartmentRepository.OutpatientDepartmentCostInput(inputParam);
@@ -90,7 +90,7 @@ namespace BenDing.Service.Providers
                     saveXmlData.MedicalInsuranceCode = "48";
                     saveXmlData.UserId = param.User.UserId;
                     //存基层
-                     _webBasicRepository.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                    // _webBasicRepository.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
                     //更新中间层确认基层写入成功
                     _hisSqlRepository.UpdateOutpatient(param.User, new UpdateOutpatientParam()
                     {
