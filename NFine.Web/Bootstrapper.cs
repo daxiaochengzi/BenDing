@@ -66,9 +66,7 @@ namespace NFine.Web
         private static IUnityContainer BuildUnityContainer()
         {
             var container = new UnityContainer();
-
-           
-            #region Service
+        #region Service
             container.RegisterType<IUserService, UserService>();
             container.RegisterType<IWebServiceBasicService, WebServiceBasicService>();
             container.RegisterType<IResidentMedicalInsuranceService, ResidentMedicalInsuranceService>();
@@ -80,11 +78,12 @@ namespace NFine.Web
             container.RegisterType<IWebBasicRepository, WebBasicRepository>();
             container.RegisterType<IHisSqlRepository, HisSqlRepository>();
             container.RegisterType<ISystemManageRepository, SystemManageRepository>();
-            container.RegisterType<IOutpatientDepartmentRepository, IOutpatientDepartmentRepository>();
+            container.RegisterType<IOutpatientDepartmentRepository, OutpatientDepartmentRepository>();
             //
             #endregion
             return container;
         }
+        
     }
 
 }

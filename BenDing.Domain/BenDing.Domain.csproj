@@ -247,6 +247,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\Dto\SystemManage\" />
+    <Folder Include="Models\Dto\Workers\" />
+    <Folder Include="Models\Params\Workers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

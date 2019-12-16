@@ -42,9 +42,29 @@ namespace NFine.Web.Controllers
             webServiceBasic = _WebBasicRepository;
             hisSqlRepository = _hisSqlRepository;
         }
-
+        /// <summary>
+        /// get测试
+        /// </summary>
+        /// <param name="pagination"></param>
+        /// <returns></returns>
         [HttpGet]
         public ApiJsonResultData PageList([FromUri] UserInfo pagination)
+        {
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            {
+                y.DataDescribe = CommonHelp.GetPropertyAliasDict(new UserInfoDto());
+                y.Data = userService.GetUserInfo();
+
+            });
+
+        }
+        /// <summary>
+        /// post测试
+        /// </summary>
+        /// <param name="pagination"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData PageListPost([FromBody] UserInfo pagination)
         {
             return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
