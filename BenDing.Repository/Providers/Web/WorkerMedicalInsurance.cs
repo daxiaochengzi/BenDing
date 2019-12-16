@@ -37,8 +37,9 @@ namespace BenDing.Repository.Providers.Web
         public static extern int HospitalizationRegister(string pi_sfbz, string pi_crbz, string pi_xzqh, string pi_yybh,
             string pi_yllb, string pi_ryrq, string pi_icd10, string pi_icd10_2, string pi_icd10_3, string pi_ryzd,
             string pi_zybq, string pi_cwh, string pi_yyzyh, string pi_jbr,
-          StringBuilder po_zyh, StringBuilder po_spbh, StringBuilder po_bnyzycs, StringBuilder po_bntcyzfje, StringBuilder po_bntckzfje,
-          StringBuilder po_fhz, StringBuilder po_msg);
+         [MarshalAs(UnmanagedType.LPStr)] StringBuilder po_zyh, [MarshalAs(UnmanagedType.LPStr)]StringBuilder po_spbh, [MarshalAs(UnmanagedType.LPStr)]StringBuilder po_bnyzycs,
+         [MarshalAs(UnmanagedType.LPStr)]StringBuilder po_bntcyzfje, [MarshalAs(UnmanagedType.LPStr)] StringBuilder po_bntckzfje,
+             [MarshalAs(UnmanagedType.LPStr)]StringBuilder po_fhz, [MarshalAs(UnmanagedType.LPStr)]StringBuilder po_msg);
         /// <summary>
         /// 4.住院资料全部修改
         /// </summary>
