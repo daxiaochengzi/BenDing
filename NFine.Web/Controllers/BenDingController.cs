@@ -1287,7 +1287,7 @@ namespace NFine.Web.Controllers
                         iniParam.Operators = inpatientData.AdmissionOperator;
                         iniParam.BusinessId = param.BusinessId;
                         iniParam.AdministrativeArea = param.AdministrativeArea;
-                        iniParam.InpatientArea= param.InpatientArea;
+                        iniParam.InpatientArea= inpatientData.AdmissionWard;
                         //入院登记
                         _workerMedicalInsuranceRepository.WorkerHospitalizationRegister(iniParam);
                     }
