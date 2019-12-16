@@ -31,10 +31,10 @@ namespace BenDing.Repository.Providers.Web
             //消息
             var Msg = new StringBuilder(1024);
             WorkerMedicalInsurance.HospitalizationRegister
-                (param.IdentityMark,
-                param.AfferentSign,
+                (param.AfferentSign,
+                param.IdentityMark,
                 param.AdministrativeArea,
-                "",
+                "cpq2677",
                 param.MedicalCategory,
                 param.AdmissionMainDiagnosisIcd10,
                 param.DiagnosisIcd10Two,
@@ -53,6 +53,10 @@ namespace BenDing.Repository.Providers.Web
                 resultState,
                 Msg
                 );
+            if (resultState.ToString() != "1")
+            {
+                throw new Exception(Msg.ToString());
+            }
             //    //保存医保信息
             //    _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
             //    int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");

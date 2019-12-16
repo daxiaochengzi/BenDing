@@ -1292,9 +1292,9 @@ namespace NFine.Web.Controllers
                     }
                     else
                     {
-                        infoData.IsSave = true;
+                        //infoData.IsSave = true;
                         //保存病人信息
-                        _webServiceBasicService.GetInpatientInfo(infoData);
+                        //_webServiceBasicService.GetInpatientInfo(infoData);
                     }
 
                 }
