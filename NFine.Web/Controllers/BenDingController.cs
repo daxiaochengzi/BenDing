@@ -1288,7 +1288,8 @@ namespace NFine.Web.Controllers
                         iniParam.AdministrativeArea = param.AdministrativeArea;
                         iniParam.InpatientArea= inpatientData.AdmissionWard;
                         //入院登记
-                        _workerMedicalInsuranceRepository.WorkerHospitalizationRegister(iniParam);
+                       var data= _workerMedicalInsuranceRepository.WorkerHospitalizationRegister(iniParam);
+                        y.Data = data;
                     }
                     else
                     {

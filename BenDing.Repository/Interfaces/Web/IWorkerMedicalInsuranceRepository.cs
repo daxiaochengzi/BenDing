@@ -1,4 +1,5 @@
-﻿using BenDing.Domain.Models.Params.Workers;
+﻿using BenDing.Domain.Models.Dto.Workers;
+using BenDing.Domain.Models.Params.Workers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,9 @@ namespace BenDing.Repository.Interfaces.Web
 {
     public interface IWorkerMedicalInsuranceRepository
     {/// <summary>
-    /// 职工入院登记
-    /// </summary>
-    /// <param name="param"></param>
-        void WorkerHospitalizationRegister(WorKerHospitalizationRegisterParam param);
+     /// 职工入院登记
+     /// </summary>
+     /// <param name="param"></param>
+        WorkerHospitalizationRegisterDto WorkerHospitalizationRegister(WorKerHospitalizationRegisterParam param);
     }
 }

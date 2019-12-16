@@ -1,4 +1,5 @@
-﻿using BenDing.Domain.Models.Params.Workers;
+﻿using BenDing.Domain.Models.Dto.Workers;
+using BenDing.Domain.Models.Params.Workers;
 using BenDing.Repository.Interfaces.Web;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,9 @@ namespace BenDing.Repository.Providers.Web
         /// 入院登记
         /// </summary>
         /// <returns></returns>
-        public void WorkerHospitalizationRegister(WorKerHospitalizationRegisterParam param)
+        public WorkerHospitalizationRegisterDto WorkerHospitalizationRegister(WorKerHospitalizationRegisterParam param)
         {
+            var resultData = new WorkerHospitalizationRegisterDto();
             //社保住院号
             var medicalInsuranceHospitalizationNo = new StringBuilder(1024);
             //审批编号
@@ -57,6 +59,17 @@ namespace BenDing.Repository.Providers.Web
             {
                 throw new Exception(Msg.ToString());
             }
+            else
+            {
+                resultData = new WorkerHospitalizationRegisterDto()
+                {   MedicalInsuranceHospitalizationNo= medicalInsuranceHospitalizationNo.ToString(),
+                    ApprovalNumber= approvalNumber.ToString(),
+                    YearHospitalizationNumber= yearHospitalizationNumber.ToString(),
+                    OverallPlanningAlreadyAmount = overallPlanningAlreadyAmount.ToString(),
+                    OverallPlanningCanAmount= overallPlanningCanAmount.ToString(),
+                };
+            }
+            return resultData;
             //    //保存医保信息
             //    _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
             //    int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");

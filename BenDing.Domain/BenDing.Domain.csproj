@@ -98,6 +98,7 @@
     <Compile Include="Models\Dto\Web\QueryOutpatientDto.cs" />
     <Compile Include="Models\Dto\Web\ThreeCataloguePairCodeUploadDto.cs" />
     <Compile Include="Models\Dto\Web\UiIniParam.cs" />
+    <Compile Include="Models\Dto\Workers\WorkerHospitalizationRegisterDto.cs" />
     <Compile Include="Models\Enums\MedicalInsuranceState.cs" />
     <Compile Include="Models\Enums\OrganizationGrade.cs" />
     <Compile Include="Models\Enums\PeopleType.cs" />
@@ -249,7 +250,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\Dto\SystemManage\" />
-    <Folder Include="Models\Dto\Workers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
