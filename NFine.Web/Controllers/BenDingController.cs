@@ -633,12 +633,12 @@ namespace NFine.Web.Controllers
                 var iniParam = new ResidentHospitalizationRegisterParam();
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
                 {   //主诊断
-                    var mainDiagnosisList = param.DiagnosisList.Where(c => c.IsMainDiagnosis = true)
+                    var mainDiagnosisList = param.DiagnosisList.Where(c => c.IsMainDiagnosis == true)
                         .Select(d => d.DiagnosisCode).Take(3).ToList();
                     if (mainDiagnosisList.Any() == false) throw new Exception("主诊断不能为空!!!");
                     iniParam.AdmissionMainDiagnosisIcd10 = CommonHelp.DiagnosisStr(mainDiagnosisList);
                     //第二诊断
-                    var nextDiagnosisList = param.DiagnosisList.Where(c => c.IsMainDiagnosis = false)
+                    var nextDiagnosisList = param.DiagnosisList.Where(c => c.IsMainDiagnosis == false)
                         .Select(d => d.DiagnosisCode).ToList();
                     if (mainDiagnosisList.Any())
                     {
@@ -1192,7 +1192,6 @@ namespace NFine.Web.Controllers
                         Participation = new MonthlyHospitalizationParticipationParam()
                         {
                             StartTime = Convert.ToDateTime(param.StartTime).ToString("yyyyMMdd"),
-                          
                             EndTime = Convert.ToDateTime(param.EndTime).ToString("yyyyMMdd"),
                             SummaryType = "22",
                             PeopleType =((int)param.PeopleType).ToString()

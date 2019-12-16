@@ -137,7 +137,7 @@ namespace BenDing.Repository.Providers.Web
         public MonthlyHospitalizationDto MonthlyHospitalization(MonthlyHospitalizationParam param)
         {
            
-            var xmlStr = XmlHelp.SaveXml(param);
+            var xmlStr = XmlHelp.SaveXml(param.Participation);
             var data = new MonthlyHospitalizationDto();
             if (xmlStr)
             {

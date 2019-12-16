@@ -30,12 +30,12 @@ namespace BenDing.Domain.Models.Params.UI
         /// </summary>
         [Display(Name = "报销开始日期")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
-        public DateTime StartTime { get; set; }
+        public string StartTime { get; set; }
         /// <summary>
         /// 报销结束时间(yyyyMMdd)
         /// </summary>
         [Display(Name = "报销结束时间")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
-        public DateTime EndTime { get; set; }
+        public string EndTime { get; set; }
     }
 }
