@@ -64,6 +64,7 @@
     <Compile Include="Interfaces\Web\IResidentMedicalInsuranceRepository.cs" />
     <Compile Include="Interfaces\Web\ISystemManageRepository.cs" />
     <Compile Include="Interfaces\Web\IWebBasicRepository.cs" />
+    <Compile Include="Interfaces\Web\IWorkerMedicalInsuranceRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\Web\MedicalInsuranceSqlRepository.cs" />
     <Compile Include="Providers\Web\HisSqlRepository.cs" />
@@ -71,6 +72,8 @@
     <Compile Include="Providers\Web\ResidentMedicalInsuranceRepository.cs" />
     <Compile Include="Providers\Web\SystemManageRepository.cs" />
     <Compile Include="Providers\Web\WebBasicRepository.cs" />
+    <Compile Include="Providers\Web\WorkerMedicalInsurance.cs" />
+    <Compile Include="Providers\Web\WorkerMedicalInsuranceRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BenDing.Domain\BenDing.Domain.csproj">

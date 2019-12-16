@@ -11,6 +11,7 @@ using BenDing.Domain.Models.Params.OutpatientDepartment;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
+using BenDing.Domain.Models.Params.Workers;
 using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces;
@@ -32,6 +33,7 @@ namespace NFine.Web.Controllers
         private readonly IResidentMedicalInsuranceService _residentService;
         private readonly IOutpatientDepartmentService _outpatientDepartmentService;
         private readonly IOutpatientDepartmentRepository _outpatientDepartmentRepository;
+        private readonly IWorkerMedicalInsuranceRepository _workerMedicalInsuranceRepository;
         /// <summary>
         /// 
         /// </summary>
@@ -52,7 +54,8 @@ namespace NFine.Web.Controllers
             IResidentMedicalInsuranceService residentMedicalInsuranceService,
             IWebBasicRepository webServiceBasic,
             IOutpatientDepartmentService outpatientDepartmentService,
-            IOutpatientDepartmentRepository outpatientDepartmentRepository
+            IOutpatientDepartmentRepository outpatientDepartmentRepository,
+            IWorkerMedicalInsuranceRepository workerMedicalInsuranceRepository
             )
         {
             _webServiceBasicService = webServiceBasicService;
@@ -64,6 +67,7 @@ namespace NFine.Web.Controllers
             _webServiceBasic = webServiceBasic;
             _outpatientDepartmentService = outpatientDepartmentService;
             _outpatientDepartmentRepository = outpatientDepartmentRepository;
+            _workerMedicalInsuranceRepository = workerMedicalInsuranceRepository;
         }
         #region 基层接口
         /// <summary>
@@ -671,7 +675,7 @@ namespace NFine.Web.Controllers
                         iniParam.BedNumber = inpatientData.AdmissionBed;
                         iniParam.HospitalizationNo = inpatientData.HospitalizationNo;
                         iniParam.Operators = inpatientData.AdmissionOperator;
-                        iniParam.InsuranceType = param.InsuranceType;
+                        iniParam.InsuranceType = "342";
                         iniParam.BusinessId = param.BusinessId;
                         //入院登记
                         _residentMedicalInsurance.HospitalizationRegister(iniParam, userBase);
@@ -1226,6 +1230,78 @@ namespace NFine.Web.Controllers
                        }
                    });
 
+            });
+
+        }
+        #endregion
+        #region 居民职工医保
+        /// <summary>
+        /// 职工入院登记
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData WorKerHospitalizationRegister([FromBody]WorKerHospitalizationRegisterUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var iniParam = new WorKerHospitalizationRegisterParam();
+                if (param.DiagnosisList != null && param.DiagnosisList.Any())
+                {   //主诊断
+                    var mainDiagnosisList = param.DiagnosisList.Where(c => c.IsMainDiagnosis = true)
+                        .Select(d => d.DiagnosisCode).Take(3).ToList();
+                    if (mainDiagnosisList.Any() == false) throw new Exception("主诊断不能为空!!!");
+                    iniParam.AdmissionMainDiagnosisIcd10 = CommonHelp.DiagnosisStr(mainDiagnosisList);
+                    //第二诊断
+                    var nextDiagnosisList = param.DiagnosisList.Where(c => c.IsMainDiagnosis = false)
+                        .Select(d => d.DiagnosisCode).ToList();
+                    if (mainDiagnosisList.Any())
+                    {
+                        var diagnosisIcd10Two = nextDiagnosisList.Take(3).ToList();
+                        iniParam.DiagnosisIcd10Two = CommonHelp.DiagnosisStr(diagnosisIcd10Two);
+                        if (nextDiagnosisList.Count > 3)
+                        {//第三诊断
+                            iniParam.DiagnosisIcd10Three = CommonHelp.DiagnosisStr(nextDiagnosisList.Where(d => !diagnosisIcd10Two.Contains(d)).Take(3).ToList());
+                        }
+                    }
+                    var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                    var infoData = new GetInpatientInfoParam()
+                    {
+                        User = userBase,
+                        BusinessId = param.BusinessId,
+                        IsSave = false,
+                    };
+                    var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
+                    if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
+                    {  //医保登录
+                        _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                        iniParam.IdentityMark = param.IdentityMark;
+                        iniParam.AfferentSign = param.AfferentSign;
+                        iniParam.MedicalCategory = param.MedicalCategory;
+                        iniParam.AdmissionDate = Convert.ToDateTime(inpatientData.AdmissionDate).ToString("yyyyMMdd");
+                        iniParam.AdmissionMainDiagnosis = inpatientData.AdmissionMainDiagnosis.Substring(0, inpatientData.AdmissionMainDiagnosis.Length > 100 ? 100 : inpatientData.AdmissionMainDiagnosis.Length);
+                        iniParam.InpatientDepartmentCode = inpatientData.InDepartmentName;
+                        iniParam.BedNumber = inpatientData.AdmissionBed;
+                        iniParam.HospitalizationNo = inpatientData.HospitalizationNo;
+                        iniParam.Operators = inpatientData.AdmissionOperator;
+                        iniParam.BusinessId = param.BusinessId;
+                        iniParam.AdministrativeArea = param.AdministrativeArea;
+                        iniParam.InpatientArea= inpatientData.AdmissionWard;
+                        //入院登记
+                        _workerMedicalInsuranceRepository.WorkerHospitalizationRegister(iniParam);
+                    }
+                    else
+                    {
+                        infoData.IsSave = true;
+                        //保存病人信息
+                        _webServiceBasicService.GetInpatientInfo(infoData);
+                    }
+
+                }
+                else
+                {
+                    throw new Exception("诊断不能为空!!!");
+                }
             });
 
         }

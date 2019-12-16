@@ -197,6 +197,7 @@
     <Compile Include="Models\Params\UI\UiICD10Param.cs" />
     <Compile Include="Models\Params\Base\UiInIDataParam.cs" />
     <Compile Include="Models\Params\Base\UiInIParam.cs" />
+    <Compile Include="Models\Params\UI\WorKerHospitalizationRegisterUiParam.cs" />
     <Compile Include="Models\Params\Web\DeleteDatabaseParam.cs" />
     <Compile Include="Models\Params\Web\CatalogParam.cs" />
     <Compile Include="Models\Params\Web\DeleteMedicalInsuranceParam.cs" />
@@ -233,6 +234,7 @@
     <Compile Include="Models\Params\Web\UpdateThreeCataloguePairCodeUploadParam.cs" />
     <Compile Include="Models\Params\Web\UserInfoParam.cs" />
     <Compile Include="Models\Params\Web\XmlData.cs" />
+    <Compile Include="Models\Params\Workers\WorKerHospitalizationRegisterParam.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Xml\CommonHelp.cs" />
     <Compile Include="Xml\LogParam.cs" />
@@ -248,7 +250,6 @@
   <ItemGroup>
     <Folder Include="Models\Dto\SystemManage\" />
     <Folder Include="Models\Dto\Workers\" />
-    <Folder Include="Models\Params\Workers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
