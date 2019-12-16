@@ -43,13 +43,7 @@ namespace BenDing.Domain.Models.Params.UI
         /// </summary>
         [XmlElement("PI_HKXZ", IsNullable = false)]
         public string HouseholdNature { get; set; }
-        /// <summary>
-        /// 医保类型编码
-        /// </summary>
-        [Display(Name = "医保类型编码")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
-        [XmlIgnore]
-        public string InsuranceType { get; set; }
+
 
         /// <summary>
         /// 诊断
