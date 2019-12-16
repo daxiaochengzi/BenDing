@@ -31,7 +31,8 @@ namespace BenDing.Repository.Providers.Web
             //返回状态
             var resultState = new StringBuilder(1024);
             //消息
-            var Msg = new StringBuilder(1024);
+            //var Msg = new StringBuilder(1024);
+            string Msg = "";
             WorkerMedicalInsurance.HospitalizationRegister
                 (param.AfferentSign,
                 param.IdentityMark,
