@@ -52,7 +52,7 @@ namespace BenDing.Service.Providers
             {
                 var inputParam = new OutpatientDepartmentCostInputParam()
                 {
-                    AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
+                    AllAmount = 20,///outpatientPerson.MedicalTreatmentTotalCost,
                     IdentityMark = "1",
                     InformationNumber = outpatientPerson.IdCardNo,
                     Operators = param.User.UserName

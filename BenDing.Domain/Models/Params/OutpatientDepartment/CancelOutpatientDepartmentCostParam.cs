@@ -37,7 +37,7 @@ namespace BenDing.Domain.Models.Params.OutpatientDepartment
     [XmlRoot("ROW", IsNullable = false)]
     public  class CancelOutpatientDepartmentCostParticipationParam
     {
-        [XmlElementAttribute("PO_BAE007", IsNullable = false)]
+        [XmlElementAttribute("PI_BAE007", IsNullable = false)]
         public string DocumentNo { get; set; }
     }
 }

@@ -1108,7 +1108,7 @@ namespace NFine.Web.Controllers
             {   //
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //医保登录
-                //_residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 var data = _outpatientDepartmentService.OutpatientDepartmentCostInput(new GetOutpatientPersonParam()
                 {
                     User = userBase,
@@ -1135,13 +1135,14 @@ namespace NFine.Web.Controllers
                 {
                     if (!string.IsNullOrWhiteSpace(outpatient.SettlementTransactionId))
                     {
-                        if (string.IsNullOrWhiteSpace(outpatient.SettlementCancelTransactionId))
+                        if (!string.IsNullOrWhiteSpace(outpatient.SettlementCancelTransactionId))
                         {
-                            throw new Exception("当前病人已办理结算");
+                            throw new Exception("当前病人已办理取消结算");
                         }
                     }
                     //医保登录
                     _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                    var documentNo = JsonConvert.DeserializeObject<OutpatientDepartmentCostInputDto>(outpatient.ReturnJson).DocumentNo;
                     _outpatientDepartmentRepository.CancelOutpatientDepartmentCost(new CancelOutpatientDepartmentCostParam()
                     {
                         User = userBase,
@@ -1149,7 +1150,7 @@ namespace NFine.Web.Controllers
                         BusinessId = param.BusinessId,
                         Participation = new CancelOutpatientDepartmentCostParticipationParam()
                         {
-                            DocumentNo = JsonConvert.DeserializeObject<OutpatientDepartmentCostInputDto>(outpatient.ReturnJson).DocumentNo,
+                            DocumentNo = documentNo,
                         }
                     });
                 }
