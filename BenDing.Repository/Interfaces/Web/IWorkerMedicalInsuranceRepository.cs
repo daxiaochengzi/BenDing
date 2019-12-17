@@ -14,5 +14,7 @@ namespace BenDing.Repository.Interfaces.Web
      /// </summary>
      /// <param name="param"></param>
         WorkerHospitalizationRegisterDto WorkerHospitalizationRegister(WorKerHospitalizationRegisterParam param);
+
+        WorkerHospitalSettlementDto WorkerHospitalSettlement(WorkerHospitalSettlementParam param);
     }
 }

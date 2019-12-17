@@ -98,6 +98,7 @@
     <Compile Include="Models\Dto\Web\QueryOutpatientDto.cs" />
     <Compile Include="Models\Dto\Web\ThreeCataloguePairCodeUploadDto.cs" />
     <Compile Include="Models\Dto\Web\UiIniParam.cs" />
+    <Compile Include="Models\Dto\Workers\WorkerHospitalSettlementDto.cs" />
     <Compile Include="Models\Dto\Workers\WorkerHospitalizationRegisterDto.cs" />
     <Compile Include="Models\Enums\MedicalInsuranceState.cs" />
     <Compile Include="Models\Enums\OrganizationGrade.cs" />
@@ -236,6 +237,7 @@
     <Compile Include="Models\Params\Web\UserInfoParam.cs" />
     <Compile Include="Models\Params\Web\XmlData.cs" />
     <Compile Include="Models\Params\Workers\WorKerHospitalizationRegisterParam.cs" />
+    <Compile Include="Models\Params\Workers\WorkerHospitalSettlementParam.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Xml\CommonHelp.cs" />
     <Compile Include="Xml\LogParam.cs" />

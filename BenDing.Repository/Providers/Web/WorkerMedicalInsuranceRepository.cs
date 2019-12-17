@@ -33,7 +33,7 @@ namespace BenDing.Repository.Providers.Web
             //消息
             //var Msg = new StringBuilder(1024);
             string Msg = "";
-            WorkerMedicalInsurance.HospitalizationRegister
+           var result= WorkerMedicalInsurance.HospitalizationRegister
                 (param.AfferentSign,
                 param.IdentityMark,
                 param.AdministrativeArea,
@@ -56,20 +56,30 @@ namespace BenDing.Repository.Providers.Web
                 resultState,
                 Msg
                 );
-            if (resultState.ToString() != "1")
+            if (result == 1)
             {
-                throw new Exception(Msg.ToString());
+                if (resultState.ToString() != "1")
+                {
+                    throw new Exception(Msg.ToString());
+                }
+                else
+                {
+                    resultData = new WorkerHospitalizationRegisterDto()
+                    {
+                        MedicalInsuranceHospitalizationNo = medicalInsuranceHospitalizationNo.ToString(),
+                        ApprovalNumber = approvalNumber.ToString(),
+                        YearHospitalizationNumber = yearHospitalizationNumber.ToString(),
+                        OverallPlanningAlreadyAmount = overallPlanningAlreadyAmount.ToString(),
+                        OverallPlanningCanAmount = overallPlanningCanAmount.ToString(),
+                    };
+                }
             }
             else
             {
-                resultData = new WorkerHospitalizationRegisterDto()
-                {   MedicalInsuranceHospitalizationNo= medicalInsuranceHospitalizationNo.ToString(),
-                    ApprovalNumber= approvalNumber.ToString(),
-                    YearHospitalizationNumber= yearHospitalizationNumber.ToString(),
-                    OverallPlanningAlreadyAmount = overallPlanningAlreadyAmount.ToString(),
-                    OverallPlanningCanAmount= overallPlanningCanAmount.ToString(),
-                };
+                throw new  Exception("职工医保入院登记执行出错!!!");
             }
+
+           
             return resultData;
             //    //保存医保信息
             //    _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
@@ -101,6 +111,57 @@ namespace BenDing.Repository.Providers.Web
             //        XmlHelp.DeSerializerModel(new IniDto(), true);
             //    }
 
+        }
+        /// <summary>
+        /// 职工划卡结算
+        /// </summary>
+        public WorkerHospitalSettlementDto WorkerHospitalSettlement(WorkerHospitalSettlementParam param)
+        {
+            var resultData = new WorkerHospitalSettlementDto();
+            //流水号
+            var documentNo = new StringBuilder(1024);
+            //自费金额
+            var selfPayFeeAmount = new StringBuilder(1024);
+            //报销金额
+            var reimbursementExpensesAmount = new StringBuilder(1024);
+            //返回状态
+            var resultState = new StringBuilder(1024);
+            //消息
+            var msg = new StringBuilder(1024);
+            var result=  WorkerMedicalInsurance.WorkerHospitalSettlement(
+                param.Port,
+                param.Pwd,
+                param.AllAmount,
+                param.CardType,
+                "cpq2677",
+                param.Operators,
+                documentNo,
+                reimbursementExpensesAmount,
+                selfPayFeeAmount,
+                resultState,
+                msg
+            );
+            if (result == 1)
+            {
+                if (resultState.ToString() != "1")
+                {
+                    throw new Exception(msg.ToString());
+                }
+                else
+                {
+                    resultData = new WorkerHospitalSettlementDto()
+                    {
+                      DocumentNo = documentNo.ToString(),
+                      ReimbursementExpensesAmount = Convert.ToDecimal(reimbursementExpensesAmount.ToString()),
+                      SelfPayFeeAmount = Convert.ToDecimal(selfPayFeeAmount.ToString()),
+                    };
+                }
+            }
+            else
+            {
+                throw new Exception("职工医保划卡执行出错!!!");
+            }
+            return resultData;
         }
     }
 }

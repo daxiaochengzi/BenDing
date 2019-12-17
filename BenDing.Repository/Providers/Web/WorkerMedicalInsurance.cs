@@ -98,7 +98,7 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="po_msg"></param>
         /// <returns></returns>
         [DllImport("yyjk.dll", EntryPoint = "hkgl", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern int hkgl(
+        public static extern int WorkerHospitalSettlement(
             int pi_ReaderPort, string pi_CardPasswd, string pi_fyze,
             string pi_hklb, string pi_yybh, string pi_jbr,
           StringBuilder po_hklsh, StringBuilder po_zhzfje, StringBuilder po_zfzfje,
