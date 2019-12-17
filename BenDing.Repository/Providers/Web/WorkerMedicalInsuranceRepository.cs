@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BenDing.Repository.Providers.Web
 {
-   public class WorkerMedicalInsuranceRepository: IWorkerMedicalInsuranceRepository
+    public class WorkerMedicalInsuranceRepository : IWorkerMedicalInsuranceRepository
     {
         /// <summary>
         /// 入院登记
@@ -32,18 +32,18 @@ namespace BenDing.Repository.Providers.Web
             var resultState = new StringBuilder(1024);
             //消息
             var Msg = new StringBuilder(1024);
-            param.DiagnosisIcd10Two = "T82.00";
-            param.DiagnosisIcd10Three = "T82.00";
-            var result= WorkerMedicalInsurance.HospitalizationRegister
+
+            WorkerMedicalInsurance.HospitalizationRegister
                 (param.AfferentSign,
                 param.IdentityMark,
-                param.AdministrativeArea,
+                "511521",
                 "cpq2677",
                 param.MedicalCategory,
+                param.AdmissionDate,
                 param.AdmissionMainDiagnosisIcd10,
                 param.DiagnosisIcd10Two,
                 param.DiagnosisIcd10Three,
-                param.AdmissionDate,
+
                 param.AdmissionMainDiagnosis,
                 param.InpatientArea,
                 param.BedNumber,
@@ -57,32 +57,24 @@ namespace BenDing.Repository.Providers.Web
                 resultState,
                 Msg
                 );
-            if (result == 1)
+            if (resultState.ToString() != "1")
             {
-                if (resultState.ToString() != "1")
-                {
-                    throw new Exception(Msg.ToString());
-                }
-                else
-                {
-                    resultData = new WorkerHospitalizationRegisterDto()
-                    {
-                        MedicalInsuranceHospitalizationNo = medicalInsuranceHospitalizationNo.ToString(),
-                        ApprovalNumber = approvalNumber.ToString(),
-                        YearHospitalizationNumber = yearHospitalizationNumber.ToString(),
-                        OverallPlanningAlreadyAmount = overallPlanningAlreadyAmount.ToString(),
-                        OverallPlanningCanAmount = overallPlanningCanAmount.ToString(),
-                    };
-                }
+                throw new Exception(Msg.ToString());
             }
             else
             {
-                throw new Exception("职工医保入院登记执行出错！！！");
+                resultData = new WorkerHospitalizationRegisterDto()
+                {
+                    MedicalInsuranceHospitalizationNo = medicalInsuranceHospitalizationNo.ToString(),
+                    ApprovalNumber = approvalNumber.ToString(),
+                    YearHospitalizationNumber = yearHospitalizationNumber.ToString(),
+                    OverallPlanningAlreadyAmount = overallPlanningAlreadyAmount.ToString(),
+                    OverallPlanningCanAmount = overallPlanningCanAmount.ToString(),
+                };
             }
-          
             return resultData;
             //    //保存医保信息
-            //    _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
+             //  _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
             //    int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
             //    if (result == 1)
             //    {
@@ -111,6 +103,47 @@ namespace BenDing.Repository.Providers.Web
             //        XmlHelp.DeSerializerModel(new IniDto(), true);
             //    }
 
+        }
+
+        public WorkerHospitalSettlementDto WorkerHospitalSettlement(WorkerHospitalSettlementParam param)
+        {
+            var resultData = new WorkerHospitalSettlementDto();
+            //流水号
+            var documentNo = new StringBuilder(1024);
+            //自费金额
+            var selfPayFeeAmount = new StringBuilder(1024);
+            //报销金额
+            var overallPlanningCanAmount = new StringBuilder(1024);
+            //返回状态
+            var resultState = new StringBuilder(1024);
+            //消息
+            var Msg = new StringBuilder(1024);
+
+          var result=  WorkerMedicalInsurance.WorkerHospitalSettlement
+                    (param.Port,
+                     param.Pwd,
+                     param.AllAmount,
+                     param.CardType,
+                     "cpq2677",
+                     param.Operators,
+                     documentNo,
+                     overallPlanningCanAmount,
+                     selfPayFeeAmount,
+                     resultState,
+                      Msg
+                    );
+             if (resultState.ToString() != "1")
+            {
+                throw new Exception(Msg.ToString());
+            }
+
+            resultData = new WorkerHospitalSettlementDto()
+            {
+                SelfPayFeeAmount =Convert.ToDecimal(selfPayFeeAmount.ToString()),
+                DocumentNo = documentNo.ToString(),
+                ReimbursementExpensesAmount = Convert.ToDecimal(overallPlanningCanAmount.ToString())
+            };
+            return resultData;
         }
     }
 }
