@@ -270,7 +270,7 @@ namespace BenDing.Service.Providers
         public List<BaseOutpatientDetailDto> GetOutpatientDetailPerson(UserInfoDto user,OutpatientDetailParam param)
         {
             List<BaseOutpatientDetailJsonDto> result;
-           var resultData= new List<BaseOutpatientDetailDto>();
+            var resultData= new List<BaseOutpatientDetailDto>();
             var init = new BaseOutpatientDetailJsonDto();
             var data = _webServiceBasic.HIS_InterfaceList("16", JsonConvert.SerializeObject(param));
 

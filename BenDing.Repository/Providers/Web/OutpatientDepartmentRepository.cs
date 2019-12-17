@@ -44,7 +44,7 @@ namespace BenDing.Repository.Providers.Web
             var xmlStr = XmlHelp.SaveXml(param);
             if (xmlStr)
             {
-                var result = MedicalInsuranceDll.CallService_cxjb("TPYP301");
+                var result = 1;//MedicalInsuranceDll.CallService_cxjb("TPYP301");
                 if (result == 1)
                 {
                     resultData = XmlHelp.DeSerializerModel(new OutpatientDepartmentCostInputDto(), true);

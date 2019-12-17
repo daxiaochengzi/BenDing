@@ -487,8 +487,8 @@ namespace BenDing.Repository.Providers.Web
                         if (paramFirst != null)
                         {
                             string strSql =
-                                $@" select [CostDetailId],[DataSort] from [dbo].[OutpatientFee] where [OutpatientNo]='{paramFirst.OutpatientNo}'
-                                 and [CostDetailId] in({outpatientNum})";
+                                $@" select [DetailId],[DataSort] from [dbo].[OutpatientFee] where [OutpatientNo]='{paramFirst.OutpatientNo}'
+                                 and [DetailId] in({outpatientNum})";
                             var data = sqlConnection.Query<InpatientInfoDetailQueryDto>(strSql).ToList();
                             int sort = 0;
                             List<BaseOutpatientDetailDto> paramNew;
@@ -511,7 +511,7 @@ namespace BenDing.Repository.Providers.Web
                                 sort++;
                                 var businessTime = item.BillTime.Substring(0, 10) + " 00:00:00.000";
                                 string str = $@"INSERT INTO [dbo].[OutpatientFee](
-                               id,[OutpatientNo] ,[CostDetailId] ,[DirectoryName],[DirectoryCode] ,[DirectoryCategoryName] ,[DirectoryCategoryCode]
+                               id,[OutpatientNo] ,[DetailId] ,[DirectoryName],[DirectoryCode] ,[DirectoryCategoryName] ,[DirectoryCategoryCode]
                                ,[Unit] ,[Formulation] ,[Specification] ,[UnitPrice],[Quantity],[Amount] ,[Dosage] ,[Usage] ,[MedicateDays]
 		                       ,[HospitalPricingUnit] ,[IsImportedDrugs] ,[DrugProducingArea] ,[RecipeCode]  ,[CostDocumentType] ,[BillDepartment]
 			                   ,[BillDepartmentId] ,[BillDoctorName],[BillDoctorId] ,[BillTime] ,[OperateDepartmentName],[OperateDepartmentId]

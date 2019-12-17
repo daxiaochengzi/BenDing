@@ -30,6 +30,8 @@ namespace NFine.Web.App_Start
                cfg.CreateMap<InpatientInfoDto, InpatientEntity>();
                cfg.CreateMap<InpatientDetailJsonDto, InpatientInfoDetailDto>();
                cfg.CreateMap<QueryOutpatientDepartmentCostDto, QueryOutpatientDepartmentCostjsonDto>();
+                cfg.CreateMap<BaseOutpatientDetailJsonDto, BaseOutpatientDetailDto>();
+                
 
 
             });

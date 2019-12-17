@@ -18,7 +18,7 @@ namespace BenDing.Domain.Models.Dto.JsonEntiy
         /// 费用明细ID
         /// </summary>
         [JsonProperty(PropertyName = "费用明细ID")]
-        public string CostDetailId { get; set; }
+        public string DetailId { get; set; }
         /// <summary>
         /// 项目名称
         /// </summary>

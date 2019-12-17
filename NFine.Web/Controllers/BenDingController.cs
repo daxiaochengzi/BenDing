@@ -1108,7 +1108,7 @@ namespace NFine.Web.Controllers
             {   //
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //医保登录
-                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                //_residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 var data = _outpatientDepartmentService.OutpatientDepartmentCostInput(new GetOutpatientPersonParam()
                 {
                     User = userBase,
