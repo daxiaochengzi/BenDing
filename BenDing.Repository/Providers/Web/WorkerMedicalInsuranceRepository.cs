@@ -32,8 +32,9 @@ namespace BenDing.Repository.Providers.Web
             var resultState = new StringBuilder(1024);
             //消息
             var Msg = new StringBuilder(1024);
-          
-            WorkerMedicalInsurance.HospitalizationRegister
+            param.DiagnosisIcd10Two = "T82.00";
+            param.DiagnosisIcd10Three = "T82.00";
+            var result= WorkerMedicalInsurance.HospitalizationRegister
                 (param.AfferentSign,
                 param.IdentityMark,
                 param.AdministrativeArea,
@@ -56,20 +57,29 @@ namespace BenDing.Repository.Providers.Web
                 resultState,
                 Msg
                 );
-            if (resultState.ToString() != "1")
+            if (result == 1)
             {
-                throw new Exception(Msg.ToString());
+                if (resultState.ToString() != "1")
+                {
+                    throw new Exception(Msg.ToString());
+                }
+                else
+                {
+                    resultData = new WorkerHospitalizationRegisterDto()
+                    {
+                        MedicalInsuranceHospitalizationNo = medicalInsuranceHospitalizationNo.ToString(),
+                        ApprovalNumber = approvalNumber.ToString(),
+                        YearHospitalizationNumber = yearHospitalizationNumber.ToString(),
+                        OverallPlanningAlreadyAmount = overallPlanningAlreadyAmount.ToString(),
+                        OverallPlanningCanAmount = overallPlanningCanAmount.ToString(),
+                    };
+                }
             }
             else
             {
-                resultData = new WorkerHospitalizationRegisterDto()
-                {   MedicalInsuranceHospitalizationNo= medicalInsuranceHospitalizationNo.ToString(),
-                    ApprovalNumber= approvalNumber.ToString(),
-                    YearHospitalizationNumber= yearHospitalizationNumber.ToString(),
-                    OverallPlanningAlreadyAmount = overallPlanningAlreadyAmount.ToString(),
-                    OverallPlanningCanAmount= overallPlanningCanAmount.ToString(),
-                };
+                throw new Exception("职工医保入院登记执行出错！！！");
             }
+          
             return resultData;
             //    //保存医保信息
             //    _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
