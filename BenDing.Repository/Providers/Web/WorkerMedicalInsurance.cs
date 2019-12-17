@@ -39,7 +39,7 @@ namespace BenDing.Repository.Providers.Web
             string pi_zybq, string pi_cwh, string pi_yyzyh, string pi_jbr,
          [MarshalAs(UnmanagedType.LPStr)]StringBuilder po_zyh, [MarshalAs(UnmanagedType.LPStr)]StringBuilder po_spbh, [MarshalAs(UnmanagedType.LPStr)]StringBuilder po_bnyzycs,
          [MarshalAs(UnmanagedType.LPStr)]StringBuilder po_bntcyzfje, [MarshalAs(UnmanagedType.LPStr)] StringBuilder po_bntckzfje,
-         [MarshalAs(UnmanagedType.LPStr)]StringBuilder po_fhz, [MarshalAs(UnmanagedType.LPStr)]String po_msg);
+         [MarshalAs(UnmanagedType.LPStr)]StringBuilder po_fhz, [MarshalAs(UnmanagedType.LPStr)]StringBuilder po_msg);
         /// <summary>
         /// 4.住院资料全部修改
         /// </summary>
