@@ -675,7 +675,7 @@ namespace NFine.Web.Controllers
                         iniParam.BedNumber = inpatientData.AdmissionBed;
                         iniParam.HospitalizationNo = inpatientData.HospitalizationNo;
                         iniParam.Operators = inpatientData.AdmissionOperator;
-                        iniParam.InsuranceType = "342";
+                        iniParam.InsuranceType = "310";
                         iniParam.BusinessId = param.BusinessId;
                         //入院登记
                         _residentMedicalInsurance.HospitalizationRegister(iniParam, userBase);
