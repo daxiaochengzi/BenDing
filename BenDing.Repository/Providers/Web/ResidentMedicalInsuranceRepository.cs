@@ -342,7 +342,7 @@ namespace BenDing.Repository.Providers.Web
                     saveXmlData.MedicalInsuranceCode = "43";
                     saveXmlData.UserId = infoParam.User.UserId;
                     //存基层
-                    _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                   // _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
 
                 }
                 else
@@ -747,7 +747,7 @@ namespace BenDing.Repository.Providers.Web
 
                     string strXml = XmlHelp.DeSerializerModelStr("CFMX");
                     var data = XmlHelp.DeSerializer<QueryPrescriptionDetailDto>(strXml);
-                    if (data.RowDataList == null && (data.RowDataList ?? throw new InvalidOperationException()).Any())
+                    if (data.RowDataList != null && data.RowDataList.Any())
                     {
                         resultdata = data.RowDataList.Select(c => new QueryPrescriptionDetailListDto()
                         {
@@ -853,7 +853,7 @@ namespace BenDing.Repository.Providers.Web
                         saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                         saveXmlData.MedicalInsuranceCode = "31";
                         saveXmlData.UserId = user.UserId;
-                        _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                       // _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
                         var batchConfirmParam = new BatchConfirmParam()
                         {
                             ConfirmType = 1,

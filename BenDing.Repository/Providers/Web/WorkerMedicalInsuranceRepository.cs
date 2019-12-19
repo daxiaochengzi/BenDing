@@ -36,14 +36,13 @@ namespace BenDing.Repository.Providers.Web
             WorkerMedicalInsurance.HospitalizationRegister
                 (param.AfferentSign,
                 param.IdentityMark,
-                "511521",
+                param.AdministrativeArea,
                 "cpq2677",
                 param.MedicalCategory,
                 param.AdmissionDate,
                 param.AdmissionMainDiagnosisIcd10,
                 param.DiagnosisIcd10Two,
                 param.DiagnosisIcd10Three,
-
                 param.AdmissionMainDiagnosis,
                 param.InpatientArea,
                 param.BedNumber,
