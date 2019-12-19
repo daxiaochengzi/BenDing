@@ -9,7 +9,7 @@ namespace BenDing.Domain.Models.Params.Workers
 {/// <summary>
 /// 
 /// </summary>
-  public  class WorkerHospitalSettlementParam
+  public  class WorkerStrokeCardParam
     {/// <summary>
     /// 端口
     /// </summary>
@@ -27,9 +27,20 @@ namespace BenDing.Domain.Models.Params.Workers
         /// </summary>
         public string CardType { get; set; }
         /// <summary>
-        /// 经办任
+        /// 经办人
         /// </summary>
         public string Operators { get; set; }
+        /// <summary>
+        /// 组织机构
+        /// </summary>
+        public  string OrganizationCode { get; set; }
+        /// <summary>
+        /// 业务id
+        /// </summary>
+        public  string BusinessId { get; set; }
+        /// <summary>
+        /// Id        /// </summary>
+        public Guid Id { get; set; }
         /// <summary>
         /// 用户
         /// </summary>

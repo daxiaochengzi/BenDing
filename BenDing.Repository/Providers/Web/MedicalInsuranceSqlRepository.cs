@@ -104,7 +104,7 @@ namespace BenDing.Repository.Providers.Web
             {
                 sqlConnection.Open();
                 string insertSql;
-                if (!string.IsNullOrWhiteSpace(param.MedicalInsuranceHospitalizationNo) && param.IsModify == false)
+                if (param.IsDelete==false)
                 {
                     insertSql = $@"update [dbo].[MedicalInsurance] set 
                     MedicalInsuranceHospitalizationNo='{param.MedicalInsuranceHospitalizationNo}',IsDelete=0

@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Dto\Base\DiagnosisData.cs" />
     <Compile Include="Models\Dto\Base\PaginationDto.cs" />
     <Compile Include="Models\Dto\Base\PaginationUserDto.cs" />
     <Compile Include="Models\Dto\JsonEntiy\BaseOutpatientDetailJsonDto.cs" />
@@ -98,7 +99,8 @@
     <Compile Include="Models\Dto\Web\QueryOutpatientDto.cs" />
     <Compile Include="Models\Dto\Web\ThreeCataloguePairCodeUploadDto.cs" />
     <Compile Include="Models\Dto\Web\UiIniParam.cs" />
-    <Compile Include="Models\Dto\Workers\WorkerHospitalSettlementDto.cs" />
+    <Compile Include="Models\Dto\Workers\QueryWorkerMedicalInsuranceDto.cs" />
+    <Compile Include="Models\Dto\Workers\WorkerStrokeCardDto.cs" />
     <Compile Include="Models\Dto\Workers\WorkerHospitalizationRegisterDto.cs" />
     <Compile Include="Models\Enums\MedicalInsuranceState.cs" />
     <Compile Include="Models\Enums\OrganizationGrade.cs" />
@@ -182,6 +184,7 @@
     <Compile Include="Models\Params\UI\InpatientInfoUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalInsuranceDataAllParamUIQuery.cs" />
     <Compile Include="Models\Params\UI\MedicalInsuranceXmlUiParam.cs" />
+    <Compile Include="Models\Params\UI\ModifyWorkerHospitalizationUiParam.cs" />
     <Compile Include="Models\Params\UI\MonthlyHospitalizationUiParam.cs" />
     <Compile Include="Models\Params\UI\PrescriptionUploadAutomaticUiParam.cs" />
     <Compile Include="Models\Params\UI\PrescriptionUploadUiParam.cs" />
@@ -236,8 +239,9 @@
     <Compile Include="Models\Params\Web\UpdateThreeCataloguePairCodeUploadParam.cs" />
     <Compile Include="Models\Params\Web\UserInfoParam.cs" />
     <Compile Include="Models\Params\Web\XmlData.cs" />
+    <Compile Include="Models\Params\Workers\ModifyWorkerHospitalizationParam.cs" />
     <Compile Include="Models\Params\Workers\WorKerHospitalizationRegisterParam.cs" />
-    <Compile Include="Models\Params\Workers\WorkerHospitalSettlementParam.cs" />
+    <Compile Include="Models\Params\Workers\WorkerStrokeCardParam.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Xml\CommonHelp.cs" />
     <Compile Include="Xml\LogParam.cs" />

@@ -39,5 +39,10 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 医保类别
         /// </summary>
         public  int InsuranceType { get; set; }
+        /// <summary>
+        /// 是否删除
+        /// </summary>
+
+        public  bool IsDelete { get; set; }=true;
     }
 }

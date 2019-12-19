@@ -95,27 +95,21 @@ namespace BenDing.Repository.Providers.Web
             var xmlStr = XmlHelp.SaveXml(paramIni);
             if (xmlStr)
             {
-
-                var saveData = new MedicalInsuranceDto
-                {
-                    AdmissionInfoJson = JsonConvert.SerializeObject(param),
-                    BusinessId = param.BusinessId,
-                    Id = Guid.NewGuid(),
-                    IsModify = false,
-                    InsuranceType = (!string.IsNullOrWhiteSpace(param.InsuranceType))
-                        ? Convert.ToInt32(param.InsuranceType)
-                        : 0
-                };
-                //保存医保信息
-                _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
-
                 int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
                 if (result == 1)
                 {
                     var data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto(), true);
-                    saveData.MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo;
-
-
+                    var saveData = new MedicalInsuranceDto
+                    {
+                        AdmissionInfoJson = JsonConvert.SerializeObject(param),
+                        BusinessId = param.BusinessId,
+                        Id = Guid.NewGuid(),
+                        IsModify = false,
+                        InsuranceType =342,
+                    };
+                    //保存中间库
+                    _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
+                   
                     //更新医保信息
                     var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
                     var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
@@ -131,7 +125,8 @@ namespace BenDing.Repository.Providers.Web
                     saveXmlData.UserId = user.UserId;
                     //存基层
                     _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
-                    //存中间库
+                    //更新中间库
+                    saveData.IsDelete =false;
                     _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
                 }
                 else

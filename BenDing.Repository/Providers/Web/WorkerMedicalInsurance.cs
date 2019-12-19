@@ -58,7 +58,7 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="po_msg">系统错误信息</param>
         /// <returns></returns>
         [DllImport("yyjk.dll", EntryPoint = "zyzlxgall", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern int Hospitalizationmodify(string pi_fwjgh, string pi_zyh, string pi_xzqh, string pi_ryrq,
+        public static extern int ModifyHospitalization(string pi_fwjgh, string pi_zyh, string pi_xzqh, string pi_ryrq,
             string pi_icd10, string pi_icd10_2, string pi_icd10_3, string pi_ryzd, string pi_zybq, string pi_cwh, string pi_yyzyh,
           StringBuilder po_fhz, StringBuilder po_msg);
 

@@ -38,7 +38,6 @@ namespace BenDing.Domain.Models.Params.UI
         [Display(Name = " 行政区域")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string AdministrativeArea { get; set; }
-       
         /// <summary>
         /// 诊断
         /// </summary>

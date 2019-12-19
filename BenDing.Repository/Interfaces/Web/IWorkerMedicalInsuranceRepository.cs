@@ -14,7 +14,13 @@ namespace BenDing.Repository.Interfaces.Web
      /// </summary>
      /// <param name="param"></param>
         WorkerHospitalizationRegisterDto WorkerHospitalizationRegister(WorKerHospitalizationRegisterParam param);
-
-        WorkerHospitalSettlementDto WorkerHospitalSettlement(WorkerHospitalSettlementParam param);
+        //职工入院登记修改
+        void ModifyWorkerHospitalization(ModifyWorkerHospitalizationParam param);
+        /// <summary>
+        /// 职工划卡
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        WorkerStrokeCardDto WorkerStrokeCard(WorkerStrokeCardParam param);
     }
 }
