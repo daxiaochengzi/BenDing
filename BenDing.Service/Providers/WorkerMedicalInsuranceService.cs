@@ -100,5 +100,16 @@ namespace BenDing.Service.Providers
             //存中间库
             _medicalInsuranceSqlRepository.SaveMedicalInsurance(param.User, saveData);
         }
+
+        /// <summary>
+        /// 职工住院预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public WorkerHospitalizationPreSettlementDto WorkerHospitalizationPreSettlement(WorkerHospitalizationPreSettlementParam param)
+        {
+            var resultData = _workerMedicalInsuranceRepository.WorkerHospitalizationPreSettlement(param);
+            return resultData;
+        }
     }
 }

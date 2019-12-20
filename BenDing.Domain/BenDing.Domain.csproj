@@ -100,6 +100,7 @@
     <Compile Include="Models\Dto\Web\ThreeCataloguePairCodeUploadDto.cs" />
     <Compile Include="Models\Dto\Web\UiIniParam.cs" />
     <Compile Include="Models\Dto\Workers\QueryWorkerMedicalInsuranceDto.cs" />
+    <Compile Include="Models\Dto\Workers\WorkerHospitalizationPreSettlementDto.cs" />
     <Compile Include="Models\Dto\Workers\WorkerStrokeCardDto.cs" />
     <Compile Include="Models\Dto\Workers\WorkerHospitalizationRegisterDto.cs" />
     <Compile Include="Models\Enums\MedicalInsuranceState.cs" />
@@ -239,7 +240,9 @@
     <Compile Include="Models\Params\Web\UpdateThreeCataloguePairCodeUploadParam.cs" />
     <Compile Include="Models\Params\Web\UserInfoParam.cs" />
     <Compile Include="Models\Params\Web\XmlData.cs" />
+    <Compile Include="Models\Params\Workers\WorkerHospitalizationPreSettlementParam.cs" />
     <Compile Include="Models\Params\Workers\ModifyWorkerHospitalizationParam.cs" />
+    <Compile Include="Models\Dto\Base\WorkerBaseParam.cs" />
     <Compile Include="Models\Params\Workers\WorKerHospitalizationRegisterParam.cs" />
     <Compile Include="Models\Params\Workers\WorkerStrokeCardParam.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

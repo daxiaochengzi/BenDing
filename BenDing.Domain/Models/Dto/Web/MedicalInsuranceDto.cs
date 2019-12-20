@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BenDing.Domain.Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -40,9 +41,9 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
         public  int InsuranceType { get; set; }
         /// <summary>
-        /// 是否删除
+        /// 医保状态
         /// </summary>
-
-        public  bool IsDelete { get; set; }=true;
+        public MedicalInsuranceState MedicalInsuranceState { get; set; }
+       
     }
 }

@@ -1,31 +1,17 @@
 ﻿using System;
+using BenDing.Domain.Models.Dto.Base;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.Base;
 
 namespace BenDing.Domain.Models.Params.Workers
 {/// <summary>
  /// 职工住院修改入参
  /// </summary>
-    public   class ModifyWorkerHospitalizationParam
+    public   class ModifyWorkerHospitalizationParam:WorkerBaseParam
     {/// <summary>
      /// Id
      /// </summary>
         public Guid Id { get; set; }
-
-        /// <summary>
-        /// 组织机构编码
-        /// </summary>
-       public  string OrganizationCode { get; set; }
-        /// <summary>
-        /// 医保住院号
-        /// </summary>
-        public string MedicalInsuranceHospitalizationNo { get; set; }
-
-        /// <summary>
-        /// 行政区域
-        /// </summary>
-        public string AdministrativeArea { get; set; }
-
-
         /// <summary>
         /// 入院日期(格式为YYYYMMDD)
         /// </summary>
@@ -70,13 +56,5 @@ namespace BenDing.Domain.Models.Params.Workers
         /// </summary>
         public string Operators { get; set; }
 
-        /// <summary>
-        /// 业务id
-        /// </summary>
-        public string BusinessId { get; set; }
-        /// <summary>
-        /// 用户信息
-        /// </summary>
-        public UserInfoDto User { get; set; }
     }
 }

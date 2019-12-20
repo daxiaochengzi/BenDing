@@ -61,13 +61,116 @@ namespace BenDing.Repository.Providers.Web
         public static extern int ModifyHospitalization(string pi_fwjgh, string pi_zyh, string pi_xzqh, string pi_ryrq,
             string pi_icd10, string pi_icd10_2, string pi_icd10_3, string pi_ryzd, string pi_zybq, string pi_cwh, string pi_yyzyh,
           StringBuilder po_fhz, StringBuilder po_msg);
-
         /// <summary>
-        /// 断开服务器
+        /// 住院费用结算
         /// </summary>
+        /// <param name="pi_fwjgh">医疗机构号</param>
+        /// <param name="pi_zyh">住院号</param>
+        /// <param name="pi_xzqh">行政区划</param>
+        /// <param name="pi_cszl">是否计住院次数</param>
+        /// <param name="pi_czy">操作员</param>
+        /// <param name="pi_cyrq">出院日期</param>
+        /// <param name="pi_cyqk">出院情况（1康复，2转院，3死亡，4其他）</param>
+        /// <param name="pi_icd10">出院主要诊断疾病ICD-10编码</param>
+        /// <param name="pi_icd10_2">出院诊断疾病ICD-10编码</param>
+        /// <param name="pi_icd10_3">出院诊断疾病ICD-10编码</param>
+        /// <param name="pi_cyzd">出院诊断（确诊疾病）</param>
+        /// <param name="PO_FYZE">发生费用金额</param>
+        /// <param name="PO_TCZF">基本统筹支付</param>
+        /// <param name="PO_BCZF">补充医疗保险支付金额</param>
+        /// <param name="PO_ZXJJ">专项基金支付金额</param>
+        /// <param name="PO_GWYBT">公务员补贴</param>
+        /// <param name="PO_GWYBZ">公务员补助</param>
+        /// <param name="PO_QTZF">其它支付金额</param>
+        /// <param name="PO_ZHZF">帐户支付</param>
+        /// <param name="PO_XJZF">现金支付</param>
+        /// <param name="PO_qfje">起付金额</param>
+        /// <param name="PO_DJH">单据号</param>
+        /// <param name="po_bz">备注</param>
+        /// <param name="po_fhz">过程返回值(为1时正常，否则不正常)</param>
+        /// <param name="po_msg">系统错误信息</param>
         /// <returns></returns>
-        [DllImport("yyjk.dll", EntryPoint = "DisConnectAppServer_cxjb", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern int DisConnectAppServer_cxjb();
+        [DllImport("yyjk.dll", EntryPoint = "fyjs_new", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        public static extern int fyjs_new(string pi_fwjgh, string pi_zyh, string pi_xzqh, string pi_cszl, string pi_czy, string pi_cyrq,
+            string pi_cyqk, string pi_icd10, string pi_icd10_2, string pi_icd10_3, string pi_cyzd,
+          StringBuilder PO_FYZE, StringBuilder PO_TCZF, StringBuilder PO_BCZF, StringBuilder PO_ZXJJ,
+          StringBuilder PO_GWYBT, StringBuilder PO_GWYBZ, StringBuilder PO_QTZF, StringBuilder PO_ZHZF,
+          StringBuilder PO_XJZF, StringBuilder PO_qfje, StringBuilder PO_DJH, StringBuilder po_bz,
+          StringBuilder po_fhz, StringBuilder po_msg);
+        /// <summary>
+        /// 住院费用预结算
+        /// </summary>
+        /// <param name="pi_fwjgh">医疗机构号</param>
+        /// <param name="pi_zyh">住院号</param>
+        /// <param name="pi_xzqh">行政区划</param>
+        /// <param name="pi_cszl">是否计住院次数</param>
+        /// <param name="pi_czy">操作员</param>
+        /// <param name="pi_cyrq">出院日期</param>
+        /// <param name="PO_FYZE">发生费用金额</param>
+        /// <param name="PO_TCZF">基本统筹支付</param>
+        /// <param name="po_bczf">补充医疗保险支付金额</param>
+        /// <param name="po_zxjj">专项基金支付金额</param>
+        /// <param name="PO_GWYBT">公务员补贴</param>
+        /// <param name="PO_GWYBZ">公务员补助</param>
+        /// <param name="Po_qtzf">其它支付金额</param>
+        /// <param name="PO_ZHZF">帐户支付</param>
+        /// <param name="PO_XJZF">现金支付</param>
+        /// <param name="PO_qfje">起付金额</param>
+        /// <param name="PO_DJH">单据号</param>
+        /// <param name="Po_bz">备注</param>
+        /// <param name="po_fhz"></param>
+        /// <param name="po_msg"></param>
+        [DllImport("yyjk.dll", EntryPoint = "fyyjs_new", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        public static extern int WorkerHospitalizationPreSettlement(string pi_fwjgh, string pi_zyh, string pi_xzqh, string pi_cszl, string pi_czy, string pi_cyrq,
+          StringBuilder PO_FYZE, StringBuilder PO_TCZF,
+          StringBuilder po_bczf, StringBuilder po_zxjj,
+          StringBuilder PO_GWYBT, StringBuilder PO_GWYBZ,
+          StringBuilder Po_qtzf, StringBuilder PO_ZHZF,
+          StringBuilder PO_XJZF, StringBuilder PO_qfje,
+          StringBuilder PO_DJH, StringBuilder Po_bz,
+          StringBuilder po_fhz, StringBuilder po_msg);
+        /// <summary>
+        /// 结算取消
+        /// </summary>
+        /// <param name="pi_xzqh">行政区划</param>
+        /// <param name="pi_fwjgh">医疗机构号</param>
+        /// <param name="pi_zyh">住院号</param>
+        /// <param name="pi_djh">登记号</param>
+        /// <param name="pi_qxcd">取消程度(1取消结算2删除资料)</param>
+        /// <param name="pi_jbr">经办人</param>
+        /// <param name="po_knbz">跨年标志</param>
+        /// <param name="po_fhz">过程返回值(为1时正常，否则不正常)</param>
+        /// <param name="po_msg">系统错误信息</param>
+        /// <returns></returns>
+        [DllImport("yyjk.dll", EntryPoint = "qxjs", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        public static extern int qxjs(string pi_xzqh, string pi_fwjgh, string pi_zyh, string pi_djh, string pi_qxcd, string pi_jbr,
+          StringBuilder po_knbz, StringBuilder po_fhz, StringBuilder po_msg);
+        /// <summary>
+        /// 查询费用结算结果
+        /// </summary>
+        /// <param name="pi_fwjgh">医疗机构号</param>
+        /// <param name="PI_ZYH">住院号</param>
+        /// <param name="pi_xzqh">行政区划</param>
+        /// <param name="PO_TCZF">基本医疗统筹支付</param>
+        /// <param name="po_bczf">补充医疗保险支付金额</param>
+        /// <param name="po_zxjj">专项基金支付金额</param>
+        /// <param name="pO_GWYBT">公务员补贴</param>
+        /// <param name="PO_GWYBZ">公务员补贴</param>
+        /// <param name="po_qtzf">其它支付金额</param>
+        /// <param name="PO_ZHZF">帐户支付</param>
+        /// <param name="PO_XJZF">现金支付</param>
+        /// <param name="PO_QFJE">起付金额</param>
+        /// <param name="PO_JSRQ">结算日期</param>
+        /// <param name="po_bz">备注</param>
+        /// <param name="PO_FHZ">过程返回值(为1时正常，否则不正常)</param>
+        /// <param name="PO_MSG">系统错误信息</param>
+        /// <returns></returns>
+        [DllImport("yyjk.dll", EntryPoint = "hqfyjsjg_new", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+        public static extern int hqfyjsjg_new(string pi_fwjgh, string PI_ZYH, string pi_xzqh,
+          StringBuilder PO_TCZF, StringBuilder po_bczf, StringBuilder po_zxjj, StringBuilder pO_GWYBT,
+          StringBuilder PO_GWYBZ, StringBuilder po_qtzf, StringBuilder PO_ZHZF, StringBuilder PO_XJZF,
+          StringBuilder PO_QFJE, StringBuilder PO_JSRQ, StringBuilder po_bz, StringBuilder PO_FHZ,
+          StringBuilder PO_MSG);
         /// <summary>
         /// 业务功能调用
         /// </summary>

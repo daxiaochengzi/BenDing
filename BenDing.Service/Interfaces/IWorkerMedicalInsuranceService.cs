@@ -20,7 +20,11 @@ namespace BenDing.Service.Interfaces
         /// </summary>
         /// <param name="param"></param>
         void ModifyWorkerHospitalization(ModifyWorkerHospitalizationParam param);
-
-
-   }
+        /// <summary>
+        /// 职工住院预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        WorkerHospitalizationPreSettlementDto WorkerHospitalizationPreSettlement(WorkerHospitalizationPreSettlementParam param);
+    }
 }
