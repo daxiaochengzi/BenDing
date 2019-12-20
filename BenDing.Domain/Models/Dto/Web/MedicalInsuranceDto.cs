@@ -25,8 +25,11 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 医保卡号
         /// </summary>
         public string InsuranceNo { get; set; }
-       
-     
+        /// <summary>
+        /// 行政区域
+        /// </summary>
+        public string AdministrativeArea { get; set; }
+
         /// <summary>
         /// 入院信息
         /// </summary>

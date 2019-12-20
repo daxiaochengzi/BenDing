@@ -521,9 +521,15 @@ namespace BenDing.Repository.Providers.Web
                 };
                 //存入中间层
                 _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
-                // HIS住院医保信息删除
-                // _webServiceBasic.HIS_InterfaceList("37", JsonConvert.SerializeObject(
-                //     new { 验证码 = infoParam.User.AuthCode, 业务ID = infoParam.BusinessId }), infoParam.User.UserId);
+                //添加日志
+                var logParam = new AddHospitalLogParam()
+                {
+                    JoinOrOldJson = JsonConvert.SerializeObject(param),
+                    User = infoParam.User,
+                    Remark = "职工住院结算取消",
+                    RelationId = infoParam.Id,
+                };
+               
                 if (cancelLimit == "2") //取消结算,并删除资料<==>删除资料与取消入院
                 {
                     //his取消入院登记
@@ -550,7 +556,7 @@ namespace BenDing.Repository.Providers.Web
                         MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceCancelHospitalized,
                         IsHisUpdateState=true
                     };
-                    //存入中间层
+                    //更新中间层
                     _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
                 }
             }

@@ -116,18 +116,28 @@ namespace BenDing.Repository.Providers.Web
                 }
                 else if (param.IsModify)
                 {
-                    insertSql = $@"update [dbo].[MedicalInsurance] set 
-                    AdmissionInfoJson='{param.AdmissionInfoJson}',[IsDelete]=0,
-                    where [Id]='{param.Id}' and OrganizationCode='{user.OrganizationCode}'";
+                   //添加行政区域
+                    if (!string.IsNullOrWhiteSpace(param.AdministrativeArea))
+                    {
+                        insertSql = $@"update [dbo].[MedicalInsurance] set 
+                        AdmissionInfoJson='{param.AdmissionInfoJson}',[IsDelete]=0,[MedicalInsuranceState]='{param.AdministrativeArea}'
+                        where [Id]='{param.Id}' and OrganizationCode='{user.OrganizationCode}'";
+                    }
+                    else
+                    {
+                        insertSql = $@"update [dbo].[MedicalInsurance] set 
+                        AdmissionInfoJson='{param.AdmissionInfoJson}',[IsDelete]=0,
+                        where [Id]='{param.Id}' and OrganizationCode='{user.OrganizationCode}'";
+                    }
                 }
                 else
                 {
                     insertSql = $@"INSERT INTO [dbo].[MedicalInsurance]([Id],[BusinessId],[InsuranceNo],[MedicalInsuranceAllAmount]
-                               ,[AdmissionInfoJson],[ReimbursementExpensesAmount] ,[SelfPayFeeAmount],[OtherInfo] 
+                               ,[AdmissionInfoJson],[ReimbursementExpensesAmount] ,[SelfPayFeeAmount],[OtherInfo],[AdministrativeArea]
 		                       ,[CreateTime],[IsDelete] ,OrganizationCode,CreateUserId,OrganizationName,InsuranceType,MedicalInsuranceState)
                            VALUES('{param.Id}','{param.BusinessId}','{param.InsuranceNo}', 0,
-                                 '{param.AdmissionInfoJson}',0,0,NULL,
-                                 GETDATE(),1,'{user.OrganizationCode}','{user.UserId}','{user.OrganizationName }',{param.InsuranceType},1);";
+                                 '{param.AdmissionInfoJson}',0,0,NULL,'{param.AdministrativeArea}',
+                                 GETDATE(),1,'{user.OrganizationCode}','{user.UserId}','{user.OrganizationName }',{param.InsuranceType},{(int)param.MedicalInsuranceState});";
                     insertSql = $"update [dbo].[MedicalInsurance] set [IsDelete]=0,DeleteUserId='{user.UserId}',DeleteTime=GETDATE() where [BusinessId]='{param.BusinessId}';" + insertSql;
 
                 }
@@ -164,6 +174,7 @@ namespace BenDing.Repository.Providers.Web
                               ,[OrganizationName]
                               ,[InsuranceType]
                               ,[SettlementNo]
+                              ,[AdministrativeArea]
                             FROM [dbo].[MedicalInsurance]
                             where  IsDelete=0";
                     if (!string.IsNullOrWhiteSpace(param.DataId))

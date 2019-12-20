@@ -26,5 +26,17 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
         WorkerHospitalizationPreSettlementDto WorkerHospitalizationPreSettlement(WorkerHospitalizationPreSettlementParam param);
+        /// <summary>
+        /// 职工住院结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        WorkerHospitalizationPreSettlementDto WorkerHospitalizationSettlement(WorkerHospitalizationSettlementParam param);
+        /// <summary>
+        /// 职工住院结算取消
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        string WorkerSettlementCancel(WorkerSettlementCancelParam param);
     }
 }

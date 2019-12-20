@@ -34,18 +34,21 @@ namespace NFine.Web.Controllers
         private readonly IOutpatientDepartmentService _outpatientDepartmentService;
         private readonly IOutpatientDepartmentRepository _outpatientDepartmentRepository;
         private readonly IWorkerMedicalInsuranceRepository _workerMedicalInsuranceRepository;
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="insuranceRepository"></param>
-        /// <param name="webServiceBasicService"></param>
-        /// <param name="medicalInsuranceSqlRepository"></param>
-        /// <param name="hisSqlRepository"></param>
-        /// <param name="manageRepository"></param>
-        /// <param name="residentMedicalInsuranceService"></param>
-        /// <param name="webServiceBasic"></param>
-        /// <param name="outpatientDepartmentService"></param>
-        /// <param name="outpatientDepartmentRepository"></param>
+        private readonly IWorkerMedicalInsuranceService _workerMedicalInsuranceService;
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="insuranceRepository"></param>
+       /// <param name="webServiceBasicService"></param>
+       /// <param name="medicalInsuranceSqlRepository"></param>
+       /// <param name="hisSqlRepository"></param>
+       /// <param name="manageRepository"></param>
+       /// <param name="residentMedicalInsuranceService"></param>
+       /// <param name="webServiceBasic"></param>
+       /// <param name="outpatientDepartmentService"></param>
+       /// <param name="outpatientDepartmentRepository"></param>
+       /// <param name="workerMedicalInsuranceRepository"></param>
+       /// <param name="workerMedicalInsuranceService"></param>
         public BenDingController(IResidentMedicalInsuranceRepository insuranceRepository,
             IWebServiceBasicService webServiceBasicService,
             IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
@@ -55,7 +58,8 @@ namespace NFine.Web.Controllers
             IWebBasicRepository webServiceBasic,
             IOutpatientDepartmentService outpatientDepartmentService,
             IOutpatientDepartmentRepository outpatientDepartmentRepository,
-            IWorkerMedicalInsuranceRepository workerMedicalInsuranceRepository
+            IWorkerMedicalInsuranceRepository workerMedicalInsuranceRepository,
+            IWorkerMedicalInsuranceService workerMedicalInsuranceService
             )
         {
             _webServiceBasicService = webServiceBasicService;
@@ -68,6 +72,7 @@ namespace NFine.Web.Controllers
             _outpatientDepartmentService = outpatientDepartmentService;
             _outpatientDepartmentRepository = outpatientDepartmentRepository;
             _workerMedicalInsuranceRepository = workerMedicalInsuranceRepository;
+            _workerMedicalInsuranceService = workerMedicalInsuranceService;
         }
         #region 基层接口
         /// <summary>
@@ -958,7 +963,8 @@ namespace NFine.Web.Controllers
                    ////LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
                    //LeaveHospitalMainDiagnosis = InpatientInfoData.AdmissionSecondaryDiagnosis,
                    UserId = CommonHelp.GuidToStr(userBase.UserId),
-                   LeaveHospitalInpatientState = param.LeaveHospitalInpatientState
+                   LeaveHospitalInpatientState = "出院状态",
+                   
                };
                var infoParam = new LeaveHospitalSettlementInfoParam()
                {
@@ -1225,8 +1231,6 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-               
-
                 var iniParam = new WorKerHospitalizationRegisterParam();
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
                 {
@@ -1261,7 +1265,7 @@ namespace NFine.Web.Controllers
                             new QueryHospitalOperatorParam(){UserId = param.UserId});
                         iniParam.OrganizationCode = userData.MedicalInsuranceAccount;
                         //入院登记
-                       var data= _workerMedicalInsuranceRepository.WorkerHospitalizationRegister(iniParam);
+                       var data= _workerMedicalInsuranceService.WorkerHospitalizationRegister(iniParam);
                         y.Data = data;
                     }
                     else
@@ -1338,7 +1342,7 @@ namespace NFine.Web.Controllers
                             new QueryHospitalOperatorParam() { UserId = param.UserId });
                         iniParam.OrganizationCode = userData.MedicalInsuranceAccount;
                         //入院登记修改
-                         _workerMedicalInsuranceRepository.ModifyWorkerHospitalization(iniParam);
+                        _workerMedicalInsuranceService.ModifyWorkerHospitalization(iniParam);
                        
                     }
                 }
@@ -1346,6 +1350,108 @@ namespace NFine.Web.Controllers
                 {
                     throw new Exception("诊断不能为空!!!");
                 }
+            });
+
+        }
+        /// <summary>
+        /// 职工住院预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData WorkerHospitalizationPreSettlement([FromUri]HospitalizationPresettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
+            {   //获取操作人员信息
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    BusinessId = param.BusinessId,
+                    OrganizationCode = userBase.OrganizationCode
+                };
+                //获取医保病人信息
+                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+                if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已医保结算,不能预结算");
+                //医保登录
+                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                //获取医保账号
+                var userData = _systemManage.QueryHospitalOperator(
+                         new QueryHospitalOperatorParam() { UserId = param.UserId });
+              
+                var infoParam = new WorkerHospitalizationPreSettlementParam()
+                {
+                    User = userBase,
+                    Id = residentData.Id,
+                    BusinessId = param.BusinessId,
+                    MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                    LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
+                    AdministrativeArea= residentData.AdministrativeArea,
+                    Operators= userBase.UserName,
+                    IsHospitalizationFrequency="0",
+                    OrganizationCode= userData.MedicalInsuranceAccount,
+                };
+                var data = _workerMedicalInsuranceService.WorkerHospitalizationPreSettlement(infoParam);
+
+                y.Data = data;
+            });
+
+        }
+        /// <summary>
+        /// 职工住院结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData WorkerHospitalizationSettlement([FromUri]LeaveHospitalSettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
+            {   //获取操作人员信息
+
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    BusinessId = param.BusinessId,
+                    OrganizationCode = userBase.OrganizationCode
+                };
+                //获取医保病人信息
+                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+                if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已办理医保结算,不能办理预结算!!!");
+                if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisPreSettlement) throw new Exception("当前病人未办理预结算,不能办理结算!!!");
+                var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
+                //获取住院病人
+                var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
+                if (inpatientInfoData == null) throw new Exception("该病人未在中心库中,请检查是否办理医保入院!!!");
+
+                //医保登录
+                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                //获取医保账号
+                var userData = _systemManage.QueryHospitalOperator(
+                         new QueryHospitalOperatorParam() { UserId = param.UserId });
+                var infoParam = new WorkerHospitalizationSettlementParam()
+                {
+                    User = userBase,
+                    Id = residentData.Id,
+                    BusinessId = inpatientInfoData.BusinessId,
+                    MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                    LeaveHospitalDate = (!string.IsNullOrWhiteSpace(inpatientInfoData.LeaveHospitalDate)) ? Convert.ToDateTime(inpatientInfoData.LeaveHospitalDate).ToString("yyyyMMdd") : DateTime.Now.ToString("yyyyMMdd"),
+                    AdmissionMainDiagnosisIcd10 = inpatientInfoData.LeaveHospitalMainDiagnosisIcd10,
+                    //LeaveHospitalDiagnosisIcd10Two = inpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
+                    LeaveHospitalMainDiagnosis = inpatientInfoData.LeaveHospitalMainDiagnosis,
+                    //LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
+                    //LeaveHospitalMainDiagnosisIcd10 = InpatientInfoData.AdmissionMainDiagnosisIcd10,
+                    ////LeaveHospitalDiagnosisIcd10Two = InpatientInfoData.LeaveHospitalSecondaryDiagnosisIcd10,
+                    //LeaveHospitalMainDiagnosis = InpatientInfoData.AdmissionSecondaryDiagnosis,
+                    LeaveHospitalState = "#",
+                    Operators= userBase.UserName,
+                    OrganizationCode= userData.MedicalInsuranceAccount,
+                    AdministrativeArea= residentData.AdministrativeArea
+
+
+                };
+                var data = _workerMedicalInsuranceService.WorkerHospitalizationSettlement(infoParam);
+                y.Data = data;
+
+
             });
 
         }

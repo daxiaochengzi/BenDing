@@ -14,19 +14,35 @@ namespace BenDing.Repository.Interfaces.Web
      /// </summary>
      /// <param name="param"></param>
         WorkerHospitalizationRegisterDto WorkerHospitalizationRegister(WorKerHospitalizationRegisterParam param);
-        //职工入院登记修改
+
+        /// <summary>
+        /// 职工入院登记修改
+        /// </summary>
+        /// <param name="param"></param>
         void ModifyWorkerHospitalization(ModifyWorkerHospitalizationParam param);
         /// <summary>
-        /// 住院费用预结算
+        /// 职工住院预结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
         WorkerHospitalizationPreSettlementDto WorkerHospitalizationPreSettlement(WorkerHospitalizationPreSettlementParam param);
+        /// <summary>
+        /// 职工住院结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        WorkerHospitalizationPreSettlementDto WorkerHospitalizationSettlement(WorkerHospitalizationSettlementParam param);
         /// <summary>
         /// 职工划卡
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
         WorkerStrokeCardDto WorkerStrokeCard(WorkerStrokeCardParam param);
+        /// <summary>
+        /// 职工住院结算取消
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        string WorkerSettlementCancel(WorkerSettlementCancelParam param);
     }
 }

@@ -83,10 +83,11 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
       
         public string FamilyAddress { get; set; }
+       
         /// <summary>
         /// 入院科室
         /// </summary>
-        
+
         public string InDepartmentName { get; set; }
         /// <summary>
         /// 入院科室编码

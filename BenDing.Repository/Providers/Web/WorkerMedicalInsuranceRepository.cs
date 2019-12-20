@@ -137,7 +137,7 @@ namespace BenDing.Repository.Providers.Web
 
         }
         /// <summary>
-        /// 住院预结算
+        /// 职工住院预结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -197,25 +197,154 @@ namespace BenDing.Repository.Providers.Web
             {
                 throw new Exception(msg.ToString());
             }
-            var resultData = new WorkerHospitalizationPreSettlementDto() 
-                {   DocumentNo= DocumentNo.ToString(),
-                    TotalAmount=Convert.ToDecimal(TotalAmount.ToString()),
-                    BasicOverallPay= Convert.ToDecimal(BasicOverallPay.ToString()),
-                    SupplementPayAmount = Convert.ToDecimal(SupplementPayAmount.ToString()),
-                    SpecialFundPayAmount = Convert.ToDecimal(SpecialFundPayAmount.ToString()),
-                    CivilServantsSubsidies = Convert.ToDecimal(CivilServantsSubsidies.ToString()),
-                    CivilServantsSubsidy = Convert.ToDecimal(CivilServantsSubsidy.ToString()),
-                    OtherPaymentAmount = Convert.ToDecimal(OtherPaymentAmount.ToString()),
-                    AccountPayment = Convert.ToDecimal(AccountPayment.ToString()),
-                    CashPayment = Convert.ToDecimal(CashPayment.ToString()),
-                    PaidAmount = Convert.ToDecimal(PaidAmount.ToString()),
-                    Remark =CashPayment.ToString(),
-                };
-                return resultData;
+            var resultData = new WorkerHospitalizationPreSettlementDto()
+            {
+                DocumentNo = DocumentNo.ToString(),
+                TotalAmount = Convert.ToDecimal(TotalAmount.ToString()),
+                BasicOverallPay = Convert.ToDecimal(BasicOverallPay.ToString()),
+                SupplementPayAmount = Convert.ToDecimal(SupplementPayAmount.ToString()),
+                SpecialFundPayAmount = Convert.ToDecimal(SpecialFundPayAmount.ToString()),
+                CivilServantsSubsidies = Convert.ToDecimal(CivilServantsSubsidies.ToString()),
+                CivilServantsSubsidy = Convert.ToDecimal(CivilServantsSubsidy.ToString()),
+                OtherPaymentAmount = Convert.ToDecimal(OtherPaymentAmount.ToString()),
+                AccountPayment = Convert.ToDecimal(AccountPayment.ToString()),
+                CashPayment = Convert.ToDecimal(CashPayment.ToString()),
+                PaidAmount = Convert.ToDecimal(PaidAmount.ToString()),
+                Remark = CashPayment.ToString(),
+            };
+            return resultData;
         }
-      
-        // public void 
-        //HospitalizationPreSettlementParam
+        /// <summary>
+        /// 职工住院结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public WorkerHospitalizationPreSettlementDto WorkerHospitalizationSettlement(WorkerHospitalizationSettlementParam param)
+        {
+            //社保住院号
+            var DocumentNo = new StringBuilder(1024);
+            //发生费用金额
+            var TotalAmount = new StringBuilder(1024);
+            //基本统筹支付
+            var BasicOverallPay = new StringBuilder(1024);
+            //补充医疗保险支付金额
+            var SupplementPayAmount = new StringBuilder(1024);
+            //专项基金支付金额
+            var SpecialFundPayAmount = new StringBuilder(1024);
+            //公务员补贴
+            var CivilServantsSubsidies = new StringBuilder(1024);
+            //公务员补助
+            var CivilServantsSubsidy = new StringBuilder(1024);
+            //其它支付金额
+            var OtherPaymentAmount = new StringBuilder(1024);
+            //账户支付
+            var AccountPayment = new StringBuilder(1024);
+            //现金支付
+            var CashPayment = new StringBuilder(1024);
+            //起付金额
+            var PaidAmount = new StringBuilder(1024);
+            // 备注
+            var Remark = new StringBuilder(1024);
+            //返回状态
+            var resultState = new StringBuilder(1024);
+            //消息
+            var msg = new StringBuilder(1024);
+            WorkerMedicalInsurance.WorkerHospitalizationSettlement
+                (param.OrganizationCode,
+                 param.MedicalInsuranceHospitalizationNo,
+                 param.AdministrativeArea,
+                 param.IsHospitalizationFrequency,
+                 param.LeaveHospitalDate,
+                 param.Operators,
+                 param.LeaveHospitalState,
+                 param.AdmissionMainDiagnosisIcd10,
+                 param.DiagnosisIcd10Two,
+                 param.DiagnosisIcd10Three,
+                 param.LeaveHospitalMainDiagnosis,
+                 TotalAmount,
+                 BasicOverallPay,
+                 SupplementPayAmount,
+                 SpecialFundPayAmount,
+                 CivilServantsSubsidies,
+                 CivilServantsSubsidy,
+                 OtherPaymentAmount,
+                 AccountPayment,
+                 CashPayment,
+                 PaidAmount,
+                 DocumentNo,
+                 Remark,
+                 resultState,
+                 msg
+                );
+            if (resultState.ToString() != "1")
+            {
+                throw new Exception(msg.ToString());
+            }
+            var resultData = new WorkerHospitalizationPreSettlementDto()
+            {
+                DocumentNo = DocumentNo.ToString(),
+                TotalAmount = Convert.ToDecimal(TotalAmount.ToString()),
+                BasicOverallPay = Convert.ToDecimal(BasicOverallPay.ToString()),
+                SupplementPayAmount = Convert.ToDecimal(SupplementPayAmount.ToString()),
+                SpecialFundPayAmount = Convert.ToDecimal(SpecialFundPayAmount.ToString()),
+                CivilServantsSubsidies = Convert.ToDecimal(CivilServantsSubsidies.ToString()),
+                CivilServantsSubsidy = Convert.ToDecimal(CivilServantsSubsidy.ToString()),
+                OtherPaymentAmount = Convert.ToDecimal(OtherPaymentAmount.ToString()),
+                AccountPayment = Convert.ToDecimal(AccountPayment.ToString()),
+                CashPayment = Convert.ToDecimal(CashPayment.ToString()),
+                PaidAmount = Convert.ToDecimal(PaidAmount.ToString()),
+                Remark = CashPayment.ToString(),
+            };
+            return resultData;
+        }
+        /// <summary>
+        /// 职工取消结算
+        /// </summary>
+        /// <param name="param"></param>
+        public string WorkerSettlementCancel(WorkerSettlementCancelParam param)
+        {
+            var cancelLimit = param.CancelLimit;
+            string cancelData;
+            if (param.CancelLimit == "1")
+            {
+                cancelData = Cancel(param);
+
+            }
+            else
+            {
+                param.CancelLimit = "1";
+                cancelData = Cancel(param);
+
+                param.CancelLimit = "2";
+                cancelData = Cancel(param);
+            }
+            string Cancel(WorkerSettlementCancelParam paramc)
+            {
+
+                //返回状态
+                var resultState = new StringBuilder(1024);
+                //消息
+                var msg = new StringBuilder(1024);
+                var yearSign = new StringBuilder(1024);
+                WorkerMedicalInsurance.WorkerSettlementCancel
+                    (param.AdministrativeArea,
+                     param.OrganizationCode,
+                     param.MedicalInsuranceHospitalizationNo,
+                     param.SettlementNo,
+                     param.CancelLimit,
+                     param.User.UserName,
+                     yearSign,
+                     resultState,
+                     msg
+                    );
+                if (resultState.ToString() != "1")
+                {
+                    throw new Exception(msg.ToString());
+                }
+                return yearSign.ToString();
+            }
+            return cancelData;
+        }
         /// <summary>
         /// 职工划卡
         /// </summary>
@@ -298,5 +427,7 @@ namespace BenDing.Repository.Providers.Web
             //_webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
             return resultData;
         }
+
+
     }
 }

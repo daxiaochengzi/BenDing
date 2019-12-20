@@ -91,7 +91,7 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="po_msg">系统错误信息</param>
         /// <returns></returns>
         [DllImport("yyjk.dll", EntryPoint = "fyjs_new", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern int fyjs_new(string pi_fwjgh, string pi_zyh, string pi_xzqh, string pi_cszl, string pi_czy, string pi_cyrq,
+        public static extern int WorkerHospitalizationSettlement(string pi_fwjgh, string pi_zyh, string pi_xzqh, string pi_cszl, string pi_czy, string pi_cyrq,
             string pi_cyqk, string pi_icd10, string pi_icd10_2, string pi_icd10_3, string pi_cyzd,
           StringBuilder PO_FYZE, StringBuilder PO_TCZF, StringBuilder PO_BCZF, StringBuilder PO_ZXJJ,
           StringBuilder PO_GWYBT, StringBuilder PO_GWYBZ, StringBuilder PO_QTZF, StringBuilder PO_ZHZF,
@@ -143,7 +143,7 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="po_msg">系统错误信息</param>
         /// <returns></returns>
         [DllImport("yyjk.dll", EntryPoint = "qxjs", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern int qxjs(string pi_xzqh, string pi_fwjgh, string pi_zyh, string pi_djh, string pi_qxcd, string pi_jbr,
+        public static extern int WorkerSettlementCancel(string pi_xzqh, string pi_fwjgh, string pi_zyh, string pi_djh, string pi_qxcd, string pi_jbr,
           StringBuilder po_knbz, StringBuilder po_fhz, StringBuilder po_msg);
         /// <summary>
         /// 查询费用结算结果

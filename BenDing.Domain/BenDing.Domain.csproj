@@ -103,6 +103,7 @@
     <Compile Include="Models\Dto\Workers\WorkerHospitalizationPreSettlementDto.cs" />
     <Compile Include="Models\Dto\Workers\WorkerStrokeCardDto.cs" />
     <Compile Include="Models\Dto\Workers\WorkerHospitalizationRegisterDto.cs" />
+    <Compile Include="Models\Enums\LeaveHospitalInpatientState.cs" />
     <Compile Include="Models\Enums\MedicalInsuranceState.cs" />
     <Compile Include="Models\Enums\OrganizationGrade.cs" />
     <Compile Include="Models\Enums\PeopleType.cs" />
@@ -244,6 +245,8 @@
     <Compile Include="Models\Params\Workers\ModifyWorkerHospitalizationParam.cs" />
     <Compile Include="Models\Dto\Base\WorkerBaseParam.cs" />
     <Compile Include="Models\Params\Workers\WorKerHospitalizationRegisterParam.cs" />
+    <Compile Include="Models\Params\Workers\WorkerHospitalizationSettlementParam.cs" />
+    <Compile Include="Models\Params\Workers\WorkerSettlementCancelParam.cs" />
     <Compile Include="Models\Params\Workers\WorkerStrokeCardParam.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Xml\CommonHelp.cs" />
