@@ -1414,6 +1414,14 @@ namespace NFine.Web.Controllers
             {   //获取操作人员信息
 
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var infoData = new GetInpatientInfoParam()
+                {
+                    User = userBase,
+                    BusinessId = param.BusinessId,
+                    IsSave = false
+                };
+                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
+
                 var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
                 {
                     BusinessId = param.BusinessId,

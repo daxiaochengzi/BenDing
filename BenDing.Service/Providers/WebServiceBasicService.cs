@@ -652,6 +652,7 @@ namespace BenDing.Service.Providers
                     OrganizationCode = userBase.OrganizationCode,
                     BusinessId = param.BusinessId
                 });
+            if (queryData==null)throw  new  Exception("当前病人未办理医保入院!!!");
             if (!string.IsNullOrWhiteSpace(queryData.AdmissionInfoJson))
             {
                 var data = JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailDto>(queryData.AdmissionInfoJson);
