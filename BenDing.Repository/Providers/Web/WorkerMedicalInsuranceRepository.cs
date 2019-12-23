@@ -380,13 +380,13 @@ namespace BenDing.Repository.Providers.Web
                       );
             if (CommonHelp.StrToTransCoding(resultState) != "1")
             {
-                throw new Exception(msg.ToString());
+                throw new Exception(CommonHelp.StrToTransCoding(msg));
             }
 
             resultData = new WorkerStrokeCardDto()
             {
                 SelfPayFeeAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(selfPayFeeAmount)),
-                DocumentNo = documentNo.ToString(),
+                DocumentNo = CommonHelp.StrToTransCoding(documentNo),
                 ReimbursementExpensesAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(overallPlanningCanAmount))
             };
 
