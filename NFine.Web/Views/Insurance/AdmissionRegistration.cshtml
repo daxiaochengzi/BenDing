@@ -263,7 +263,7 @@
             }
             $.ajax({
                 type: 'POST',
-                url: '/BenDing/GetInpatientInfo',
+                url: host +'/GetInpatientInfo',
                 data: params,
                 dataType: "json",
                 async: false,
@@ -292,7 +292,7 @@
                         //诊断表初始化
                         $.ajax({
                             type: 'POST',
-                            url: '/BenDing/GetInpatientDiagnosis',
+                            url: host +'/GetInpatientDiagnosis',
                             data: params,
                             dataType: "json",
                             async: false,
@@ -350,7 +350,7 @@
             num: 2,
             display: 'DiseaseName',
             shortcut: 'MnemonicCode',
-            url: '/BenDing/QueryICD10',
+            url: host +'/QueryICD10',
             query: {},
             resArray: 'Data',
             count: 10,
@@ -458,7 +458,7 @@
             field.DiagnosisList = dataTable1;
             $.ajax({
                 type: 'POST',
-                url: '/BenDing/HospitalizationRegister',
+                url: host +'/HospitalizationRegister',
                 async: false,
                 data: JSON.stringify(field),
                 dataType: "json",

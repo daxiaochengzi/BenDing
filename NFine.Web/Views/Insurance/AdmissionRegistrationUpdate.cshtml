@@ -159,7 +159,7 @@
             num: 2,
             display: 'DiseaseName',
             shortcut: 'MnemonicCode',
-            url: '/BenDing/QueryICD10',
+            url: host +'/QueryICD10',
             query: {},
             resArray: 'Data',
             count: 10,
@@ -245,7 +245,7 @@
             console.log(field)
             $.ajax({
                 type: 'POST',
-                url: '/BenDing/HospitalizationModify',
+                url: host +'/HospitalizationModify',
                 async: false,
                 data: JSON.stringify(field),
                 dataType: "json",
@@ -270,7 +270,7 @@
                 , "UserId": $("#empid").val() /*授权操作人的ID*/
             }
             $.ajax({
-                url: '/BenDing/QueryMedicalInsurance',
+                url: host +'/QueryMedicalInsurance',
                 data: params,
                 dataType: "json",
                 async: false,
@@ -306,7 +306,7 @@
                     , "UserId": $("#empid").val() /*授权操作人的ID*/
                 }
                 $.ajax({
-                    url: '/BenDing/HospitalizationRegisterCancel',
+                    url: host +'/HospitalizationRegisterCancel',
                     data: params,
                     dataType: "json",
                     async: false,
@@ -325,7 +325,7 @@
         //科室数据
         function selectDepartmentName(defaultCode) {
             $.ajax({
-                url: "/BenDing/QueryInformationInfo",
+                url: host +'/QueryInformationInfo',
                 dataType: "json",
                 async: false,
                 data: { "DirectoryType": "0", "UserId": $("#empid").val() },

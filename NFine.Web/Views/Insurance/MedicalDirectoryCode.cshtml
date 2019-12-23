@@ -194,7 +194,7 @@
             table.render({
                 elem: '#LAY-app-content-list'
                 , height: $(window).height() - 128
-                , url: '/BenDing/QueryCatalog' //数据接口
+                , url: host +'/QueryCatalog' //数据接口
                 , parseData: function (res) { //res 即为原始返回的数据
                     return {
                         "code": res.Code, //解析接口状态
@@ -222,7 +222,7 @@
             table.render({
                 elem: '#LAY-yibao-content-list'
                 , height: $(window).height() - 128
-                , url: '/BenDing/QueryProjectDownload' //数据接口
+                , url: host +'/QueryProjectDownload' //数据接口
                 , parseData: function (res) { //res 即为原始返回的数据
                     return {
                         "code": res.Code, //解析接口状态
@@ -257,7 +257,7 @@
             table.render({
                 elem: '#LAY-pair-content-list'
                 , height: $(window).height() - 128
-                , url: '/BenDing/DirectoryComparisonManagement' //数据接口
+                , url: host +'/DirectoryComparisonManagement' //数据接口
                 , where: { UserId: $("#empid").val() }
                 , parseData: function (res) { //res 即为原始返回的数据
                     return {
@@ -309,7 +309,7 @@
                         area: ['1080px', '540px'],
                         fixed: false, //不固定
                         maxmin: true,
-                        content: '/BenDing/MedicalDirectoryPairCode' + params
+                        content: host +'/MedicalDirectoryPairCode' + params
                     });
                 } else if (obj.event === 'updatePairCode') {
                     //layer.msg('ID：' + data.id + ' 的查看操作');
