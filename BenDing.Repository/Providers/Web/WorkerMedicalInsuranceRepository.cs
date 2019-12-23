@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
@@ -49,19 +50,19 @@ namespace BenDing.Repository.Providers.Web
         {
             var resultData = new WorkerHospitalizationRegisterDto();
             //社保住院号
-            var medicalInsuranceHospitalizationNo = new StringBuilder(1024);
+            var medicalInsuranceHospitalizationNo = new byte[1024];
             //审批编号
-            var approvalNumber = new StringBuilder(1024);
+            var approvalNumber = new byte[1024];
             //年住院次数
-            var yearHospitalizationNumber = new StringBuilder(1024);
+            var yearHospitalizationNumber = new byte[1024];
             //统筹已付金额
-            var overallPlanningAlreadyAmount = new StringBuilder(1024);
+            var overallPlanningAlreadyAmount = new byte[1024];
             //统筹可付金额
-            var overallPlanningCanAmount = new StringBuilder(1024);
+            var overallPlanningCanAmount = new byte[1024];
             //返回状态
-            var resultState = new StringBuilder(1024);
+            var resultState = new byte[1024];
             //消息
-            var msg = new StringBuilder(1024);
+            var msg = new byte[1024];
 
             WorkerMedicalInsurance.HospitalizationRegister
                 (param.AfferentSign,
@@ -86,19 +87,19 @@ namespace BenDing.Repository.Providers.Web
                 resultState,
                 msg
                 );
-            if (resultState.ToString() != "1")
+            if (CommonHelp.StrToTransCoding(resultState)!= "1")
             {
-                throw new Exception(msg.ToString());
+                throw new Exception(CommonHelp.StrToTransCoding(msg));
             }
             else
             {
                 resultData = new WorkerHospitalizationRegisterDto()
                 {
-                    MedicalInsuranceHospitalizationNo = medicalInsuranceHospitalizationNo.ToString(),
-                    ApprovalNumber = approvalNumber.ToString(),
-                    YearHospitalizationNumber = yearHospitalizationNumber.ToString(),
-                    OverallPlanningAlreadyAmount = overallPlanningAlreadyAmount.ToString(),
-                    OverallPlanningCanAmount = overallPlanningCanAmount.ToString(),
+                    MedicalInsuranceHospitalizationNo = CommonHelp.StrToTransCoding(medicalInsuranceHospitalizationNo) ,
+                    ApprovalNumber = CommonHelp.StrToTransCoding(approvalNumber) ,
+                    YearHospitalizationNumber = CommonHelp.StrToTransCoding(yearHospitalizationNumber),
+                    OverallPlanningAlreadyAmount = CommonHelp.StrToTransCoding(overallPlanningAlreadyAmount),
+                    OverallPlanningCanAmount = CommonHelp.StrToTransCoding(overallPlanningCanAmount),
                 };
             }
 
@@ -111,9 +112,9 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="param"></param>
         public void ModifyWorkerHospitalization(ModifyWorkerHospitalizationParam param)
         {//返回状态
-            var resultState = new StringBuilder(1024);
+            var resultState = new byte[1024];
             //消息
-            var msg = new StringBuilder(1024);
+            var msg = new byte[1024];
 
             WorkerMedicalInsurance.ModifyHospitalization
                 (param.OrganizationCode,
@@ -130,9 +131,9 @@ namespace BenDing.Repository.Providers.Web
                  resultState,
                  msg
                 );
-            if (resultState.ToString() != "1")
+            if (CommonHelp.StrToTransCoding(resultState) != "1")
             {
-                throw new Exception(msg.ToString());
+                throw new Exception(CommonHelp.StrToTransCoding(msg));
             }
 
         }
@@ -144,33 +145,33 @@ namespace BenDing.Repository.Providers.Web
         public WorkerHospitalizationPreSettlementDto WorkerHospitalizationPreSettlement(WorkerHospitalizationPreSettlementParam param)
         {
             //社保住院号
-            var DocumentNo = new StringBuilder(1024);
+            var documentNo = new byte[1024];
             //发生费用金额
-            var TotalAmount = new StringBuilder(1024);
+            var totalAmount = new byte[1024];
             //基本统筹支付
-            var BasicOverallPay = new StringBuilder(1024);
+            var basicOverallPay = new byte[1024];
             //补充医疗保险支付金额
-            var SupplementPayAmount = new StringBuilder(1024);
+            var supplementPayAmount = new byte[1024];
             //专项基金支付金额
-            var SpecialFundPayAmount = new StringBuilder(1024);
+            var specialFundPayAmount = new byte[1024];
             //公务员补贴
-            var CivilServantsSubsidies = new StringBuilder(1024);
+            var civilServantsSubsidies = new byte[1024];
             //公务员补助
-            var CivilServantsSubsidy = new StringBuilder(1024);
+            var civilServantsSubsidy = new byte[1024];
             //其它支付金额
-            var OtherPaymentAmount = new StringBuilder(1024);
+            var otherPaymentAmount = new byte[1024];
             //账户支付
-            var AccountPayment = new StringBuilder(1024);
+            var accountPayment = new byte[1024];
             //现金支付
-            var CashPayment = new StringBuilder(1024);
+            var cashPayment = new byte[1024];
             //起付金额
-            var PaidAmount = new StringBuilder(1024);
+            var paidAmount = new byte[1024];
             // 备注
-            var Remark = new StringBuilder(1024);
+            var remark = new byte[1024];
             //返回状态
-            var resultState = new StringBuilder(1024);
+            var resultState = new byte[1024];
             //消息
-            var msg = new StringBuilder(1024);
+            var msg = new byte[1024];
             WorkerMedicalInsurance.WorkerHospitalizationPreSettlement
                 (param.OrganizationCode,
                  param.MedicalInsuranceHospitalizationNo,
@@ -178,39 +179,39 @@ namespace BenDing.Repository.Providers.Web
                  param.IsHospitalizationFrequency,
                  param.Operators,
                  param.LeaveHospitalDate,
-                 TotalAmount,
-                 BasicOverallPay,
-                 SupplementPayAmount,
-                 SpecialFundPayAmount,
-                 CivilServantsSubsidies,
-                 CivilServantsSubsidy,
-                 OtherPaymentAmount,
-                 AccountPayment,
-                 CashPayment,
-                 PaidAmount,
-                 DocumentNo,
-                 Remark,
+                 totalAmount,
+                 basicOverallPay,
+                 supplementPayAmount,
+                 specialFundPayAmount,
+                 civilServantsSubsidies,
+                 civilServantsSubsidy,
+                 otherPaymentAmount,
+                 accountPayment,
+                 cashPayment,
+                 paidAmount,
+                 documentNo,
+                 remark,
                  resultState,
                  msg
                 );
-            if (resultState.ToString() != "1")
+            if (CommonHelp.StrToTransCoding(resultState) != "1")
             {
-                throw new Exception(msg.ToString());
+                throw new Exception(CommonHelp.StrToTransCoding(msg));
             }
             var resultData = new WorkerHospitalizationPreSettlementDto()
             {
-                DocumentNo = DocumentNo.ToString(),
-                TotalAmount = Convert.ToDecimal(TotalAmount.ToString()),
-                BasicOverallPay = Convert.ToDecimal(BasicOverallPay.ToString()),
-                SupplementPayAmount = Convert.ToDecimal(SupplementPayAmount.ToString()),
-                SpecialFundPayAmount = Convert.ToDecimal(SpecialFundPayAmount.ToString()),
-                CivilServantsSubsidies = Convert.ToDecimal(CivilServantsSubsidies.ToString()),
-                CivilServantsSubsidy = Convert.ToDecimal(CivilServantsSubsidy.ToString()),
-                OtherPaymentAmount = Convert.ToDecimal(OtherPaymentAmount.ToString()),
-                AccountPayment = Convert.ToDecimal(AccountPayment.ToString()),
-                CashPayment = Convert.ToDecimal(CashPayment.ToString()),
-                PaidAmount = Convert.ToDecimal(PaidAmount.ToString()),
-                Remark = CashPayment.ToString(),
+                DocumentNo = documentNo.ToString(),
+                TotalAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(totalAmount)),
+                BasicOverallPay = Convert.ToDecimal(CommonHelp.StrToTransCoding(basicOverallPay)),
+                SupplementPayAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(supplementPayAmount)),
+                SpecialFundPayAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(specialFundPayAmount)),
+                CivilServantsSubsidies = Convert.ToDecimal(CommonHelp.StrToTransCoding(civilServantsSubsidies)),
+                CivilServantsSubsidy = Convert.ToDecimal(CommonHelp.StrToTransCoding(civilServantsSubsidy)),
+                OtherPaymentAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(otherPaymentAmount)),
+                AccountPayment = Convert.ToDecimal(CommonHelp.StrToTransCoding(accountPayment)),
+                CashPayment = Convert.ToDecimal(CommonHelp.StrToTransCoding(cashPayment)),
+                PaidAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(paidAmount)),
+                Remark = CommonHelp.StrToTransCoding(cashPayment),
             };
             return resultData;
         }
@@ -222,33 +223,33 @@ namespace BenDing.Repository.Providers.Web
         public WorkerHospitalizationPreSettlementDto WorkerHospitalizationSettlement(WorkerHospitalizationSettlementParam param)
         {
             //社保住院号
-            var DocumentNo = new StringBuilder(1024);
+            var documentNo = new byte[1024];
             //发生费用金额
-            var TotalAmount = new StringBuilder(1024);
+            var totalAmount = new byte[1024];
             //基本统筹支付
-            var BasicOverallPay = new StringBuilder(1024);
+            var basicOverallPay = new byte[1024];
             //补充医疗保险支付金额
-            var SupplementPayAmount = new StringBuilder(1024);
+            var supplementPayAmount = new byte[1024];
             //专项基金支付金额
-            var SpecialFundPayAmount = new StringBuilder(1024);
+            var specialFundPayAmount = new byte[1024];
             //公务员补贴
-            var CivilServantsSubsidies = new StringBuilder(1024);
+            var civilServantsSubsidies = new byte[1024];
             //公务员补助
-            var CivilServantsSubsidy = new StringBuilder(1024);
+            var civilServantsSubsidy = new byte[1024];
             //其它支付金额
-            var OtherPaymentAmount = new StringBuilder(1024);
+            var otherPaymentAmount = new byte[1024];
             //账户支付
-            var AccountPayment = new StringBuilder(1024);
+            var accountPayment = new byte[1024];
             //现金支付
-            var CashPayment = new StringBuilder(1024);
+            var cashPayment = new byte[1024];
             //起付金额
-            var PaidAmount = new StringBuilder(1024);
+            var paidAmount = new byte[1024];
             // 备注
-            var Remark = new StringBuilder(1024);
+            var remark = new byte[1024];
             //返回状态
-            var resultState = new StringBuilder(1024);
+            var resultState = new byte[1024];
             //消息
-            var msg = new StringBuilder(1024);
+            var msg = new byte[1024];
             WorkerMedicalInsurance.WorkerHospitalizationSettlement
                 (param.OrganizationCode,
                  param.MedicalInsuranceHospitalizationNo,
@@ -261,39 +262,39 @@ namespace BenDing.Repository.Providers.Web
                  param.DiagnosisIcd10Two,
                  param.DiagnosisIcd10Three,
                  param.LeaveHospitalMainDiagnosis,
-                 TotalAmount,
-                 BasicOverallPay,
-                 SupplementPayAmount,
-                 SpecialFundPayAmount,
-                 CivilServantsSubsidies,
-                 CivilServantsSubsidy,
-                 OtherPaymentAmount,
-                 AccountPayment,
-                 CashPayment,
-                 PaidAmount,
-                 DocumentNo,
-                 Remark,
+                 totalAmount,
+                 basicOverallPay,
+                 supplementPayAmount,
+                 specialFundPayAmount,
+                 civilServantsSubsidies,
+                 civilServantsSubsidy,
+                 otherPaymentAmount,
+                 accountPayment,
+                 cashPayment,
+                 paidAmount,
+                 documentNo,
+                 remark,
                  resultState,
                  msg
                 );
-            if (resultState.ToString() != "1")
+            if (CommonHelp.StrToTransCoding(resultState) != "1")
             {
-                throw new Exception(msg.ToString());
+                throw new Exception(CommonHelp.StrToTransCoding(msg));
             }
             var resultData = new WorkerHospitalizationPreSettlementDto()
             {
-                DocumentNo = DocumentNo.ToString(),
-                TotalAmount = Convert.ToDecimal(TotalAmount.ToString()),
-                BasicOverallPay = Convert.ToDecimal(BasicOverallPay.ToString()),
-                SupplementPayAmount = Convert.ToDecimal(SupplementPayAmount.ToString()),
-                SpecialFundPayAmount = Convert.ToDecimal(SpecialFundPayAmount.ToString()),
-                CivilServantsSubsidies = Convert.ToDecimal(CivilServantsSubsidies.ToString()),
-                CivilServantsSubsidy = Convert.ToDecimal(CivilServantsSubsidy.ToString()),
-                OtherPaymentAmount = Convert.ToDecimal(OtherPaymentAmount.ToString()),
-                AccountPayment = Convert.ToDecimal(AccountPayment.ToString()),
-                CashPayment = Convert.ToDecimal(CashPayment.ToString()),
-                PaidAmount = Convert.ToDecimal(PaidAmount.ToString()),
-                Remark = CashPayment.ToString(),
+                DocumentNo = documentNo.ToString(),
+                TotalAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(totalAmount)),
+                BasicOverallPay = Convert.ToDecimal(CommonHelp.StrToTransCoding(basicOverallPay)),
+                SupplementPayAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(supplementPayAmount)),
+                SpecialFundPayAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(specialFundPayAmount)),
+                CivilServantsSubsidies = Convert.ToDecimal(CommonHelp.StrToTransCoding(civilServantsSubsidies)),
+                CivilServantsSubsidy = Convert.ToDecimal(CommonHelp.StrToTransCoding(civilServantsSubsidy)),
+                OtherPaymentAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(otherPaymentAmount)),
+                AccountPayment = Convert.ToDecimal(CommonHelp.StrToTransCoding(accountPayment)),
+                CashPayment = Convert.ToDecimal(CommonHelp.StrToTransCoding(cashPayment)),
+                PaidAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(paidAmount)),
+                Remark = CommonHelp.StrToTransCoding(cashPayment),
             };
             return resultData;
         }
@@ -322,10 +323,10 @@ namespace BenDing.Repository.Providers.Web
             {
 
                 //返回状态
-                var resultState = new StringBuilder(1024);
+                var resultState = new byte[1024];
                 //消息
-                var msg = new StringBuilder(1024);
-                var yearSign = new StringBuilder(1024);
+                var msg = new byte[1024];
+                var yearSign = new byte[1024];
                 WorkerMedicalInsurance.WorkerSettlementCancel
                     (param.AdministrativeArea,
                      param.OrganizationCode,
@@ -337,11 +338,11 @@ namespace BenDing.Repository.Providers.Web
                      resultState,
                      msg
                     );
-                if (resultState.ToString() != "1")
+                if (CommonHelp.StrToTransCoding(resultState) != "1")
                 {
-                    throw new Exception(msg.ToString());
+                    throw new Exception(CommonHelp.StrToTransCoding(msg));
                 }
-                return yearSign.ToString();
+                return CommonHelp.StrToTransCoding(yearSign);
             }
             return cancelData;
         }
@@ -354,15 +355,15 @@ namespace BenDing.Repository.Providers.Web
         {
             var resultData = new WorkerStrokeCardDto();
             //流水号
-            var documentNo = new StringBuilder(1024);
+            var documentNo = new byte[1024];
             //自费金额
-            var selfPayFeeAmount = new StringBuilder(1024);
+            var selfPayFeeAmount = new byte[1024];
             //报销金额
-            var overallPlanningCanAmount = new StringBuilder(1024);
+            var overallPlanningCanAmount = new byte[1024];
             //返回状态
-            var resultState = new StringBuilder(1024);
+            var resultState = new byte[1024];
             //消息
-            var msg = new StringBuilder(1024);
+            var msg = new byte[1024];
             // param.OrganizationCode==cpq2677
             var result = WorkerMedicalInsurance.WorkerHospitalSettlement
                       (param.Port,
@@ -377,16 +378,16 @@ namespace BenDing.Repository.Providers.Web
                        resultState,
                       msg
                       );
-            if (resultState.ToString() != "1")
+            if (CommonHelp.StrToTransCoding(resultState) != "1")
             {
                 throw new Exception(msg.ToString());
             }
 
             resultData = new WorkerStrokeCardDto()
             {
-                SelfPayFeeAmount = Convert.ToDecimal(selfPayFeeAmount.ToString()),
+                SelfPayFeeAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(selfPayFeeAmount)),
                 DocumentNo = documentNo.ToString(),
-                ReimbursementExpensesAmount = Convert.ToDecimal(overallPlanningCanAmount.ToString())
+                ReimbursementExpensesAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(overallPlanningCanAmount))
             };
 
             //var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
@@ -427,6 +428,10 @@ namespace BenDing.Repository.Providers.Web
             //_webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
             return resultData;
         }
+
+
+
+
 
 
     }
