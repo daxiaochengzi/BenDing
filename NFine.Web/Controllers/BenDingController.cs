@@ -1245,6 +1245,9 @@ namespace NFine.Web.Controllers
                         BusinessId = param.BusinessId,
                         IsSave = false,
                     };
+                    //获取医院等级
+                    var gradeData = _systemManage.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
+
                     var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
                     if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
                     {  //医保登录
@@ -1259,7 +1262,7 @@ namespace NFine.Web.Controllers
                         iniParam.HospitalizationNo = inpatientData.HospitalizationNo;
                         iniParam.Operators = inpatientData.AdmissionOperator;
                         iniParam.BusinessId = param.BusinessId;
-                        iniParam.AdministrativeArea = param.AdministrativeArea;
+                        iniParam.AdministrativeArea =  gradeData.AdministrativeArea;
                         iniParam.InpatientArea= inpatientData.AdmissionWard;
                         var userData = _systemManage.QueryHospitalOperator(
                             new QueryHospitalOperatorParam(){UserId = param.UserId});
@@ -1327,6 +1330,8 @@ namespace NFine.Web.Controllers
                         IsSave = false,
                     };
                     var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
+                    //获取医院等级
+                    var gradeData = _systemManage.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
                     if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
                     {  //医保登录
                         _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
@@ -1336,7 +1341,7 @@ namespace NFine.Web.Controllers
                         iniParam.HospitalizationNo = param.HospitalizationNo;
                         iniParam.Operators = userBase.UserName;
                         iniParam.BusinessId = param.BusinessId;
-                        iniParam.AdministrativeArea = param.AdministrativeArea;
+                        iniParam.AdministrativeArea = gradeData.AdministrativeArea;
                         iniParam.InpatientArea = param.InpatientArea;
                         var userData = _systemManage.QueryHospitalOperator(
                             new QueryHospitalOperatorParam() { UserId = param.UserId });

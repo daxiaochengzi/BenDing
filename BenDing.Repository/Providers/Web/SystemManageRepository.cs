@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
+using BenDing.Domain.Models.Dto.SystemManage;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.SystemManage;
@@ -107,13 +108,13 @@ namespace BenDing.Repository.Providers.Web
                     if (resultNum > 0)
                     {
                         sqlStr = $@"update  [dbo].[HospitalOrganizationGrade] 
-                                set [OrganizationGrade]={(int)param.OrganizationGrade},[UpdateTime]=GETDATE(),UpdateUserId='{param.UserId}'
+                                set [OrganizationGrade]={(int)param.OrganizationGrade},[UpdateTime]=GETDATE(),AdministrativeArea='{param.AdministrativeArea}',UpdateUserId='{param.UserId}'
                                 where IsDelete=0 and HospitalId='{param.HospitalId}'";
                     }
                     else
                     {
-                        sqlStr = $@"INSERT INTO [dbo].[HospitalOrganizationGrade] (Id,HospitalId,[OrganizationGrade],[UpdateTime],[CreateUserId],IsDelete)
-                                 values('{Guid.NewGuid()}','{param.HospitalId}',{(int)param.OrganizationGrade},GETDATE(),'{param.UserId}',0)";
+                        sqlStr = $@"INSERT INTO [dbo].[HospitalOrganizationGrade] (Id,HospitalId,[OrganizationGrade],[UpdateTime],[CreateUserId],IsDelete,[AdministrativeArea])
+                                 values('{Guid.NewGuid()}','{param.HospitalId}',{(int)param.OrganizationGrade},GETDATE(),'{param.UserId}',0,'{param.AdministrativeArea}')";
                     }
                     sqlConnection.Execute(sqlStr);
 
@@ -132,20 +133,22 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public OrganizationGrade QueryHospitalOrganizationGrade(string param)
+        public HospitalOrganizationGradeDto QueryHospitalOrganizationGrade(string param)
         {
-            OrganizationGrade resultData;
+          
             //医院等级
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 sqlConnection.Open();
                 string querySql =
                     $"select   OrganizationGrade from [dbo].[HospitalOrganizationGrade] where IsDelete=0 and HospitalId='{param}'";
-                resultData = (OrganizationGrade)sqlConnection.QueryFirst<int>(querySql);
+               var resultData = sqlConnection.QueryFirstOrDefault<HospitalOrganizationGradeDto>(querySql);
                 sqlConnection.Close();
+                if (resultData==null)throw  new Exception("当前医院未设置等级,请重新设置");
+                return resultData;
             }
 
-            return resultData;
+           
         }
         /// <summary>
         /// 操作员登陆信息查询

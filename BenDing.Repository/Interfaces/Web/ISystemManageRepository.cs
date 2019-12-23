@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using BenDing.Domain.Models.Dto.SystemManage;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.SystemManage;
@@ -41,7 +41,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        OrganizationGrade QueryHospitalOrganizationGrade(string param);
+        HospitalOrganizationGradeDto QueryHospitalOrganizationGrade(string param);
         int AddHospitalLog(AddHospitalLogParam param);
     }
 }

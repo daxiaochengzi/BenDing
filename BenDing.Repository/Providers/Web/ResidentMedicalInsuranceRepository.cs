@@ -1006,7 +1006,8 @@ namespace BenDing.Repository.Providers.Web
             var resultData = new Dictionary<string, List<QueryInpatientInfoDetailDto>>();
             var dataList = new List<QueryInpatientInfoDetailDto>();
             //获取医院等级
-            var grade = _systemManageRepository.QueryHospitalOrganizationGrade(user.OrganizationCode);
+            var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(user.OrganizationCode);
+            var grade = gradeData.OrganizationGrade;
             string msg = "";
             foreach (var item in param)
             {

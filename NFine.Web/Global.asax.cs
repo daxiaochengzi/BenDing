@@ -27,6 +27,15 @@ namespace NFine.Web
 
 
         }
+        /// <summary>
+        /// 
+        /// </summary>
+
+        protected void Application_PreSendRequestHeaders()
+        {
+            Response.Headers.Remove("X-Frame-Options");
+            Response.AddHeader("X-Frame-Options", "AllowAll");
+        }
 
 
     }

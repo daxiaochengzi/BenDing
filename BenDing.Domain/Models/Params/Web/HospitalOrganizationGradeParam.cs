@@ -22,6 +22,11 @@ namespace BenDing.Domain.Models.Params.Web
         [Display(Name = "医院id")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public  string HospitalId { get; set; }
-       
+        /// <summary>
+        /// 行政区划
+        /// </summary>
+        public string AdministrativeArea { get; set; }
+
+
     }
 }

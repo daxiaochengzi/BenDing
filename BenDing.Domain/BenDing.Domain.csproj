@@ -82,6 +82,7 @@
     <Compile Include="Models\Dto\Resident\ResidentUserInfoDto.cs" />
     <Compile Include="Models\Dto\Resident\RetrunPrescriptionUploadDto.cs" />
     <Compile Include="Models\Dto\Resident\UploadMedicalInsuranceResidentHisDto.cs" />
+    <Compile Include="Models\Dto\SystemManage\HospitalOrganizationGradeDto.cs" />
     <Compile Include="Models\Dto\Web\AddHospitalOperatorParam.cs" />
     <Compile Include="Models\Dto\Web\HospitalThreeCatalogueCodeDto.cs" />
     <Compile Include="Models\Dto\Web\InpatientDiagnosisDto.cs" />
@@ -260,8 +261,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\Dto\SystemManage\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

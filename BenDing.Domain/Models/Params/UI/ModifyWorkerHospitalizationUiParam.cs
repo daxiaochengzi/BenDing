@@ -12,12 +12,6 @@ namespace BenDing.Domain.Models.Params.UI
 /// </summary>
    public class ModifyWorkerHospitalizationUiParam: UiBaseDataParam
     {
-        
-        /// <summary>
-        /// 行政区域
-        /// </summary>
-        public string AdministrativeArea { get; set; }
-
         /// <summary>
         /// 入院日期(格式为YYYYMMDD)
         /// </summary>

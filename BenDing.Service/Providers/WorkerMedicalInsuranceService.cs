@@ -54,7 +54,7 @@ namespace BenDing.Service.Providers
                     BusinessId = param.BusinessId,
                     Id = Guid.NewGuid(),
                     IsModify = false,
-                    AdministrativeArea= param.AdministrativeArea,
+                  
                     InsuranceType = 310,
                     MedicalInsuranceState= MedicalInsuranceState.MedicalInsuranceHospitalized,
                     MedicalInsuranceHospitalizationNo = registerData.MedicalInsuranceHospitalizationNo
@@ -97,7 +97,7 @@ namespace BenDing.Service.Providers
             {
                 AdmissionInfoJson = JsonConvert.SerializeObject(param),
                 BusinessId = param.BusinessId,
-                AdministrativeArea= param.AdministrativeArea,
+           
                 Id = param.Id,
                 IsModify = true,
                
