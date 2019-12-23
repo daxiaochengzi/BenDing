@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Dto.Base;
 using BenDing.Domain.Models.Dto.Web;
 
 namespace BenDing.Domain.Models.Params.Workers
 {/// <summary>
 /// 
 /// </summary>
-  public  class WorkerHospitalSettlementParam
+  public  class WorkerStrokeCardParam: WorkerBaseParam
     {/// <summary>
-    /// 端口
-    /// </summary>
+     /// 端口
+     /// </summary>
         public int Port { get; set; }
         /// <summary>
         /// 密码
@@ -27,12 +28,12 @@ namespace BenDing.Domain.Models.Params.Workers
         /// </summary>
         public string CardType { get; set; }
         /// <summary>
-        /// 经办任
+        /// 经办人
         /// </summary>
         public string Operators { get; set; }
         /// <summary>
-        /// 用户
-        /// </summary>
-        public UserInfoDto User { get; set; }
+        /// Id        /// </summary>
+        public Guid Id { get; set; }
+
     }
 }

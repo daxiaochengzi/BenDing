@@ -5,9 +5,12 @@ using System.Linq;
 using System.Net.Mime;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.XPath;
+using BenDing.Domain.Models.Dto.Base;
 using BenDing.Domain.Models.Dto.Resident;
+using BenDing.Domain.Models.Dto.Web;
 
 namespace BenDing.Domain.Xml
 {/// <summary>
@@ -200,6 +203,63 @@ namespace BenDing.Domain.Xml
             }
 
             return result.Trim();
+        }
+        /// <summary>
+        /// 诊断获取
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static DiagnosisData GetDiagnosis(List<InpatientDiagnosisDto> param)
+        {
+            var resultData = new DiagnosisData();
+            //主诊断
+            var mainDiagnosisList = param.Where(c => c.IsMainDiagnosis = true)
+                .Select(d => d.DiagnosisCode).Take(3).ToList();
+            if (mainDiagnosisList.Any() == false) throw new Exception("主诊断不能为空!!!");
+            resultData.AdmissionMainDiagnosisIcd10 = CommonHelp.DiagnosisStr(mainDiagnosisList);
+            //第二诊断
+            var nextDiagnosisList = param.Where(c => c.IsMainDiagnosis = false)
+                .Select(d => d.DiagnosisCode).ToList();
+            if (mainDiagnosisList.Any())
+            {
+                var diagnosisIcd10Two = nextDiagnosisList.Take(3).ToList();
+                resultData.DiagnosisIcd10Two = CommonHelp.DiagnosisStr(diagnosisIcd10Two);
+                if (nextDiagnosisList.Count > 3)
+                {//第三诊断
+                    resultData.DiagnosisIcd10Three = CommonHelp.DiagnosisStr(nextDiagnosisList.Where(d => !diagnosisIcd10Two.Contains(d)).Take(3).ToList());
+                }
+            }
+
+            return resultData;
+        }
+        /// <summary>
+        /// 字符转码
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static string StrToTransCoding(byte[] param)
+        {
+            string resultData = null;
+            if (param.Length > 0)
+            {
+                resultData = Encoding.ASCII.GetString(param, 1, 1023).Replace("\0", "") ;
+            }
+            Regex reg = new Regex("^[-+]?(([0-9]+)([.]([0-9]+))?|([.]([0-9]+))?)$");
+            if (resultData != null)
+            {
+                if (reg.IsMatch(resultData) == false)
+                {
+                    resultData = Encoding.GetEncoding("GBK").GetString(param, 1, 1023).Replace("\0", "");
+                    //获取字符是否包含??
+                    bool flag = resultData.Contains("??");
+                    if (flag) resultData = Encoding.GetEncoding("GBK").GetString(param, 1, 1023).Replace("\0", "");
+
+                }
+
+            }
+
+
+            return resultData;
         }
     }
 

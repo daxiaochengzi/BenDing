@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BenDing.Domain.Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -24,8 +25,11 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 医保卡号
         /// </summary>
         public string InsuranceNo { get; set; }
-       
-     
+        /// <summary>
+        /// 行政区域
+        /// </summary>
+        public string AdministrativeArea { get; set; }
+
         /// <summary>
         /// 入院信息
         /// </summary>
@@ -39,5 +43,10 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 医保类别
         /// </summary>
         public  int InsuranceType { get; set; }
+        /// <summary>
+        /// 医保状态
+        /// </summary>
+        public MedicalInsuranceState MedicalInsuranceState { get; set; }
+       
     }
 }

@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.JsonEntiy;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Dto.Workers;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
+using BenDing.Domain.Models.Params.Workers;
 using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces;
@@ -24,8 +26,9 @@ namespace BenDing.Service.Providers
         private readonly IHisSqlRepository _hisSqlRepository;
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private readonly IWebBasicRepository _webServiceBasic;
-        private  InpatientBase inpatientBaseService = new InpatientBase();
+        private InpatientBase inpatientBaseService = new InpatientBase();
         private readonly ISystemManageRepository _systemManageRepository;
+
         /// <summary>
         /// 
         /// </summary>
@@ -37,14 +40,14 @@ namespace BenDing.Service.Providers
             IHisSqlRepository hisSqlRepository,
             IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
             ISystemManageRepository iSystemManageRepository
-         
+
         )
         {
             _webServiceBasic = iWebServiceBasic;
             _hisSqlRepository = hisSqlRepository;
             _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
             _systemManageRepository = iSystemManageRepository;
-         
+
         }
 
         /// <summary>
@@ -64,8 +67,8 @@ namespace BenDing.Service.Providers
             resultList = GetResultData(ini, data);
             if (resultList.Any())
             {
-               var resultValueJson=  resultList.FirstOrDefault();
-                resultData= AutoMapper.Mapper.Map<UserInfoDto>(resultValueJson);
+                var resultValueJson = resultList.FirstOrDefault();
+                resultData = AutoMapper.Mapper.Map<UserInfoDto>(resultValueJson);
             }
 
             return resultData;
@@ -83,7 +86,7 @@ namespace BenDing.Service.Providers
             Int32 resultData = 0;
             List<OrgDto> result;
             var init = new OrgDto();
-            var info = new { 验证码 = userInfo.AuthCode, 医院名称 = name };
+            var info = new {验证码 = userInfo.AuthCode, 医院名称 = name};
             var data = _webServiceBasic.HIS_InterfaceList("30", JsonConvert.SerializeObject(info));
             result = GetResultData(init, data);
             if (result.Any())
@@ -127,7 +130,8 @@ namespace BenDing.Service.Providers
             {
                 oCatalogInfo.开始行数 = i;
                 oCatalogInfo.结束行数 = i + param.Nums;
-                var catalogDtoData = _webServiceBasic.HIS_InterfaceList("05",JsonConvert.SerializeObject(oCatalogInfo));
+                var catalogDtoData =
+                    _webServiceBasic.HIS_InterfaceList("05", JsonConvert.SerializeObject(oCatalogInfo));
                 List<CatalogDto> resultCatalogDto;
                 var initCatalogDto = new CatalogDto();
                 resultCatalogDto = GetResultData(initCatalogDto, catalogDtoData);
@@ -157,7 +161,7 @@ namespace BenDing.Service.Providers
         public string DeleteCatalog(UserInfoDto user, int catalog)
         {
             var num = _hisSqlRepository.DeleteCatalog(user, catalog);
-            return "删除【" + (CatalogTypeEnum)catalog + "】 成功 " + num + "条";
+            return "删除【" + (CatalogTypeEnum) catalog + "】 成功 " + num + "条";
         }
 
         /// <summary>
@@ -192,7 +196,7 @@ namespace BenDing.Service.Providers
                 oICD10Info.开始行数 = i;
                 oICD10Info.结束行数 = i + param.Nums;
                 var catalogDtoData =
-                     _webServiceBasic.HIS_InterfaceList("07", JsonConvert.SerializeObject(oICD10Info));
+                    _webServiceBasic.HIS_InterfaceList("07", JsonConvert.SerializeObject(oICD10Info));
                 List<ICD10InfoDto> resultCatalogDto;
                 var initCatalogDto = new ICD10InfoDto();
                 resultCatalogDto = GetResultData(initCatalogDto, catalogDtoData);
@@ -217,7 +221,7 @@ namespace BenDing.Service.Providers
         public BaseOutpatientInfoDto GetOutpatientPerson(GetOutpatientPersonParam param)
         {
             var resultData = new BaseOutpatientInfoDto();
-            List<OutpatientInfoJsonDto>  result;
+            List<OutpatientInfoJsonDto> result;
             var outPatient = new OutpatientParam()
             {
                 AuthCode = param.User.AuthCode,
@@ -228,7 +232,7 @@ namespace BenDing.Service.Providers
             };
             var init = new OutpatientInfoJsonDto();
             var data = _webServiceBasic.HIS_InterfaceList("12", JsonConvert.SerializeObject(outPatient));
-           
+
             result = GetResultData(init, data);
             if (result.Any())
             {
@@ -240,22 +244,22 @@ namespace BenDing.Service.Providers
 
                 //if (resultData.ReceptionStatus < 2) throw  new  Exception("门诊病人需要已接诊才能结算!!!");
 
-                    if (param.IsSave)
+                if (param.IsSave)
+                {
+                    resultData.ReturnJson = param.ReturnJson;
+                    resultData.Id = param.Id;
+
+                    _hisSqlRepository.SaveOutpatient(param.User, resultData);
+                    //门诊病人明细下载
+                    GetOutpatientDetailPerson(param.User, new OutpatientDetailParam()
                     {
-                        resultData.ReturnJson = param.ReturnJson;
-                        resultData.Id =  param.Id;
-                     
-                        _hisSqlRepository.SaveOutpatient(param.User, resultData);
-                        //门诊病人明细下载
-                        GetOutpatientDetailPerson(param.User, new OutpatientDetailParam()
-                        {
-                            AuthCode = param.User.AuthCode,
-                            OutpatientNo = resultData.OutpatientNumber,
-                            BusinessId = resultData.BusinessId
-                        });
-                    }
-              
-               
+                        AuthCode = param.User.AuthCode,
+                        OutpatientNo = resultData.OutpatientNumber,
+                        BusinessId = resultData.BusinessId
+                    });
+                }
+
+
             }
 
             return resultData;
@@ -267,10 +271,10 @@ namespace BenDing.Service.Providers
         /// <param name="user"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public List<BaseOutpatientDetailDto> GetOutpatientDetailPerson(UserInfoDto user,OutpatientDetailParam param)
+        public List<BaseOutpatientDetailDto> GetOutpatientDetailPerson(UserInfoDto user, OutpatientDetailParam param)
         {
             List<BaseOutpatientDetailJsonDto> result;
-            var resultData= new List<BaseOutpatientDetailDto>();
+            var resultData = new List<BaseOutpatientDetailDto>();
             var init = new BaseOutpatientDetailJsonDto();
             var data = _webServiceBasic.HIS_InterfaceList("16", JsonConvert.SerializeObject(param));
 
@@ -301,19 +305,21 @@ namespace BenDing.Service.Providers
             xmlData.AuthCode = param.User.AuthCode;
             xmlData.UserId = param.User.UserId;
             xmlData.OrganizationCode = param.User.OrganizationCode;
-            var data= _webServiceBasic.HIS_Interface("39", JsonConvert.SerializeObject(xmlData));
+            var data = _webServiceBasic.HIS_Interface("39", JsonConvert.SerializeObject(xmlData));
             InpatientInfoJsonDto dataValue = JsonConvert.DeserializeObject<InpatientInfoJsonDto>(data.Msg);
-            if (dataValue != null && dataValue.InpatientInfoJsonData!=null)
+            if (dataValue != null && dataValue.InpatientInfoJsonData != null)
             {
                 var diagnosisList = dataValue.DiagnosisJson.Select(c => new InpatientDiagnosisDto()
-                { DiagnosisCode = c.DiagnosisCode,
-                  DiagnosisName = c.DiagnosisName,
-                  IsMainDiagnosis = c.IsMainDiagnosis=="是"?true:false,
-                  DiagnosisMedicalInsuranceCode = c.DiagnosisMedicalInsuranceCode
+                {
+                    DiagnosisCode = c.DiagnosisCode,
+                    DiagnosisName = c.DiagnosisName,
+                    IsMainDiagnosis = c.IsMainDiagnosis == "是" ? true : false,
+                    DiagnosisMedicalInsuranceCode = c.DiagnosisMedicalInsuranceCode
                 }).ToList();
                 resultData = new InpatientInfoDto()
-                {   DiagnosisList = diagnosisList,
-                    HospitalizationId= dataValue.InpatientInfoJsonData.HospitalizationId,
+                {
+                    DiagnosisList = diagnosisList,
+                    HospitalizationId = dataValue.InpatientInfoJsonData.HospitalizationId,
                     BusinessId = param.BusinessId,
                     DiagnosisJson = JsonConvert.SerializeObject(dataValue.DiagnosisJson),
                     AdmissionBed = dataValue.InpatientInfoJsonData.AdmissionBed,
@@ -332,15 +338,16 @@ namespace BenDing.Service.Providers
                     ContactName = dataValue.InpatientInfoJsonData.ContactName,
                     ContactPhone = dataValue.InpatientInfoJsonData.ContactPhone,
                     Remark = dataValue.InpatientInfoJsonData.Remark,
-                    HospitalName= param.User.OrganizationName,
+                    HospitalName = param.User.OrganizationName,
                     HospitalizationNo = dataValue.InpatientInfoJsonData.HospitalizationNo,
-                    TransactionId= transactionId,
-                    InDepartmentName= dataValue.InpatientInfoJsonData.InDepartmentName,
+                    TransactionId = transactionId,
+                    InDepartmentName = dataValue.InpatientInfoJsonData.InDepartmentName,
                     InDepartmentId = dataValue.InpatientInfoJsonData.InDepartmentId,
                     DocumentNo = dataValue.InpatientInfoJsonData.DocumentNo,
                 };
                 if (param.IsSave == true)
-                {  //删除以前记录
+                {
+                    //删除以前记录
                     var deleteData = _hisSqlRepository.DeleteDatabase(new DeleteDatabaseParam()
                     {
                         User = param.User,
@@ -348,15 +355,16 @@ namespace BenDing.Service.Providers
                         Value = param.BusinessId,
                         TableName = "Inpatient"
                     });
-                   //添加病人信息
+                    //添加病人信息
                     var inpatientEntity = new InpatientEntity();
                     var insertEntity = AutoMapper.Mapper.Map<InpatientEntity>(resultData);
                     insertEntity.Id = Guid.NewGuid();
                     inpatientBaseService.Insert(insertEntity, param.User);
-                   
+
                 }
 
             }
+
             return resultData;
         }
 
@@ -393,20 +401,21 @@ namespace BenDing.Service.Providers
             InpatientDetailListJsonDto dataValue = JsonConvert.DeserializeObject<InpatientDetailListJsonDto>(data.Msg);
             if (dataValue != null)
             {
-                 resultData = AutoMapper.Mapper.Map<List<InpatientInfoDetailDto>>(dataValue.DetailList);
-                var saveParam=new SaveInpatientInfoDetailParam()
+                resultData = AutoMapper.Mapper.Map<List<InpatientInfoDetailDto>>(dataValue.DetailList);
+                var saveParam = new SaveInpatientInfoDetailParam()
                 {
                     DataList = resultData,
                     HospitalizationId = inpatient.HospitalizationId,
                     User = user
                 };
-                   _hisSqlRepository.SaveInpatientInfoDetail(saveParam);
+                _hisSqlRepository.SaveInpatientInfoDetail(saveParam);
                 //    //  var msg = "获取住院号【" + resultFirst.住院号 + "】，业务ID【" + param.业务ID + "】的时间段内的住院费用成功，共" + result.Count +
                 //    //          "条记录";
                 //}
 
-               
+
             }
+
             return resultData;
         }
 
@@ -456,9 +465,9 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public List<InformationDto> SaveInformation(UserInfoDto user, InformationParam param)
         {
-          var  resultDataIni=  new List<InformationDto>();
+            var resultDataIni = new List<InformationDto>();
             var resultData =
-                 _webServiceBasic.HIS_InterfaceList("03", JsonConvert.SerializeObject(param));
+                _webServiceBasic.HIS_InterfaceList("03", JsonConvert.SerializeObject(param));
             var result = new List<InformationJsonDto>();
             var init = new InformationJsonDto();
             if (resultData.Result == "1")
@@ -466,12 +475,12 @@ namespace BenDing.Service.Providers
                 result = GetResultData(init, resultData);
                 if (result.Any())
                 {
-                    resultDataIni  = AutoMapper.Mapper.Map<List<InformationDto>>(result);
+                    resultDataIni = AutoMapper.Mapper.Map<List<InformationDto>>(result);
                     //保存基础信息
                     _hisSqlRepository.SaveInformationInfo(user, resultDataIni, param);
                 }
 
-               
+
             }
 
             return resultDataIni;
@@ -494,7 +503,7 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public void SaveXmlData(SaveXmlData param)
         {
-       
+
 
             //var data = _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(param));
             //if (data.Result == "1")
@@ -524,7 +533,7 @@ namespace BenDing.Service.Providers
         public UserInfoDto GetUserBaseInfo(string param)
         {
             var data = _systemManageRepository.QueryHospitalOperator(new QueryHospitalOperatorParam()
-            { UserId = param });
+                {UserId = param});
             if (string.IsNullOrWhiteSpace(data.HisUserAccount))
             {
                 throw new Exception("当前用户未授权,基层账户信息,请重新授权!!!");
@@ -571,6 +580,7 @@ namespace BenDing.Service.Providers
 
             return result;
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -592,7 +602,7 @@ namespace BenDing.Service.Providers
                     ProjectCodeType = c.DirectoryCategoryCode,
                     ProjectCodeTypeDetail = c.ProjectCodeType,
                     Remark = c.Remark,
-                    ProjectLevel = ((ProjectLevel)Convert.ToInt32(c.ProjectLevel)).ToString(),
+                    ProjectLevel = ((ProjectLevel) Convert.ToInt32(c.ProjectLevel)).ToString(),
                     RestrictionSign = GetStrData(c.ProjectCodeType, c.RestrictionSign)
 
                 }).ToList();
@@ -606,8 +616,8 @@ namespace BenDing.Service.Providers
                     VersionNumber = ""
                 };
                 _webServiceBasic.HIS_Interface("35", JsonConvert.SerializeObject(uploadData));
-              
-               
+
+
                 resultData = _medicalInsuranceSqlRepository.UpdateThreeCataloguePairCodeUpload(param);
             }
 
@@ -625,6 +635,7 @@ namespace BenDing.Service.Providers
 
             return resultData;
         }
+
         /// <summary>
         /// 住院医保查询
         /// </summary>
@@ -646,7 +657,9 @@ namespace BenDing.Service.Providers
                 var data = JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailDto>(queryData.AdmissionInfoJson);
                 resultData.Id = queryData.Id;
                 resultData.MedicalInsuranceHospitalizationNo = queryData.MedicalInsuranceHospitalizationNo;
-                resultData.AdmissionDate = DateTime.ParseExact(data.AdmissionDate, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture).ToString("yyyy-MM-dd");
+                resultData.AdmissionDate = DateTime
+                    .ParseExact(data.AdmissionDate, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture)
+                    .ToString("yyyy-MM-dd");
                 resultData.BedNumber = data.BedNumber;
                 resultData.FetusNumber = data.FetusNumber;
                 resultData.HospitalizationNo = data.HospitalizationNo;
@@ -658,6 +671,7 @@ namespace BenDing.Service.Providers
                 {
                     resultData.PersonNumber = data.AfferentSign;
                 }
+
                 var queryParam = new InformationParam()
                 {
                     DirectoryType = "0"
@@ -667,8 +681,11 @@ namespace BenDing.Service.Providers
                 if (infoList.Any())
                 {
                     resultData.InpatientDepartmentCode = data.InpatientDepartmentCode;
-                    resultData.InpatientDepartmentName = infoList.Where(c => c.FixedEncoding == data.InpatientDepartmentCode).Select(d => d.DirectoryName).FirstOrDefault();
+                    resultData.InpatientDepartmentName = infoList
+                        .Where(c => c.FixedEncoding == data.InpatientDepartmentCode).Select(d => d.DirectoryName)
+                        .FirstOrDefault();
                 }
+
                 //诊疗
                 var diagnosisList = new List<InpatientDiagnosisDto>();
                 diagnosisList.Add(new InpatientDiagnosisDto
@@ -679,7 +696,8 @@ namespace BenDing.Service.Providers
                 });
                 if (!string.IsNullOrWhiteSpace(data.DiagnosisIcd10Two))
                 {
-                    var icd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam() { DiseaseCoding = data.DiagnosisIcd10Two });
+                    var icd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam()
+                        {DiseaseCoding = data.DiagnosisIcd10Two});
                     if (icd10Data.Any())
                     {
                         var Icd10Two = icd10Data.FirstOrDefault();
@@ -691,9 +709,11 @@ namespace BenDing.Service.Providers
                         });
                     }
                 }
+
                 if (!string.IsNullOrWhiteSpace(data.DiagnosisIcd10Three))
                 {
-                    var icd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam() { DiseaseCoding = data.DiagnosisIcd10Three });
+                    var icd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam()
+                        {DiseaseCoding = data.DiagnosisIcd10Three});
                     if (icd10Data.Any())
                     {
                         var Icd10Three = icd10Data.FirstOrDefault();
@@ -710,9 +730,84 @@ namespace BenDing.Service.Providers
 
 
             }
+
+            return resultData;
+        }
+
+
+        public QueryWorkerMedicalInsuranceDto QueryWorKerMedicalInsuranceDetail(
+            QueryMedicalInsuranceUiParam param)
+        {
+            var resultData = new QueryWorkerMedicalInsuranceDto();
+            var userBase = GetUserBaseInfo(param.UserId);
+            var queryData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(
+                new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    OrganizationCode = userBase.OrganizationCode,
+                    BusinessId = param.BusinessId
+                });
+            if (!string.IsNullOrWhiteSpace(queryData.AdmissionInfoJson))
+            {
+                var data = JsonConvert.DeserializeObject<WorKerHospitalizationRegisterParam>(queryData.AdmissionInfoJson);
+                resultData.Id = queryData.Id;
+                resultData.MedicalInsuranceHospitalizationNo = queryData.MedicalInsuranceHospitalizationNo;
+                resultData.AdmissionDate = DateTime
+                    .ParseExact(data.AdmissionDate, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture)
+                    .ToString("yyyy-MM-dd");
+                resultData.BedNumber = data.BedNumber;
+                resultData.HospitalizationNo = data.HospitalizationNo;
+                //1为医保卡号2为公民身份号码 3为个人编号
+                if (data.IdentityMark == "1") resultData.WorkerCardNo = data.AfferentSign;
+                if (data.IdentityMark == "2") resultData.IdCardNo = data.AfferentSign;
+                if (data.IdentityMark == "3") resultData.PersonNumber = data.AfferentSign;
+                //诊疗
+                var diagnosisList = new List<InpatientDiagnosisDto>();
+                diagnosisList.Add(new InpatientDiagnosisDto
+                {
+                    IsMainDiagnosis = true,
+                    DiagnosisName = data.AdmissionMainDiagnosis,
+                    DiagnosisCode = data.AdmissionMainDiagnosisIcd10
+                });
+                if (!string.IsNullOrWhiteSpace(data.DiagnosisIcd10Two))
+                {
+                    var icd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam()
+                        {DiseaseCoding = data.DiagnosisIcd10Two});
+                    if (icd10Data.Any())
+                    {
+                        var Icd10Two = icd10Data.FirstOrDefault();
+                        diagnosisList.Add(new InpatientDiagnosisDto
+                        {
+                            IsMainDiagnosis = false,
+                            DiagnosisName = Icd10Two.DiseaseName,
+                            DiagnosisCode = data.DiagnosisIcd10Two
+                        });
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(data.DiagnosisIcd10Three))
+                {
+                    var icd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam()
+                        {DiseaseCoding = data.DiagnosisIcd10Three});
+                    if (icd10Data.Any())
+                    {
+                        var Icd10Three = icd10Data.FirstOrDefault();
+                        diagnosisList.Add(new InpatientDiagnosisDto
+                        {
+                            IsMainDiagnosis = false,
+                            DiagnosisName = Icd10Three.DiseaseName,
+                            DiagnosisCode = data.DiagnosisIcd10Three
+                        });
+                    }
+                }
+                resultData.DiagnosisList = diagnosisList;
+
+
+            }
+
             return resultData;
         }
     }
-
 }
+
+
+
 

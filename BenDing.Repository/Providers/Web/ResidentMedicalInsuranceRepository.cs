@@ -95,27 +95,22 @@ namespace BenDing.Repository.Providers.Web
             var xmlStr = XmlHelp.SaveXml(paramIni);
             if (xmlStr)
             {
-
-                var saveData = new MedicalInsuranceDto
-                {
-                    AdmissionInfoJson = JsonConvert.SerializeObject(param),
-                    BusinessId = param.BusinessId,
-                    Id = Guid.NewGuid(),
-                    IsModify = false,
-                    InsuranceType = (!string.IsNullOrWhiteSpace(param.InsuranceType))
-                        ? Convert.ToInt32(param.InsuranceType)
-                        : 0
-                };
-                //保存医保信息
-                _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
-
                 int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
                 if (result == 1)
                 {
                     var data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto(), true);
-                    saveData.MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo;
-
-
+                    var saveData = new MedicalInsuranceDto
+                    {
+                        AdmissionInfoJson = JsonConvert.SerializeObject(param),
+                        BusinessId = param.BusinessId,
+                        Id = Guid.NewGuid(),
+                        IsModify = false,
+                        InsuranceType =342,
+                        MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized
+                    };
+                    //保存中间库
+                    _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
+                   
                     //更新医保信息
                     var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
                     var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
@@ -131,7 +126,8 @@ namespace BenDing.Repository.Providers.Web
                     saveXmlData.UserId = user.UserId;
                     //存基层
                     _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
-                    //存中间库
+                    //更新中间库
+                    saveData.MedicalInsuranceState = MedicalInsuranceState.HisHospitalized;
                     _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
                 }
                 else
@@ -316,8 +312,9 @@ namespace BenDing.Repository.Providers.Web
                         SettlementNo = data.DocumentNo,
                         MedicalInsuranceAllAmount = data.TotalAmount,
                         PreSettlementTransactionId = Guid.NewGuid().ToString("N"),
+                        MedicalInsuranceState= MedicalInsuranceState.MedicalInsurancePreSettlement
                     };
-                    //更新医保病人信息
+                    //存入中间库
                     _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
                     var logParam = new AddHospitalLogParam()
                     {
@@ -342,8 +339,11 @@ namespace BenDing.Repository.Providers.Web
                     saveXmlData.MedicalInsuranceCode = "43";
                     saveXmlData.UserId = infoParam.User.UserId;
                     //存基层
-                   // _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
-
+                    //_webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                    //更新中间库
+                    updateParam.IsHisUpdateState = true;
+                    updateParam.MedicalInsuranceState = MedicalInsuranceState.HisPreSettlement;
+                    _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
                 }
                 else
                 {
@@ -397,8 +397,9 @@ namespace BenDing.Repository.Providers.Web
                         SettlementNo = data.DocumentNo,
                         MedicalInsuranceAllAmount = data.TotalAmount,
                         SettlementTransactionId = Guid.NewGuid().ToString("N"),
+                        MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceSettlement
                     };
-                    //更新医保病人信息
+                    //存入中间层
                     _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
 
                     //更新医保信息
@@ -415,7 +416,10 @@ namespace BenDing.Repository.Providers.Web
                     saveXmlData.MedicalInsuranceCode = "41";
                     saveXmlData.UserId = infoParam.User.UserId;
                     //存基层
-                    _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                    // _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                    //更新中间层
+                    updateParam.IsHisUpdateState = true;
+                    updateParam.MedicalInsuranceState = MedicalInsuranceState.HisSettlement;
                     //添加日志
                     var logParam = new AddHospitalLogParam()
                     {
@@ -485,8 +489,6 @@ namespace BenDing.Repository.Providers.Web
         public void LeaveHospitalSettlementCancel(LeaveHospitalSettlementCancelParam param,
             LeaveHospitalSettlementCancelInfoParam infoParam)
         {
-
-
             var cancelLimit = param.CancelLimit;
             string cancelData;
             if (param.CancelLimit == "1")
@@ -515,12 +517,19 @@ namespace BenDing.Repository.Providers.Web
                     UserId = infoParam.User.UserId,
                     Id = infoParam.Id,
                     CancelTransactionId = cancelTransactionId,
+                    MedicalInsuranceState = MedicalInsuranceState.HisPreSettlement
                 };
-                //更新医保病人信息
+                //存入中间层
                 _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
-                // HIS住院医保信息删除
-                // _webServiceBasic.HIS_InterfaceList("37", JsonConvert.SerializeObject(
-                //     new { 验证码 = infoParam.User.AuthCode, 业务ID = infoParam.BusinessId }), infoParam.User.UserId);
+                //添加日志
+                var logParam = new AddHospitalLogParam()
+                {
+                    JoinOrOldJson = JsonConvert.SerializeObject(param),
+                    User = infoParam.User,
+                    Remark = "职工住院结算取消",
+                    RelationId = infoParam.Id,
+                };
+               
                 if (cancelLimit == "2") //取消结算,并删除资料<==>删除资料与取消入院
                 {
                     //his取消入院登记
@@ -536,7 +545,19 @@ namespace BenDing.Repository.Providers.Web
                     saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                     saveXmlData.MedicalInsuranceCode = "22";
                     saveXmlData.UserId = infoParam.User.UserId;
+
                     _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+
+                    var updateParamData = new UpdateMedicalInsuranceResidentSettlementParam()
+                    {
+                        UserId = infoParam.User.UserId,
+                        Id = infoParam.Id,
+                        CancelTransactionId = cancelTransactionId,
+                        MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceCancelHospitalized,
+                        IsHisUpdateState=true
+                    };
+                    //更新中间层
+                    _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
                 }
             }
 
@@ -747,7 +768,7 @@ namespace BenDing.Repository.Providers.Web
 
                     string strXml = XmlHelp.DeSerializerModelStr("CFMX");
                     var data = XmlHelp.DeSerializer<QueryPrescriptionDetailDto>(strXml);
-                    if (data.RowDataList != null && data.RowDataList.Any())
+                    if (data.RowDataList == null && (data.RowDataList ?? throw new InvalidOperationException()).Any())
                     {
                         resultdata = data.RowDataList.Select(c => new QueryPrescriptionDetailListDto()
                         {
@@ -853,7 +874,7 @@ namespace BenDing.Repository.Providers.Web
                         saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                         saveXmlData.MedicalInsuranceCode = "31";
                         saveXmlData.UserId = user.UserId;
-                       // _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                        _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
                         var batchConfirmParam = new BatchConfirmParam()
                         {
                             ConfirmType = 1,

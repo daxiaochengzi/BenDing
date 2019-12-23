@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BenDing.Domain.Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -50,8 +51,15 @@ namespace BenDing.Domain.Models.Params.Web
         /// 预结算交易id
         /// </summary>
         public string PreSettlementTransactionId { get; set; }
-
-        
+        /// <summary>
+        /// 医保状态
+        /// </summary>
+        public MedicalInsuranceState MedicalInsuranceState { get; set; }
+        /// <summary>
+        /// 是否更新His状态
+        /// </summary>
+         
+        public bool IsHisUpdateState { get; set; }
 
 
     }

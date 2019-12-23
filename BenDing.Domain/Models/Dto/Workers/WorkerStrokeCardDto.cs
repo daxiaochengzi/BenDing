@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BenDing.Domain.Models.Dto.Workers
 {
-   public class WorkerHospitalSettlementDto
+   public class WorkerStrokeCardDto
     {/// <summary>
     /// 流水号
     /// </summary>
