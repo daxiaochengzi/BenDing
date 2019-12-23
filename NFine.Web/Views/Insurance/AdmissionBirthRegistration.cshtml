@@ -244,7 +244,7 @@
             }
             $.ajax({
                 type: 'POST',
-                url: '/BenDing/GetInpatientInfo',
+                url: host +'/GetInpatientInfo',
                 data: params,
                 dataType: "json",
                 async: false,
@@ -273,7 +273,7 @@
                         //诊断表初始化
                         $.ajax({
                             type: 'POST',
-                            url: '/BenDing/GetInpatientDiagnosis',
+                            url: host+'/GetInpatientDiagnosis',
                             data: params,
                             dataType: "json",
                             async: false,
@@ -439,7 +439,7 @@
             field.DiagnosisList = dataTable1;
             $.ajax({
                 type: 'POST',
-                url: '/BenDing/HospitalizationRegister',
+                url: host+'/HospitalizationRegister',
                 async: false,
                 data: JSON.stringify(field),
                 dataType: "json",
