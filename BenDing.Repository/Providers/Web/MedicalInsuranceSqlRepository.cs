@@ -166,7 +166,7 @@ namespace BenDing.Repository.Providers.Web
                               ,[OrganizationName]
                               ,[InsuranceType]
                               ,[SettlementNo]
-                              ,[AdministrativeArea]
+                             
                             FROM [dbo].[MedicalInsurance]
                             where  IsDelete=0";
                     if (!string.IsNullOrWhiteSpace(param.DataId))

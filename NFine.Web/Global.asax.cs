@@ -28,7 +28,7 @@ namespace NFine.Web
 
         }
         /// <summary>
-        /// 
+        /// 跨Frame设置
         /// </summary>
 
         protected void Application_PreSendRequestHeaders()

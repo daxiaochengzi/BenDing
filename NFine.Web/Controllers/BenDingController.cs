@@ -1382,7 +1382,8 @@ namespace NFine.Web.Controllers
                 //获取医保账号
                 var userData = _systemManage.QueryHospitalOperator(
                          new QueryHospitalOperatorParam() { UserId = param.UserId });
-              
+                //获取医院等级
+                var gradeData = _systemManage.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
                 var infoParam = new WorkerHospitalizationPreSettlementParam()
                 {
                     User = userBase,
@@ -1390,7 +1391,7 @@ namespace NFine.Web.Controllers
                     BusinessId = param.BusinessId,
                     MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
                     LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
-                    AdministrativeArea= residentData.AdministrativeArea,
+                    AdministrativeArea= gradeData.AdministrativeArea,
                     Operators= userBase.UserName,
                     IsHospitalizationFrequency="0",
                     OrganizationCode= userData.MedicalInsuranceAccount,
@@ -1432,6 +1433,8 @@ namespace NFine.Web.Controllers
                 //获取医保账号
                 var userData = _systemManage.QueryHospitalOperator(
                          new QueryHospitalOperatorParam() { UserId = param.UserId });
+                //获取医院等级
+                var gradeData = _systemManage.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
                 var infoParam = new WorkerHospitalizationSettlementParam()
                 {
                     User = userBase,
@@ -1449,7 +1452,7 @@ namespace NFine.Web.Controllers
                     LeaveHospitalState = "#",
                     Operators= userBase.UserName,
                     OrganizationCode= userData.MedicalInsuranceAccount,
-                    AdministrativeArea= residentData.AdministrativeArea
+                    AdministrativeArea= gradeData.AdministrativeArea
 
 
                 };

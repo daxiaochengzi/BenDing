@@ -13,10 +13,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// id
         /// </summary>
         public Guid Id { get; set; }
-        /// <summary>
-        /// 行政区域
-        /// </summary>
-        public string AdministrativeArea { get; set; }
+      
 
         /// <summary>
         /// his住院id
