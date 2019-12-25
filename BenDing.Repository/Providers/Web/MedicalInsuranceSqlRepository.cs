@@ -76,7 +76,7 @@ namespace BenDing.Repository.Providers.Web
                             strSql = $@" update MedicalInsurance set PreSettlementUserId='{param.UserId}',PreSettlementTime=GETDATE(),MedicalInsuranceState={(int)param.MedicalInsuranceState},
                                     OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
                                     SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
-                                    SettlementNo='{param.SettlementNo}',PreSettlementTransactionId='{param.SettlementTransactionId}'
+                                    SettlementNo='{param.SettlementNo}',PreSettlementTransactionId='{param.PreSettlementTransactionId}'
                                     where Id='{param.Id}' ";
 
                         }

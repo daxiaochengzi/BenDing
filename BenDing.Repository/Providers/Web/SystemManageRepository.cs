@@ -141,7 +141,7 @@ namespace BenDing.Repository.Providers.Web
             {
                 sqlConnection.Open();
                 string querySql =
-                    $"select   OrganizationGrade from [dbo].[HospitalOrganizationGrade] where IsDelete=0 and HospitalId='{param}'";
+                    $"select   OrganizationGrade,AdministrativeArea from [dbo].[HospitalOrganizationGrade] where IsDelete=0 and HospitalId='{param}'";
                var resultData = sqlConnection.QueryFirstOrDefault<HospitalOrganizationGradeDto>(querySql);
                 sqlConnection.Close();
                 if (resultData==null)throw  new Exception("当前医院未设置等级,请重新设置");
