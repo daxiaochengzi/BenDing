@@ -32,12 +32,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         WorkerHospitalizationPreSettlementDto WorkerHospitalizationSettlement(WorkerHospitalizationSettlementParam param);
-        /// <summary>
-        /// 职工划卡
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        WorkerStrokeCardDto WorkerStrokeCard(WorkerStrokeCardParam param);
+      
         /// <summary>
         /// 职工住院结算取消
         /// </summary>

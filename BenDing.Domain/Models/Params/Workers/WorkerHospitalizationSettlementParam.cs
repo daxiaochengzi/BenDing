@@ -49,5 +49,9 @@ namespace BenDing.Domain.Models.Params.Workers
         /// </summary>
 
         public string LeaveHospitalMainDiagnosis { get; set; }
+        /// <summary>
+        /// 病人姓名
+        /// </summary>
+        public  string PatientName { get; set; }
     }
 }

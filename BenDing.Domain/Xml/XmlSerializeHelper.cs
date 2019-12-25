@@ -24,9 +24,10 @@ namespace BenDing.Domain.Xml
                 using (StringWriter sw = new StringWriter())
                 {
                     Type t = obj.GetType();
+                  
                     XmlSerializer serializer = new XmlSerializer(obj.GetType());
                     serializer.Serialize(sw, obj);
-                    
+                   
                     sw.Close();
                     return sw.ToString();
                 }
@@ -34,6 +35,31 @@ namespace BenDing.Domain.Xml
             catch (Exception ex)
             {
                 throw new Exception("将实体对象转换成XML异常", ex);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="o"></param>
+        /// <param name="encoding"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
+        public static string HisXmlSerialize<T>(T o)
+        {
+            var encoding = Encoding.UTF8;
+            if (o == null)
+                throw new ArgumentNullException("实体不能为空!!!");
+           
+            var ser = new XmlSerializer(o.GetType());
+            using (var ms = new MemoryStream())
+            {
+                using (var writer = new XmlTextWriter(ms, encoding))
+                {
+                    writer.Formatting = System.Xml.Formatting.Indented;
+                    ser.Serialize(writer, o);
+                }
+                return encoding.GetString(ms.ToArray());
             }
         }
 

@@ -22,7 +22,7 @@ namespace BenDing.Repository.Providers.Web
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private readonly ISystemManageRepository _systemManageRepository;
         private readonly IWebBasicRepository _webServiceBasic;
-
+     
         /// <summary>
         /// 
         /// </summary>
@@ -30,17 +30,20 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="webBasicRepository"></param>
         /// <param name="medicalInsuranceSqlRepository"></param>
         /// <param name="systemManageRepository"></param>
+      
         public WorkerMedicalInsuranceRepository(
             IHisSqlRepository hisSqlRepository,
             IWebBasicRepository webBasicRepository,
             IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
             ISystemManageRepository systemManageRepository
+           
         )
         {
             _hisSqlRepository = hisSqlRepository;
             _webServiceBasic = webBasicRepository;
             _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
             _systemManageRepository = systemManageRepository;
+           
         }
         /// <summary>
         /// 入院登记
@@ -346,93 +349,33 @@ namespace BenDing.Repository.Providers.Web
             }
             return cancelData;
         }
+       
         /// <summary>
-        /// 职工划卡
+        /// 职工结算信息查询
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public WorkerStrokeCardDto WorkerStrokeCard(WorkerStrokeCardParam param)
+        public QueryWorkerHospitalizationSettlementDto QueryWorkerHospitalizationSettlement(
+            QueryWorkerHospitalizationSettlementParam param)
         {
-            var resultData = new WorkerStrokeCardDto();
-            //流水号
-            var documentNo = new byte[1024];
-            //自费金额
-            var selfPayFeeAmount = new byte[1024];
-            //报销金额
-            var overallPlanningCanAmount = new byte[1024];
+            var resultData = new QueryWorkerHospitalizationSettlementDto();
             //返回状态
             var resultState = new byte[1024];
             //消息
             var msg = new byte[1024];
             // param.OrganizationCode==cpq2677
-            var result = WorkerMedicalInsurance.WorkerHospitalSettlement
-                      (param.Port,
-                       param.Pwd,
-                       param.AllAmount,
-                       param.CardType,
-                       param.OrganizationCode,
-                       param.Operators,
-                       documentNo,
-                       overallPlanningCanAmount,
-                       selfPayFeeAmount,
-                       resultState,
-                      msg
-                      );
+            var result = WorkerMedicalInsurance.QueryWorkerHospitalSettlement
+            (   param.StartTime,
+                param.EndTime,
+                param.AdministrativeArea,
+                resultState,
+                msg
+            );
             if (CommonHelp.StrToTransCoding(resultState) != "1")
             {
                 throw new Exception(CommonHelp.StrToTransCoding(msg));
             }
-
-            resultData = new WorkerStrokeCardDto()
-            {
-                SelfPayFeeAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(selfPayFeeAmount)),
-                DocumentNo = CommonHelp.StrToTransCoding(documentNo),
-                ReimbursementExpensesAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(overallPlanningCanAmount))
-            };
-
-            //var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
-            //{
-
-            //    ReimbursementExpensesAmount = resultData.ReimbursementExpensesAmount,
-            //    SelfPayFeeAmount = resultData.SelfPayFeeAmount,
-            //    OtherInfo = JsonConvert.SerializeObject(resultData),
-            //    Id = param.Id,
-            //    UserId = param.User.UserId,
-            //    SettlementNo = resultData.DocumentNo,
-            //    PreSettlementTransactionId = Guid.NewGuid().ToString("N"),
-            //};
-            ////更新医保病人信息
-            //_medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
-            //var logParam = new AddHospitalLogParam()
-            //{
-            //    JoinOrOldJson = JsonConvert.SerializeObject(param),
-            //    ReturnOrNewJson = JsonConvert.SerializeObject(resultData),
-            //    User = param.User,
-            //    Remark = "职工划卡"
-            //};
-            //_systemManageRepository.AddHospitalLog(logParam);
-            ////更新医保信息
-            //var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
-            //var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
-            //var saveXmlData = new SaveXmlData();
-            //saveXmlData.OrganizationCode = param.User.OrganizationCode;
-            //saveXmlData.AuthCode = param.User.AuthCode;
-            //saveXmlData.BusinessId = param.BusinessId;
-            //saveXmlData.TransactionId = updateParam.PreSettlementTransactionId;
-            //saveXmlData.MedicalInsuranceBackNum = "CXJB009";
-            //saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
-            //saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-            //saveXmlData.MedicalInsuranceCode = "43";
-            //saveXmlData.UserId = param.User.UserId;
-            //存基层
-            //_webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
             return resultData;
         }
-
-
-
-
-
-
     }
 }

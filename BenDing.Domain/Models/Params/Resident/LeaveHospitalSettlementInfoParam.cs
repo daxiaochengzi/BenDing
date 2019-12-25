@@ -27,5 +27,10 @@ namespace BenDing.Domain.Models.Params.Resident
         /// 业务id
         /// </summary>
         public  string BusinessId { get; set; }
-    }
+        /// <summary>
+        /// 病人姓名
+        /// </summary>
+        public  string IdCardNo { get; set; }
+        
+    } 
 }

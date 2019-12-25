@@ -215,7 +215,7 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="po_msg"></param>
         /// <returns></returns>
         [DllImport("yyjk.dll", EntryPoint = "xmljsxxcx", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern int xmljsxxcx(string pi_jsksrq, string pi_jszzrq, string pi_xzqh,
+        public static extern int QueryWorkerHospitalSettlement(string pi_jsksrq, string pi_jszzrq, string pi_xzqh,
           byte[] po_fhz, byte[] po_msg);
     
     }
