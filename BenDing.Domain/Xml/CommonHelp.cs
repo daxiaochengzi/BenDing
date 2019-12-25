@@ -21,6 +21,7 @@ namespace BenDing.Domain.Xml
         public static string EncodeBase64(string code_type, string code)
         {
             string encode = "";
+         
             byte[] bytes = Encoding.GetEncoding(code_type).GetBytes(code);
             try
             {

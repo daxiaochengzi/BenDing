@@ -170,5 +170,10 @@ namespace BenDing.Domain.Models.Params.Resident
         /// </summary>
         [XmlIgnore]
         public  Guid  Id { get; set; }
+        /// <summary>
+        /// 明细id
+        /// </summary>
+        [XmlIgnore]
+        public string DetailId { get; set; }
     }
 }

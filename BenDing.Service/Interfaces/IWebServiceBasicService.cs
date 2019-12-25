@@ -103,5 +103,10 @@ namespace BenDing.Service.Interfaces
         /// <returns></returns>
         QueryMedicalInsuranceDetailInfoDto QueryMedicalInsuranceDetail(
             QueryMedicalInsuranceUiParam param);
+        /// <summary>
+        /// 住院结算
+        /// </summary>
+        /// <param name="param"></param>
+        void HospitalizationSettlement(GetInpatientInfoParam param);
     }
 }

@@ -38,5 +38,10 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
         string WorkerSettlementCancel(WorkerSettlementCancelParam param);
-    }
+        /// <summary>
+        /// 职工划卡
+        /// </summary>
+        /// <param name="param"></param>
+        void WorkerStrokeCard(WorkerStrokeCardParam param);
+   }
 }

@@ -49,5 +49,6 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 批次号
         /// </summary>
         public string BatchNumber { get; set; }
+        
     }
 }

@@ -19,6 +19,20 @@ namespace BenDing.Domain.Models.Dto.Workers
         /// 报销金额
         /// </summary>
         public decimal ReimbursementExpensesAmount { get; set; }
+        /// <summary>
+        /// 医保住院号
+        /// </summary>
+        public  string MedicalInsuranceHospitalizationNo { get; set; }
+        /// <summary>
+        /// 总费用
+        /// </summary>
+        public  decimal TotalAmount { get; set; }
+        /// <summary>
+        /// 病人姓名
+        /// </summary>
+        public  string PatientName { get; set; }
+
+
 
     }
 }

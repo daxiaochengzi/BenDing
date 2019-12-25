@@ -100,6 +100,7 @@
     <Compile Include="Models\Dto\Web\QueryOutpatientDto.cs" />
     <Compile Include="Models\Dto\Web\ThreeCataloguePairCodeUploadDto.cs" />
     <Compile Include="Models\Dto\Web\UiIniParam.cs" />
+    <Compile Include="Models\Dto\Workers\QueryWorkerHospitalizationSettlementDto.cs" />
     <Compile Include="Models\Dto\Workers\QueryWorkerMedicalInsuranceDto.cs" />
     <Compile Include="Models\Dto\Workers\WorkerHospitalizationPreSettlementDto.cs" />
     <Compile Include="Models\Dto\Workers\WorkerStrokeCardDto.cs" />
@@ -111,6 +112,11 @@
     <Compile Include="Models\Enums\ProjectCodeType.cs" />
     <Compile Include="Models\Enums\ProjectLevel.cs" />
     <Compile Include="Models\Enums\SummaryType.cs" />
+    <Compile Include="Models\HisXml\HospitalizationFeeUploadXml.cs" />
+    <Compile Include="Models\HisXml\HospitalizationModifyXml.cs" />
+    <Compile Include="Models\HisXml\HospitalizationRegisterXml.cs" />
+    <Compile Include="Models\HisXml\HospitalSettlementXml.cs" />
+    <Compile Include="Models\HisXml\ReadCardXml.cs" />
     <Compile Include="Models\Params\Base\BaseUiBusinessIdDataParam.cs" />
     <Compile Include="Models\Params\Base\BaseUiIniParam.cs" />
     <Compile Include="Models\Params\Base\DatabaseParam.cs" />
@@ -206,6 +212,7 @@
     <Compile Include="Models\Params\Base\UiInIDataParam.cs" />
     <Compile Include="Models\Params\Base\UiInIParam.cs" />
     <Compile Include="Models\Params\UI\WorKerHospitalizationRegisterUiParam.cs" />
+    <Compile Include="Models\Params\UI\WorkerStrokeCardUiParam.cs" />
     <Compile Include="Models\Params\Web\DeleteDatabaseParam.cs" />
     <Compile Include="Models\Params\Web\CatalogParam.cs" />
     <Compile Include="Models\Params\Web\DeleteMedicalInsuranceParam.cs" />
@@ -242,6 +249,7 @@
     <Compile Include="Models\Params\Web\UpdateThreeCataloguePairCodeUploadParam.cs" />
     <Compile Include="Models\Params\Web\UserInfoParam.cs" />
     <Compile Include="Models\Params\Web\XmlData.cs" />
+    <Compile Include="Models\Params\Workers\QueryWorkerHospitalizationSettlementParam.cs" />
     <Compile Include="Models\Params\Workers\WorkerHospitalizationPreSettlementParam.cs" />
     <Compile Include="Models\Params\Workers\ModifyWorkerHospitalizationParam.cs" />
     <Compile Include="Models\Dto\Base\WorkerBaseParam.cs" />

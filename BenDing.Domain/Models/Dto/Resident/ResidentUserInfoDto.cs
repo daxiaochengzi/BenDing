@@ -75,15 +75,15 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// <summary>
         /// 居民医保账户余额ResidentInsuranceBalance
         /// </summary>
-        public string ResidentInsuranceBalance { get; set; }
+        public decimal ResidentInsuranceBalance { get; set; }
         /// <summary>
         /// 职工医保账户余额 
         /// </summary>
-        public string WorkersInsuranceBalance { get; set; }
+        public decimal WorkersInsuranceBalance { get; set; }
         /// <summary>
         /// 门特余额
         /// </summary>
-        public string MentorBalance { get; set; }
+        public decimal MentorBalance { get; set; }
         /// <summary>
         /// 建卡贫困户标志
         /// </summary>
@@ -95,14 +95,14 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// <summary>
         /// 重点优抚对象类别
         /// </summary>
-        public string PreferentialTreatmentType { get; set; }
+        public decimal PreferentialTreatmentType { get; set; }
         /// <summary>
         /// 民政特殊人员认定地
         /// </summary>
-        public string SpecialPeopleCognizancePlace { get; set; }
+        public decimal SpecialPeopleCognizancePlace { get; set; }
         /// <summary>
         /// 统筹支付余额
         /// </summary>
-        public string OverallPaymentBalance { get; set; }
+        public decimal OverallPaymentBalance { get; set; }
     }
 }

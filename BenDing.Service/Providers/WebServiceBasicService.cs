@@ -367,7 +367,22 @@ namespace BenDing.Service.Providers
 
             return resultData;
         }
-
+        /// <summary>
+        /// 住院结算
+        /// </summary>
+        /// <param name="param"></param>
+        public void HospitalizationSettlement(GetInpatientInfoParam param)
+        {
+            var transactionId = Guid.NewGuid().ToString("N");
+            var xmlData = new MedicalInsuranceXmlDto();
+            xmlData.BusinessId = param.BusinessId;
+            xmlData.HealthInsuranceNo = "31";
+            xmlData.TransactionId = transactionId;
+            xmlData.AuthCode = param.User.AuthCode;
+            xmlData.UserId = param.User.UserId;
+            xmlData.OrganizationCode = param.User.OrganizationCode;
+            var data = _webServiceBasic.HIS_Interface("39", JsonConvert.SerializeObject(xmlData));
+        }
 
         /// <summary>
         /// 获取住院明细

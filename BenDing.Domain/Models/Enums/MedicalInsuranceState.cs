@@ -25,10 +25,7 @@ namespace BenDing.Domain.Models.Enums
         /// 医保预结算
         /// </summary>
         MedicalInsurancePreSettlement = 3,
-        /// <summary>
-        /// His预结算
-        /// </summary>
-        HisPreSettlement = 4,
+
         /// <summary>
         /// 医保结算
         /// </summary>

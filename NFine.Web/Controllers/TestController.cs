@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Http;
 using BenDing.Domain.Models.Dto;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.HisXml;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
@@ -113,7 +115,29 @@ namespace NFine.Web.Controllers
             });
 
         }
-        
+        /// <summary>
+        /// 测试xml生成
+        /// </summary>
+        [HttpGet]
+        public void TestXml()
+        {
+            var data = new HospitalizationFeeUploadXml();
+          
+            data.MedicalInsuranceHospitalizationNo = "123";
+          
+            var rowDataList = new List<HospitalizationFeeUploadRowXml>();
+            data.RowDataList = rowDataList;
+            rowDataList.Add(new HospitalizationFeeUploadRowXml()
+            {
+                SerialNumber = "777"
+            });
+            rowDataList.Add(new HospitalizationFeeUploadRowXml()
+            {
+                SerialNumber = "77888"
+            });
+            string dd= XmlSerializeHelper.HisXmlSerialize(data);
+
+        }
 
         /// <summary>
         /// 基层预结算测试
