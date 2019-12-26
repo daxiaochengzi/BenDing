@@ -6,9 +6,11 @@ using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
+using BenDing.Domain.Models.HisXml;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.OutpatientDepartment;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Models.Params.Workers;
@@ -612,6 +614,59 @@ namespace NFine.Web.Controllers
              });
 
         }
+        /// <summary>
+        /// 医保卡认证身份识别
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData MedicalInsuranceCardAuthentication([FromBody]MedicalInsuranceCardAuthenticationUiParam param)
+        {
+            return new ApiJsonResultData(ModelState, new ResidentUserInfoDto()).RunWithTry(y =>
+            {
+                //医保登陆
+                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                //获取医保信息
+                var userBaseData = _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
+                {  InformationNumber = param.InformationNumber,
+                  IdentityMark = param.IdentityMark,
+                });
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               
+                var xmlData = new ReadCardXml()
+                {
+                    IdCardNo= userBaseData.IdCardNo,
+                    Age = userBaseData.Age,
+                    PatientName= userBaseData.PatientName,
+                    InsuranceType = userBaseData.InsuranceType=="342"?"10":"11",//10为居民，其余未职工
+                    AccountBalance = userBaseData.InsuranceType == "342"?userBaseData.ResidentInsuranceBalance: userBaseData.WorkersInsuranceBalance
+                };
+                var transactionId = Guid.NewGuid().ToString("N");
+                var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                var saveXmlData = new SaveXmlData();
+                saveXmlData.OrganizationCode = userBase.OrganizationCode;
+                saveXmlData.AuthCode = userBase.AuthCode;
+                saveXmlData.BusinessId = param.BusinessId;
+                saveXmlData.TransactionId = transactionId;
+                saveXmlData.MedicalInsuranceBackNum = "CXJB001";
+                saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                saveXmlData.MedicalInsuranceCode = "03";
+                saveXmlData.UserId = userBase.UserId;
+                //存基层
+                _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                _systemManage.AddHospitalLog(new AddHospitalLogParam()
+                {
+                    User = userBase,
+                    ReturnOrNewJson = JsonConvert.SerializeObject(xmlData),
+                    Remark = "卡认证transactionId:"+ transactionId,
+                });
+
+                y.Data = userBase;
+            });
+
+        }
+        
         /// <summary>
         /// 项目下载
         /// </summary>

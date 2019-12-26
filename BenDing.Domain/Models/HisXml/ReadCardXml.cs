@@ -17,16 +17,10 @@ namespace BenDing.Domain.Models.HisXml
         [XmlElementAttribute("aac002", IsNullable = false)]
         public string IdCardNo { get; set; }
         /// <summary>
-        /// 姓名
+        /// 患者姓名
         /// </summary>
         [XmlElementAttribute("aac003", IsNullable = false)]
-        public  string Name { get; set; }
-        /// <summary>
-        /// 民族
-        /// </summary>
-        [XmlElementAttribute("aac005", IsNullable = false)]
-        public string Nation { get; set; }
-
+        public  string PatientName { get; set; }
         /// <summary>
         /// 年龄
         /// </summary>
