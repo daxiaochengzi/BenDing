@@ -25,12 +25,7 @@ namespace BenDing.Domain.Models.Params.UI
         [Required(ErrorMessage = "{0}不能为空!!!")]
 
         public string UserId { get; set; }
-        /// <summary>
-        /// 行政区域
-        /// </summary>
-        [Display(Name = "行政区域")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
-        public string AdministrativeArea { get; set; }
+       
 
     }
 }
