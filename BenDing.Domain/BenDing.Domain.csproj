@@ -114,6 +114,7 @@
     <Compile Include="Models\Enums\SummaryType.cs" />
     <Compile Include="Models\HisXml\HospitalizationFeeUploadXml.cs" />
     <Compile Include="Models\HisXml\HospitalizationModifyXml.cs" />
+    <Compile Include="Models\HisXml\HospitalizationRegisterCancelXml.cs" />
     <Compile Include="Models\HisXml\HospitalizationRegisterXml.cs" />
     <Compile Include="Models\HisXml\HospitalSettlementXml.cs" />
     <Compile Include="Models\HisXml\ReadCardXml.cs" />

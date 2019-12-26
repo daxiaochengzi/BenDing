@@ -89,10 +89,11 @@ namespace NFine.Web.Controllers
                 {
                     MedicalInsuranceType = "10",
                     MedicalInsuranceHospitalizationNo = "44116476",
+                    InsuranceNo = "77777"
                  
                 };
 
-               var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
                 var saveXmlData = new SaveXmlData();
                 saveXmlData.OrganizationCode = userBase.OrganizationCode;
                 saveXmlData.AuthCode = userBase.AuthCode;
@@ -100,24 +101,43 @@ namespace NFine.Web.Controllers
                 saveXmlData.TransactionId = Guid.Parse("E67C69F5-5FA8-438A-94EC-85E092CA56E9").ToString("N");
                 saveXmlData.MedicalInsuranceBackNum = "CXJB002";
                 saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-                saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
                 saveXmlData.MedicalInsuranceCode = "21";
                 saveXmlData.UserId = userBase.UserId;
                 //存基层
                 webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+            });
 
+        }
+        [HttpGet]
+        public ApiJsonResultData MedicalInsuranceXmlCancel([FromUri] MedicalInsuranceXmlUiParam param)
+        {
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            {
+                var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //更新医保信息
+                var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
+                //回参构建
+                var xmlData = new HospitalizationRegisterCancelXml()
+                {
+                   
+                    MedicalInsuranceHospitalizationNo = "44116476",
 
-                //var xmlData = new MedicalInsuranceXmlDto();
-                //xmlData.BusinessId = param.BusinessId;
-                //xmlData.HealthInsuranceNo = param.HealthInsuranceNo;
-                //xmlData.TransactionId = Guid.NewGuid().ToString("N");
-                //xmlData.AuthCode = userBase.AuthCode;
-                //xmlData.UserId = param.UserId;
-                //xmlData.OrganizationCode = userBase.OrganizationCode;
-                //webServiceBasicService.GetXmlData(xmlData);
+                };
 
-
-
+                var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                var saveXmlData = new SaveXmlData();
+                saveXmlData.OrganizationCode = userBase.OrganizationCode;
+                saveXmlData.AuthCode = userBase.AuthCode;
+                saveXmlData.BusinessId = param.BusinessId;
+                saveXmlData.TransactionId = Guid.Parse("EA144C5D-1146-4229-87FB-7D9EEA0B3F78").ToString("N");
+                saveXmlData.MedicalInsuranceBackNum = "CXJB003";
+                saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
+                saveXmlData.MedicalInsuranceCode = "22";
+                saveXmlData.UserId = userBase.UserId;
+                //存基层
+                webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
             });
 
         }

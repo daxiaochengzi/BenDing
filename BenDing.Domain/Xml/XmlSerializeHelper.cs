@@ -60,7 +60,8 @@ namespace BenDing.Domain.Xml
                     ns.Add("", "");//把命名空间设置为空，这样就没有命名空间了
                     ser.Serialize(writer, o, ns);
                 }
-                return encoding.GetString(ms.ToArray());
+               var encodingData = encoding.GetString(ms.ToArray());
+               return System.Text.RegularExpressions.Regex.Replace(encodingData, "^[^<]", "");
             }
         }
 
