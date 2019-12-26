@@ -24,7 +24,6 @@ namespace BenDing.Domain.Xml
                 using (StringWriter sw = new StringWriter())
                 {
                     Type t = obj.GetType();
-                  
                     XmlSerializer serializer = new XmlSerializer(obj.GetType());
                     serializer.Serialize(sw, obj);
                    
@@ -57,7 +56,9 @@ namespace BenDing.Domain.Xml
                 using (var writer = new XmlTextWriter(ms, encoding))
                 {
                     writer.Formatting = System.Xml.Formatting.Indented;
-                    ser.Serialize(writer, o);
+                    XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+                    ns.Add("", "");//把命名空间设置为空，这样就没有命名空间了
+                    ser.Serialize(writer, o, ns);
                 }
                 return encoding.GetString(ms.ToArray());
             }
