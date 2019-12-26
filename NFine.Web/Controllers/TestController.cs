@@ -85,7 +85,7 @@ namespace NFine.Web.Controllers
                 //更新医保信息
                 var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
                 //回参构建
-                var xmlData = new HospitalizationRegisterXml()
+                var xmlData = new HospitalizationRegisterXml()  
                 {
                     MedicalInsuranceType = "10",
                     MedicalInsuranceHospitalizationNo = "44116476",
