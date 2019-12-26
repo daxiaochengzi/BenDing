@@ -214,12 +214,12 @@ namespace BenDing.Domain.Xml
         {
             var resultData = new DiagnosisData();
             //主诊断
-            var mainDiagnosisList = param.Where(c => c.IsMainDiagnosis = true)
+            var mainDiagnosisList = param.Where(c => c.IsMainDiagnosis == true)
                 .Select(d => d.DiagnosisCode).Take(3).ToList();
             if (mainDiagnosisList.Any() == false) throw new Exception("主诊断不能为空!!!");
             resultData.AdmissionMainDiagnosisIcd10 = CommonHelp.DiagnosisStr(mainDiagnosisList);
             //第二诊断
-            var nextDiagnosisList = param.Where(c => c.IsMainDiagnosis = false)
+            var nextDiagnosisList = param.Where(c => c.IsMainDiagnosis == false)
                 .Select(d => d.DiagnosisCode).ToList();
             if (mainDiagnosisList.Any())
             {

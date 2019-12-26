@@ -82,23 +82,29 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
                 var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
-                //var dataInfo = new ResidentUserInfoParam()
-                //{
-                //    IdentityMark = "1",
-                //    InformationNumber = "512501195802085180"
-                //};
-                //var strXmls = XmlSerializeHelper.XmlSerialize(dataInfo);
-                //var data = new SaveXmlData();
-                //data.OrganizationCode = userBase.OrganizationCode;
-                //data.AuthCode = userBase.AuthCode;
-                //data.BusinessId = "FFE6ADE4D0B746C58B972C7824B8C9DF";
-                //data.TransactionId = Guid.Parse("05D3BE09-1ED6-484F-9807-1462101F02BF").ToString("N");
-                //data.MedicalInsuranceBackNum = Guid.Parse("05D3BE09-1ED6-484F-9807-1462101F02BF").ToString("N");
-                //data.BackParam = CommonHelp.EncodeBase64("utf-8", strXmls);
-                //data.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmls);
-                //data.MedicalInsuranceCode = "21";
-                //data.UserId = userBase.UserId;
-                // _webServiceBasicService.SaveXmlData(data);
+                //更新医保信息
+                var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
+                //回参构建
+                var xmlData = new HospitalizationRegisterXml()
+                {
+                    MedicalInsuranceType = "10",
+                    MedicalInsuranceHospitalizationNo = "44116476",
+                 
+                };
+
+               var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                var saveXmlData = new SaveXmlData();
+                saveXmlData.OrganizationCode = userBase.OrganizationCode;
+                saveXmlData.AuthCode = userBase.AuthCode;
+                saveXmlData.BusinessId = param.BusinessId;
+                saveXmlData.TransactionId = Guid.Parse("E67C69F5-5FA8-438A-94EC-85E092CA56E9").ToString("N");
+                saveXmlData.MedicalInsuranceBackNum = "CXJB002";
+                saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                saveXmlData.MedicalInsuranceCode = "21";
+                saveXmlData.UserId = userBase.UserId;
+                //存基层
+                webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
 
 
                 //var xmlData = new MedicalInsuranceXmlDto();
