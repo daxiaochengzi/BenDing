@@ -723,17 +723,15 @@ namespace NFine.Web.Controllers
                         iniParam.BedNumber = inpatientData.AdmissionBed;
                         iniParam.HospitalizationNo = inpatientData.HospitalizationNo;
                         iniParam.Operators = inpatientData.AdmissionOperator;
-                        iniParam.InsuranceType = "310";
+                        iniParam.InsuranceType = "342";//居民医保
                         iniParam.BusinessId = param.BusinessId;
                         //入院登记
                         _residentMedicalInsurance.HospitalizationRegister(iniParam, userBase);
-                    }
-                    else
-                    {
                         infoData.IsSave = true;
                         //保存病人信息
                         _webServiceBasicService.GetInpatientInfo(infoData);
                     }
+
 
                 }
                 else

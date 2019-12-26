@@ -93,8 +93,8 @@ namespace BenDing.Repository.Providers.Web
         {
 
             var paramIni = param;
-         
-            var xmlStr = XmlHelp.SaveXml(paramIni);
+
+            var xmlStr = true;// XmlHelp.SaveXml(paramIni);
             if (xmlStr)
             {
                 int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
@@ -107,7 +107,8 @@ namespace BenDing.Repository.Providers.Web
                         BusinessId = param.BusinessId,
                         Id = Guid.NewGuid(),
                         IsModify = false,
-                        InsuranceType =342,
+                        InsuranceType =Convert.ToInt32(param.InsuranceType),
+                        MedicalInsuranceHospitalizationNo= data.MedicalInsuranceInpatientNo,
                         MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized
                     };
                     //保存中间库
@@ -995,6 +996,7 @@ namespace BenDing.Repository.Providers.Web
                         Unit = item.Unit,
                         UseDays = 0,
                         Remark = "",
+                        DetailId=item.DetailId,
                         DoctorJobNumber = item.OperateDoctorId,
                         Id = item.Id,
                         LimitApprovalDate = "",

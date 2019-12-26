@@ -118,19 +118,19 @@ namespace BenDing.Repository.Providers.Web
                 {
                   
                         insertSql = $@"update [dbo].[MedicalInsurance] set 
-                        AdmissionInfoJson='{param.AdmissionInfoJson}',[IsDelete]=0,
+                        AdmissionInfoJson='{param.AdmissionInfoJson}'
                         where [Id]='{param.Id}' and OrganizationCode='{user.OrganizationCode}'";
             
                 }
                 else
                 {
                     insertSql = $@"INSERT INTO [dbo].[MedicalInsurance]([Id],[BusinessId],[InsuranceNo],[MedicalInsuranceAllAmount]
-                               ,[AdmissionInfoJson],[ReimbursementExpensesAmount] ,[SelfPayFeeAmount],[OtherInfo]
+                               ,[AdmissionInfoJson],[ReimbursementExpensesAmount] ,[SelfPayFeeAmount],[OtherInfo],[MedicalInsuranceHospitalizationNo]
 		                       ,[CreateTime],[IsDelete] ,OrganizationCode,CreateUserId,OrganizationName,InsuranceType,MedicalInsuranceState)
                            VALUES('{param.Id}','{param.BusinessId}','{param.InsuranceNo}', 0,
-                                 '{param.AdmissionInfoJson}',0,0,NULL,
-                                 GETDATE(),1,'{user.OrganizationCode}','{user.UserId}','{user.OrganizationName }',{param.InsuranceType},{(int)param.MedicalInsuranceState});";
-                    insertSql = $"update [dbo].[MedicalInsurance] set [IsDelete]=0,DeleteUserId='{user.UserId}',DeleteTime=GETDATE() where [BusinessId]='{param.BusinessId}';" + insertSql;
+                                 '{param.AdmissionInfoJson}',0,0,NULL,'{param.MedicalInsuranceHospitalizationNo}',
+                                 GETDATE(),0,'{user.OrganizationCode}','{user.UserId}','{user.OrganizationName }',{param.InsuranceType},{(int)param.MedicalInsuranceState});";
+                    insertSql = $"update [dbo].[MedicalInsurance] set [IsDelete]=1,DeleteUserId='{user.UserId}',DeleteTime=GETDATE() where [BusinessId]='{param.BusinessId}';" + insertSql;
 
                 }
                 //var log = LogFactory.GetLogger("ini".GetType().ToString());
