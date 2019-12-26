@@ -376,7 +376,7 @@ namespace BenDing.Service.Providers
             var transactionId = Guid.NewGuid().ToString("N");
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.BusinessId;
-            xmlData.HealthInsuranceNo = "31";
+            xmlData.HealthInsuranceNo = "43";
             xmlData.TransactionId = transactionId;
             xmlData.AuthCode = param.User.AuthCode;
             xmlData.UserId = param.User.UserId;

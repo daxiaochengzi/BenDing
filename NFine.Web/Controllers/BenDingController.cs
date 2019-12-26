@@ -993,6 +993,13 @@ namespace NFine.Web.Controllers
                    BusinessId = param.BusinessId,
                    OrganizationCode = userBase.OrganizationCode
                };
+               var infoData = new GetInpatientInfoParam()
+               {
+                   User = userBase,
+                   BusinessId = param.BusinessId,
+                   IsSave = false
+               };
+               _webServiceBasicService.HospitalizationSettlement(infoData); ;
                //获取医保病人信息
                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
                if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已办理医保结算,不能办理预结算!!!");
@@ -1003,7 +1010,7 @@ namespace NFine.Web.Controllers
                if (inpatientInfoData == null) throw new Exception("该病人未在中心库中,请检查是否办理医保入院!!!");
 
                //医保登录
-               _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               //_residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                var presettlementParam = new LeaveHospitalSettlementParam()
                {
                    MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
@@ -1019,16 +1026,16 @@ namespace NFine.Web.Controllers
                    LeaveHospitalInpatientState = "出院状态",
                    
                };
-               var infoParam = new LeaveHospitalSettlementInfoParam()
-               {
-                   User = userBase,
-                   Id = residentData.Id,
-                   InsuranceNo = residentData.InsuranceNo,
-                   BusinessId = inpatientInfoData.BusinessId,
-                   IdCardNo= inpatientInfoData.IdCardNo,
-               };
-               var data = _residentMedicalInsurance.LeaveHospitalSettlement(presettlementParam, infoParam);
-               y.Data = data;
+               //var infoParam = new LeaveHospitalSettlementInfoParam()
+               //{
+               //    User = userBase,
+               //    Id = residentData.Id,
+               //    InsuranceNo = residentData.InsuranceNo,
+               //    BusinessId = inpatientInfoData.BusinessId,
+               //    IdCardNo= inpatientInfoData.IdCardNo,
+               //};
+               //var data = _residentMedicalInsurance.LeaveHospitalSettlement(presettlementParam, infoParam);
+               //y.Data = data;
 
 
            });
