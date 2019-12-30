@@ -40,5 +40,9 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
       
         public List<string> RegionCodeList { get; set; }
+        /// <summary>
+        /// 医保交易码
+        /// </summary>
+        public  string TransKey { get; set; }
     }
 }

@@ -134,7 +134,7 @@ namespace BenDing.Service.Providers
                 UserId = param.User.UserId,
                 SettlementNo = resultData.DocumentNo,
                 MedicalInsuranceAllAmount = resultData.TotalAmount,
-                PreSettlementTransactionId = Guid.NewGuid().ToString("N"),
+                PreSettlementTransactionId = param.User.TransKey,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsurancePreSettlement
             };
             //存入中间库
@@ -155,7 +155,7 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public WorkerHospitalizationPreSettlementDto WorkerHospitalizationSettlement(WorkerHospitalizationSettlementParam param)
+        public WorkerHospitalizationPreSettlementDto  WorkerHospitalizationSettlement(WorkerHospitalizationSettlementParam param)
         {
             var resultData = _workerMedicalInsuranceRepository.WorkerHospitalizationSettlement(param);
             //报销金额 =统筹支付+补充医疗保险支付金额+专项基金支付金额+
@@ -171,7 +171,7 @@ namespace BenDing.Service.Providers
                 Id = param.Id,
                 SettlementNo = resultData.DocumentNo,
                 MedicalInsuranceAllAmount = resultData.TotalAmount,
-                SettlementTransactionId = Guid.NewGuid().ToString("N"),
+                SettlementTransactionId = param.User.UserId,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceSettlement
             };
             //存入中间层

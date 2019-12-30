@@ -185,23 +185,59 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public void TestXml()
         {
-            var data = new HospitalizationFeeUploadXml();
+            var ddd =new List<InpatientDiagnosisDto>();
+            ddd.Add(new InpatientDiagnosisDto()
+            {
+                 IsMainDiagnosis = true,
+                DiagnosisCode = "T82.003",
+                DiagnosisName = "主动脉机械瓣周漏"
+            });
+            ddd.Add(new InpatientDiagnosisDto()
+            {
+                IsMainDiagnosis = true,
+                DiagnosisCode = "T82.201",
+                DiagnosisName = "冠状动脉搭桥术机械性并发症"
+            });
+            ddd.Add(new InpatientDiagnosisDto()
+            {
+                IsMainDiagnosis = true,
+                DiagnosisCode = "T82.812",
+                DiagnosisName = "主动脉机械瓣周漏"
+            });
+            ddd.Add(new InpatientDiagnosisDto()
+            {
+                IsMainDiagnosis = false,
+                DiagnosisCode = "T83.304",
+                DiagnosisName = "子宫内节育器脱落"
+            });
+            ddd.Add(new InpatientDiagnosisDto()
+            {
+                IsMainDiagnosis = false,
+                DiagnosisCode = "T84.502",
+                DiagnosisName = "膝关节假体植入感染"
+            });
+            var ddds=CommonHelp.GetDiagnosis(ddd);
 
 
-            
-            data.MedicalInsuranceHospitalizationNo = "123";
-          
-            var rowDataList = new List<HospitalizationFeeUploadRowXml>();
-            data.RowDataList = rowDataList;
-            rowDataList.Add(new HospitalizationFeeUploadRowXml()
-            {
-                SerialNumber = "777"
-            });
-            rowDataList.Add(new HospitalizationFeeUploadRowXml()
-            {
-                SerialNumber = "77888"
-            });
-            string dd= XmlSerializeHelper.HisXmlSerialize(data);
+
+
+            //var data = new HospitalizationFeeUploadXml();
+
+
+
+            //data.MedicalInsuranceHospitalizationNo = "123";
+
+            //var rowDataList = new List<HospitalizationFeeUploadRowXml>();
+            //data.RowDataList = rowDataList;
+            //rowDataList.Add(new HospitalizationFeeUploadRowXml()
+            //{
+            //    SerialNumber = "777"
+            //});
+            //rowDataList.Add(new HospitalizationFeeUploadRowXml()
+            //{
+            //    SerialNumber = "77888"
+            //});
+            //string dd= XmlSerializeHelper.HisXmlSerialize(data);
 
         }
 

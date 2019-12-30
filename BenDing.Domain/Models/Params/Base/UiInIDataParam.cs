@@ -32,6 +32,6 @@ namespace BenDing.Domain.Models.Params.UI
         [Display(Name = "发起交易的动作ID")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         [XmlIgnore]
-        public Guid TransactionId { get; set; }
+        public string TransKey { get; set; }
     }
 }

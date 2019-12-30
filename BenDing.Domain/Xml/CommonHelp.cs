@@ -21,7 +21,7 @@ namespace BenDing.Domain.Xml
         public static string EncodeBase64(string code_type, string code)
         {
             string encode = "";
-         
+
             byte[] bytes = Encoding.GetEncoding(code_type).GetBytes(code);
             try
             {
@@ -143,10 +143,11 @@ namespace BenDing.Domain.Xml
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public static string DiagnosisStr(List<string> param)
+        public static string DiagnosisStr(List<InpatientDiagnosisDto> param)
         {
-            string str = string.Join(",", param.ToArray());
-            string resultData = str.Length > 20 ?string.Join(",", param.Take(2).ToArray()) : str;
+            var dataList = param.Select(c => c.DiagnosisCode).ToList();
+            string str = string.Join(",", dataList.ToArray());
+            string resultData = str.Length > 20 ? string.Join(",", dataList.Take(2).ToArray()) : str;
             return resultData;
         }
 
@@ -181,7 +182,7 @@ namespace BenDing.Domain.Xml
             var pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "bin\\BenDing.Domain.xml";
             if (!System.IO.File.Exists(pathXml))
             {
-                throw new SystemException("BenDing.Domain.xml文件不存在!!!"+ pathXml);
+                throw new SystemException("BenDing.Domain.xml文件不存在!!!" + pathXml);
             }
             string keyName = string.Format("//doc/members/member[@name='P:{0}']/summary", classPropertyName);
 
@@ -212,46 +213,55 @@ namespace BenDing.Domain.Xml
         /// <returns></returns>
         public static DiagnosisData GetDiagnosis(List<InpatientDiagnosisDto> param)
         {
+
             var resultData = new DiagnosisData();
+
             //主诊断
             var mainDiagnosisList = param.Where(c => c.IsMainDiagnosis == true)
-                .Select(d => d.DiagnosisCode).Take(3).ToList();
+                .Take(3).ToList();
             if (mainDiagnosisList.Any() == false) throw new Exception("主诊断不能为空!!!");
+            resultData.DiagnosisDescribe = GetDiagnosisDescribe(resultData.DiagnosisDescribe, mainDiagnosisList);
             resultData.AdmissionMainDiagnosisIcd10 = CommonHelp.DiagnosisStr(mainDiagnosisList);
             //第二诊断
             var nextDiagnosisList = param.Where(c => c.IsMainDiagnosis == false)
-                .Select(d => d.DiagnosisCode).ToList();
+                .ToList();
             if (mainDiagnosisList.Any())
             {
                 var diagnosisIcd10Two = nextDiagnosisList.Take(3).ToList();
+                resultData.DiagnosisDescribe = GetDiagnosisDescribe(resultData.DiagnosisDescribe, diagnosisIcd10Two);
                 resultData.DiagnosisIcd10Two = CommonHelp.DiagnosisStr(diagnosisIcd10Two);
                 if (nextDiagnosisList.Count > 3)
                 {//第三诊断
                     resultData.DiagnosisIcd10Three = CommonHelp.DiagnosisStr(nextDiagnosisList.Where(d => !diagnosisIcd10Two.Contains(d)).Take(3).ToList());
+                    resultData.DiagnosisDescribe = GetDiagnosisDescribe(resultData.DiagnosisDescribe, diagnosisIcd10Two);
                 }
             }
 
             return resultData;
         }
-
-        public static DiagnosisData GetDiagnosisDescribe(List<InpatientDiagnosisDto> param)
+        /// <summary>
+        /// 获取诊断描述
+        /// </summary>
+        /// <param name="describe">描述参数</param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static string GetDiagnosisDescribe(string describe, List<InpatientDiagnosisDto> param)
         {
-            var resultData = new DiagnosisData();
-            //主诊断
-            var mainDiagnosisList = param.Where(c => c.IsMainDiagnosis == true)
-                .Select(d => d.DiagnosisCode).Take(3).ToList();
-            if (mainDiagnosisList.Any() == false) throw new Exception("主诊断不能为空!!!");
-            resultData.AdmissionMainDiagnosisIcd10 = CommonHelp.DiagnosisStr(mainDiagnosisList);
-            //第二诊断
-            var nextDiagnosisList = param.Where(c => c.IsMainDiagnosis == false)
-                .Select(d => d.DiagnosisCode).ToList();
-            if (mainDiagnosisList.Any())
+            string resultData = describe;
+
+            foreach (var item in param)
             {
-                var diagnosisIcd10Two = nextDiagnosisList.Take(3).ToList();
-                resultData.DiagnosisIcd10Two = CommonHelp.DiagnosisStr(diagnosisIcd10Two);
-                if (nextDiagnosisList.Count > 3)
-                {//第三诊断
-                    resultData.DiagnosisIcd10Three = CommonHelp.DiagnosisStr(nextDiagnosisList.Where(d => !diagnosisIcd10Two.Contains(d)).Take(3).ToList());
+                if (!string.IsNullOrEmpty(resultData))
+                {
+                    if (resultData.Length < 100)//控制长度小于100
+                    {
+                        resultData = resultData + "," + item.DiagnosisName;
+                    }
+
+                }
+                else
+                {
+                    resultData = item.DiagnosisName;
                 }
             }
 
@@ -267,7 +277,7 @@ namespace BenDing.Domain.Xml
             string resultData = null;
             if (param.Length > 0)
             {
-                resultData = Encoding.ASCII.GetString(param, 1, 1023).Replace("\0", "") ;
+                resultData = Encoding.ASCII.GetString(param, 1, 1023).Replace("\0", "");
             }
             Regex reg = new Regex("^[-+]?(([0-9]+)([.]([0-9]+))?|([.]([0-9]+))?)$");
             if (resultData != null)

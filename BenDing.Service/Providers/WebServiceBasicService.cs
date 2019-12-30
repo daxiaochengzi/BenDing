@@ -298,11 +298,11 @@ namespace BenDing.Service.Providers
         public InpatientInfoDto GetInpatientInfo(GetInpatientInfoParam param)
         {
             var resultData = new InpatientInfoDto();
-            var transactionId = Guid.NewGuid().ToString("N");
+          
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.BusinessId;
             xmlData.HealthInsuranceNo = "21";
-            xmlData.TransactionId = transactionId;
+            xmlData.TransactionId = param.TransKey;
             xmlData.AuthCode = param.User.AuthCode;
             xmlData.UserId = param.User.UserId;
             xmlData.OrganizationCode = param.User.OrganizationCode;
@@ -341,7 +341,7 @@ namespace BenDing.Service.Providers
                     Remark = dataValue.InpatientInfoJsonData.Remark,
                     HospitalName = param.User.OrganizationName,
                     HospitalizationNo = dataValue.InpatientInfoJsonData.HospitalizationNo,
-                    TransactionId = transactionId,
+                    TransactionId = param.TransKey,
                     InDepartmentName = dataValue.InpatientInfoJsonData.InDepartmentName,
                     InDepartmentId = dataValue.InpatientInfoJsonData.InDepartmentId,
                     DocumentNo = dataValue.InpatientInfoJsonData.DocumentNo,
