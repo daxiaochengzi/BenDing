@@ -218,6 +218,7 @@
     <Compile Include="Models\Params\Base\UiInIDataParam.cs" />
     <Compile Include="Models\Params\Base\UiInIParam.cs" />
     <Compile Include="Models\Params\UI\WorKerHospitalizationRegisterUiParam.cs" />
+    <Compile Include="Models\Params\UI\WorkerHospitalizationSettlementUiParam.cs" />
     <Compile Include="Models\Params\UI\WorkerStrokeCardUiParam.cs" />
     <Compile Include="Models\Params\Web\DeleteDatabaseParam.cs" />
     <Compile Include="Models\Params\Web\CatalogParam.cs" />
