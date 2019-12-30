@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace BenDing.Domain.Models.Dto.JsonEntiy
+namespace BenDing.Domain.Models.Dto.JsonEntity
 {
    public class BaseOutpatientDetailJsonDto
     {

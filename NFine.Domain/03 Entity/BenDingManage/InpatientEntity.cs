@@ -162,16 +162,60 @@ namespace NFine.Domain._03_Entity.BenDingManage
         [StringLength(50)]
         public string AdmissionDiagnosticDoctorId { get; set; }
         /// <summary>
-        /// 
+        /// 组织机构编码
         /// </summary>
-        [DisplayName("")]
+        [DisplayName("组织机构编码")]
         [StringLength(50)]
         public string OrganizationCode { get; set; }
         /// <summary>
         /// 组织机构名称
         /// </summary>
         [DisplayName("组织机构名称")]
+        [StringLength(200)]
         public string OrganizationName { get; set; }
+        /// <summary>
+        /// 出院诊断json
+        /// </summary>
+        [DisplayName("出院诊断json")]
+        public string LeaveHospitalDiagnosisJson { get; set; }
+        /// <summary>
+        /// 离院诊断
+        /// </summary>
+        [DisplayName("离院诊断")]
+        [StringLength(1000)]
+        public string LeaveHospitalDiagnosis { get; set; }
+        /// <summary>
+        /// 出院科室编码
+        /// </summary>
+        [DisplayName("出院科室编码")]
+        [StringLength(100)]
+        public string LeaveHospitalDepartmentId { get; set; }
+        /// <summary>
+        /// 出院科室名称
+        /// </summary>
+        [DisplayName("出院科室名称")]
+        [StringLength(100)]
+        public string LeaveHospitalDepartmentName { get; set; }
+
+        /// <summary>
+        /// 出院床位
+        /// </summary>
+        [DisplayName("出院床位")]
+        [StringLength(100)]
+        public string LeaveHospitalBedNumber { get; set; }
+        /// <summary>
+        /// 出院诊断医生
+        /// </summary>
+        [DisplayName("出院诊断医生")]
+        [StringLength(100)]
+     
+        public string LeaveHospitalDiagnosticDoctor { get; set; }
+        /// <summary>
+        /// 出院经办人
+        /// </summary>
+        [DisplayName("出院经办人")]
+        [StringLength(100)]
+        public string LeaveHospitalOperator { get; set; }
         /// <summary>
         /// 创建时间
         /// </summary>

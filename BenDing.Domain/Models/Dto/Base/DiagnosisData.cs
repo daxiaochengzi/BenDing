@@ -24,5 +24,9 @@ namespace BenDing.Domain.Models.Dto.Base
         /// </summary>
 
         public string DiagnosisIcd10Three { get; set; }
+        /// <summary>
+        /// 诊断描述
+        /// </summary>
+        public  string DiagnosisDescribe { get; set; }
     }
 }

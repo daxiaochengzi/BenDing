@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using AutoMapper;
-using BenDing.Domain.Models.Dto.JsonEntiy;
+using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.Resident;
 using NFine.Domain._03_Entity.BenDingManage;
 
 namespace NFine.Web.App_Start
@@ -31,7 +32,9 @@ namespace NFine.Web.App_Start
                cfg.CreateMap<InpatientDetailJsonDto, InpatientInfoDetailDto>();
                cfg.CreateMap<QueryOutpatientDepartmentCostDto, QueryOutpatientDepartmentCostjsonDto>();
                 cfg.CreateMap<BaseOutpatientDetailJsonDto, BaseOutpatientDetailDto>();
-                
+               
+
+
 
 
             });

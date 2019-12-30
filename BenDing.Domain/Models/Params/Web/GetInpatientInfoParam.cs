@@ -23,5 +23,9 @@ namespace BenDing.Domain.Models.Params.Web
         /// 用户
         /// </summary>
         public UserInfoDto User { get; set; }
+        /// <summary>
+        /// 交易码
+        /// </summary>
+        public string TransKey { get; set; }
     } 
 }
