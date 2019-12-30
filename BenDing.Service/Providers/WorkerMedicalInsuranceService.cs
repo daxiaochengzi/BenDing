@@ -247,7 +247,6 @@ namespace BenDing.Service.Providers
             _systemManageRepository.AddHospitalLog(logParam); //回参构建
             
         }
-
         /// <summary>
         ///取消结算
         /// </summary>
@@ -257,7 +256,7 @@ namespace BenDing.Service.Providers
         {
             var resultData = _workerMedicalInsuranceRepository.WorkerSettlementCancel(param);
             //取消交易id
-            var cancelTransactionId = Guid.NewGuid().ToString("N");
+            var cancelTransactionId = param.User.TransKey;
             var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
             {
                 UserId = param.User.UserId,
@@ -265,6 +264,7 @@ namespace BenDing.Service.Providers
                 CancelTransactionId = cancelTransactionId,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsurancePreSettlement
             };
+
             //存入中间层
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
             //添加日志
@@ -294,9 +294,7 @@ namespace BenDing.Service.Providers
                 saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                 saveXmlData.MedicalInsuranceCode = "22";
                 saveXmlData.UserId = param.User.UserId;
-
                 _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
-
                 var updateParamData = new UpdateMedicalInsuranceResidentSettlementParam()
                 {
                     UserId = param.User.UserId,

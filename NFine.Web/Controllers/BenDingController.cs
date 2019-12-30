@@ -1073,6 +1073,7 @@ namespace NFine.Web.Controllers
                    BusinessId = param.BusinessId,
                    OrganizationCode = userBase.OrganizationCode
                };
+               userBase.TransKey = param.TransKey;
                //医保登录
                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                //获取医保病人信息
@@ -1086,6 +1087,7 @@ namespace NFine.Web.Controllers
                        Operators = CommonHelp.GuidToStr(userBase.UserId),
                        CancelLimit = param.CancelLimit,
                    };
+                
                    var cancelParam = new LeaveHospitalSettlementCancelInfoParam()
                    {
                        BusinessId = param.BusinessId,
@@ -1463,8 +1465,8 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [HttpGet]
-        public ApiJsonResultData WorkerHospitalizationSettlement([FromUri]LeaveHospitalSettlementUiParam param)
+        [HttpPost]
+        public ApiJsonResultData WorkerHospitalizationSettlement([FromBody]LeaveHospitalSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {   //获取操作人员信息
@@ -1521,11 +1523,58 @@ namespace NFine.Web.Controllers
                 infoParam.LeaveHospitalMainDiagnosis = diagnosisData.DiagnosisDescribe;
                 var data = _workerMedicalInsuranceService.WorkerHospitalizationSettlement(infoParam);
                 y.Data = data;
-
+                
 
             });
 
         }
+
+        /// <summary>
+        /// 职工取消结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData WorkerSettlementCancel([FromUri] LeaveHospitalSettlementCancelUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {   //获取操作人员信息
+
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    BusinessId = param.BusinessId,
+                    OrganizationCode = userBase.OrganizationCode
+                };
+                userBase.TransKey = param.TransKey;
+                //医保登录
+                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                //获取医保病人信息
+                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+                if (residentData != null)
+                {
+                    if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw  new  Exception("当前病人未医保结算");
+                    //获取医院等级
+                    var gradeData = _systemManage.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
+                    var cancelParam = new WorkerSettlementCancelParam()
+                    {
+                        BusinessId = param.BusinessId,
+                        Id = residentData.Id,
+                        User = userBase,
+                        SettlementNo= residentData.SettlementNo,
+                        CancelLimit = param.CancelLimit,
+                        MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                        AdministrativeArea = gradeData.AdministrativeArea,
+                        OrganizationCode = userBase.OrganizationCode,
+                    };
+                    _workerMedicalInsuranceService.WorkerSettlementCancel(cancelParam);
+
+
+                }
+
+            });
+        }
+
         /// <summary>
         /// 职工划卡
         /// </summary>

@@ -537,13 +537,12 @@ namespace BenDing.Repository.Providers.Web
 
             if (cancelData == "1")
             {
-                //取消交易id
-                var cancelTransactionId = Guid.NewGuid().ToString("N");
+            
                 var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
                 {
                     UserId = infoParam.User.UserId,
                     Id = infoParam.Id,
-                    CancelTransactionId = cancelTransactionId,
+                    CancelTransactionId = infoParam.User.TransKey,
                     MedicalInsuranceState = MedicalInsuranceState.MedicalInsurancePreSettlement
                 };
                 //存入中间层
@@ -553,7 +552,7 @@ namespace BenDing.Repository.Providers.Web
                 {
                     JoinOrOldJson = JsonConvert.SerializeObject(param),
                     User = infoParam.User,
-                    Remark = "职工住院结算取消",
+                    Remark = "居民住院结算取消",
                     RelationId = infoParam.Id,
                 };
                
@@ -573,7 +572,7 @@ namespace BenDing.Repository.Providers.Web
                     saveXmlData.OrganizationCode = infoParam.User.OrganizationCode;
                     saveXmlData.AuthCode = infoParam.User.AuthCode;
                     saveXmlData.BusinessId = infoParam.BusinessId;
-                    saveXmlData.TransactionId = cancelTransactionId;
+                    saveXmlData.TransactionId = infoParam.User.TransKey;
                     saveXmlData.MedicalInsuranceBackNum = "CXJB004";
                     saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
                     saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
@@ -586,7 +585,7 @@ namespace BenDing.Repository.Providers.Web
                     {
                         UserId = infoParam.User.UserId,
                         Id = infoParam.Id,
-                        CancelTransactionId = cancelTransactionId,
+                        CancelTransactionId = infoParam.User.TransKey,
                         MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceCancelHospitalized,
                         IsHisUpdateState=true
                     };
