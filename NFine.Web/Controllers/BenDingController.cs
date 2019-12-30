@@ -1481,7 +1481,7 @@ namespace NFine.Web.Controllers
                 };
                 userBase.TransKey = param.TransKey;
                 //获取his结算
-                var hisSettlement= _webServiceBasicService.GetHisHospitalizationSettlement(infoData); 
+                //var hisSettlement= _webServiceBasicService.GetHisHospitalizationSettlement(infoData); 
                 var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
                 {
                     BusinessId = param.BusinessId,
@@ -1509,7 +1509,7 @@ namespace NFine.Web.Controllers
                     Id = residentData.Id,
                     BusinessId = inpatientInfoData.BusinessId,
                     MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                    LeaveHospitalDate =Convert.ToDateTime(hisSettlement.LeaveHospitalDate).ToString("yyyyMMdd"),
+                    LeaveHospitalDate =DateTime.Now.ToString("yyyyMMdd"),//Convert.ToDateTime(hisSettlement.LeaveHospitalDate).ToString("yyyyMMdd"),
                     LeaveHospitalState = param.LeaveHospitalInpatientState,
                     Operators = userBase.UserName,
                     OrganizationCode = userData.MedicalInsuranceAccount,
