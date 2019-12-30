@@ -145,14 +145,17 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
                 var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var rowXml = new List<HospitalizationFeeUploadRowXml>();
-                rowXml.Add(new HospitalizationFeeUploadRowXml(){SerialNumber = "ABFB478F5E6B4B7A8500D20C83BBBC15" });
-                rowXml.Add(new HospitalizationFeeUploadRowXml() { SerialNumber = "AA5D0D462F2743F993F7DF3CCE9B1D5B" });
-                rowXml.Add(new HospitalizationFeeUploadRowXml() { SerialNumber = "060746259DE44F41B1291FB7278F246B" });
-                rowXml.Add(new HospitalizationFeeUploadRowXml() { SerialNumber = "FAFE1927497844728543AE77E284AD6C" });
-                rowXml.Add(new HospitalizationFeeUploadRowXml() { SerialNumber = "E02B5F44D0F04415BF8C844762F848C8" });
-                rowXml.Add(new HospitalizationFeeUploadRowXml() { SerialNumber = "54BC930971BA4073A9D3F8D7FA8F9EB5" });
-                rowXml.Add(new HospitalizationFeeUploadRowXml() { SerialNumber = "5F79C4B103A64130812C7A0D5F7C0E50" });
+
+                var hospitalizationFeeList = hisSqlRepository.InpatientInfoDetailQuery(
+                    new InpatientInfoDetailQueryParam() {BusinessId = param.BusinessId});
+
+             
+                var rowXml = hospitalizationFeeList.Where(d=>d.UploadMark==0).Select(c => new HospitalizationFeeUploadRowXml()
+                {
+                    SerialNumber = c.DetailId
+                }).ToList();
+
+
                 var xmlData = new HospitalizationFeeUploadXml()
                 {
 
@@ -161,7 +164,7 @@ namespace NFine.Web.Controllers
                 };
                 var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
                 //
-                var transactionId = Guid.Parse("8EB3E8F1-26C9-4A23-8441-4DEB61131026").ToString("N");
+                var transactionId = Guid.Parse("79D71ACA-EDBB-419C-A382-2271922E708D").ToString("N");
                 var saveXmlData = new SaveXmlData();
                 saveXmlData.OrganizationCode = userBase.OrganizationCode;
                 saveXmlData.AuthCode = userBase.AuthCode;
@@ -182,23 +185,59 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public void TestXml()
         {
-            var data = new HospitalizationFeeUploadXml();
+            var ddd =new List<InpatientDiagnosisDto>();
+            ddd.Add(new InpatientDiagnosisDto()
+            {
+                 IsMainDiagnosis = true,
+                DiagnosisCode = "T82.003",
+                DiagnosisName = "主动脉机械瓣周漏"
+            });
+            ddd.Add(new InpatientDiagnosisDto()
+            {
+                IsMainDiagnosis = true,
+                DiagnosisCode = "T82.201",
+                DiagnosisName = "冠状动脉搭桥术机械性并发症"
+            });
+            ddd.Add(new InpatientDiagnosisDto()
+            {
+                IsMainDiagnosis = true,
+                DiagnosisCode = "T82.812",
+                DiagnosisName = "主动脉机械瓣周漏"
+            });
+            ddd.Add(new InpatientDiagnosisDto()
+            {
+                IsMainDiagnosis = false,
+                DiagnosisCode = "T83.304",
+                DiagnosisName = "子宫内节育器脱落"
+            });
+            ddd.Add(new InpatientDiagnosisDto()
+            {
+                IsMainDiagnosis = false,
+                DiagnosisCode = "T84.502",
+                DiagnosisName = "膝关节假体植入感染"
+            });
+            var ddds=CommonHelp.GetDiagnosis(ddd);
 
 
-            
-            data.MedicalInsuranceHospitalizationNo = "123";
-          
-            var rowDataList = new List<HospitalizationFeeUploadRowXml>();
-            data.RowDataList = rowDataList;
-            rowDataList.Add(new HospitalizationFeeUploadRowXml()
-            {
-                SerialNumber = "777"
-            });
-            rowDataList.Add(new HospitalizationFeeUploadRowXml()
-            {
-                SerialNumber = "77888"
-            });
-            string dd= XmlSerializeHelper.HisXmlSerialize(data);
+
+
+            //var data = new HospitalizationFeeUploadXml();
+
+
+
+            //data.MedicalInsuranceHospitalizationNo = "123";
+
+            //var rowDataList = new List<HospitalizationFeeUploadRowXml>();
+            //data.RowDataList = rowDataList;
+            //rowDataList.Add(new HospitalizationFeeUploadRowXml()
+            //{
+            //    SerialNumber = "777"
+            //});
+            //rowDataList.Add(new HospitalizationFeeUploadRowXml()
+            //{
+            //    SerialNumber = "77888"
+            //});
+            //string dd= XmlSerializeHelper.HisXmlSerialize(data);
 
         }
 

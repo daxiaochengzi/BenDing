@@ -15,6 +15,10 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
         public Guid Id { get; set; }
         /// <summary>
+        /// 明细id
+        /// </summary>
+        public  string DetailId { get; set; }
+        /// <summary>
         /// 上传标记（1上传,0未上传）
         /// </summary>
         public int UploadMark { get; set; }

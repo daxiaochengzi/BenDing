@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
 using Newtonsoft.Json;
 
-namespace BenDing.Domain.Models.Dto.JsonEntiy
+namespace BenDing.Domain.Models.Dto.JsonEntity
 {
    public class ResidentUserInfoJsonDto: IniDto
     {/// <summary>

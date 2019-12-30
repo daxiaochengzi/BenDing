@@ -4,33 +4,39 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
+using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.Base;
 
 namespace BenDing.Domain.Models.Params.Resident
 {
-  public  class LeaveHospitalSettlementUiParam
-    {
+  public  class LeaveHospitalSettlementUiParam:UiBaseDataParam
+    { /// <summary>
+      /// 出院日期
+      /// </summary>
+        [Display(Name = "出院日期")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        public  string LeaveHospitalDate { get; set; }
         /// <summary>
-        /// 业务id
+        /// 出院病人状态(1康复，2转院，3死亡，4其他)
         /// </summary>
-        [Display(Name = "业务id")]
+        [Display(Name = "出院病人状态")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
 
-        public string BusinessId { get; set; }
+        public string LeaveHospitalInpatientState { get; set; }
         /// <summary>
-        /// 用户id
+        /// 离院经办人
         /// </summary>
-        [Display(Name = "用户id")]
+        [Display(Name = "离院经办人")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
 
-        public string UserId { get; set; }
+        public string LeaveHospitalOperator { get; set; }
 
-        ///// <summary>
-        ///// 出院病人状态(1康复，2转院，3死亡，4其他)
-        ///// </summary>
-        //[Display(Name = "出院病人状态")]
-        //[Required(ErrorMessage = "{0}不能为空!!!")]
+        /// <summary>
+        /// 诊断
+        /// </summary>
 
-        //public string LeaveHospitalInpatientState { get; set; }
+        public List<InpatientDiagnosisDto> DiagnosisList { get; set; } = null;
 
 
     }

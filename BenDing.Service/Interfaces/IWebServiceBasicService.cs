@@ -2,6 +2,8 @@
 using BenDing.Domain.Models.Params.Web;
 using System;
 using System.Collections.Generic;
+using BenDing.Domain.Models.Dto.JsonEntity;
+using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 
 namespace BenDing.Service.Interfaces
@@ -107,6 +109,12 @@ namespace BenDing.Service.Interfaces
         /// 住院结算
         /// </summary>
         /// <param name="param"></param>
-        void HospitalizationSettlement(GetInpatientInfoParam param);
+        PatientLeaveHospitalInfoDto GetHisHospitalizationSettlement(GetInpatientInfoParam param);
+        /// <summary>
+        /// 获取his住院预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+         HisHospitalizationPreSettlementJsonDto GetHisHospitalizationPreSettlement(GetInpatientInfoParam param);
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
 
-namespace BenDing.Domain.Models.Dto.JsonEntiy
+namespace BenDing.Domain.Models.Dto.JsonEntity
 {
    public class QueryOutpatientDepartmentCostjsonDto
     {/// <summary>

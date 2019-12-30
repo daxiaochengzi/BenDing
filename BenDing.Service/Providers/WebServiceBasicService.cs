@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BenDing.Domain.Models.Dto.JsonEntiy;
+using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Dto.Workers;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params;
 using BenDing.Domain.Models.Params.Base;
+using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Models.Params.Workers;
@@ -297,11 +298,11 @@ namespace BenDing.Service.Providers
         public InpatientInfoDto GetInpatientInfo(GetInpatientInfoParam param)
         {
             var resultData = new InpatientInfoDto();
-            var transactionId = Guid.NewGuid().ToString("N");
+          
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.BusinessId;
             xmlData.HealthInsuranceNo = "21";
-            xmlData.TransactionId = transactionId;
+            xmlData.TransactionId = param.TransKey;
             xmlData.AuthCode = param.User.AuthCode;
             xmlData.UserId = param.User.UserId;
             xmlData.OrganizationCode = param.User.OrganizationCode;
@@ -340,7 +341,7 @@ namespace BenDing.Service.Providers
                     Remark = dataValue.InpatientInfoJsonData.Remark,
                     HospitalName = param.User.OrganizationName,
                     HospitalizationNo = dataValue.InpatientInfoJsonData.HospitalizationNo,
-                    TransactionId = transactionId,
+                    TransactionId = param.TransKey,
                     InDepartmentName = dataValue.InpatientInfoJsonData.InDepartmentName,
                     InDepartmentId = dataValue.InpatientInfoJsonData.InDepartmentId,
                     DocumentNo = dataValue.InpatientInfoJsonData.DocumentNo,
@@ -368,20 +369,67 @@ namespace BenDing.Service.Providers
             return resultData;
         }
         /// <summary>
-        /// 住院结算
+        /// 获取his住院结算
         /// </summary>
         /// <param name="param"></param>
-        public void HospitalizationSettlement(GetInpatientInfoParam param)
+        public PatientLeaveHospitalInfoDto GetHisHospitalizationSettlement(GetInpatientInfoParam param)
         {
-            var transactionId = Guid.NewGuid().ToString("N");
+            var resultData = new PatientLeaveHospitalInfoDto();
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.BusinessId;
-            xmlData.HealthInsuranceNo = "31";
-            xmlData.TransactionId = transactionId;
+            xmlData.HealthInsuranceNo = "41";
+            xmlData.TransactionId = param.TransKey;
             xmlData.AuthCode = param.User.AuthCode;
             xmlData.UserId = param.User.UserId;
             xmlData.OrganizationCode = param.User.OrganizationCode;
-            var data = _webServiceBasic.HIS_Interface("39", JsonConvert.SerializeObject(xmlData));
+            var jsonParam = JsonConvert.SerializeObject(xmlData);
+            var data = _webServiceBasic.HIS_Interface("39", jsonParam);
+            HisHospitalizationSettlementJsonDto dataValue = JsonConvert.DeserializeObject<HisHospitalizationSettlementJsonDto>(data.Msg);
+            var dataValueFirst = dataValue.LeaveHospitalInfoData.FirstOrDefault();
+            //实体转换
+            if (dataValueFirst != null)
+            {
+                resultData.LeaveHospitalBedNumber = dataValueFirst.LeaveHospitalBedNumber;
+                resultData.LeaveHospitalDate = dataValueFirst.LeaveHospitalDate;
+                resultData.LeaveHospitalDepartmentId = dataValueFirst.LeaveHospitalDepartmentId;
+                resultData.LeaveHospitalDepartmentName = dataValueFirst.LeaveHospitalDepartmentName;
+                resultData.LeaveHospitalDiagnosticDoctor = dataValueFirst.LeaveHospitalDiagnosticDoctor;
+                resultData.LeaveHospitalOperator = dataValueFirst.LeaveHospitalOperator;
+            }
+            var diagnosisList = dataValue.DiagnosisJson.Select(c => new InpatientDiagnosisDto()
+            {
+                DiagnosisCode = c.DiagnosisCode,
+                DiagnosisName = c.DiagnosisName,
+                DiagnosisMedicalInsuranceCode = c.DiagnosisMedicalInsuranceCode,
+                IsMainDiagnosis = c.IsMainDiagnosis=="是"?true:false,
+
+            }).ToList();
+
+
+            return resultData;
+        }
+
+        /// <summary>
+        /// 获取his住院预结算
+        /// </summary>
+        /// <param name="param"></param>
+        public HisHospitalizationPreSettlementJsonDto GetHisHospitalizationPreSettlement(GetInpatientInfoParam param)
+        {
+           
+            var xmlData = new MedicalInsuranceXmlDto();
+            xmlData.BusinessId = param.BusinessId;
+            xmlData.HealthInsuranceNo = "43";
+            xmlData.TransactionId = param.TransKey;
+            xmlData.AuthCode = param.User.AuthCode;
+            xmlData.UserId = param.User.UserId;
+            xmlData.OrganizationCode = param.User.OrganizationCode;
+            var jsonParam = JsonConvert.SerializeObject(xmlData);
+            var data = _webServiceBasic.HIS_Interface("39", jsonParam);
+            HisHospitalizationPreSettlementJsonDto dataValue = JsonConvert.DeserializeObject<HisHospitalizationPreSettlementJsonDto>(data.Msg);
+            
+
+
+            return dataValue;
         }
 
         /// <summary>

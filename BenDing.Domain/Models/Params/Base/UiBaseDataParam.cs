@@ -24,5 +24,13 @@ namespace BenDing.Domain.Models.Params.Base
         [Display(Name = "业务id")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string BusinessId { get; set; }
+
+        /// <summary>
+        /// 医保交易码
+        /// </summary>
+        [Display(Name = "医保交易码")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        public string TransKey { get; set; }
+
     }
 }
