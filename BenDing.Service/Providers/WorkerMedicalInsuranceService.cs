@@ -160,22 +160,22 @@ namespace BenDing.Service.Providers
             var resultData = _workerMedicalInsuranceRepository.WorkerHospitalizationSettlement(param);
             //报销金额 =统筹支付+补充医疗保险支付金额+专项基金支付金额+
             //公务员补贴+公务员补助+其它支付金额
-            decimal reimbursementExpenses = resultData.BasicOverallPay + resultData.SupplementPayAmount + resultData.SpecialFundPayAmount
-            + resultData.CivilServantsSubsidies + resultData.CivilServantsSubsidy + resultData.OtherPaymentAmount;
-            var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
-            {
-                UserId = param.User.UserId,
-                ReimbursementExpensesAmount = CommonHelp.ValueToDouble(reimbursementExpenses),
-                SelfPayFeeAmount = resultData.CashPayment,
-                OtherInfo = JsonConvert.SerializeObject(resultData),
-                Id = param.Id,
-                SettlementNo = resultData.DocumentNo,
-                MedicalInsuranceAllAmount = resultData.TotalAmount,
-                SettlementTransactionId = param.User.UserId,
-                MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceSettlement
-            };
-            //存入中间层
-            _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
+            //decimal reimbursementExpenses = resultData.BasicOverallPay + resultData.SupplementPayAmount + resultData.SpecialFundPayAmount
+            //+ resultData.CivilServantsSubsidies + resultData.CivilServantsSubsidy + resultData.OtherPaymentAmount;
+            //var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
+            //{
+            //    UserId = param.User.UserId,
+            //    ReimbursementExpensesAmount = CommonHelp.ValueToDouble(reimbursementExpenses),
+            //    SelfPayFeeAmount = resultData.CashPayment,
+            //    OtherInfo = JsonConvert.SerializeObject(resultData),
+            //    Id = param.Id,
+            //    SettlementNo = resultData.DocumentNo,
+            //    MedicalInsuranceAllAmount = resultData.TotalAmount,
+            //    SettlementTransactionId = param.User.UserId,
+            //    MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceSettlement
+            //};
+            ////存入中间层
+            //_medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
 
             
             return resultData;

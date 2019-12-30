@@ -1488,9 +1488,9 @@ namespace NFine.Web.Controllers
                     OrganizationCode = userBase.OrganizationCode
                 };
                 //获取医保病人信息
-                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-                if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已办理医保结算,不能办理预结算!!!");
-                if (residentData.MedicalInsuranceState == MedicalInsuranceState.MedicalInsurancePreSettlement) throw new Exception("当前病人未办理预结算,不能办理结算!!!");
+                //var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+                //if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已办理医保结算,不能办理预结算!!!");
+                //if (residentData.MedicalInsuranceState == MedicalInsuranceState.MedicalInsurancePreSettlement) throw new Exception("当前病人未办理预结算,不能办理结算!!!");
                 var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
                 //获取住院病人
                 var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
@@ -1506,9 +1506,9 @@ namespace NFine.Web.Controllers
                 var infoParam = new WorkerHospitalizationSettlementParam()
                 {
                     User = userBase,
-                    Id = residentData.Id,
+                    Id =Guid.NewGuid(), //residentData.Id,
                     BusinessId = inpatientInfoData.BusinessId,
-                    MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                    MedicalInsuranceHospitalizationNo = "44116329",//residentData.MedicalInsuranceHospitalizationNo,
                     LeaveHospitalDate =DateTime.Now.ToString("yyyyMMdd"),//Convert.ToDateTime(hisSettlement.LeaveHospitalDate).ToString("yyyyMMdd"),
                     LeaveHospitalState = param.LeaveHospitalInpatientState,
                     Operators = userBase.UserName,
