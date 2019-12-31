@@ -7,6 +7,7 @@ using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Dto.Workers;
 using BenDing.Domain.Models.Enums;
+using BenDing.Domain.Models.HisXml;
 using BenDing.Domain.Models.Params;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
@@ -387,7 +388,7 @@ namespace BenDing.Service.Providers
             HisHospitalizationSettlementJsonDto dataValue = JsonConvert.DeserializeObject<HisHospitalizationSettlementJsonDto>(data.Msg);
             var dataValueFirst = dataValue.LeaveHospitalInfoData.FirstOrDefault();
             //实体转换
-            if (dataValueFirst != null)
+            if (dataValueFirst != null) 
             {
                 resultData.LeaveHospitalBedNumber = dataValueFirst.LeaveHospitalBedNumber;
                 resultData.LeaveHospitalDate = dataValueFirst.LeaveHospitalDate;
@@ -405,7 +406,7 @@ namespace BenDing.Service.Providers
 
             }).ToList();
 
-
+            resultData.DiagnosisList = diagnosisList;
             return resultData;
         }
 
