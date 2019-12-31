@@ -63,7 +63,7 @@ namespace BenDing.Domain.Models.HisXml
         /// <summary>
         /// 医保类型 10:居民  职工:310
         /// </summary>
-        [XmlElementAttribute("aae140", IsNullable = false)]
+        [XmlElementAttribute("aac066", IsNullable = false)]
         public string MedicalInsuranceType { get; set; }
     }
 }

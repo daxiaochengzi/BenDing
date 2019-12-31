@@ -240,7 +240,7 @@ namespace BenDing.Service.Providers
 
                 resultData = AutoMapper.Mapper.Map<BaseOutpatientInfoDto>(dataValueFirst);
                 resultData.Id = param.Id;
-
+                resultData.ReturnJson = param.ReturnJson;
                 if (param.IsSave)
                 {
                     _hisSqlRepository.SaveOutpatient(param.User, resultData);

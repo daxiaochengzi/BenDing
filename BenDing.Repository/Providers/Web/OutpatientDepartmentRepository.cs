@@ -7,6 +7,7 @@ using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.HisXml;
 using BenDing.Domain.Models.Params.OutpatientDepartment;
 using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.Web;
@@ -74,7 +75,7 @@ namespace BenDing.Repository.Providers.Web
                     {
                         if (data.ReturnState =="1")
                         {
-                            var transactionId = Guid.NewGuid().ToString("N");
+                            var transactionId = param.User.TransKey;
                             //写入日志
                             _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
                             {
@@ -83,7 +84,12 @@ namespace BenDing.Repository.Providers.Web
                                 ReturnOrNewJson = JsonConvert.SerializeObject(data),
                                 Remark = "[R][OutpatientDepartment]门诊病人结算取消"
                             });
+                            //回参构建
+                            var xmlData = new OutpatientDepartmentCostCancelXml()
+                            {
 
+                                SettlementNo = param.Participation.DocumentNo,
+                            };
                             var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
                             var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
                             var saveXmlData = new SaveXmlData();
@@ -92,8 +98,8 @@ namespace BenDing.Repository.Providers.Web
                             saveXmlData.BusinessId = param.BusinessId;
                             saveXmlData.TransactionId = transactionId;
                             saveXmlData.MedicalInsuranceBackNum = "TPYP302";
-                            saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
-                            saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                            saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                            saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
                             saveXmlData.MedicalInsuranceCode = "42";
                             saveXmlData.UserId = param.User.UserId;
                             //存基层
