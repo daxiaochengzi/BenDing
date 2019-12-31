@@ -63,6 +63,7 @@
     <Compile Include="Models\Dto\JsonEntity\HisHospitalizationSettlementJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\MonthlyHospitalizationJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\OutpatientInfoJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntity\OutpatientPersonJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\QueryInpatientInfoJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\QueryOutpatientDepartmentCostjsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\ResidentUserInfoJsonDto.cs" />

@@ -224,45 +224,57 @@ namespace BenDing.Service.Providers
         {
             var resultData = new BaseOutpatientInfoDto();
             List<OutpatientInfoJsonDto> result;
-            var outPatient = new OutpatientParam()
+            var xmlData = new MedicalInsuranceXmlDto();
+            xmlData.BusinessId = param.UiParam.BusinessId;
+            xmlData.HealthInsuranceNo = "48";
+            xmlData.TransactionId = param.UiParam.TransKey;
+            xmlData.AuthCode = param.User.AuthCode;
+            xmlData.UserId = param.User.UserId;
+            xmlData.OrganizationCode = param.User.OrganizationCode;
+            var jsonParam = JsonConvert.SerializeObject(xmlData);
+            var data = _webServiceBasic.HIS_Interface("39", jsonParam);
+            OutpatientPersonJsonDto dataValue = JsonConvert.DeserializeObject<OutpatientPersonJsonDto>(data.Msg);
+            var dataValueFirst = dataValue.OutpatientPersonBase;
+            if (dataValueFirst != null)
             {
-                AuthCode = param.User.AuthCode,
-                OrganizationCode = param.User.OrganizationCode,
-                IdCardNo = param.UiParam.IdCardNo,
-                StartTime = Convert.ToDateTime(param.UiParam.StartTime).ToString("yyyy-MM-dd HH:mm:ss"),
-                EndTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-            };
-            var init = new OutpatientInfoJsonDto();
-            var data = _webServiceBasic.HIS_InterfaceList("12", JsonConvert.SerializeObject(outPatient));
 
-            result = GetResultData(init, data);
-            if (result.Any())
-            {
-                var resultDataIni = result.FirstOrDefault(c => c.BusinessId == param.UiParam.BusinessId);
-                if (resultDataIni != null)
-                {
-                    resultData = AutoMapper.Mapper.Map<BaseOutpatientInfoDto>(resultDataIni);
-                }
+                resultData = AutoMapper.Mapper.Map<BaseOutpatientInfoDto>(dataValueFirst);
 
-                //if (resultData.ReceptionStatus < 2) throw  new  Exception("门诊病人需要已接诊才能结算!!!");
 
                 if (param.IsSave)
                 {
-                    resultData.ReturnJson = param.ReturnJson;
-                    resultData.Id = param.Id;
-
                     _hisSqlRepository.SaveOutpatient(param.User, resultData);
-                    //门诊病人明细下载
-                    GetOutpatientDetailPerson(param.User, new OutpatientDetailParam()
-                    {
-                        AuthCode = param.User.AuthCode,
-                        OutpatientNo = resultData.OutpatientNumber,
-                        BusinessId = resultData.BusinessId
-                    });
                 }
-
-
             }
+
+            //result = GetResultData(init, data);
+            //if (result.Any())
+            //{
+            //    var resultDataIni = result.FirstOrDefault(c => c.BusinessId == param.UiParam.BusinessId);
+            //    if (resultDataIni != null)
+            //    {
+            //        resultData = AutoMapper.Mapper.Map<BaseOutpatientInfoDto>(resultDataIni);
+            //    }
+
+            //    //if (resultData.ReceptionStatus < 2) throw  new  Exception("门诊病人需要已接诊才能结算!!!");
+
+            //    if (param.IsSave)
+            //    {
+            //        resultData.ReturnJson = param.ReturnJson;
+            //        resultData.Id = param.Id;
+
+            //        _hisSqlRepository.SaveOutpatient(param.User, resultData);
+            //        //门诊病人明细下载
+            //        GetOutpatientDetailPerson(param.User, new OutpatientDetailParam()
+            //        {
+            //            AuthCode = param.User.AuthCode,
+            //            OutpatientNo = resultData.OutpatientNumber,
+            //            BusinessId = resultData.BusinessId
+            //        });
+            //    }
+
+
+            //}
 
             return resultData;
         }
