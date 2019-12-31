@@ -11,12 +11,7 @@ using BenDing.Domain.Models.Params.Base;
 namespace BenDing.Domain.Models.Params.Resident
 {
   public  class LeaveHospitalSettlementUiParam:UiBaseDataParam
-    { /// <summary>
-      /// 出院日期
-      /// </summary>
-        [Display(Name = "出院日期")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
-        public  string LeaveHospitalDate { get; set; }
+    { 
         /// <summary>
         /// 出院病人状态(1康复，2转院，3死亡，4其他)
         /// </summary>
@@ -24,14 +19,6 @@ namespace BenDing.Domain.Models.Params.Resident
         [Required(ErrorMessage = "{0}不能为空!!!")]
 
         public string LeaveHospitalInpatientState { get; set; }
-        /// <summary>
-        /// 离院经办人
-        /// </summary>
-        [Display(Name = "离院经办人")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
-
-        public string LeaveHospitalOperator { get; set; }
-
         /// <summary>
         /// 诊断
         /// </summary>
