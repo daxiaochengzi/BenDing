@@ -29,6 +29,7 @@ namespace BenDing.Domain.Models.HisXml
         /// <summary>
         /// 医保卡号
         /// </summary>
+        [XmlElementAttribute("yac005", IsNullable = false)]
         public string InsuranceNo { get; set; }
         /// <summary>
         /// 账户余额
@@ -39,6 +40,7 @@ namespace BenDing.Domain.Models.HisXml
         /// <summary>
         /// 总费用
         /// </summary>
+        [XmlElementAttribute("akc264", IsNullable = false)]
         public decimal AllAmount { get; set; }
       
         /// <summary>
