@@ -4,12 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Params.Base;
 
 namespace BenDing.Domain.Models.Params.UI
 {/// <summary>
 /// 
 /// </summary>
-   public class GetOutpatientUiParam: UiInIParam
+   public class GetOutpatientUiParam: UiBaseDataParam
     {/// <summary>
      /// 身份证号码
      /// </summary>
@@ -23,13 +24,6 @@ namespace BenDing.Domain.Models.Params.UI
         [Display(Name = "开始时间")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string StartTime { get; set; }
-        /// <summary>
-        /// 业务id
-        /// </summary>
 
-        [Display(Name = "业务id")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
-      
-        public string BusinessId { get; set; }
     }
 }

@@ -639,8 +639,6 @@ namespace NFine.Web.Controllers
              });
 
         }
-      
-
         /// <summary>
         /// 项目下载
         /// </summary>
@@ -1139,6 +1137,7 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {   //
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
                 //医保登录
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 var data = _outpatientDepartmentService.OutpatientDepartmentCostInput(new GetOutpatientPersonParam()
