@@ -968,8 +968,8 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [HttpGet]
-        public ApiJsonResultData LeaveHospitalSettlement([FromUri]LeaveHospitalSettlementUiParam param)
+        [HttpPost]
+        public ApiJsonResultData LeaveHospitalSettlement([FromBody]LeaveHospitalSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
            {   //获取操作人员信息
