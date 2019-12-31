@@ -239,7 +239,7 @@ namespace BenDing.Service.Providers
             {
 
                 resultData = AutoMapper.Mapper.Map<BaseOutpatientInfoDto>(dataValueFirst);
-
+                resultData.Id = param.Id;
 
                 if (param.IsSave)
                 {

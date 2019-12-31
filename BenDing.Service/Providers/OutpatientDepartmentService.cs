@@ -54,6 +54,7 @@ namespace BenDing.Service.Providers
 
             //获取门诊病人数据
             var outpatientPerson = _webServiceBasic.GetOutpatientPerson(param);
+            outpatientPerson.IdCardNo = "511521201704210171";
             if (outpatientPerson != null)
             {
                 var inputParam = new OutpatientDepartmentCostInputParam()
@@ -91,7 +92,8 @@ namespace BenDing.Service.Providers
                         SettlementNo = resultData.DocumentNo,
                         AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
                         PatientName = outpatientPerson.PatientName,
-                        AccountAmountPay = resultData.ReimbursementExpensesAmount
+                        AccountAmountPay = resultData.ReimbursementExpensesAmount,
+                        MedicalInsuranceType="10",
 
                     };
                     //基层数据写入
@@ -103,7 +105,7 @@ namespace BenDing.Service.Providers
                         InformationNumber = outpatientPerson.IdCardNo,
                     });
                     xmlData.AccountBalance = userInfoData.ResidentInsuranceBalance;
-
+                    xmlData.PersonalCoding = userInfoData.PersonalCoding;
                     var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
                     var saveXmlData = new SaveXmlData();
                     saveXmlData.OrganizationCode = param.User.OrganizationCode;
