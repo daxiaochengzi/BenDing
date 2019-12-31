@@ -63,6 +63,7 @@
     <Compile Include="Models\Dto\JsonEntity\HisHospitalizationSettlementJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\MonthlyHospitalizationJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\OutpatientInfoJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntity\OutpatientPersonJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\QueryInpatientInfoJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\QueryOutpatientDepartmentCostjsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\ResidentUserInfoJsonDto.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="Models\HisXml\HospitalizationRegisterCancelXml.cs" />
     <Compile Include="Models\HisXml\HospitalizationRegisterXml.cs" />
     <Compile Include="Models\HisXml\HospitalSettlementXml.cs" />
+    <Compile Include="Models\HisXml\OutpatientDepartmentCostXml.cs" />
     <Compile Include="Models\HisXml\ReadCardXml.cs" />
     <Compile Include="Models\Params\Base\BaseUiBusinessIdDataParam.cs" />
     <Compile Include="Models\Params\Base\BaseUiIniParam.cs" />

@@ -32,6 +32,7 @@ namespace BenDing.Domain.Models.Params.Web
         /// id
         /// </summary>
         public Guid Id { get; set; }
- 
+       
+
     }
 }
