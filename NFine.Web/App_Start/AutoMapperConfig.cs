@@ -25,7 +25,6 @@ namespace NFine.Web.App_Start
                cfg.CreateMap<InpatientInfoJsonDataDto, InpatientInfoDto>();
                cfg.CreateMap<ResidentUserInfoJsonDto, ResidentUserInfoDto>();
                cfg.CreateMap<QueryInpatientInfoJsonDto, QueryInpatientInfoDto>();
-             
                cfg.CreateMap<HospitalizationPresettlementJsonDto, HospitalizationPresettlementDto>();
                cfg.CreateMap<OutpatientInfoJsonDto, BaseOutpatientInfoDto>();
                cfg.CreateMap<InpatientInfoDto, InpatientEntity>();
@@ -33,7 +32,10 @@ namespace NFine.Web.App_Start
                cfg.CreateMap<QueryOutpatientDepartmentCostDto, QueryOutpatientDepartmentCostjsonDto>();
                cfg.CreateMap<BaseOutpatientDetailJsonDto, BaseOutpatientDetailDto>();
                cfg.CreateMap<OutpatientPersonBaseJsonDto, BaseOutpatientInfoDto>();
+               cfg.CreateMap<PatientLeaveHospitalInfoDto, LeaveHospitalSettlementInfoParam>();
                 
+
+
 
 
             });

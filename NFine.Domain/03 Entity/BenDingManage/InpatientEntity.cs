@@ -178,6 +178,13 @@ namespace NFine.Domain._03_Entity.BenDingManage
         /// </summary>
         [DisplayName("出院诊断json")]
         public string LeaveHospitalDiagnosisJson { get; set; }
+
+        /// <summary>
+        /// 出院科室编码
+        /// </summary>
+        [DisplayName("出院科室编码")]
+        [StringLength(100)]
+        public string LeaveHospitalDepartmentId { get; set; }
         /// <summary>
         /// 出院科室名称
         /// </summary>

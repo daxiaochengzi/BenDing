@@ -135,8 +135,11 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         List<QueryICD10InfoDto> QueryICD10(QueryICD10UiParam param);
-       
-
+        /// <summary>
+        /// 保存住院结算
+        /// </summary>
+        /// <param name="param"></param>
+        void SaveInpatientSettlement(SaveInpatientSettlementParam param);
         /// <summary>
         /// 保存住院病人明细
         /// </summary>

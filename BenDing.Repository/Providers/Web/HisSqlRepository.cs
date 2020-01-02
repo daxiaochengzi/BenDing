@@ -403,7 +403,6 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="user"></param>
         /// <param name="param"></param>
-
         public void UpdateOutpatient(UserInfoDto user, UpdateOutpatientParam param)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -435,6 +434,38 @@ namespace BenDing.Repository.Providers.Web
             }
 
         }
+        /// <summary>
+        /// 保存住院结算
+        /// </summary>
+      
+        /// <param name="param"></param>
+        public void SaveInpatientSettlement(SaveInpatientSettlementParam param)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string strSql = null;
+                try
+                {
+                    sqlConnection.Open();
+                   
+                        strSql = $@"update [dbo].[Outpatient] set [UpdateUserId]='{param.User.UserId}',[UpdateTime]=getDate(),
+                                   LeaveHospitalDiagnosisJson='{param.LeaveHospitalDiagnosisJson}',LeaveHospitalDepartmentId='{param.LeaveHospitalDepartmentId}',
+                                   LeaveHospitalDepartmentName='{param.LeaveHospitalDepartmentName}',LeaveHospitalBedNumber='{param.LeaveHospitalBedNumber}',
+                                   LeaveHospitalDiagnosticDoctor='{param.LeaveHospitalDiagnosticDoctor}',LeaveHospitalOperator='{param.LeaveHospitalOperator}',
+                                   where Id='{param.Id.ToString()}'";
+
+                    sqlConnection.Execute(strSql);
+                    sqlConnection.Close();
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(strSql);
+                    throw new Exception(e.Message);
+                }
+
+            }
+        }
+
         /// <summary>
         /// 查询门诊病人信息
         /// </summary>

@@ -129,6 +129,7 @@
     <Compile Include="Models\Params\Base\DatabaseParam.cs" />
     <Compile Include="Models\Params\Base\GetHisBaseParam.cs" />
     <Compile Include="Models\Params\Base\UiBaseDataParam.cs" />
+    <Compile Include="Models\Params\Base\UserBaseParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\CancelMonthlyHospitalizationParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\CancelOutpatientDepartmentCostParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\MonthlyHospitalizationParam.cs" />
@@ -250,6 +251,7 @@
     <Compile Include="Models\Params\Web\QueryMedicalInsuranceResidentInfoParam.cs" />
     <Compile Include="Models\Params\Web\QueryOutpatientParam.cs" />
     <Compile Include="Models\Params\Web\SaveInpatientInfoDetailParam.cs" />
+    <Compile Include="Models\Params\Web\SaveInpatientSettlementParam.cs" />
     <Compile Include="Models\Params\Web\SaveXmlData.cs" />
     <Compile Include="Models\Params\Web\SaveXmlDataParam.cs" />
     <Compile Include="Models\Params\Web\SingleResidentInfQueryUiParam.cs" />

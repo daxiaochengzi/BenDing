@@ -945,6 +945,7 @@ namespace NFine.Web.Controllers
               if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已医保结算,不能预结算");
               //医保登录
               _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+
               var presettlementParam = new HospitalizationPresettlementParam()
               {
                   MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
@@ -1019,6 +1020,12 @@ namespace NFine.Web.Controllers
                    IdCardNo = inpatientInfoData.IdCardNo,
                };
                var data = _residentMedicalInsurance.LeaveHospitalSettlement(settlementParam, infoParam);
+               //结算后保存信息
+               var saveParam = AutoMapper.Mapper.Map<SaveInpatientSettlementParam>(hisSettlement);
+               saveParam.Id = (Guid) inpatientInfoData.Id;
+               saveParam.User = userBase;
+               saveParam.LeaveHospitalDiagnosisJson = JsonConvert.SerializeObject(hisSettlement.DiagnosisList);
+               _hisSqlRepository.SaveInpatientSettlement(saveParam);
                y.Data = data;
            });
 
@@ -1481,16 +1488,16 @@ namespace NFine.Web.Controllers
                 };
                 userBase.TransKey = param.TransKey;
                 //获取his结算
-                //var hisSettlement= _webServiceBasicService.GetHisHospitalizationSettlement(infoData); 
+                var hisSettlement= _webServiceBasicService.GetHisHospitalizationSettlement(infoData); 
                 var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
                 {
                     BusinessId = param.BusinessId,
                     OrganizationCode = userBase.OrganizationCode
                 };
                 //获取医保病人信息
-                //var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-                //if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已办理医保结算,不能办理预结算!!!");
-                //if (residentData.MedicalInsuranceState == MedicalInsuranceState.MedicalInsurancePreSettlement) throw new Exception("当前病人未办理预结算,不能办理结算!!!");
+                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+                if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已办理医保结算,不能办理预结算!!!");
+                if (residentData.MedicalInsuranceState == MedicalInsuranceState.MedicalInsurancePreSettlement) throw new Exception("当前病人未办理预结算,不能办理结算!!!");
                 var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
                 //获取住院病人
                 var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
@@ -1506,10 +1513,10 @@ namespace NFine.Web.Controllers
                 var infoParam = new WorkerHospitalizationSettlementParam()
                 {
                     User = userBase,
-                    Id =Guid.NewGuid(), //residentData.Id,
+                    Id = residentData.Id,
                     BusinessId = inpatientInfoData.BusinessId,
-                    MedicalInsuranceHospitalizationNo = "44116329",//residentData.MedicalInsuranceHospitalizationNo,
-                    LeaveHospitalDate =DateTime.Now.ToString("yyyyMMdd"),//Convert.ToDateTime(hisSettlement.LeaveHospitalDate).ToString("yyyyMMdd"),
+                    MedicalInsuranceHospitalizationNo =residentData.MedicalInsuranceHospitalizationNo,
+                    LeaveHospitalDate =Convert.ToDateTime(hisSettlement.LeaveHospitalDate).ToString("yyyyMMdd"),
                     LeaveHospitalState = param.LeaveHospitalInpatientState,
                     Operators = userBase.UserName,
                     OrganizationCode = userData.MedicalInsuranceAccount,
@@ -1522,6 +1529,12 @@ namespace NFine.Web.Controllers
                 infoParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
                 infoParam.LeaveHospitalMainDiagnosis = diagnosisData.DiagnosisDescribe;
                 var data = _workerMedicalInsuranceService.WorkerHospitalizationSettlement(infoParam);
+                //结算后保存信息
+                var saveParam = AutoMapper.Mapper.Map<SaveInpatientSettlementParam>(hisSettlement);
+                saveParam.Id = (Guid)inpatientInfoData.Id;
+                saveParam.User = userBase;
+                saveParam.LeaveHospitalDiagnosisJson = JsonConvert.SerializeObject(hisSettlement.DiagnosisList);
+                _hisSqlRepository.SaveInpatientSettlement(saveParam);
                 y.Data = data;
                 
 
