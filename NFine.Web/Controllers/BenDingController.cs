@@ -1161,6 +1161,7 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
                 var outpatient = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam() { BusinessId = param.BusinessId });
                 if (outpatient != null)
                 {
@@ -1173,7 +1174,7 @@ namespace NFine.Web.Controllers
                     }
                     //医保登录
                     _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                    var documentNo = JsonConvert.DeserializeObject<OutpatientDepartmentCostInputDto>(outpatient.ReturnJson).DocumentNo;
+                    var documentNo = JsonConvert.DeserializeObject<OutpatientDepartmentCostInputDto>(outpatient.ReturnJson);
                     _outpatientDepartmentRepository.CancelOutpatientDepartmentCost(new CancelOutpatientDepartmentCostParam()
                     {
                         User = userBase,
@@ -1181,7 +1182,7 @@ namespace NFine.Web.Controllers
                         BusinessId = param.BusinessId,
                         Participation = new CancelOutpatientDepartmentCostParticipationParam()
                         {
-                            DocumentNo = documentNo,
+                            DocumentNo = documentNo.DocumentNo,
                         }
                     });
                 }

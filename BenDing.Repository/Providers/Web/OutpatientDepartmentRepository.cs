@@ -77,12 +77,14 @@ namespace BenDing.Repository.Providers.Web
                         {
                             var transactionId = param.User.TransKey;
                             //写入日志
+                         
                             _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
                             {
                                 RelationId = param.Id,
                                 JoinOrOldJson = JsonConvert.SerializeObject(param.Participation),
                                 ReturnOrNewJson = JsonConvert.SerializeObject(data),
-                                Remark = "[R][OutpatientDepartment]门诊病人结算取消"
+                                Remark = "[R][OutpatientDepartment]门诊病人结算取消",
+                                User= param.User,
                             });
                             //回参构建
                             var xmlData = new OutpatientDepartmentCostCancelXml()
