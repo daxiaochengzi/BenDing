@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.UI;
 
 namespace NFine.Web.Controllers
@@ -38,10 +39,11 @@ namespace NFine.Web.Controllers
         /// <param name="bid"></param>
         /// <param name="empid"></param>
         /// <returns></returns>
-        public ActionResult AdmissionRegistration(string bid, string empid)
+        public ActionResult AdmissionRegistration(GetHisBaseParam param)
         {
-            ViewBag.bid = bid;
-            ViewBag.empid = empid;
+            ViewBag.empid = param.EmpId;
+            ViewBag.bid = param.BId;
+            ViewBag.transkey = param.TransKey;
             ViewBag.title = "医保入院登记";
             return View();
         }
@@ -49,13 +51,14 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 修改医保登记
         /// </summary>
-        /// <param name="bid"></param>
-        /// <param name="empid"></param>
+        /// <param name="param"></param>
+
         /// <returns></returns>
-        public ActionResult AdmissionRegistrationUpdate(string bid, string empid)
+        public ActionResult AdmissionRegistrationUpdate(GetHisBaseParam param)
         {
-            ViewBag.bid = bid;
-            ViewBag.empid = empid;
+            ViewBag.empid = param.EmpId;
+            ViewBag.bid = param.BId;
+            ViewBag.transkey = param.TransKey;
             ViewBag.title = "修改医保登记";
             return View();
         }
@@ -64,13 +67,14 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 医保生育住院登记
         /// </summary>
-        /// <param name="bid"></param>
-        /// <param name="empid"></param>
+        /// <param name="param"></param>
+        
         /// <returns></returns>
-        public ActionResult AdmissionBirthRegistration(string bid, string empid)
+        public ActionResult AdmissionBirthRegistration(GetHisBaseParam param)
         {
-            ViewBag.bid = bid;
-            ViewBag.empid = empid;
+            ViewBag.empid = param.EmpId;
+            ViewBag.bid = param.BId;
+            ViewBag.transkey = param.TransKey;
             ViewBag.title = "医保生育住院登记";
             return View();
         }
@@ -89,13 +93,13 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 住院清单上传,2.2.4.	处方项目传输
         /// </summary>
-        /// <param name="bid">业务ID</param>
-        /// <param name="empid">用户ID</param>
+        /// <param name="param"></param>
         /// <returns></returns>
-        public ActionResult HospitalizationExpensesManagement(string bid, string empid)
+        public ActionResult HospitalizationExpensesManagement(GetHisBaseParam param)
         {
-            ViewBag.empid = empid;
-            ViewBag.bid = bid;
+            ViewBag.empid = param.EmpId;
+            ViewBag.bid = param.BId;
+            ViewBag.transkey = param.TransKey;
             ViewBag.title = "住院清单上传";
             return View();
         }
@@ -103,13 +107,14 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 住院清单撤销
         /// </summary>
-        /// <param name="bid">用户ID</param>
-        /// <param name="empid">业务ID</param>
+        /// <param name="param"></param>
+
         /// <returns></returns>
-        public ActionResult HospitalizationExpensesManagementReceive(string bid, string empid)
+        public ActionResult HospitalizationExpensesManagementReceive(GetHisBaseParam param)
         {
-            ViewBag.empid = empid;
-            ViewBag.bid = bid;
+            ViewBag.empid = param.EmpId;
+            ViewBag.bid = param.BId;
+            ViewBag.transkey = param.TransKey;
             ViewBag.title = "住院清单撤销";
             return View();
         }
@@ -135,13 +140,14 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 住院预结算
         /// </summary>
-        /// <param name="bid">用户ID</param>
-        /// <param name="empid">业务ID</param>
+        /// <param name="param"></param>
+   
         /// <returns></returns>
-        public ActionResult HospitalPreSettle(string bid, string empid)
+        public ActionResult HospitalPreSettle(GetHisBaseParam param)
         {
-            ViewBag.empid = empid;
-            ViewBag.bid = bid;
+            ViewBag.empid = param.EmpId;
+            ViewBag.bid = param.BId;
+            ViewBag.transkey = param.TransKey;
             ViewBag.title = "住院预结算";
             return View();
         }
@@ -150,13 +156,14 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 住院结算
         /// </summary>
-        /// <param name="bid">用户ID</param>
-        /// <param name="empid">业务ID</param>
+        /// <param name="param"></param>
+
         /// <returns></returns>
-        public ActionResult LeaveHospitalSettlement(string bid, string empid)
+        public ActionResult LeaveHospitalSettlement(GetHisBaseParam param)
         {
-            ViewBag.empid = empid;
-            ViewBag.bid = bid;
+            ViewBag.empid = param.EmpId;
+            ViewBag.bid = param.BId;
+            ViewBag.transkey = param.TransKey;
             ViewBag.title = "住院结算";
             return View();
         }
@@ -164,13 +171,14 @@ namespace NFine.Web.Controllers
         /// <summary>
         /// 住院取消结算
         /// </summary>
-        /// <param name="bid">用户ID</param>
-        /// <param name="empid">业务ID</param>
+        /// <param name="param"></param>
+
         /// <returns></returns>
-        public ActionResult LeaveHospitalSettlementCancel(string bid, string empid)
+        public ActionResult LeaveHospitalSettlementCancel(GetHisBaseParam param)
         {
-            ViewBag.empid = empid;
-            ViewBag.bid = bid;
+            ViewBag.empid = param.EmpId;
+            ViewBag.bid = param.BId;
+            ViewBag.transkey = param.TransKey;
             ViewBag.title = "住院取消结算";
             return View();
         }

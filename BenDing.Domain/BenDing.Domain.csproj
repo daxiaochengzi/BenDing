@@ -127,6 +127,7 @@
     <Compile Include="Models\Params\Base\BaseUiBusinessIdDataParam.cs" />
     <Compile Include="Models\Params\Base\BaseUiIniParam.cs" />
     <Compile Include="Models\Params\Base\DatabaseParam.cs" />
+    <Compile Include="Models\Params\Base\GetHisBaseParam.cs" />
     <Compile Include="Models\Params\Base\UiBaseDataParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\CancelMonthlyHospitalizationParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\CancelOutpatientDepartmentCostParam.cs" />
