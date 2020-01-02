@@ -220,7 +220,7 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public BaseOutpatientInfoDto GetOutpatientPerson(GetOutpatientPersonParam param)
         {
-            var resultData = new BaseOutpatientInfoDto();
+            BaseOutpatientInfoDto resultData =null;
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.UiParam.BusinessId;
             xmlData.HealthInsuranceNo = "48";
@@ -234,7 +234,6 @@ namespace BenDing.Service.Providers
             var dataValueFirst = dataValue.OutpatientPersonBase;
             if (dataValueFirst != null)
             {
-
                 resultData = AutoMapper.Mapper.Map<BaseOutpatientInfoDto>(dataValueFirst);
                 resultData.Id = param.Id;
                 resultData.ReturnJson = param.ReturnJson;
@@ -243,9 +242,9 @@ namespace BenDing.Service.Providers
                 {
                     _hisSqlRepository.SaveOutpatient(param.User, resultData);
                 }
-                return resultData;
+               
             }
-            return null;
+            return resultData;
 
             //result = GetResultData(init, data);
             //if (result.Any())
@@ -276,7 +275,7 @@ namespace BenDing.Service.Providers
 
             //}
 
-           
+
         }
 
         /// <summary>

@@ -81,7 +81,7 @@ namespace BenDing.Repository.Providers.Web
 
                         }
                     }
-                   
+
                     var data = sqlConnection.Execute(strSql);
                     sqlConnection.Close();
                     return data;
@@ -106,36 +106,44 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                sqlConnection.Open();
-                string insertSql;
-                if (param.MedicalInsuranceState == MedicalInsuranceState.HisHospitalized)
+                string strSql = null;
+                try
                 {
-                    insertSql = $@"update [dbo].[MedicalInsurance] set 
+                    sqlConnection.Open();
+                    if (param.MedicalInsuranceState == MedicalInsuranceState.HisHospitalized)
+                    {
+                        strSql = $@"update [dbo].[MedicalInsurance] set 
                     MedicalInsuranceState={(int)param.MedicalInsuranceState}
                     where [Id]='{param.Id}'";
-                }
-                else if (param.IsModify)
-                {
-                  
-                        insertSql = $@"update [dbo].[MedicalInsurance] set 
+                    }
+                    else if (param.IsModify)
+                    {
+
+                        strSql = $@"update [dbo].[MedicalInsurance] set 
                         AdmissionInfoJson='{param.AdmissionInfoJson}'
                         where [Id]='{param.Id}' and OrganizationCode='{user.OrganizationCode}'";
-            
-                }
-                else
-                {
-                    insertSql = $@"INSERT INTO [dbo].[MedicalInsurance]([Id],[BusinessId],[InsuranceNo],[MedicalInsuranceAllAmount]
+
+                    }
+                    else
+                    {
+                        strSql = $@"INSERT INTO [dbo].[MedicalInsurance]([Id],[BusinessId],[InsuranceNo],[MedicalInsuranceAllAmount]
                                ,[AdmissionInfoJson],[ReimbursementExpensesAmount] ,[SelfPayFeeAmount],[OtherInfo],[MedicalInsuranceHospitalizationNo]
 		                       ,[CreateTime],[IsDelete] ,OrganizationCode,CreateUserId,OrganizationName,InsuranceType,MedicalInsuranceState)
                            VALUES('{param.Id}','{param.BusinessId}','{param.InsuranceNo}', 0,
                                  '{param.AdmissionInfoJson}',0,0,NULL,'{param.MedicalInsuranceHospitalizationNo}',
                                  GETDATE(),0,'{user.OrganizationCode}','{user.UserId}','{user.OrganizationName }',{param.InsuranceType},{(int)param.MedicalInsuranceState});";
-                    insertSql = $"update [dbo].[MedicalInsurance] set [IsDelete]=1,DeleteUserId='{user.UserId}',DeleteTime=GETDATE() where [BusinessId]='{param.BusinessId}';" + insertSql;
+                        strSql = $"update [dbo].[MedicalInsurance] set [IsDelete]=1,DeleteUserId='{user.UserId}',DeleteTime=GETDATE() where [BusinessId]='{param.BusinessId}';" + strSql;
 
+                    }
+
+                    sqlConnection.Execute(strSql);
                 }
-                //var log = LogFactory.GetLogger("ini".GetType().ToString());
-                //log.Debug(insertSql);
-                sqlConnection.Execute(insertSql);
+                catch (Exception e)
+                {
+                    _log.Debug(strSql);
+                    throw new Exception(e.Message);
+                }
+
 
             }
         }
@@ -411,7 +419,7 @@ namespace BenDing.Repository.Providers.Web
                     if (param.DirectoryCodeList.Any())
                     {
                         var updateId = CommonHelp.ListToStr(param.DirectoryCodeList);
-                         sqlStr = $@"
+                        sqlStr = $@"
                             select a.FixedEncoding,a.DirectoryCode,b.ProjectCode,b.ProjectCodeType,
                             b.ProjectName,b.ProjectLevel,b.Formulation,b.Specification,b.Unit,a.DirectoryCategoryCode,
                             b.OneBlock,b.TwoBlock,b.ThreeBlock,b.FourBlock,b.Manufacturer,b.LimitPaymentScope,b.NewCodeMark,
@@ -420,7 +428,7 @@ namespace BenDing.Repository.Providers.Web
                             inner join [dbo].[MedicalInsuranceProject] as b on b.ProjectCode=a.ProjectCode
                             where a.OrganizationCode='{param.OrganizationCode}' and a.[DirectoryCode] in({updateId})
                              and a.IsDelete=0  and b.IsDelete=0 and b.EffectiveSign=1";
-                         resultData = sqlConnection.Query<QueryMedicalInsurancePairCodeDto>(sqlStr).ToList();
+                        resultData = sqlConnection.Query<QueryMedicalInsurancePairCodeDto>(sqlStr).ToList();
                         sqlConnection.Close();
                     }
                     return resultData;
@@ -430,7 +438,7 @@ namespace BenDing.Repository.Providers.Web
                     _log.Debug(sqlStr);
                     throw new Exception(e.Message);
                 }
-              
+
             }
         }
         /// <summary>
@@ -514,7 +522,7 @@ namespace BenDing.Repository.Providers.Web
                         querySql += whereSql + " order by a.CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " +
                                     param.Limit + " ROWS ONLY;";
                     }
-                      executeSql = countSql + whereSql + ";" + querySql;
+                    executeSql = countSql + whereSql + ";" + querySql;
                     var result = sqlConnection.QueryMultiple(executeSql);
 
                     int totalPageCount = result.Read<int>().FirstOrDefault();
@@ -560,11 +568,11 @@ namespace BenDing.Repository.Providers.Web
                 }
             }
         }
-      /// <summary>
-      /// 
-      /// </summary>
-      /// <param name="param"></param>
-      /// <returns></returns>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public List<QueryThreeCataloguePairCodeUploadDto> ThreeCataloguePairCodeUpload(UpdateThreeCataloguePairCodeUploadParam param)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -626,7 +634,7 @@ namespace BenDing.Repository.Providers.Web
                         querySql = $@"update [dbo].[ThreeCataloguePairCode] set UploadState=1 where 
                                  UploadState=0 and OrganizationCode='{param.User.OrganizationCode}' and IsDelete=0";
                     }
-                   var resultData = sqlConnection.Execute(querySql);
+                    var resultData = sqlConnection.Execute(querySql);
                     sqlConnection.Close();
                     return resultData;
                 }
@@ -681,11 +689,11 @@ namespace BenDing.Repository.Providers.Web
                     _log.Debug(querySql);
                     throw new Exception(e.Message);
                 }
-             
+
 
             }
 
-         
+
         }
         public string FilteSqlStr(string str)
         {

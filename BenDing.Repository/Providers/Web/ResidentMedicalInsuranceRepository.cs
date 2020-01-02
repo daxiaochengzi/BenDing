@@ -68,7 +68,7 @@ namespace BenDing.Repository.Providers.Web
         public ResidentUserInfoDto GetUserInfo(ResidentUserInfoParam param)
         {
 
-            var resulData = new ResidentUserInfoDto();
+            ResidentUserInfoDto resulData = null;
 
             var xmlStr = XmlHelp.SaveXml(param);
             if (xmlStr)
