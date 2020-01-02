@@ -216,14 +216,11 @@ namespace BenDing.Service.Providers
         /// <summary>
         /// 获取门诊病人
         /// </summary>
-        /// <param name="user"></param>
         /// <param name="param"></param>
-        /// <param name="isSave"></param>
         /// <returns></returns>
         public BaseOutpatientInfoDto GetOutpatientPerson(GetOutpatientPersonParam param)
         {
             var resultData = new BaseOutpatientInfoDto();
-            List<OutpatientInfoJsonDto> result;
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.UiParam.BusinessId;
             xmlData.HealthInsuranceNo = "48";
@@ -246,7 +243,9 @@ namespace BenDing.Service.Providers
                 {
                     _hisSqlRepository.SaveOutpatient(param.User, resultData);
                 }
+                return resultData;
             }
+            return null;
 
             //result = GetResultData(init, data);
             //if (result.Any())
@@ -277,7 +276,7 @@ namespace BenDing.Service.Providers
 
             //}
 
-            return resultData;
+           
         }
 
         /// <summary>
