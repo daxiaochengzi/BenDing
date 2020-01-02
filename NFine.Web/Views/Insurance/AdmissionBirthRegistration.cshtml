@@ -23,6 +23,8 @@
         <form class="layui-form" id="LAY-form" lay-filter="LAY-form-render">
             <input type="hidden" id="bid" name="BusinessId" value="@ViewBag.bid" placeholder="业务ID" />
             <input type="hidden" id="empid" name="UserId" value="@ViewBag.empid" placeholder="用户ID" />
+            <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
+            
             <div class="layui-card-header layuibd-card-header-auto">
                 <!--搜索部分-->
                 <div class="layui-form-item">
@@ -235,13 +237,21 @@
 
         /**根据当前住院病人的业务ID查询,返回数据回显到下面表单里面*/
         form.on('submit(LAY-form-search)', function (data) {
+
+            //var params = {
+            //    "IdCardNo": $("#IdCardNo").val() /*身份证号*/
+            //    , "StartTime": $("#date1").val() /*查询开始日期，必传*/
+            //    , "IdentityMark": $("#IdentityMark").val() /*身份标志，1:身份证,2:医保个人编码*/
+            //    , "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
+            //    , "UserId": $("#empid").val() /*授权操作人的ID*/
+            //}
+
             var params = {
-                "IdCardNo": $("#IdCardNo").val() /*身份证号*/
-                , "StartTime": $("#date1").val() /*查询开始日期，必传*/
-                , "IdentityMark": $("#IdentityMark").val() /*身份标志，1:身份证,2:医保个人编码*/
+                  "TransKey": $("#transkey").val() /*医保交易码*/
                 , "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
                 , "UserId": $("#empid").val() /*授权操作人的ID*/
             }
+
             $.ajax({
                 type: 'POST',
                 url: host +'/GetInpatientInfo',
@@ -423,15 +433,19 @@
                 field.AfferentSign = field.PersonalCoding
             }
             //科室ID
-            field.InpatientDepartmentCode = field.InDepartmentId
+            //field.InpatientDepartmentCode = field.InDepartmentId
             //床位号
-            field.BedNumber = field.AdmissionBed
+            //field.BedNumber = field.AdmissionBed
             //经办人
-            field.Operators = field.UserId
-            //业务ID
-            field.BusinessId = field.BusinessId
+            //field.Operators = field.UserId
             //获取入院病人查询开始时间
-            field.StartTime = field.AdmissionDate
+            //field.StartTime = field.AdmissionDate
+            //业务ID
+            field.BusinessId = field.BusinessId;
+            //医保交易码
+            field.TransKey = $("#transkey").val();
+            //授权操作人的ID
+            field.UserId = $("#empid").val();
             //诊断列表
             var dataTable1 = table.cache[layTableId];
 

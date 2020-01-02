@@ -276,7 +276,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData GetInpatientInfo([FromBody]InpatientInfoUiParam param)
+        public ApiJsonResultData GetInpatientInfo([FromBody]UiBaseDataParam param)
         {
             return new ApiJsonResultData(ModelState, new ResidentUserInfoDto()).RunWithTry(y =>
            {
@@ -285,25 +285,26 @@ namespace NFine.Web.Controllers
                {
                    User = userBase,
                    BusinessId = param.BusinessId,
-                   IsSave = true
+                   IsSave = true,
+                   TransKey= param.TransKey
                };
                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
 
-               //if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
-               //{//获取医保个人信息
-               //    _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
+               {//获取医保个人信息
+                   _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
 
-               //    var residentUserBase = _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
-               //    {
-               //        IdentityMark = "1",
-               //        InformationNumber = inpatientData.IdCardNo,
-               //    });
-               //    var data = inpatientData;
+                   var residentUserBase = _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
+                   {
+                       IdentityMark = "1",
+                       InformationNumber = inpatientData.IdCardNo,
+                   });
+                   var data = inpatientData;
 
-               //    data.MedicalInsuranceResidentInfo = residentUserBase;
-               //    y.Data = data;
+                   data.MedicalInsuranceResidentInfo = residentUserBase;
+                   y.Data = data;
 
-               //}
+               }
            });
         }
         /// <summary>
