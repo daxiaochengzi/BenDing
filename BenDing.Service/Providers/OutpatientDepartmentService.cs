@@ -54,80 +54,78 @@ namespace BenDing.Service.Providers
 
             //获取门诊病人数据
             var outpatientPerson = _webServiceBasic.GetOutpatientPerson(param);
-            outpatientPerson.IdCardNo = "511521201704210171";
-            //if (outpatientPerson != null)
-            //{
-            //    var inputParam = new OutpatientDepartmentCostInputParam()
-            //    {
-            //        AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
-            //        IdentityMark = "1",
-            //        InformationNumber = outpatientPerson.IdCardNo,
-            //        Operators = param.User.UserName
-            //    };
-            //    //医保数据写入
-            //    resultData = _outpatientDepartmentRepository.OutpatientDepartmentCostInput(inputParam);
-            //    if (resultData != null)
-            //    {
-            //        var transactionId = param.User.TransKey;
-            //        param.ReturnJson = JsonConvert.SerializeObject(resultData);
-            //        param.Id = Guid.NewGuid();
-            //        param.IsSave = true;
-            //        //中间层数据写入
-            //        _webServiceBasic.GetOutpatientPerson(param);
-            //        //日志写入
-            //        _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
-            //        {
-            //            User = param.User,
-            //            JoinOrOldJson = JsonConvert.SerializeObject(inputParam),
-            //            ReturnOrNewJson = JsonConvert.SerializeObject(resultData),
-            //            RelationId = param.Id,
-            //            Remark = "[R][OutpatientDepartment]门诊病人结算"
-            //        });
-            //        //回参构建
-            //        var xmlData = new OutpatientDepartmentCostXml()
-            //        {
+            if (outpatientPerson != null)
+            {
+                var inputParam = new OutpatientDepartmentCostInputParam()
+                {
+                    AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
+                    IdentityMark = "1",
+                    InformationNumber = outpatientPerson.IdCardNo,
+                    Operators = param.User.UserName
+                };
+                //医保数据写入
+                resultData = _outpatientDepartmentRepository.OutpatientDepartmentCostInput(inputParam);
+                if (resultData != null)
+                {
+                    var transactionId = param.User.TransKey;
+                    param.ReturnJson = JsonConvert.SerializeObject(resultData);
+                    param.Id = Guid.NewGuid();
+                    param.IsSave = true;
+                    //中间层数据写入
+                    _webServiceBasic.GetOutpatientPerson(param);
+                    //日志写入
+                    _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
+                    {
+                        User = param.User,
+                        JoinOrOldJson = JsonConvert.SerializeObject(inputParam),
+                        ReturnOrNewJson = JsonConvert.SerializeObject(resultData),
+                        RelationId = param.Id,
+                        Remark = "[R][OutpatientDepartment]门诊病人结算"
+                    });
+                    //获取病人的基础信息
+                    var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
+                    {
+                        IdentityMark = "1",
+                        InformationNumber = outpatientPerson.IdCardNo,
+                    });
+                    //回参构建
+                    var xmlData = new OutpatientDepartmentCostXml()
+                    {
 
-            //            MedicalInsuranceOutpatientNo = resultData.DocumentNo,
-            //            CashPayment = resultData.SelfPayFeeAmount,
-            //            SettlementNo = resultData.DocumentNo,
-            //            AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
-            //            PatientName = outpatientPerson.PatientName,
-            //            AccountAmountPay = resultData.ReimbursementExpensesAmount,
-            //            MedicalInsuranceType="10",
+                        MedicalInsuranceOutpatientNo = resultData.DocumentNo,
+                        CashPayment = resultData.SelfPayFeeAmount,
+                        SettlementNo = resultData.DocumentNo,
+                        AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
+                        PatientName = outpatientPerson.PatientName,
+                        AccountAmountPay = resultData.ReimbursementExpensesAmount,
+                        MedicalInsuranceType= userInfoData.InsuranceType=="342"?"10" : userInfoData.InsuranceType,
+                    };
+                    //基层数据写入
+                    var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
+                    xmlData.AccountBalance = userInfoData.ResidentInsuranceBalance;
+                    xmlData.PersonalCoding = userInfoData.PersonalCoding;
+                    var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                    var saveXmlData = new SaveXmlData();
+                    saveXmlData.OrganizationCode = param.User.OrganizationCode;
+                    saveXmlData.AuthCode = param.User.AuthCode;
+                    saveXmlData.BusinessId = param.UiParam.BusinessId;
+                    saveXmlData.TransactionId = transactionId;
+                    saveXmlData.MedicalInsuranceBackNum = "TPYP301";
+                    saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam );
+                    saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
+                    saveXmlData.MedicalInsuranceCode = "48";
+                    saveXmlData.UserId = param.User.UserId;
+                    //存基层
+                     _webBasicRepository.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                    //更新中间层确认基层写入成功
+                    _hisSqlRepository.UpdateOutpatient(param.User, new UpdateOutpatientParam()
+                    {
+                        Id = param.Id,
+                        SettlementTransactionId = transactionId
+                    });
 
-            //        };
-            //        //基层数据写入
-            //        var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
-            //        //获取病人的基础信息
-            //        var userInfoData= _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
-            //        {
-            //            IdentityMark = "1",
-            //            InformationNumber = outpatientPerson.IdCardNo,
-            //        });
-            //        xmlData.AccountBalance = userInfoData.ResidentInsuranceBalance;
-            //        xmlData.PersonalCoding = userInfoData.PersonalCoding;
-            //        var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-            //        var saveXmlData = new SaveXmlData();
-            //        saveXmlData.OrganizationCode = param.User.OrganizationCode;
-            //        saveXmlData.AuthCode = param.User.AuthCode;
-            //        saveXmlData.BusinessId = param.UiParam.BusinessId;
-            //        saveXmlData.TransactionId = transactionId;
-            //        saveXmlData.MedicalInsuranceBackNum = "TPYP301";
-            //        saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam );
-            //        saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
-            //        saveXmlData.MedicalInsuranceCode = "48";
-            //        saveXmlData.UserId = param.User.UserId;
-            //        //存基层
-            //         _webBasicRepository.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
-            //        //更新中间层确认基层写入成功
-            //        _hisSqlRepository.UpdateOutpatient(param.User, new UpdateOutpatientParam()
-            //        {
-            //            Id = param.Id,
-            //            SettlementTransactionId = transactionId
-            //        });
-
-            //    }
-            //}
+                }
+            }
 
 
             return resultData;
