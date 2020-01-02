@@ -689,7 +689,7 @@ namespace NFine.Web.Controllers
                     {  //医保登录
                         _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                         iniParam.IdentityMark = param.IdentityMark;
-                        iniParam.AfferentSign = param.AfferentSign;
+                        iniParam.AfferentSign = param.IdentityMark=="1"?inpatientData.IdCardNo: param.AfferentSign;
                         iniParam.MedicalCategory = param.MedicalCategory;
                         iniParam.FetusNumber = param.FetusNumber;
                         iniParam.HouseholdNature = param.HouseholdNature;
