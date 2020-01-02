@@ -75,8 +75,7 @@ namespace BenDing.Repository.Providers.Web
                     {
                         if (data.ReturnState =="1")
                         {
-                            if (data.Msg.Contains("失败"))
-                            {
+                           
                                 var transactionId = param.User.TransKey;
                                 //写入日志
                                 _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
@@ -114,12 +113,9 @@ namespace BenDing.Repository.Providers.Web
                                     SettlementCancelTransactionId = transactionId
                                 });
                             }
-                            else
-                            {
-                                throw  new  Exception(data.Msg);
-                            }
+                           
                           
-                        }
+                        
                     }
                     
 
