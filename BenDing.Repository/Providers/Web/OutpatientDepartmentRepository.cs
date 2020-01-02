@@ -75,7 +75,7 @@ namespace BenDing.Repository.Providers.Web
                     {
                         if (data.ReturnState =="1")
                         {
-                            if (!data.Msg.Contains("失败"))
+                            if (data.Msg.Contains("失败"))
                             {
                                 var transactionId = param.User.TransKey;
                                 //写入日志
@@ -84,7 +84,8 @@ namespace BenDing.Repository.Providers.Web
                                     RelationId = param.Id,
                                     JoinOrOldJson = JsonConvert.SerializeObject(param.Participation),
                                     ReturnOrNewJson = JsonConvert.SerializeObject(data),
-                                    Remark = "[R][OutpatientDepartment]门诊病人结算取消"
+                                    Remark = "[R][OutpatientDepartment]门诊病人结算取消",
+                                    User= param.User,
                                 });
                                 //回参构建
                                 var xmlData = new OutpatientDepartmentCostCancelXml()
