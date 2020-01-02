@@ -26,6 +26,11 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         [JsonProperty(PropertyName = "病人姓名")]
         public string PatientName { get; set; }
         /// <summary>
+        /// 身份证号
+        /// </summary>
+        [JsonProperty(PropertyName = "身份证")]
+        public  string IdCardNo { get; set; }
+        /// <summary>
         /// 医生姓名
         /// </summary>
         [JsonProperty(PropertyName = "医生姓名")]

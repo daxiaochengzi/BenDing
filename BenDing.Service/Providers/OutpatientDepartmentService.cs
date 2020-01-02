@@ -54,7 +54,6 @@ namespace BenDing.Service.Providers
 
             //获取门诊病人数据
             var outpatientPerson = _webServiceBasic.GetOutpatientPerson(param);
-            outpatientPerson.IdCardNo = "511521201704210171";
             if (outpatientPerson != null)
             {
                 var inputParam = new OutpatientDepartmentCostInputParam()
@@ -83,6 +82,12 @@ namespace BenDing.Service.Providers
                         RelationId = param.Id,
                         Remark = "[R][OutpatientDepartment]门诊病人结算"
                     });
+                    //获取病人的基础信息
+                    var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
+                    {
+                        IdentityMark = "1",
+                        InformationNumber = outpatientPerson.IdCardNo,
+                    });
                     //回参构建
                     var xmlData = new OutpatientDepartmentCostXml()
                     {
@@ -93,17 +98,10 @@ namespace BenDing.Service.Providers
                         AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
                         PatientName = outpatientPerson.PatientName,
                         AccountAmountPay = resultData.ReimbursementExpensesAmount,
-                        MedicalInsuranceType="10",
-
+                        MedicalInsuranceType= userInfoData.InsuranceType=="342"?"10" : userInfoData.InsuranceType,
                     };
                     //基层数据写入
                     var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
-                    //获取病人的基础信息
-                    var userInfoData= _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
-                    {
-                        IdentityMark = "1",
-                        InformationNumber = outpatientPerson.IdCardNo,
-                    });
                     xmlData.AccountBalance = userInfoData.ResidentInsuranceBalance;
                     xmlData.PersonalCoding = userInfoData.PersonalCoding;
                     var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
