@@ -94,7 +94,7 @@ namespace BenDing.Repository.Providers.Web
 
             var paramIni = param;
 
-            var xmlStr = true;// XmlHelp.SaveXml(paramIni);
+            var xmlStr =  XmlHelp.SaveXml(paramIni);
             if (xmlStr)
             {
                 int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
@@ -443,7 +443,7 @@ namespace BenDing.Repository.Providers.Web
                     saveXmlData.MedicalInsuranceCode = "41";
                     saveXmlData.UserId = infoParam.User.UserId;
                     //存基层
-                    //_webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                    _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
                     //更新中间层
                     updateParam.IsHisUpdateState = true;
                     updateParam.MedicalInsuranceState = MedicalInsuranceState.HisSettlement;
@@ -757,7 +757,7 @@ namespace BenDing.Repository.Providers.Web
             var xmlStr = XmlHelp.SaveXml(param);
             if (xmlStr)
             {
-                int result = 1; //MedicalInsuranceDll.CallService_cxjb("CXJB005");
+                int result = MedicalInsuranceDll.CallService_cxjb("CXJB005");
                 if (result == 1)
                 {
                     XmlHelp.DeSerializerModel(new IniDto(), true);

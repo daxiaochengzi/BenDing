@@ -52,7 +52,6 @@ namespace NFine.Web.Controllers
         /// 修改医保登记
         /// </summary>
         /// <param name="param"></param>
-
         /// <returns></returns>
         public ActionResult AdmissionRegistrationUpdate(GetHisBaseParam param)
         {
@@ -68,7 +67,6 @@ namespace NFine.Web.Controllers
         /// 医保生育住院登记
         /// </summary>
         /// <param name="param"></param>
-        
         /// <returns></returns>
         public ActionResult AdmissionBirthRegistration(GetHisBaseParam param)
         {
@@ -108,7 +106,6 @@ namespace NFine.Web.Controllers
         /// 住院清单撤销
         /// </summary>
         /// <param name="param"></param>
-
         /// <returns></returns>
         public ActionResult HospitalizationExpensesManagementReceive(GetHisBaseParam param)
         {
@@ -141,7 +138,7 @@ namespace NFine.Web.Controllers
         /// 住院预结算
         /// </summary>
         /// <param name="param"></param>
-   
+
         /// <returns></returns>
         public ActionResult HospitalPreSettle(GetHisBaseParam param)
         {
@@ -157,7 +154,6 @@ namespace NFine.Web.Controllers
         /// 住院结算
         /// </summary>
         /// <param name="param"></param>
-
         /// <returns></returns>
         public ActionResult LeaveHospitalSettlement(GetHisBaseParam param)
         {
@@ -172,7 +168,6 @@ namespace NFine.Web.Controllers
         /// 住院取消结算
         /// </summary>
         /// <param name="param"></param>
-
         /// <returns></returns>
         public ActionResult LeaveHospitalSettlementCancel(GetHisBaseParam param)
         {
