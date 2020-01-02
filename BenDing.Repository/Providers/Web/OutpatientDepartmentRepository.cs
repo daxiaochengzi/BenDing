@@ -40,7 +40,7 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         public OutpatientDepartmentCostInputDto OutpatientDepartmentCostInput(OutpatientDepartmentCostInputParam param)
         {
-            var resultData = new OutpatientDepartmentCostInputDto();
+            OutpatientDepartmentCostInputDto resultData = null;
 
             var xmlStr = XmlHelp.SaveXml(param);
             if (xmlStr)
