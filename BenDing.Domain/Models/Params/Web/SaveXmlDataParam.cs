@@ -4,28 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.Base;
 
 namespace BenDing.Domain.Models.Params.Web
 {/// <summary>
  /// 医保信息回写至基层系统
  /// </summary>
-    public class SaveXmlDataParam
+    public class SaveXmlDataParam: UserBaseParam
     {
         /// <summary>
-        /// 用户
+        /// 业务id
         /// </summary>
-        public UserInfoDto User { get; set; }
-        /// <summary>
-        /// his唯一交易码
-        /// </summary>
-        public string TransactionId { get; set; }
+        public  string BusinessId { get; set; }
         /// <summary>
         /// 医保交易码
         /// </summary>
         public  string MedicalInsuranceCode { get; set; }
         /// <summary>
-        /// 业务id
+        /// 医保返回编码
         /// </summary>
-        public  string BusinessId { get; set; }
+        public  string MedicalInsuranceBackNum { get; set; }
+        /// <summary>
+        /// 返回参数
+        /// </summary>
+        public  string BackParam { get; set; }
+
     }
 }

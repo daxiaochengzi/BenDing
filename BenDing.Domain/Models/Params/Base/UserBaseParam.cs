@@ -9,9 +9,10 @@ namespace BenDing.Domain.Models.Params.Base
 {
     public class UserBaseParam
     {/// <summary>
-    /// 用户信息
-    /// </summary>
+     /// 用户信息
+     /// </summary>
         public UserInfoDto User { get; set; }
+  
     }
 
 }

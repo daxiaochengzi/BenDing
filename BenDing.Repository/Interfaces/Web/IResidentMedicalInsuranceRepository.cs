@@ -20,7 +20,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// 入院登记
         /// </summary>
         /// <returns></returns>
-        void HospitalizationRegister(ResidentHospitalizationRegisterParam param, UserInfoDto user);
+        ResidentHospitalizationRegisterDto HospitalizationRegister(ResidentHospitalizationRegisterParam param);
         /// <summary>
         /// 项目下载
         /// </summary>

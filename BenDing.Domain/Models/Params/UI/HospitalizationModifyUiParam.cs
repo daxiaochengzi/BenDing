@@ -38,28 +38,7 @@ namespace BenDing.Domain.Models.Params.UI
         [XmlElement("PI_RYRQ", IsNullable = false)]
 
         public string AdmissionDate { get; set; }
-        ///// <summary>
-        ///// 入院主要诊断疾病ICD-10编码
-        ///// </summary>
-        //[XmlElement("PI_ICD10", IsNullable = false)]
-
-        //public string AdmissionMainDiagnosisIcd10 { get; set; }
-        ///// <summary>
-        ///// 入院诊断疾病ICD-10编码
-        ///// </summary>
-        //[XmlElement("PI_ICD10_2", IsNullable = false)]
-        //public string DiagnosisIcd10Two { get; set; }
-        ///// <summary>
-        ///// 入院诊断疾病ICD-10编码three
-        ///// </summary>
-        //[XmlElement("PI_ICD10_3", IsNullable = false)]
-        //public string DiagnosisIcd10Three { get; set; }
-        ///// <summary>
-        ///// 入院诊断疾病名称
-        ///// </summary>
-        //[XmlElement("PI_RYZD", IsNullable = false)]
-
-        //public string AdmissionMainDiagnosis { get; set; }
+       
         /// <summary>
         /// 住院科室编号 
         /// </summary>

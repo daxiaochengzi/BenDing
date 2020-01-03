@@ -314,7 +314,7 @@ namespace BenDing.Service.Providers
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.BusinessId;
             xmlData.HealthInsuranceNo = "21";
-            xmlData.TransactionId = param.TransKey;
+            xmlData.TransactionId = param.User.TransKey;
             xmlData.AuthCode = param.User.AuthCode;
             xmlData.UserId = param.User.UserId;
             xmlData.OrganizationCode = param.User.OrganizationCode;
@@ -576,31 +576,24 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public void SaveXmlData(SaveXmlData param)
+        public void SaveXmlData(SaveXmlDataParam param)
         {
-
-
-            //var data = _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(param));
-            //if (data.Result == "1")
-            //{
-            //    var saveParam = new MedicalInsuranceDataAllParam()
-            //    {
-            //        DataAllId = Guid.NewGuid().ToString("N"),
-            //        BusinessId = param.业务ID,
-            //        CreateUserId = param.操作人员ID,
-            //        DataId = param.发起交易的动作ID,
-            //        DataType = param.医保交易码,
-            //        OrgCode = param.机构ID,
-            //        ParticipationJson = param.入参,
-            //        ResultDataJson = param.出参,
-            //        HisMedicalInsuranceId = param.发起交易的动作ID,
-            //        Remark = param.Remark,
-            //        IdCard = param.IDCard,
-
-            //    };
-            //     _hisSqlRepository.SaveMedicalInsuranceDataAll(saveParam);
-            //}
-
+            //更新医保信息
+            var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
+            var xmlParam =new SaveXmlData()
+            {
+                OrganizationCode = param.User.OrganizationCode,
+                AuthCode = param.User.AuthCode,
+                BusinessId = param.BusinessId,
+                TransactionId = param.User.TransKey,
+                MedicalInsuranceBackNum = param.MedicalInsuranceBackNum,
+                BackParam = CommonHelp.EncodeBase64("utf-8", param.BackParam),
+                IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam),
+                MedicalInsuranceCode = param.MedicalInsuranceCode,
+                UserId = param.User.UserId,
+           };
+            //存基层
+            _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(xmlParam));
 
         }
 

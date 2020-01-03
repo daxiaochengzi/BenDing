@@ -106,7 +106,7 @@ namespace BenDing.Domain.Models.Params.Resident
         //[Required(ErrorMessage = "{0}不能为空!!!")]
         public string Operators { get; set; }
         /// <summary>
-        /// 医保类型编码
+        /// 医保类型编码(310 职工,342 居民)
         /// </summary>
         [Display(Name = "医保类型编码")]
         [Required(ErrorMessage = "{0}不能为空!!!")]

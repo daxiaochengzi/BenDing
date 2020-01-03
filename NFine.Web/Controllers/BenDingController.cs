@@ -37,6 +37,7 @@ namespace NFine.Web.Controllers
         private readonly IOutpatientDepartmentRepository _outpatientDepartmentRepository;
         private readonly IWorkerMedicalInsuranceRepository _workerMedicalInsuranceRepository;
         private readonly IWorkerMedicalInsuranceService _workerMedicalInsuranceService;
+        private readonly IMedicalInsuranceService _medicalInsuranceService;
         /// <summary>
         /// 
         /// </summary>
@@ -61,7 +62,8 @@ namespace NFine.Web.Controllers
             IOutpatientDepartmentService outpatientDepartmentService,
             IOutpatientDepartmentRepository outpatientDepartmentRepository,
             IWorkerMedicalInsuranceRepository workerMedicalInsuranceRepository,
-            IWorkerMedicalInsuranceService workerMedicalInsuranceService
+            IWorkerMedicalInsuranceService workerMedicalInsuranceService,
+            IMedicalInsuranceService medicalInsuranceService
             )
         {
             _webServiceBasicService = webServiceBasicService;
@@ -75,6 +77,7 @@ namespace NFine.Web.Controllers
             _outpatientDepartmentRepository = outpatientDepartmentRepository;
             _workerMedicalInsuranceRepository = workerMedicalInsuranceRepository;
             _workerMedicalInsuranceService = workerMedicalInsuranceService;
+            _medicalInsuranceService = medicalInsuranceService;
         }
         #region 基层接口
         /// <summary>
@@ -281,12 +284,13 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new ResidentUserInfoDto()).RunWithTry(y =>
            {
                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               userBase.TransKey = param.TransKey;
                var infoData = new GetInpatientInfoParam()
                {
                    User = userBase,
                    BusinessId = param.BusinessId,
                    IsSave = true,
-                   TransKey= param.TransKey
+                 
                };
                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
 
@@ -454,12 +458,11 @@ namespace NFine.Web.Controllers
              {
                 //获取操作人员信息
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                 userBase.TransKey = param.TransKey;
                  var infoData = new GetInpatientInfoParam()
                  {
                      User = userBase,
                      BusinessId = param.BusinessId,
-                     IsSave = false,
-                     TransKey = param.TransKey
                  };
                  var hisSettlementData = _webServiceBasicService.GetHisHospitalizationSettlement(infoData);
                  y.Data = hisSettlementData;
@@ -667,48 +670,11 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-                var iniParam = new ResidentHospitalizationRegisterParam();
+               
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
                 {
-                    var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
-                    iniParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
-                    iniParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
-                    iniParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
-                    iniParam.AdmissionMainDiagnosis = diagnosisData.DiagnosisDescribe;
-                    var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                    var infoData = new GetInpatientInfoParam()
-                    {
-                        User = userBase,
-                        BusinessId = param.BusinessId,
-                        IsSave = false,
-                        TransKey = param.TransKey,
-                    };
-                    userBase.TransKey = param.TransKey;
-                    var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
-                    if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
-                    {  //医保登录
-                        _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                        iniParam.IdentityMark = param.IdentityMark;
-                        iniParam.AfferentSign = param.IdentityMark=="1"?inpatientData.IdCardNo: param.AfferentSign;
-                        iniParam.MedicalCategory = param.MedicalCategory;
-                        iniParam.FetusNumber = param.FetusNumber;
-                        iniParam.HouseholdNature = param.HouseholdNature;
-                        iniParam.AdmissionDate = Convert.ToDateTime(inpatientData.AdmissionDate).ToString("yyyyMMdd");
-                        iniParam.AdmissionMainDiagnosis = inpatientData.AdmissionMainDiagnosis.Substring(0, inpatientData.AdmissionMainDiagnosis.Length > 100 ? 100 : inpatientData.AdmissionMainDiagnosis.Length);
-                        iniParam.InpatientDepartmentCode = inpatientData.InDepartmentName;
-                        iniParam.BedNumber = inpatientData.AdmissionBed;
-                        iniParam.HospitalizationNo = inpatientData.HospitalizationNo;
-                        iniParam.Operators = inpatientData.AdmissionOperator;
-                        iniParam.InsuranceType = "342";//居民医保
-                        iniParam.BusinessId = param.BusinessId;
-                        //入院登记
-                        _residentMedicalInsurance.HospitalizationRegister(iniParam, userBase);
-                        infoData.IsSave = true;
-                        //保存病人信息
-                        _webServiceBasicService.GetInpatientInfo(infoData);
-                    }
 
-
+                    _medicalInsuranceService.HospitalizationRegister(param);
                 }
                 else
                 {
@@ -747,26 +713,7 @@ namespace NFine.Web.Controllers
                 //医保登陆
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
-                {   //主诊断
-                    //医保修改
-                    var modifyParam = new HospitalizationModifyParam()
-                    {
-                        AdmissionDate = Convert.ToDateTime(param.AdmissionDate).ToString("yyyyMMdd"),
-                        BedNumber = param.BedNumber,
-                        BusinessId = param.BusinessId,
-                        FetusNumber = param.FetusNumber,
-                        HouseholdNature = param.HouseholdNature,
-                        MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
-                        TransKey = param.TransKey,
-                        UserId = param.UserId,
-                        InpatientDepartmentCode = param.InpatientDepartmentCode,
-                        HospitalizationNo = CommonHelp.GuidToStr(param.BusinessId)
-                    };
-                    var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
-                    modifyParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
-                    modifyParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
-                    modifyParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
-                    _residentMedicalInsurance.HospitalizationModify(modifyParam, userBase);
+                {   
                 }
                 else
                 {
@@ -930,14 +877,13 @@ namespace NFine.Web.Controllers
                   BusinessId = param.BusinessId,
                   OrganizationCode = userBase.OrganizationCode
               };
+              userBase.TransKey = param.TransKey;
               var infoData = new GetInpatientInfoParam()
               {
                   User = userBase,
                   BusinessId = param.BusinessId,
-                  IsSave = false,
-                  TransKey = param.TransKey
               };
-              userBase.TransKey = param.TransKey;
+           
               //获取his预结算
               var hisPreSettlementData = _webServiceBasicService.GetHisHospitalizationPreSettlement(infoData);
               var preSettlementData = hisPreSettlementData.PreSettlementData.FirstOrDefault();
@@ -979,14 +925,13 @@ namespace NFine.Web.Controllers
                    BusinessId = param.BusinessId,
                    OrganizationCode = userBase.OrganizationCode
                };
+               userBase.TransKey = param.TransKey;
                var infoData = new GetInpatientInfoParam()
                {
                    User = userBase,
                    BusinessId = param.BusinessId,
-                   IsSave = false,
-                   TransKey = param.TransKey,
                };
-               userBase.TransKey = param.TransKey;
+              
                //获取his结算
                var hisSettlement = _webServiceBasicService.GetHisHospitalizationSettlement(infoData);
                //获取医保病人信息
@@ -1282,57 +1227,13 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData WorKerHospitalizationRegister([FromBody]WorKerHospitalizationRegisterUiParam param)
+        public ApiJsonResultData WorKerHospitalizationRegister([FromBody]ResidentHospitalizationRegisterUiParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-                var iniParam = new WorKerHospitalizationRegisterParam();
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
                 {
-                    var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
-                    iniParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
-                    iniParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
-                    iniParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
-                    var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                    var infoData = new GetInpatientInfoParam()
-                    {
-                        User = userBase,
-                        BusinessId = param.BusinessId,
-                        IsSave = false,
-                    };
-                    //获取医院等级
-                    var gradeData = _systemManage.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
-
-                    var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
-                    if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
-                    {  //医保登录
-                        _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                        iniParam.IdentityMark = param.IdentityMark;
-                        iniParam.AfferentSign = param.AfferentSign;
-                        iniParam.MedicalCategory = param.MedicalCategory;
-                        iniParam.AdmissionDate = Convert.ToDateTime(inpatientData.AdmissionDate).ToString("yyyyMMdd");
-                        iniParam.AdmissionMainDiagnosis = inpatientData.AdmissionMainDiagnosis.Substring(0, inpatientData.AdmissionMainDiagnosis.Length > 100 ? 100 : inpatientData.AdmissionMainDiagnosis.Length);
-                        iniParam.InpatientDepartmentCode = inpatientData.InDepartmentName;
-                        iniParam.BedNumber = inpatientData.AdmissionBed;
-                        iniParam.HospitalizationNo = inpatientData.HospitalizationNo;
-                        iniParam.Operators = inpatientData.AdmissionOperator;
-                        iniParam.BusinessId = param.BusinessId;
-                        iniParam.AdministrativeArea = gradeData.AdministrativeArea;
-                        iniParam.InpatientArea = inpatientData.AdmissionWard;
-                        var userData = _systemManage.QueryHospitalOperator(
-                            new QueryHospitalOperatorParam() { UserId = param.UserId });
-                        iniParam.OrganizationCode = userData.MedicalInsuranceAccount;
-                        //入院登记
-                        var data = _workerMedicalInsuranceService.WorkerHospitalizationRegister(iniParam);
-                        y.Data = data;
-                    }
-                    else
-                    {
-                        infoData.IsSave = true;
-                        //保存病人信息
-                        _webServiceBasicService.GetInpatientInfo(infoData);
-                    }
-
+                    _medicalInsuranceService.HospitalizationRegister(param);
                 }
                 else
                 {
@@ -1424,6 +1325,7 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {   //获取操作人员信息
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
                 var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
                 {
                     BusinessId = param.BusinessId,
@@ -1436,10 +1338,8 @@ namespace NFine.Web.Controllers
                 {
                     User = userBase,
                     BusinessId = param.BusinessId,
-                    IsSave = false,
-                    TransKey = param.TransKey
                 };
-                userBase.TransKey = param.TransKey;
+              
                 //获取his预结算
                 var hisPreSettlementData = _webServiceBasicService.GetHisHospitalizationPreSettlement(infoData);
                 var preSettlementData = hisPreSettlementData.PreSettlementData.FirstOrDefault();
@@ -1478,16 +1378,14 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {   //获取操作人员信息
-
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
                 var infoData = new GetInpatientInfoParam()
                 {
                     User = userBase,
                     BusinessId = param.BusinessId,
-                    IsSave = false,
-                    TransKey = param.TransKey,
                 };
-                userBase.TransKey = param.TransKey;
+               
                 //获取his结算
                 var hisSettlement= _webServiceBasicService.GetHisHospitalizationSettlement(infoData); 
                 var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
@@ -1503,7 +1401,6 @@ namespace NFine.Web.Controllers
                 //获取住院病人
                 var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
                 if (inpatientInfoData == null) throw new Exception("该病人未在中心库中,请检查是否办理医保入院!!!");
-              
                 //医保登录
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保账号

@@ -76,10 +76,7 @@ namespace BenDing.Repository.Providers.Web
                 MedicalInsuranceDll.CallService_cxjb("CXJB001");
                 var  data = XmlHelp.DeSerializerModel(new ResidentUserInfoJsonDto(), true);
                 resulData= AutoMapper.Mapper.Map<ResidentUserInfoDto>(data);
-
             }
-
-
             return resulData;
 
 
@@ -89,70 +86,16 @@ namespace BenDing.Repository.Providers.Web
         /// 入院登记
         /// </summary>
         /// <returns></returns>
-        public void HospitalizationRegister(ResidentHospitalizationRegisterParam param, UserInfoDto user)
+        public ResidentHospitalizationRegisterDto HospitalizationRegister(ResidentHospitalizationRegisterParam param)
         {
-
-            var paramIni = param;
-
-            var xmlStr =  XmlHelp.SaveXml(paramIni);
-            if (xmlStr)
-            {
-                int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
-                if (result == 1)
-                {
-                    var data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto(), true);
-                    var saveData = new MedicalInsuranceDto
-                    {
-                        AdmissionInfoJson = JsonConvert.SerializeObject(param),
-                        BusinessId = param.BusinessId,
-                        Id = Guid.NewGuid(),
-                        IsModify = false,
-                        InsuranceType =Convert.ToInt32(param.InsuranceType),
-                        MedicalInsuranceHospitalizationNo= data.MedicalInsuranceInpatientNo,
-                        MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized
-                    };
-                    //保存中间库
-                    _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
-                   
-                    //更新医保信息
-                    var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
-                    //回参构建
-                    var xmlData = new HospitalizationRegisterXml()
-                    {
-                        MedicalInsuranceType = "10",
-                        MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo,
-                    };
-                    var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-                    var saveXmlData = new SaveXmlData();
-                    saveXmlData.OrganizationCode = user.OrganizationCode;
-                    saveXmlData.AuthCode = user.AuthCode;
-                    saveXmlData.BusinessId = param.BusinessId;
-                    saveXmlData.TransactionId = user.TransKey;
-                    saveXmlData.MedicalInsuranceBackNum = "CXJB002";
-                    saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-                    saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
-                    saveXmlData.MedicalInsuranceCode = "21";
-                    saveXmlData.UserId = user.UserId;
-                    //存基层
-                    _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
-                    //更新中间库
-                    saveData.MedicalInsuranceState = MedicalInsuranceState.HisHospitalized;
-                    _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
-
-                    //日志
-                    var logParam = new AddHospitalLogParam();
-                    logParam.User = user;
-                    logParam.RelationId = saveData.Id;
-                    logParam.JoinOrOldJson = JsonConvert.SerializeObject(param);
-                    logParam.ReturnOrNewJson = JsonConvert.SerializeObject(data);
-                    logParam.Remark = "医保入院登记;TransactionId:"+ user.TransKey;
-                    _systemManageRepository.AddHospitalLog(logParam);
-                }
-                else
-                {
-                    XmlHelp.DeSerializerModel(new IniDto(), true);
-                }
-            }
+            ResidentHospitalizationRegisterDto data = null;
+            
+            var xmlStr =  XmlHelp.SaveXml(param);
+            if (xmlStr == false) return data;
+            int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
+            if (result != 1) throw new Exception("居民医保执行出错!!!");
+            data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto(), true);
+            return data;
         }
 
         /// <summary>
@@ -163,84 +106,10 @@ namespace BenDing.Repository.Providers.Web
         public void HospitalizationModify(HospitalizationModifyParam param, UserInfoDto user)
         {
             var xmlStr = XmlHelp.SaveXml(param);
-            if (xmlStr)
-            {
-                int result = MedicalInsuranceDll.CallService_cxjb("CXJB003");
-                if (result == 1)
-                {
-                    var resultData = XmlHelp.DeSerializerModel(new IniDto(), true);
-                    var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
-                    //回参构建
-                    var xmlData = new HospitalizationRegisterXml()
-                    {
-                        
-                        MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
-                    };
-                    var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-                   
-                    var saveXmlData = new SaveXmlData();
-                    saveXmlData.OrganizationCode = user.OrganizationCode;
-                    saveXmlData.AuthCode = user.AuthCode;
-                    saveXmlData.BusinessId = param.BusinessId;
-                    saveXmlData.TransactionId = param.TransKey;
-                    saveXmlData.MedicalInsuranceBackNum = "CXJB003";
-                    saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-                    saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
-                    saveXmlData.MedicalInsuranceCode = "23";
-                    saveXmlData.UserId = user.UserId;
-                    _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
-                    var paramStr = "";
-                    var queryData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(
-                        new QueryMedicalInsuranceResidentInfoParam
-                        {
-                            BusinessId = param.BusinessId,
-                            OrganizationCode = user.OrganizationCode
-                        });
-                    if (!string.IsNullOrWhiteSpace(queryData.AdmissionInfoJson))
-                    {
-                        var data =
-                            JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailDto>(queryData
-                                .AdmissionInfoJson);
-                        if (!string.IsNullOrWhiteSpace(param.AdmissionDate))
-                            data.AdmissionDate = param.AdmissionDate;
-                        if (!string.IsNullOrWhiteSpace(param.AdmissionMainDiagnosis))
-                            data.AdmissionMainDiagnosis = param.AdmissionMainDiagnosis;
-                        if (!string.IsNullOrWhiteSpace(param.AdmissionMainDiagnosisIcd10))
-                            data.AdmissionMainDiagnosisIcd10 = param.AdmissionMainDiagnosisIcd10;
-                        if (!string.IsNullOrWhiteSpace(param.DiagnosisIcd10Three))
-                            data.DiagnosisIcd10Three = param.DiagnosisIcd10Three;
-                        if (!string.IsNullOrWhiteSpace(param.DiagnosisIcd10Two))
-                            data.DiagnosisIcd10Two = param.DiagnosisIcd10Two;
-                        if (!string.IsNullOrWhiteSpace(param.FetusNumber)) data.FetusNumber = param.FetusNumber;
-                        if (!string.IsNullOrWhiteSpace(param.HouseholdNature))
-                            data.HouseholdNature = param.HouseholdNature;
-                        if (!string.IsNullOrWhiteSpace(param.InpatientDepartmentCode))
-                            data.InpatientDepartmentCode = param.InpatientDepartmentCode;
-                        if (!string.IsNullOrWhiteSpace(param.BedNumber)) data.BedNumber = param.BedNumber;
-                        data.Id = queryData.Id;
-                        paramStr = JsonConvert.SerializeObject(data);
-                    }
-
-                    var saveData = new MedicalInsuranceDto
-                    {
-                        AdmissionInfoJson = paramStr,
-                        BusinessId = queryData.BusinessId,
-                        Id = queryData.Id,
-                        IsModify = true,
-                        MedicalInsuranceHospitalizationNo = queryData.MedicalInsuranceHospitalizationNo
-                    };
-                    _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
-                    //日志
-                    var logParam = new AddHospitalLogParam();
-                    logParam.User = user;
-                    logParam.RelationId = queryData.Id;
-                    logParam.JoinOrOldJson = queryData.AdmissionInfoJson;
-                    logParam.ReturnOrNewJson = paramStr;
-                    logParam.Remark = "医保入院登记修改";
-                    _systemManageRepository.AddHospitalLog(logParam);
-                }
-
-            }
+            if (xmlStr == false) return;
+            int result = MedicalInsuranceDll.CallService_cxjb("CXJB003");
+            if (result != 1) throw new Exception("居民医保修改入院登记出错!!!");
+            XmlHelp.DeSerializerModel(new IniDto(), true);
 
         }
 
@@ -306,7 +175,6 @@ namespace BenDing.Repository.Providers.Web
             HospitalizationPreSettlementInfoParam infoParam)
         {
 
-
             var data = new HospitalizationPresettlementDto();
             var xmlStr = XmlHelp.SaveXml(param);
             if (xmlStr)
@@ -319,7 +187,6 @@ namespace BenDing.Repository.Providers.Web
                     {
                         data=AutoMapper.Mapper.Map<HospitalizationPresettlementDto>(dataIni);
                     }
-
                     //报销金额 =统筹支付+补充险支付+生育补助+民政救助+民政重大疾病救助+精准扶贫+民政优抚+其它支付
                     decimal reimbursementExpenses =
                         data.BasicOverallPay + data.SupplementPayAmount + data.BirthAallowance +

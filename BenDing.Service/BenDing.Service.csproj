@@ -47,11 +47,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IMedicalInsuranceService.cs" />
     <Compile Include="Interfaces\IOutpatientDepartmentService.cs" />
     <Compile Include="Interfaces\IResidentMedicalInsuranceService.cs" />
     <Compile Include="Interfaces\IWebServiceBasicService.cs" />
     <Compile Include="Interfaces\IWorkerMedicalInsuranceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\MedicalInsuranceService.cs" />
     <Compile Include="Providers\OutpatientDepartmentService.cs" />
     <Compile Include="Providers\ResidentMedicalInsuranceService.cs" />
     <Compile Include="Providers\WebServiceBasicService.cs" />

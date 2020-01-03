@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Workers;
+using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Workers;
 
 namespace BenDing.Service.Interfaces

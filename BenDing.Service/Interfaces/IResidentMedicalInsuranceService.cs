@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.UI;
 
 namespace BenDing.Service.Interfaces
 {
@@ -20,6 +21,12 @@ namespace BenDing.Service.Interfaces
         /// </summary>
         /// <returns></returns>
         void HospitalizationRegister(ResidentHospitalizationRegisterParam param, UserInfoDto user);
+        /// <summary>
+        /// 修改入院登记
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="user"></param>
+        void HospitalizationModify(HospitalizationModifyParam param, UserInfoDto user);
         /// <summary>
         /// 项目下载
         /// </summary>
