@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.HisXml;
+using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
@@ -48,7 +50,7 @@ namespace BenDing.Service.Providers
             _workerMedicalInsuranceService = workerMedicalInsuranceService;
             _residentMedicalInsuranceService = residentMedicalInsuranceService;
         }
-
+        //HospitalizationPreSettlement
         public void HospitalizationRegister(ResidentHospitalizationRegisterUiParam param)
         {
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
@@ -83,7 +85,6 @@ namespace BenDing.Service.Providers
         /// 入院登记修改
         /// </summary>
         /// <param name="param"></param>
-      
         public void HospitalizationModify(HospitalizationModifyUiParam param)
         { //获取操作人员信息
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
@@ -100,6 +101,8 @@ namespace BenDing.Service.Providers
            //职工
             if (residentData.InsuranceType == "310")
             {
+                var workerParam = GetWorkerHospitalizationModify(param, userBase);
+                _workerMedicalInsuranceService.ModifyWorkerHospitalization(workerParam);
             }
             //居民
             if (residentData.InsuranceType == "342")
@@ -109,11 +112,40 @@ namespace BenDing.Service.Providers
             }
 
         }
+
+        public HospitalizationPresettlementDto HospitalizationPreSettlement(UiBaseDataParam param)
+        {//获取操作人员信息
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+            {
+                BusinessId = param.BusinessId,
+                OrganizationCode = userBase.OrganizationCode
+            };
+            userBase.TransKey = param.TransKey;
+
+            //获取医保病人信息
+            var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+            if (residentData == null) throw new Exception("当前病人未办理医保入院");
+            //职工
+            if (residentData.InsuranceType == "310")
+            {
+                //var workerParam = GetWorkerHospitalizationModify(param, userBase);
+                //_workerMedicalInsuranceService.ModifyWorkerHospitalization(workerParam);
+            }
+            //居民
+            if (residentData.InsuranceType == "342")
+            {
+                //var residentParam = GetResidentHospitalizationModify(param);
+                //_residentMedicalInsuranceService.HospitalizationModify(residentParam, userBase);
+            }
+            return  new HospitalizationPresettlementDto();
+        }
+
         /// <summary>
-        /// 入院登记修改
+        /// 居民入院登记修改
         /// </summary>
         /// <param name="param"></param>
-        public HospitalizationModifyParam GetResidentHospitalizationModify(HospitalizationModifyUiParam param)
+        private HospitalizationModifyParam GetResidentHospitalizationModify(HospitalizationModifyUiParam param)
         {
             //主诊断
             //医保修改
@@ -135,6 +167,34 @@ namespace BenDing.Service.Providers
             modifyParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
             modifyParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
 
+            return modifyParam;
+        }
+        /// <summary>
+        /// 职工入院登记修改
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        private ModifyWorkerHospitalizationParam GetWorkerHospitalizationModify(HospitalizationModifyUiParam param, UserInfoDto user)
+        {
+            //获取医院等级
+            var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(user.OrganizationCode);
+            //医保修改
+            var modifyParam = new ModifyWorkerHospitalizationParam()
+            {
+                AdmissionDate = Convert.ToDateTime(param.AdmissionDate).ToString("yyyyMMdd"),
+                BedNumber = param.BedNumber,
+                BusinessId = param.BusinessId,
+                MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
+                HospitalizationNo = CommonHelp.GuidToStr(param.BusinessId),
+                AdministrativeArea = gradeData.AdministrativeArea,
+                Operators= user.UserName,
+            };
+            var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
+            modifyParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
+            modifyParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
+            modifyParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
+            modifyParam.AdmissionMainDiagnosis = diagnosisData.DiagnosisDescribe;
             return modifyParam;
         }
         /// <summary>
@@ -166,7 +226,6 @@ namespace BenDing.Service.Providers
             iniParam.BusinessId = param.BusinessId;
             return iniParam;
         }
-
         /// <summary>
         /// 获取职工入院登记入参
         /// </summary>
@@ -182,6 +241,7 @@ namespace BenDing.Service.Providers
             iniParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
             iniParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
             iniParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
+            iniParam.AdmissionMainDiagnosis= diagnosisData.DiagnosisDescribe;
             //获取医院等级
             var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(user.OrganizationCode);
             if (gradeData == null) throw new Exception("获取医院等级失败!!!");
@@ -202,5 +262,9 @@ namespace BenDing.Service.Providers
             iniParam.OrganizationCode = userData.MedicalInsuranceAccount;
             return iniParam;
         }
+
+        //private ResidentHospitalizationPreSettlement()
+        //{
+        //}
     }
 }

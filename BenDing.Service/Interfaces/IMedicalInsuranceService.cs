@@ -13,5 +13,10 @@ namespace BenDing.Service.Interfaces
         /// </summary>
         /// <returns></returns>
         void HospitalizationRegister(ResidentHospitalizationRegisterUiParam param);
+        /// <summary>
+        /// 入院登记修改
+        /// </summary>
+        /// <param name="param"></param>
+        void HospitalizationModify(HospitalizationModifyUiParam param);
     }
 }

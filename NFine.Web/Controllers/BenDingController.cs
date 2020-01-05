@@ -52,6 +52,8 @@ namespace NFine.Web.Controllers
         /// <param name="outpatientDepartmentRepository"></param>
         /// <param name="workerMedicalInsuranceRepository"></param>
         /// <param name="workerMedicalInsuranceService"></param>
+        /// <param name="medicalInsuranceService"></param>
+
         public BenDingController(IResidentMedicalInsuranceRepository insuranceRepository,
             IWebServiceBasicService webServiceBasicService,
             IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
@@ -469,7 +471,6 @@ namespace NFine.Web.Controllers
 
              });
         }
-
         /// <summary>
         /// 基层入院登记取消
         /// </summary>
@@ -661,7 +662,7 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
-        /// 居民入院登记
+        /// 医保入院登记
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -684,7 +685,7 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
-        /// 居民入院登记查询
+        /// 医保入院登记查询
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -700,7 +701,7 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
-        /// 居民入院登记修改
+        /// 医保入院登记修改
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -713,7 +714,8 @@ namespace NFine.Web.Controllers
                 //医保登陆
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
-                {   
+                {
+                    _medicalInsuranceService.HospitalizationModify(param);
                 }
                 else
                 {
@@ -743,7 +745,7 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
-        /// 处方上传
+        /// 医保处方上传
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -771,7 +773,7 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
-        /// 处方自动上传
+        ///医保处方自动上传
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -789,7 +791,7 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
-        /// 删除处方数据
+        /// 医保删除处方数据
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -862,7 +864,7 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
-        /// 居民医保住院费用预结算
+        /// 医保住院费用预结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -910,7 +912,7 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
-        /// 居民医保出院费用结算
+        /// 医保出院费用结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -977,7 +979,7 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
-        /// 查询居民医保出院费用结算
+        /// 查询医保出院费用结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -1008,7 +1010,7 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
-        /// 取消居民医保出院费用结算
+        /// 取消医保出院费用结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -1264,53 +1266,23 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData ModifyWorkerHospitalization([FromBody]ModifyWorkerHospitalizationUiParam param)
+        public ApiJsonResultData ModifyWorkerHospitalization([FromBody]HospitalizationModifyUiParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-
-
-                var iniParam = new ModifyWorkerHospitalizationParam();
-
+                //his登陆
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //医保登陆
+                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
                 {
-                    var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
-                    iniParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
-                    iniParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
-                    iniParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
-                    var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                    var infoData = new GetInpatientInfoParam()
-                    {
-                        User = userBase,
-                        BusinessId = param.BusinessId,
-                        IsSave = false,
-                    };
-                    var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
-                    //获取医院等级
-                    var gradeData = _systemManage.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
-                    if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
-                    {  //医保登录
-                        _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                        iniParam.AdmissionDate = Convert.ToDateTime(param.AdmissionDate).ToString("yyyyMMdd");
-                        iniParam.AdmissionMainDiagnosis = inpatientData.AdmissionMainDiagnosis.Substring(0, inpatientData.AdmissionMainDiagnosis.Length > 100 ? 100 : inpatientData.AdmissionMainDiagnosis.Length);
-                        iniParam.BedNumber = param.BedNumber;
-                        iniParam.HospitalizationNo = param.HospitalizationNo;
-                        iniParam.Operators = userBase.UserName;
-                        iniParam.BusinessId = param.BusinessId;
-                        iniParam.AdministrativeArea = gradeData.AdministrativeArea;
-                        iniParam.InpatientArea = param.InpatientArea;
-                        var userData = _systemManage.QueryHospitalOperator(
-                            new QueryHospitalOperatorParam() { UserId = param.UserId });
-                        iniParam.OrganizationCode = userData.MedicalInsuranceAccount;
-                        //入院登记修改
-                        _workerMedicalInsuranceService.ModifyWorkerHospitalization(iniParam);
-
-                    }
+                    _medicalInsuranceService.HospitalizationModify(param);
                 }
                 else
                 {
                     throw new Exception("诊断不能为空!!!");
                 }
+
             });
 
         }

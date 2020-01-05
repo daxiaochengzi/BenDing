@@ -353,7 +353,7 @@ namespace BenDing.Service.Providers
                     Remark = dataValue.InpatientInfoJsonData.Remark,
                     HospitalName = param.User.OrganizationName,
                     HospitalizationNo = dataValue.InpatientInfoJsonData.HospitalizationNo,
-                    TransactionId = param.TransKey,
+                    TransactionId = param.User.TransKey,
                     InDepartmentName = dataValue.InpatientInfoJsonData.InDepartmentName,
                     InDepartmentId = dataValue.InpatientInfoJsonData.InDepartmentId,
                     DocumentNo = dataValue.InpatientInfoJsonData.DocumentNo,
@@ -390,7 +390,7 @@ namespace BenDing.Service.Providers
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.BusinessId;
             xmlData.HealthInsuranceNo = "41";
-            xmlData.TransactionId = param.TransKey;
+            xmlData.TransactionId = param.User.TransKey;
             xmlData.AuthCode = param.User.AuthCode;
             xmlData.UserId = param.User.UserId;
             xmlData.OrganizationCode = param.User.OrganizationCode;
@@ -431,7 +431,7 @@ namespace BenDing.Service.Providers
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.BusinessId;
             xmlData.HealthInsuranceNo = "43";
-            xmlData.TransactionId = param.TransKey;
+            xmlData.TransactionId = param.User.TransKey;
             xmlData.AuthCode = param.User.AuthCode;
             xmlData.UserId = param.User.UserId;
             xmlData.OrganizationCode = param.User.OrganizationCode;
