@@ -66,9 +66,8 @@ namespace BenDing.Repository.Interfaces.Web
         /// 费用预结算
         /// </summary>
         /// <param name="param"></param>
-        /// <param name="infoParam"></param>
         /// <returns></returns>
-        HospitalizationPresettlementDto HospitalizationPreSettlement(HospitalizationPresettlementParam param, HospitalizationPreSettlementInfoParam infoParam);
+        HospitalizationPresettlementDto HospitalizationPreSettlement(HospitalizationPresettlementParam param);
         /// <summary>
         /// 医保出院结算信息
         /// </summary>

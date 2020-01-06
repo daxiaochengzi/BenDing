@@ -10,19 +10,8 @@ namespace BenDing.Domain.Models.Params.Workers
 {/// <summary>
 /// 
 /// </summary>
-  public  class QueryWorkerHospitalizationSettlementParam
-    {/// <summary>
-    /// 开始时间
-    /// </summary>
-        public string StartTime { get; set; }
-        /// <summary>
-        /// 结束时间
-        /// </summary>
-        public string EndTime { get; set; }
-        /// <summary>
-        /// 行政区域
-        /// </summary>
-        public  string AdministrativeArea { get; set; }
+  public  class QueryWorkerHospitalizationSettlementParam: WorkerBaseParam
+    {
 
     }
 }

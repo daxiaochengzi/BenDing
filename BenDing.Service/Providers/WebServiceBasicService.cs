@@ -576,26 +576,7 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public void SaveXmlData(SaveXmlDataParam param)
-        {
-            //更新医保信息
-            var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
-            var xmlParam =new SaveXmlData()
-            {
-                OrganizationCode = param.User.OrganizationCode,
-                AuthCode = param.User.AuthCode,
-                BusinessId = param.BusinessId,
-                TransactionId = param.User.TransKey,
-                MedicalInsuranceBackNum = param.MedicalInsuranceBackNum,
-                BackParam = CommonHelp.EncodeBase64("utf-8", param.BackParam),
-                IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam),
-                MedicalInsuranceCode = param.MedicalInsuranceCode,
-                UserId = param.User.UserId,
-           };
-            //存基层
-            _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(xmlParam));
-
-        }
+       
 
 
         public UserInfoDto GetUserBaseInfo(string param)

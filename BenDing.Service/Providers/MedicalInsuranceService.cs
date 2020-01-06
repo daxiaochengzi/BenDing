@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.HisXml;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
@@ -50,7 +51,7 @@ namespace BenDing.Service.Providers
             _workerMedicalInsuranceService = workerMedicalInsuranceService;
             _residentMedicalInsuranceService = residentMedicalInsuranceService;
         }
-        //HospitalizationPreSettlement
+      
         public void HospitalizationRegister(ResidentHospitalizationRegisterUiParam param)
         {
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
@@ -63,9 +64,8 @@ namespace BenDing.Service.Providers
             //获取医保病人
             var inpatientData = _serviceBasicService.GetInpatientInfo(infoData);
             if (inpatientData == null) throw new Exception("获取基层住院病人失败");
-            //医保登录
-            _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-
+           
+            //居民
             if (param.InsuranceType == "342")
             {
                 var residentParam = GetResidentHospitalizationRegisterParam(param, inpatientData);
@@ -112,35 +112,6 @@ namespace BenDing.Service.Providers
             }
 
         }
-
-        public HospitalizationPresettlementDto HospitalizationPreSettlement(UiBaseDataParam param)
-        {//获取操作人员信息
-            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
-            var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
-            {
-                BusinessId = param.BusinessId,
-                OrganizationCode = userBase.OrganizationCode
-            };
-            userBase.TransKey = param.TransKey;
-
-            //获取医保病人信息
-            var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-            if (residentData == null) throw new Exception("当前病人未办理医保入院");
-            //职工
-            if (residentData.InsuranceType == "310")
-            {
-                //var workerParam = GetWorkerHospitalizationModify(param, userBase);
-                //_workerMedicalInsuranceService.ModifyWorkerHospitalization(workerParam);
-            }
-            //居民
-            if (residentData.InsuranceType == "342")
-            {
-                //var residentParam = GetResidentHospitalizationModify(param);
-                //_residentMedicalInsuranceService.HospitalizationModify(residentParam, userBase);
-            }
-            return  new HospitalizationPresettlementDto();
-        }
-
         /// <summary>
         /// 居民入院登记修改
         /// </summary>
@@ -263,8 +234,5 @@ namespace BenDing.Service.Providers
             return iniParam;
         }
 
-        //private ResidentHospitalizationPreSettlement()
-        //{
-        //}
     }
 }

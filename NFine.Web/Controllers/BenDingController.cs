@@ -292,7 +292,7 @@ namespace NFine.Web.Controllers
                    User = userBase,
                    BusinessId = param.BusinessId,
                    IsSave = true,
-                 
+
                };
                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
 
@@ -458,8 +458,8 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new PatientLeaveHospitalInfoDto()).RunWithTry(y =>
              {
-                //获取操作人员信息
-                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                 //获取操作人员信息
+                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                  userBase.TransKey = param.TransKey;
                  var infoData = new GetInpatientInfoParam()
                  {
@@ -671,16 +671,11 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-               
-                if (param.DiagnosisList != null && param.DiagnosisList.Any())
-                {
+                if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
+                //医保登录
+                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _medicalInsuranceService.HospitalizationRegister(param);
 
-                    _medicalInsuranceService.HospitalizationRegister(param);
-                }
-                else
-                {
-                    throw new Exception("诊断不能为空!!!");
-                }
             });
 
         }
@@ -709,18 +704,11 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData HospitalizationModify([FromBody]HospitalizationModifyUiParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
-            {  //his登陆
-                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+            {
+                if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
                 //医保登陆
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                if (param.DiagnosisList != null && param.DiagnosisList.Any())
-                {
-                    _medicalInsuranceService.HospitalizationModify(param);
-                }
-                else
-                {
-                    throw new Exception("诊断不能为空!!!");
-                }
+                _medicalInsuranceService.HospitalizationModify(param);
             });
 
         }
@@ -872,43 +860,26 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData HospitalizationPreSettlement([FromUri]UiBaseDataParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
-          {   //获取操作人员信息
-              var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-              var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
-              {
-                  BusinessId = param.BusinessId,
-                  OrganizationCode = userBase.OrganizationCode
-              };
-              userBase.TransKey = param.TransKey;
-              var infoData = new GetInpatientInfoParam()
-              {
-                  User = userBase,
-                  BusinessId = param.BusinessId,
-              };
-           
-              //获取his预结算
-              var hisPreSettlementData = _webServiceBasicService.GetHisHospitalizationPreSettlement(infoData);
-              var preSettlementData = hisPreSettlementData.PreSettlementData.FirstOrDefault();
-              //获取医保病人信息
-              var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-              if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已医保结算,不能预结算");
-              //医保登录
-              _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+            {    //医保登录
+                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                //获取医保病人信息
+                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    BusinessId = param.BusinessId
+                });
+                if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已医保结算,不能预结算");
+                //职工
+                if (residentData.InsuranceType == "310")
+                {
+                    y.Data = _workerMedicalInsuranceService.WorkerHospitalizationPreSettlement(param);
+                }
+                //居民
+                if (residentData.InsuranceType == "342")
+                {
+                    y.Data = _residentService.HospitalizationPreSettlement(param);
+                }
 
-              var presettlementParam = new HospitalizationPresettlementParam()
-              {
-                  MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                  LeaveHospitalDate = Convert.ToDateTime(preSettlementData.EndDate).ToString("yyyyMMdd"),
-              };
-              var infoParam = new HospitalizationPreSettlementInfoParam()
-              {
-                  User = userBase,
-                  Id = residentData.Id,
-                  BusinessId = param.BusinessId,
-              };
-              var data = _residentMedicalInsurance.HospitalizationPreSettlement(presettlementParam, infoParam);
-              y.Data = data;
-          });
+            });
 
         }
         /// <summary>
@@ -920,61 +891,31 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData LeaveHospitalSettlement([FromBody]LeaveHospitalSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
-           {   //获取操作人员信息
-               var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-               var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
-               {
-                   BusinessId = param.BusinessId,
-                   OrganizationCode = userBase.OrganizationCode
-               };
-               userBase.TransKey = param.TransKey;
-               var infoData = new GetInpatientInfoParam()
-               {
-                   User = userBase,
-                   BusinessId = param.BusinessId,
-               };
-              
-               //获取his结算
-               var hisSettlement = _webServiceBasicService.GetHisHospitalizationSettlement(infoData);
-               //获取医保病人信息
-               var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-               if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已办理医保结算,不能办理预结算!!!");
-               if (residentData.MedicalInsuranceState == MedicalInsuranceState.MedicalInsurancePreSettlement) throw new Exception("当前病人未办理预结算,不能办理结算!!!");
-               var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
-               //获取住院病人
-               var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
-               if (inpatientInfoData == null) throw new Exception("该病人未在中心库中,请检查是否办理医保入院!!!");
+           {
                //医保登录
                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-               var settlementParam = new LeaveHospitalSettlementParam()
+               //获取医保病人信息
+               var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
                {
-                   MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                   LeaveHospitalDate = Convert.ToDateTime(hisSettlement.LeaveHospitalDate).ToString("yyyyMMdd"),
-                   UserId = hisSettlement.LeaveHospitalOperator,
-                   LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
-               };
-               //获取诊断
-               var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
-               settlementParam.LeaveHospitalMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
-               settlementParam.LeaveHospitalDiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
-               settlementParam.LeaveHospitalDiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
-               settlementParam.LeaveHospitalMainDiagnosis = diagnosisData.DiagnosisDescribe;
-               var infoParam = new LeaveHospitalSettlementInfoParam()
+                   BusinessId = param.BusinessId
+               });
+               //职工
+               if (residentData.InsuranceType == "310")
                {
-                   User = userBase,
-                   Id = residentData.Id,
-                   InsuranceNo = residentData.InsuranceNo,
-                   BusinessId = inpatientInfoData.BusinessId,
-                   IdCardNo = inpatientInfoData.IdCardNo,
-               };
-               var data = _residentMedicalInsurance.LeaveHospitalSettlement(settlementParam, infoParam);
-               //结算后保存信息
-               var saveParam = AutoMapper.Mapper.Map<SaveInpatientSettlementParam>(hisSettlement);
-               saveParam.Id = (Guid) inpatientInfoData.Id;
-               saveParam.User = userBase;
-               saveParam.LeaveHospitalDiagnosisJson = JsonConvert.SerializeObject(hisSettlement.DiagnosisList);
-               _hisSqlRepository.SaveInpatientSettlement(saveParam);
-               y.Data = data;
+                   y.Data = _workerMedicalInsuranceService.WorkerHospitalizationSettlement(new WorkerHospitalizationSettlementUiParam()
+                   {
+                       DiagnosisList = param.DiagnosisList,
+                       TransKey = param.TransKey,
+                       BusinessId = param.BusinessId,
+                       LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
+                       UserId = param.UserId,
+                   });
+               }
+               //居民
+               if (residentData.InsuranceType == "342")
+               {
+                   y.Data = _residentService.LeaveHospitalSettlement(param);
+               }
            });
 
         }
@@ -1033,21 +974,45 @@ namespace NFine.Web.Controllers
                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
                if (residentData != null)
                {
-                   var settlementCancelParam = new LeaveHospitalSettlementCancelParam()
+                   if (residentData.InsuranceType == "342")
                    {
-                       MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                       SettlementNo = residentData.SettlementNo,
-                       Operators = CommonHelp.GuidToStr(userBase.UserId),
-                       CancelLimit = param.CancelLimit,
-                   };
-                
-                   var cancelParam = new LeaveHospitalSettlementCancelInfoParam()
+                       var settlementCancelParam = new LeaveHospitalSettlementCancelParam()
+                       {
+                           MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                           SettlementNo = residentData.SettlementNo,
+                           Operators = CommonHelp.GuidToStr(userBase.UserId),
+                           CancelLimit = param.CancelLimit,
+                       };
+
+                       var cancelParam = new LeaveHospitalSettlementCancelInfoParam()
+                       {
+                           BusinessId = param.BusinessId,
+                           Id = residentData.Id,
+                           User = userBase,
+                       };
+                       _residentMedicalInsurance.LeaveHospitalSettlementCancel(settlementCancelParam, cancelParam);
+                   }
+
+                   if (residentData.InsuranceType == "310")
                    {
-                       BusinessId = param.BusinessId,
-                       Id = residentData.Id,
-                       User = userBase,
-                   };
-                   _residentMedicalInsurance.LeaveHospitalSettlementCancel(settlementCancelParam, cancelParam);
+                       if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人未医保结算");
+                       //获取医院等级
+                       var gradeData = _systemManage.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
+                       var cancelParam = new WorkerSettlementCancelParam()
+                       {
+                           BusinessId = param.BusinessId,
+                           Id = residentData.Id,
+                           User = userBase,
+                           SettlementNo = residentData.SettlementNo,
+                           CancelLimit = param.CancelLimit,
+                           MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                           AdministrativeArea = gradeData.AdministrativeArea,
+                           OrganizationCode = userBase.OrganizationCode,
+                       };
+                       _workerMedicalInsuranceService.WorkerSettlementCancel(cancelParam);
+                   }
+
+
 
 
                }
@@ -1295,47 +1260,10 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData WorkerHospitalizationPreSettlement([FromUri]UiBaseDataParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
-            {   //获取操作人员信息
-                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                userBase.TransKey = param.TransKey;
-                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
-                {
-                    BusinessId = param.BusinessId,
-                    OrganizationCode = userBase.OrganizationCode
-                };
-                //获取医保病人信息
-                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-                if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已医保结算,不能预结算");
-                var infoData = new GetInpatientInfoParam()
-                {
-                    User = userBase,
-                    BusinessId = param.BusinessId,
-                };
-              
-                //获取his预结算
-                var hisPreSettlementData = _webServiceBasicService.GetHisHospitalizationPreSettlement(infoData);
-                var preSettlementData = hisPreSettlementData.PreSettlementData.FirstOrDefault();
+            {
                 //医保登录
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                //获取医保账号
-                var userData = _systemManage.QueryHospitalOperator(
-                         new QueryHospitalOperatorParam() { UserId = param.UserId });
-                //获取医院等级
-                var gradeData = _systemManage.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
-                var infoParam = new WorkerHospitalizationPreSettlementParam()
-                {
-                    User = userBase,
-                    Id = residentData.Id,
-                    BusinessId = param.BusinessId,
-                    MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                    LeaveHospitalDate =Convert.ToDateTime(preSettlementData.EndDate).ToString("yyyyMMdd"),
-                    AdministrativeArea = gradeData.AdministrativeArea,
-                    Operators = preSettlementData.Operator,
-                    IsHospitalizationFrequency = "0",
-                    OrganizationCode = userData.MedicalInsuranceAccount,
-                };
-                var data = _workerMedicalInsuranceService.WorkerHospitalizationPreSettlement(infoParam);
-
+                var data = _workerMedicalInsuranceService.WorkerHospitalizationPreSettlement(param);
                 y.Data = data;
             });
 
@@ -1349,65 +1277,10 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData WorkerHospitalizationSettlement([FromBody]WorkerHospitalizationSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
-            {   //获取操作人员信息
-                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                userBase.TransKey = param.TransKey;
-                var infoData = new GetInpatientInfoParam()
-                {
-                    User = userBase,
-                    BusinessId = param.BusinessId,
-                };
-               
-                //获取his结算
-                var hisSettlement= _webServiceBasicService.GetHisHospitalizationSettlement(infoData); 
-                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
-                {
-                    BusinessId = param.BusinessId,
-                    OrganizationCode = userBase.OrganizationCode
-                };
-                //获取医保病人信息
-                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-                if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已办理医保结算,不能办理预结算!!!");
-                if (residentData.MedicalInsuranceState == MedicalInsuranceState.MedicalInsurancePreSettlement) throw new Exception("当前病人未办理预结算,不能办理结算!!!");
-                var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
-                //获取住院病人
-                var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
-                if (inpatientInfoData == null) throw new Exception("该病人未在中心库中,请检查是否办理医保入院!!!");
-                //医保登录
+            {     //医保登录
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                //获取医保账号
-                var userData = _systemManage.QueryHospitalOperator(
-                         new QueryHospitalOperatorParam() { UserId = param.UserId });
-                //获取医院等级
-                var gradeData = _systemManage.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
-                var infoParam = new WorkerHospitalizationSettlementParam()
-                {
-                    User = userBase,
-                    Id = residentData.Id,
-                    BusinessId = inpatientInfoData.BusinessId,
-                    MedicalInsuranceHospitalizationNo =residentData.MedicalInsuranceHospitalizationNo,
-                    LeaveHospitalDate =Convert.ToDateTime(hisSettlement.LeaveHospitalDate).ToString("yyyyMMdd"),
-                    LeaveHospitalState = param.LeaveHospitalInpatientState,
-                    Operators = userBase.UserName,
-                    OrganizationCode = userData.MedicalInsuranceAccount,
-                    AdministrativeArea = gradeData.AdministrativeArea
-                };
-                //获取诊断
-                var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
-                infoParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
-                infoParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
-                infoParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
-                infoParam.LeaveHospitalMainDiagnosis = diagnosisData.DiagnosisDescribe;
-                var data = _workerMedicalInsuranceService.WorkerHospitalizationSettlement(infoParam);
-                //结算后保存信息
-                var saveParam = AutoMapper.Mapper.Map<SaveInpatientSettlementParam>(hisSettlement);
-                saveParam.Id = (Guid)inpatientInfoData.Id;
-                saveParam.User = userBase;
-                saveParam.LeaveHospitalDiagnosisJson = JsonConvert.SerializeObject(hisSettlement.DiagnosisList);
-                _hisSqlRepository.SaveInpatientSettlement(saveParam);
+                var data = _workerMedicalInsuranceService.WorkerHospitalizationSettlement(param);
                 y.Data = data;
-                
-
             });
 
         }
@@ -1436,7 +1309,7 @@ namespace NFine.Web.Controllers
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
                 if (residentData != null)
                 {
-                    if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw  new  Exception("当前病人未医保结算");
+                    if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人未医保结算");
                     //获取医院等级
                     var gradeData = _systemManage.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
                     var cancelParam = new WorkerSettlementCancelParam()
@@ -1444,7 +1317,7 @@ namespace NFine.Web.Controllers
                         BusinessId = param.BusinessId,
                         Id = residentData.Id,
                         User = userBase,
-                        SettlementNo= residentData.SettlementNo,
+                        SettlementNo = residentData.SettlementNo,
                         CancelLimit = param.CancelLimit,
                         MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
                         AdministrativeArea = gradeData.AdministrativeArea,

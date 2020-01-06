@@ -60,6 +60,7 @@ namespace BenDing.Domain.Models.Dto.Workers
         /// </summary>
       
         public string DocumentNo { get; set; }
+       
 
         /// <summary>
         ///  备注

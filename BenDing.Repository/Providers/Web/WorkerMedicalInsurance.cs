@@ -164,7 +164,7 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="PO_MSG">系统错误信息</param>
         /// <returns></returns>
         [DllImport("yyjk.dll", EntryPoint = "hqfyjsjg_new", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern int hqfyjsjg_new(string pi_fwjgh, string PI_ZYH, string pi_xzqh,
+        public static extern int QueryWorkerHospitalSettlement(string pi_fwjgh, string PI_ZYH, string pi_xzqh,
           byte[] PO_TCZF, byte[] po_bczf, byte[] po_zxjj, byte[] pO_GWYBT,
           byte[] PO_GWYBZ, byte[] po_qtzf, byte[] PO_ZHZF, byte[] PO_XJZF,
           byte[] PO_QFJE, byte[] PO_JSRQ, byte[] po_bz, byte[] PO_FHZ,
@@ -215,7 +215,7 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="po_msg"></param>
         /// <returns></returns>
         [DllImport("yyjk.dll", EntryPoint = "xmljsxxcx", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern int QueryWorkerHospitalSettlement(string pi_jsksrq, string pi_jszzrq, string pi_xzqh,
+        public static extern int xmljsxxcx(string pi_jsksrq, string pi_jszzrq, string pi_xzqh,
           byte[] po_fhz, byte[] po_msg);
     
     }

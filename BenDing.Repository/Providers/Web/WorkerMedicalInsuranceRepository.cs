@@ -358,16 +358,49 @@ namespace BenDing.Repository.Providers.Web
         public QueryWorkerHospitalizationSettlementDto QueryWorkerHospitalizationSettlement(
             QueryWorkerHospitalizationSettlementParam param)
         {
-            var resultData = new QueryWorkerHospitalizationSettlementDto();
+            
+            //基本统筹支付
+            var basicOverallPay = new byte[1024];
+            //补充医疗保险支付金额
+            var supplementPayAmount = new byte[1024];
+            //专项基金支付金额
+            var specialFundPayAmount = new byte[1024];
+            //公务员补贴
+            var civilServantsSubsidies = new byte[1024];
+            //公务员补助
+            var civilServantsSubsidy = new byte[1024];
+            //其它支付金额
+            var otherPaymentAmount = new byte[1024];
+            //账户支付
+            var accountPayment = new byte[1024];
+            //现金支付
+            var cashPayment = new byte[1024];
+            //起付金额
+            var paidAmount = new byte[1024];
+            //结算日期
+            var settlementTime = new byte[1024];
+            // 备注
+            var remark = new byte[1024];
             //返回状态
             var resultState = new byte[1024];
             //消息
             var msg = new byte[1024];
             // param.OrganizationCode==cpq2677
             var result = WorkerMedicalInsurance.QueryWorkerHospitalSettlement
-            (   param.StartTime,
-                param.EndTime,
+            (   param.OrganizationCode,
+                param.MedicalInsuranceHospitalizationNo,
                 param.AdministrativeArea,
+                basicOverallPay,
+                supplementPayAmount,
+                specialFundPayAmount,
+                civilServantsSubsidies,
+                civilServantsSubsidy,
+                otherPaymentAmount,
+                accountPayment,
+                cashPayment,
+                paidAmount,
+                settlementTime,
+                remark,
                 resultState,
                 msg
             );
@@ -375,6 +408,23 @@ namespace BenDing.Repository.Providers.Web
             {
                 throw new Exception(CommonHelp.StrToTransCoding(msg));
             }
+            var resultData = new QueryWorkerHospitalizationSettlementDto()
+            {
+              
+             
+                BasicOverallPay = Convert.ToDecimal(CommonHelp.StrToTransCoding(basicOverallPay)),
+                SupplementPayAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(supplementPayAmount)),
+                SpecialFundPayAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(specialFundPayAmount)),
+                CivilServantsSubsidies = Convert.ToDecimal(CommonHelp.StrToTransCoding(civilServantsSubsidies)),
+                CivilServantsSubsidy = Convert.ToDecimal(CommonHelp.StrToTransCoding(civilServantsSubsidy)),
+                OtherPaymentAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(otherPaymentAmount)),
+                AccountPayment = Convert.ToDecimal(CommonHelp.StrToTransCoding(accountPayment)),
+                CashPayment = Convert.ToDecimal(CommonHelp.StrToTransCoding(cashPayment)),
+                PaidAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(paidAmount)),
+                Remark = CommonHelp.StrToTransCoding(cashPayment),
+                SettlementTime= CommonHelp.StrToTransCoding(settlementTime),
+
+            };
             return resultData;
         }
     }

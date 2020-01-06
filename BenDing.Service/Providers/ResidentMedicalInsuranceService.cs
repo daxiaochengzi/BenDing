@@ -4,6 +4,7 @@ using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.HisXml;
+using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
@@ -18,17 +19,18 @@ namespace BenDing.Service.Providers
 {
     public class ResidentMedicalInsuranceService : IResidentMedicalInsuranceService
     {
-        private readonly IResidentMedicalInsuranceRepository _residentMedicalInsurance;
-        private readonly IWebBasicRepository _webServiceBasic;
+        private readonly IResidentMedicalInsuranceRepository _residentMedicalInsuranceRepository;
+        private readonly IWebBasicRepository _webBasicRepository;
         private readonly IHisSqlRepository _hisSqlRepository;
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private readonly ISystemManageRepository _systemManageRepository;
+
         private readonly IWebServiceBasicService _serviceBasicService;
         private readonly IWorkerMedicalInsuranceService _workerMedicalInsuranceService;
 
         public ResidentMedicalInsuranceService(
-            IResidentMedicalInsuranceRepository insuranceRepository,
-            IWebBasicRepository iWebServiceBasic,
+            IResidentMedicalInsuranceRepository residentMedicalInsuranceRepository,
+            IWebBasicRepository webBasicRepository,
             IHisSqlRepository hisSqlRepository,
             IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
             ISystemManageRepository systemManageRepository,
@@ -36,8 +38,8 @@ namespace BenDing.Service.Providers
             IWorkerMedicalInsuranceService workerMedicalInsuranceService
             )
         {
-            _residentMedicalInsurance = insuranceRepository;
-            _webServiceBasic = iWebServiceBasic;
+            _residentMedicalInsuranceRepository = residentMedicalInsuranceRepository;
+            _webBasicRepository = webBasicRepository;
             _hisSqlRepository = hisSqlRepository;
             _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
             _systemManageRepository = systemManageRepository;
@@ -46,7 +48,7 @@ namespace BenDing.Service.Providers
         }
         public ResidentUserInfoDto GetUserInfo(ResidentUserInfoParam param)
         {
-            var resultData = _residentMedicalInsurance.GetUserInfo(param);
+            var resultData = _residentMedicalInsuranceRepository.GetUserInfo(param);
 
             return resultData;
         }
@@ -57,7 +59,7 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public void HospitalizationRegister(ResidentHospitalizationRegisterParam param, UserInfoDto user)
         {
-            var residentData = _residentMedicalInsurance.HospitalizationRegister(param);
+            var residentData = _residentMedicalInsuranceRepository.HospitalizationRegister(param);
             var saveData = new MedicalInsuranceDto
             {
                 AdmissionInfoJson = JsonConvert.SerializeObject(param),
@@ -86,7 +88,7 @@ namespace BenDing.Service.Providers
                 BackParam = strXmlBackParam
             };
             //存基层
-            _serviceBasicService.SaveXmlData(saveXml);
+            _webBasicRepository.SaveXmlData(saveXml);
             //更新中间库
             saveData.MedicalInsuranceState = MedicalInsuranceState.HisHospitalized;
             _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
@@ -102,10 +104,6 @@ namespace BenDing.Service.Providers
             _systemManageRepository.AddHospitalLog(logParam);
 
         }
-       
-     
-      
-
         /// <summary>
         /// 入院登记修改
         /// </summary>
@@ -113,27 +111,23 @@ namespace BenDing.Service.Providers
         /// <param name="user"></param>
         public void HospitalizationModify(HospitalizationModifyParam param, UserInfoDto user)
         {
-            _residentMedicalInsurance.HospitalizationModify(param, user);
-            var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
-            //回参构建
+            _residentMedicalInsuranceRepository.HospitalizationModify(param, user);
+            // 回参构建
             var xmlData = new HospitalizationRegisterXml()
             {
-
                 MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
             };
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-
-            var saveXmlData = new SaveXmlData();
-            saveXmlData.OrganizationCode = user.OrganizationCode;
-            saveXmlData.AuthCode = user.AuthCode;
-            saveXmlData.BusinessId = param.BusinessId;
-            saveXmlData.TransactionId = param.TransKey;
-            saveXmlData.MedicalInsuranceBackNum = "CXJB003";
-            saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-            saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
-            saveXmlData.MedicalInsuranceCode = "23";
-            saveXmlData.UserId = user.UserId;
-            _webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+            var saveXml = new SaveXmlDataParam()
+            {
+                User = user,
+                MedicalInsuranceBackNum = "CXJB003",
+                MedicalInsuranceCode = "23",
+                BusinessId = param.BusinessId,
+                BackParam = strXmlBackParam
+            };
+            //存基层
+            _webBasicRepository.SaveXmlData(saveXml);
             var paramStr = "";
             var queryData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(
                 new QueryMedicalInsuranceResidentInfoParam
@@ -184,8 +178,11 @@ namespace BenDing.Service.Providers
             logParam.Remark = "医保入院登记修改";
             _systemManageRepository.AddHospitalLog(logParam);
         }
-
-        //处方自动上传
+        /// <summary>
+        /// 处方自动上传
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="user"></param>
         public void PrescriptionUploadAutomatic(PrescriptionUploadAutomaticParam param, UserInfoDto user)
         {//获取所有未传费用病人
             var allPatients = _hisSqlRepository.QueryAllHospitalizationPatients(param);
@@ -202,12 +199,141 @@ namespace BenDing.Service.Providers
                         {
                             BusinessId = items.BusinessId
                         };
-                        _residentMedicalInsurance.PrescriptionUpload(uploadParam, user);
+                        _residentMedicalInsuranceRepository.PrescriptionUpload(uploadParam, user);
                     }
 
                 }
             }
         }
+        /// <summary>
+        /// 居民住院预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public HospitalizationPresettlementDto HospitalizationPreSettlement(UiBaseDataParam param)
+        {
+            HospitalizationPresettlementDto resultData = null;
+            //获取操作人员信息
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            userBase.TransKey = param.TransKey;
+            var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+            {
+                BusinessId = param.BusinessId,
+                OrganizationCode = userBase.OrganizationCode
+            };
+            var infoData = new GetInpatientInfoParam()
+            {
+                User = userBase,
+                BusinessId = param.BusinessId,
+            };
+            //获取his预结算
+            var hisPreSettlementData = _serviceBasicService.GetHisHospitalizationPreSettlement(infoData);
+            var preSettlementData = hisPreSettlementData.PreSettlementData.FirstOrDefault();
+            //获取医保病人信息
+            var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+            //医保执行
+            var data = _residentMedicalInsuranceRepository.HospitalizationPreSettlement(new HospitalizationPresettlementParam()
+            {
+                LeaveHospitalDate = preSettlementData.EndDate,
+                MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+            });
+            resultData = data ?? throw new Exception("居民预结算返回结果有误!!!");
+            //报销金额 =统筹支付+补充险支付+生育补助+民政救助+民政重大疾病救助+精准扶贫+民政优抚+其它支付
+            decimal reimbursementExpenses =
+                data.BasicOverallPay + data.SupplementPayAmount + data.BirthAallowance +
+                data.CivilAssistancePayAmount + data.CivilAssistanceSeriousIllnessPayAmount +
+                data.AccurateAssistancePayAmount + data.CivilServicessistancePayAmount +
+                data.OtherPaymentAmount;
+            var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
+            {
+                ReimbursementExpensesAmount = CommonHelp.ValueToDouble(reimbursementExpenses),
+                SelfPayFeeAmount = data.CashPayment,
+                OtherInfo = JsonConvert.SerializeObject(data),
+                Id = residentData.Id,
+                UserId = param.UserId,
+                SettlementNo = data.DocumentNo,
+                MedicalInsuranceAllAmount = data.TotalAmount,
+                PreSettlementTransactionId = param.TransKey,
+                MedicalInsuranceState = MedicalInsuranceState.MedicalInsurancePreSettlement
+            };
+            //存入中间库
+            _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
+            var logParam = new AddHospitalLogParam()
+            {
+                JoinOrOldJson = JsonConvert.SerializeObject(param),
+                ReturnOrNewJson = JsonConvert.SerializeObject(data),
+                User = userBase,
+
+                Remark = "居民住院病人预结算"
+            };
+            _systemManageRepository.AddHospitalLog(logParam);
+            return resultData;
+        }
+        /// <summary>
+        /// 居民住院结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public HospitalizationPresettlementDto LeaveHospitalSettlement(LeaveHospitalSettlementUiParam param)
+        {
+
+            // 获取操作人员信息
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+            {
+                BusinessId = param.BusinessId,
+                OrganizationCode = userBase.OrganizationCode
+            };
+            userBase.TransKey = param.TransKey;
+            var infoData = new GetInpatientInfoParam()
+            {
+                User = userBase,
+                BusinessId = param.BusinessId,
+            };
+            //获取his结算
+            var hisSettlement = _serviceBasicService.GetHisHospitalizationSettlement(infoData);
+            //获取医保病人信息
+            var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+            if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已办理医保结算,不能办理预结算!!!");
+            if (residentData.MedicalInsuranceState == MedicalInsuranceState.MedicalInsurancePreSettlement) throw new Exception("当前病人未办理预结算,不能办理结算!!!");
+            var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
+            //获取住院病人
+            var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
+            if (inpatientInfoData == null) throw new Exception("该病人未在中心库中,请检查是否办理医保入院!!!");
+
+            var settlementParam = new LeaveHospitalSettlementParam()
+            {
+                MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                LeaveHospitalDate = Convert.ToDateTime(hisSettlement.LeaveHospitalDate).ToString("yyyyMMdd"),
+                UserId = hisSettlement.LeaveHospitalOperator,
+                LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
+            };
+            //获取诊断
+            var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
+            settlementParam.LeaveHospitalMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
+            settlementParam.LeaveHospitalDiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
+            settlementParam.LeaveHospitalDiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
+            settlementParam.LeaveHospitalMainDiagnosis = diagnosisData.DiagnosisDescribe;
+            var infoParam = new LeaveHospitalSettlementInfoParam()
+            {
+                User = userBase,
+                Id = residentData.Id,
+                InsuranceNo = residentData.InsuranceNo,
+                BusinessId = inpatientInfoData.BusinessId,
+                IdCardNo = inpatientInfoData.IdCardNo,
+            };
+            //医保执行
+            var data = _residentMedicalInsuranceRepository.LeaveHospitalSettlement(settlementParam, infoParam);
+            if (data == null) throw new Exception("居民住院结算反馈失败");
+            //结算后保存信息
+            var saveParam = AutoMapper.Mapper.Map<SaveInpatientSettlementParam>(hisSettlement);
+            saveParam.Id = (Guid)inpatientInfoData.Id;
+            saveParam.User = userBase;
+            saveParam.LeaveHospitalDiagnosisJson = JsonConvert.SerializeObject(hisSettlement.DiagnosisList);
+            _hisSqlRepository.SaveInpatientSettlement(saveParam);
+            return data;
+        }
+
 
         /// <summary>
         /// 医保项目下载
@@ -223,7 +349,7 @@ namespace BenDing.Service.Providers
             var updateTime = _medicalInsuranceSqlRepository.ProjectDownloadTimeMax();
             if (!string.IsNullOrWhiteSpace(updateTime)) param.UpdateTime = Convert.ToDateTime(updateTime).ToString("yyyyMMdd");
 
-            var count = _residentMedicalInsurance.ProjectDownloadCount(param);
+            var count = _residentMedicalInsuranceRepository.ProjectDownloadCount(param);
             var cnt = Convert.ToInt32(count / param.Limit) + ((count % param.Limit) > 0 ? 1 : 0);
             param.QueryType = 2;
             Int64 allNum = 0;
@@ -231,7 +357,7 @@ namespace BenDing.Service.Providers
             while (i < cnt)
             {
                 param.Page = i + pageIni;
-                data = _residentMedicalInsurance.ProjectDownload(param);
+                data = _residentMedicalInsuranceRepository.ProjectDownload(param);
                 if (data != null && data.Row.Any())
                 {
                     allNum += data.Row.Count;

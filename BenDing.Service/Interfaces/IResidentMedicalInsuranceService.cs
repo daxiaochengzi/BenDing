@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 
@@ -28,6 +29,13 @@ namespace BenDing.Service.Interfaces
         /// <param name="user"></param>
         void HospitalizationModify(HospitalizationModifyParam param, UserInfoDto user);
         /// <summary>
+        /// 居民住院结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+
+         HospitalizationPresettlementDto LeaveHospitalSettlement(LeaveHospitalSettlementUiParam param);
+        /// <summary>
         /// 项目下载
         /// </summary>
         /// <param name="param"></param>
@@ -35,6 +43,12 @@ namespace BenDing.Service.Interfaces
 
         string ProjectDownload(ResidentProjectDownloadParam param);
         void PrescriptionUploadAutomatic(PrescriptionUploadAutomaticParam param, UserInfoDto user);
+        /// <summary>
+        /// 居民住院预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+         HospitalizationPresettlementDto HospitalizationPreSettlement(UiBaseDataParam param);
 
 
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Workers;
+using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Workers;
 
@@ -26,13 +27,13 @@ namespace BenDing.Service.Interfaces
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        WorkerHospitalizationPreSettlementDto WorkerHospitalizationPreSettlement(WorkerHospitalizationPreSettlementParam param);
+        WorkerHospitalizationPreSettlementDto WorkerHospitalizationPreSettlement(UiBaseDataParam param);
         /// <summary>
         /// 职工住院结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        WorkerHospitalizationPreSettlementDto WorkerHospitalizationSettlement(WorkerHospitalizationSettlementParam param);
+        WorkerHospitalizationPreSettlementDto WorkerHospitalizationSettlement(WorkerHospitalizationSettlementUiParam param);
         /// <summary>
         /// 职工住院结算取消
         /// </summary>

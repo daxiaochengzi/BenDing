@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ServiceModel;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.Web;
+using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Repository.ServiceReference;
 using Newtonsoft.Json;
@@ -82,6 +84,30 @@ namespace BenDing.Repository.Providers.Web
             return result;
 
 
+
+        }
+        /// <summary>
+        /// 回写至基层
+        /// </summary>
+        /// <param name="param"></param>
+        public void SaveXmlData(SaveXmlDataParam param)
+        {
+            //更新医保信息
+            var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
+            var xmlParam = new SaveXmlData()
+            {
+                OrganizationCode = param.User.OrganizationCode,
+                AuthCode = param.User.AuthCode,
+                BusinessId = param.BusinessId,
+                TransactionId = param.User.TransKey,
+                MedicalInsuranceBackNum = param.MedicalInsuranceBackNum,
+                BackParam = CommonHelp.EncodeBase64("utf-8", param.BackParam),
+                IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam),
+                MedicalInsuranceCode = param.MedicalInsuranceCode,
+                UserId = param.User.UserId,
+            };
+            //存基层
+          HIS_InterfaceList("38", JsonConvert.SerializeObject(xmlParam));
 
         }
     }

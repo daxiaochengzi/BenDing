@@ -89,12 +89,6 @@ namespace BenDing.Service.Interfaces
         /// <returns></returns>
         string GetIcd10(UserInfoDto user, CatalogParam param);
         void GetXmlData(MedicalInsuranceXmlDto param);
-        /// <summary>
-        /// 回写至基层
-        /// </summary>
-        /// <param name="param"></param>
-        void SaveXmlData(SaveXmlDataParam param);
-
         UserInfoDto GetUserBaseInfo(string param);
         /// <summary>
         /// 三大目录对码信息回写至基层系统
