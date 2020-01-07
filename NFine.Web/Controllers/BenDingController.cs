@@ -472,16 +472,34 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet]
-        public ApiJsonResultData HospitalizationRegisterCancel([FromUri]BaseUiBusinessIdDataParam param)
+        public ApiJsonResultData HospitalizationRegisterCancel([FromUri]UiBaseDataParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {  //医保登陆
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                _residentMedicalInsurance.HospitalizationPreSettlement(new HospitalizationPresettlementParam()
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
+                //回参构建
+                var xmlData = new HospitalizationRegisterXml()
                 {
-                    LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
-                    MedicalInsuranceHospitalizationNo = "44116476"
-                });
+                    MedicalInsuranceHospitalizationNo = "44116476",
+                };
+                var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                var saveXml = new SaveXmlDataParam()
+                {
+                    User = userBase,
+                    MedicalInsuranceBackNum = "Qxjs",
+                    MedicalInsuranceCode = "22",
+                    BusinessId = param.BusinessId,
+                    BackParam = strXmlBackParam
+                };
+                //存基层
+                _webServiceBasic.SaveXmlData(saveXml);
+                //_residentMedicalInsurance.HospitalizationPreSettlement(new HospitalizationPresettlementParam()
+                //{
+                //    LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
+                //    MedicalInsuranceHospitalizationNo = "44116476"
+                //});
                 //var dd = new ResidentUserInfoParam();
                 //dd.IdentityMark = "1";
                 //dd.InformationNumber = "111";
