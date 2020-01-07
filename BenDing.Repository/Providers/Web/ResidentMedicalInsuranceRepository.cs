@@ -178,9 +178,6 @@ namespace BenDing.Repository.Providers.Web
             var dataIni = XmlHelp.DeSerializerModel(new HospitalizationPresettlementJsonDto(), true);
             if (dataIni != null) data = AutoMapper.Mapper.Map<HospitalizationPresettlementDto>(dataIni);
             return data;
-
-
-
         }
 
         /// <summary>
