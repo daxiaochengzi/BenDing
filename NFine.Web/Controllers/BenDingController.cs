@@ -480,7 +480,7 @@ namespace NFine.Web.Controllers
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 userBase.TransKey = param.TransKey;
                 //回参构建
-                var xmlData = new HospitalizationRegisterXml()
+                var xmlData = new HospitalizationRegisterCancelXml()
                 {
                     MedicalInsuranceHospitalizationNo = "44116476",
                 };
