@@ -1008,7 +1008,7 @@ namespace NFine.Web.Controllers
                //获取医保病人信息
                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
                if (residentData != null)
-               {
+               {  //居民
                    if (residentData.InsuranceType == "342")
                    {
                        var settlementCancelParam = new LeaveHospitalSettlementCancelParam()
@@ -1026,7 +1026,7 @@ namespace NFine.Web.Controllers
                        };
                        _residentMedicalInsurance.LeaveHospitalSettlementCancel(settlementCancelParam, cancelParam);
                    }
-
+                   //职工
                    if (residentData.InsuranceType == "310")
                    {
                        if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人未医保结算");

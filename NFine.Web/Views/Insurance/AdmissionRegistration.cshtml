@@ -30,7 +30,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">身份标识</label>
                         <div class="layui-input-inline">
-                            <select id="IdentityMark" name="IdentityMark" lay-verify="required">
+                            <select id="IdentityMark" name="IdentityMark" lay-filter="IdentityMark"  lay-verify="required">
                                 <option value="">请选择条件</option>
                                 <option value="1" selected>身份证号</option>
                                 <option value="2">个人编号</option>
@@ -38,9 +38,9 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label">身份证号</label>
+                        <label class="layui-form-label" id="markTextLable">身份证号</label>
                         <div class="layui-input-inline">
-                            <input type="text" id="IdCardNo" placeholder="请输入身份标识" autocomplete="off" class="layui-input">
+                            <input type="text" id="identityMarkText" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -250,7 +250,17 @@
                 $("#HouseholdNatureId").hide();
             }
         });
-        
+
+        form.on('select(IdentityMark)', function (data) {
+            var val = data.value;
+            if (val == 2) {
+                $("#markTextLable").text("个人编码");
+                $("#identityMarkText").attr("placeholder", "请输入个人编码");
+            } else {
+                $("#markTextLable").text("身份证号");
+                $("#identityMarkText").attr("placeholder", "请输入身份证号");
+            } 
+        });
 
 
         /**根据当前住院病人的业务ID查询,返回数据回显到下面表单里面*/
@@ -304,15 +314,18 @@
                             async: false,
                             success: function (result) {
                                 var oldData = result.Data;
-                                tableIns.reload({
-                                    data: oldData, where: params, parseData: function (result) {
-                                        return {
-                                            "code": result.Code
-                                            , "msg": result.Message
-                                            , "data": result.Data
-                                        };
-                                    }
-                                });
+                                if (oldData != null) {
+                                    tableIns.reload({
+                                        data: oldData, where: params, parseData: function (result) {
+                                            return {
+                                                "code": result.Code
+                                                , "msg": result.Message
+                                                , "data": result.Data
+                                            };
+                                        }
+                                    });
+                                }
+                                
                             }
                         });
                     }
@@ -324,7 +337,7 @@
             return false;//阻止表单跳转
         });
         //数据表格实例化			
-        var layTableId = "layTable";
+        var layTableId = "dataTableId";
         var tableIns = table.render({
             elem: '#dataTable',
             id: layTableId,
@@ -361,7 +374,9 @@
             resArray: 'Data',
             count: 10,
             done: function (item) {
-                var oldData = table.cache[layTableId];
+                //var oldData = table.cache[layTableId];
+                var oldData = new Array;
+                
                 var newRow = {
                     DiagnosisName: item.DiseaseName,
                     DiagnosisCode: item.DiseaseCoding,
