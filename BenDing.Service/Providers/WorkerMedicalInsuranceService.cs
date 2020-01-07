@@ -115,6 +115,7 @@ namespace BenDing.Service.Providers
         { //his登陆
             var userBase = _serviceBasicService.GetUserBaseInfo(uiParam.UserId);
             var param = GetWorkerHospitalizationModify(uiParam, userBase);
+            //医保执行
             _workerMedicalInsuranceRepository.ModifyWorkerHospitalization(param);
             // 回参构建
             var xmlData = new HospitalizationRegisterXml()
@@ -219,7 +220,7 @@ namespace BenDing.Service.Providers
                 IsHospitalizationFrequency = "0",
                 OrganizationCode = userData.MedicalInsuranceAccount,
             };
-
+            //医保结算
             var resultData = _workerMedicalInsuranceRepository.WorkerHospitalizationPreSettlement(preSettlement);
 
             //报销金额 =统筹支付+补充医疗保险支付金额+专项基金支付金额+
