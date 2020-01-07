@@ -112,6 +112,9 @@ namespace BenDing.Service.Providers
                 Remark = "医保入院登记;TransactionId:" + userBase.TransKey
             };
             _systemManageRepository.AddHospitalLog(logParam);
+            //保存入院数据
+            infoData.IsSave = true;
+            _serviceBasicService.GetInpatientInfo(infoData);
 
         }
         /// <summary>
@@ -183,12 +186,14 @@ namespace BenDing.Service.Providers
             };
             _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
             //日志
-            var logParam = new AddHospitalLogParam();
-            logParam.User = userBase;
-            logParam.RelationId = queryData.Id;
-            logParam.JoinOrOldJson = queryData.AdmissionInfoJson;
-            logParam.ReturnOrNewJson = paramStr;
-            logParam.Remark = "医保入院登记修改";
+            var logParam = new AddHospitalLogParam
+            {
+                User = userBase,
+                RelationId = queryData.Id,
+                JoinOrOldJson = queryData.AdmissionInfoJson,
+                ReturnOrNewJson = paramStr,
+                Remark = "医保入院登记修改"
+            };
             _systemManageRepository.AddHospitalLog(logParam);
         }
         /// <summary>

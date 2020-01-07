@@ -975,7 +975,7 @@ namespace BenDing.Repository.Providers.Web
                 try
                 {
                     sqlConnection.Open();
-                    strSql = $@" update {param.TableName} set IsDelete=1 ,UpdateUserId='{param.User.UserId}',DeleteTime=GETDATE() 
+                    strSql = $@" update {param.TableName} set IsDelete=1 ,DeleteUserId='{param.User.UserId}',DeleteTime=GETDATE() 
                                where {param.Field}='{param.Value}' and IsDelete=0";
                     var data = sqlConnection.Execute(strSql);
 
