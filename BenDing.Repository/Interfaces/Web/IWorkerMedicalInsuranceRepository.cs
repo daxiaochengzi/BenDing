@@ -39,5 +39,12 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         string WorkerSettlementCancel(WorkerSettlementCancelParam param);
+        /// <summary>
+        /// 职工结算查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        QueryWorkerHospitalizationSettlementDto QueryWorkerHospitalizationSettlement(
+            QueryWorkerHospitalizationSettlementParam param);
     }
 }

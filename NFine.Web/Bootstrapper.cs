@@ -12,16 +12,22 @@ using StructureMap;
 using Unity;
 
 namespace NFine.Web
-{
+{/// <summary>
+/// 
+/// </summary>
     public class Bootstrapper
-    {
+    {/// <summary>
+    /// 
+    /// </summary>
         public static void Initialise()
         {
             var container = BuildUnityContainer();
             // DependencyResolver.SetResolver(new UnityDependencyResolver(container));//MVC×¢Èë
             GlobalConfiguration.Configuration.DependencyResolver = new Unity.WebApi.UnityDependencyResolver(container);
 
-        }
+        }/// <summary>
+        /// 
+        /// </summary>
         public class UnityIOC
         {
             /// <summary>
@@ -72,7 +78,7 @@ namespace NFine.Web
             container.RegisterType<IResidentMedicalInsuranceService, ResidentMedicalInsuranceService>();
             container.RegisterType<IOutpatientDepartmentService, OutpatientDepartmentService>();
             container.RegisterType<IWorkerMedicalInsuranceService, WorkerMedicalInsuranceService>();
-            container.RegisterType<IMedicalInsuranceService, MedicalInsuranceService>();
+           
 
             #endregion
             #region Repository

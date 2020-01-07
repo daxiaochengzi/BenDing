@@ -11,9 +11,13 @@ using BenDing.Domain.Models.Params.Resident;
 using NFine.Domain._03_Entity.BenDingManage;
 
 namespace NFine.Web.App_Start
-{
+{/// <summary>
+/// 
+/// </summary>
     public class AutoMapperConfig
-    {
+    {/// <summary>
+    /// 
+    /// </summary>
         public static void Config()
         {
             Mapper.Initialize(cfg =>

@@ -4,7 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
+using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.HisXml;
+using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.OutpatientDepartment;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.SystemManage;
@@ -21,28 +24,31 @@ namespace BenDing.Service.Providers
     public class OutpatientDepartmentService : IOutpatientDepartmentService
     {
         private readonly IOutpatientDepartmentRepository _outpatientDepartmentRepository;
-        private readonly IWebServiceBasicService _webServiceBasic;
+        private readonly IWebServiceBasicService _serviceBasicService;
         private readonly IWebBasicRepository _webBasicRepository;
         private readonly IHisSqlRepository _hisSqlRepository;
         private readonly ISystemManageRepository _systemManageRepository;
         private readonly IResidentMedicalInsuranceRepository _residentMedicalInsuranceRepository;
+        private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
 
 
         public OutpatientDepartmentService(
            IOutpatientDepartmentRepository outpatientDepartmentRepository,
-           IWebServiceBasicService webServiceBasic,
+           IWebServiceBasicService webServiceBasicService,
            IWebBasicRepository webBasicRepository,
            IHisSqlRepository hisSqlRepository,
            ISystemManageRepository systemManageRepository,
-           IResidentMedicalInsuranceRepository residentMedicalInsuranceRepository
+           IResidentMedicalInsuranceRepository residentMedicalInsuranceRepository,
+           IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository
            )
         {
-            _webServiceBasic = webServiceBasic;
+            _serviceBasicService = webServiceBasicService;
             _outpatientDepartmentRepository = outpatientDepartmentRepository;
             _webBasicRepository = webBasicRepository;
             _hisSqlRepository = hisSqlRepository;
             _systemManageRepository = systemManageRepository;
             _residentMedicalInsuranceRepository = residentMedicalInsuranceRepository;
+            _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
         }
 
         /// <summary>
@@ -50,9 +56,9 @@ namespace BenDing.Service.Providers
         /// </summary>
         public OutpatientDepartmentCostInputDto OutpatientDepartmentCostInput(GetOutpatientPersonParam param)
         {
-            OutpatientDepartmentCostInputDto resultData=null;
+            OutpatientDepartmentCostInputDto resultData = null;
             //获取门诊病人数据
-            var outpatientPerson = _webServiceBasic.GetOutpatientPerson(param);
+            var outpatientPerson = _serviceBasicService.GetOutpatientPerson(param);
             if (outpatientPerson == null) throw new Exception("his中未获取到当前病人!!!");
             var inputParam = new OutpatientDepartmentCostInputParam()
             {
@@ -64,13 +70,25 @@ namespace BenDing.Service.Providers
             //医保数据写入
             resultData = _outpatientDepartmentRepository.OutpatientDepartmentCostInput(inputParam);
             if (resultData == null) throw new Exception("门诊费用医保执行失败!!!");
-
-            var transactionId = param.User.TransKey;
-            param.ReturnJson = JsonConvert.SerializeObject(resultData);
-            param.Id = Guid.NewGuid();
+          
             param.IsSave = true;
+            param.Id = Guid.NewGuid();
+            //保存门诊病人
+            _serviceBasicService.GetOutpatientPerson(param);
             //中间层数据写入
-            _webServiceBasic.GetOutpatientPerson(param);
+            var saveData = new MedicalInsuranceDto
+            {
+                AdmissionInfoJson = JsonConvert.SerializeObject(param),
+                BusinessId = param.UiParam.BusinessId,
+                Id = Guid.NewGuid(),
+                IsModify = false,
+                InsuranceType = 999,
+                MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized,
+                MedicalInsuranceHospitalizationNo = resultData.DocumentNo
+            };
+            //存中间库
+            _medicalInsuranceSqlRepository.SaveMedicalInsurance(param.User, saveData);
+
             //日志写入
             _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
             {
@@ -98,32 +116,91 @@ namespace BenDing.Service.Providers
                 AccountAmountPay = resultData.ReimbursementExpensesAmount,
                 MedicalInsuranceType = userInfoData.InsuranceType == "342" ? "10" : userInfoData.InsuranceType,
             };
-            //基层数据写入
-            var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
-            xmlData.AccountBalance = userInfoData.ResidentInsuranceBalance;
-            xmlData.PersonalCoding = userInfoData.PersonalCoding;
-            var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-            var saveXmlData = new SaveXmlData();
-            saveXmlData.OrganizationCode = param.User.OrganizationCode;
-            saveXmlData.AuthCode = param.User.AuthCode;
-            saveXmlData.BusinessId = param.UiParam.BusinessId;
-            saveXmlData.TransactionId = transactionId;
-            saveXmlData.MedicalInsuranceBackNum = "TPYP301";
-            saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-            saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
-            saveXmlData.MedicalInsuranceCode = "48";
-            saveXmlData.UserId = param.User.UserId;
-            //存基层
-            _webBasicRepository.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
-            //更新中间层确认基层写入成功
-            _hisSqlRepository.UpdateOutpatient(param.User, new UpdateOutpatientParam()
-            {
-                Id = param.Id,
-                SettlementTransactionId = transactionId
-            });
 
+            var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+            var saveXml = new SaveXmlDataParam()
+            {
+                User = param.User,
+                MedicalInsuranceBackNum = "zydj",
+                MedicalInsuranceCode = "21",
+                BusinessId = param.UiParam.BusinessId,
+                BackParam = strXmlBackParam
+            };
+            //存基层
+            _webBasicRepository.SaveXmlData(saveXml);
+            var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
+            {
+                UserId = param.User.UserId,
+                ReimbursementExpensesAmount =resultData.ReimbursementExpensesAmount,
+                SelfPayFeeAmount = resultData.SelfPayFeeAmount,
+                OtherInfo = JsonConvert.SerializeObject(resultData),
+                Id = saveData.Id,
+                SettlementNo = resultData.DocumentNo,
+                MedicalInsuranceAllAmount = outpatientPerson.MedicalTreatmentTotalCost,
+                SettlementTransactionId = param.User.TransKey,
+                MedicalInsuranceState = MedicalInsuranceState.HisSettlement
+            };
+            //存入中间层
+            _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
 
             return resultData;
+        }
+
+        public void CancelOutpatientDepartmentCost(UiBaseDataParam param)
+        {
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            userBase.TransKey = param.TransKey;
+            //获取医保病人信息
+            var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+            {
+                BusinessId = param.BusinessId,
+                OrganizationCode = userBase.OrganizationCode
+            };
+            var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+            if (residentData == null) throw new Exception("当前病人未结算,不能取消结算!!!");
+            _outpatientDepartmentRepository.CancelOutpatientDepartmentCost(new CancelOutpatientDepartmentCostParam()
+            {
+               DocumentNo = residentData.SettlementNo
+            });
+
+            //添加日志
+            var logParam = new AddHospitalLogParam()
+            {
+                JoinOrOldJson = JsonConvert.SerializeObject(param),
+                User = userBase,
+                Remark = "门诊取消结算",
+                RelationId = residentData.Id,
+            };
+            _systemManageRepository.AddHospitalLog(logParam);
+
+            //回参构建
+            var xmlData = new OutpatientDepartmentCostCancelXml()
+            {
+              SettlementNo = residentData.SettlementNo
+            };
+            var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+            var saveXml = new SaveXmlDataParam()
+            {
+                User = userBase,
+                MedicalInsuranceBackNum = "Qxjs",
+                MedicalInsuranceCode = "42MZ",
+                BusinessId = param.BusinessId,
+                BackParam = strXmlBackParam
+            };
+            //存基层
+            _webBasicRepository.SaveXmlData(saveXml);
+
+            var updateParamData = new UpdateMedicalInsuranceResidentSettlementParam()
+            {
+                UserId = param.UserId,
+                Id = residentData.Id,
+                CancelTransactionId = param.TransKey,
+                MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceCancelSettlement,
+                IsHisUpdateState = true
+            };
+            //更新中间层
+            _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
+
         }
     }
 }

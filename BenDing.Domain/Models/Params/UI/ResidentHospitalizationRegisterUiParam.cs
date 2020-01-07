@@ -9,7 +9,9 @@ using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Base;
 
 namespace BenDing.Domain.Models.Params.UI
-{
+{/// <summary>
+/// 
+/// </summary>
    public class ResidentHospitalizationRegisterUiParam:UiBaseDataParam
     {
         ///<summary>

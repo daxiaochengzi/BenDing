@@ -377,7 +377,7 @@ namespace BenDing.Repository.Providers.Web
                         UserId = infoParam.User.UserId,
                         Id = infoParam.Id,
                         CancelTransactionId = infoParam.User.TransKey,
-                        MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceCancelHospitalized,
+                        MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceCancelSettlement,
                         IsHisUpdateState = true
                     };
                     //更新中间层

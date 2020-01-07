@@ -371,19 +371,17 @@ namespace BenDing.Repository.Providers.Web
                 {
                     sqlConnection.Open();
                    
-                        //strSql =
-                        //    $"update [dbo].[Outpatient] set [IsDelete]=1 ,[UpdateUserId]='{user.UserId}',[UpdateTime]=getDate() where Id='{param.Id.ToString()}'";
                     
                         strSql = $@"update [dbo].[outpatient] set  [IsDelete] =1 ,DeleteTime=getDate(),DeleteUserId='{user.UserId}' where [IsDelete]=0 and [BusinessId]='{param.BusinessId}';
                    INSERT INTO [dbo].[outpatient](
                    Id,[PatientName],[IdCardNo],[PatientSex],[BusinessId],[OutpatientNumber],[VisitDate]
                    ,[DepartmentId],[DepartmentName],[DiagnosticDoctor]
                    ,[Operator] ,[MedicalTreatmentTotalCost],[Remark],[ReceptionStatus]
-                   ,[CreateTime],[DeleteTime],OrganizationCode,OrganizationName,CreateUserId,IsDelete,ReturnJson)
+                   ,[CreateTime],[DeleteTime],OrganizationCode,OrganizationName,CreateUserId,IsDelete)
                    VALUES('{param.Id}','{param.PatientName}','{param.IdCardNo}','{param.PatientSex}','{param.BusinessId}','{param.OutpatientNumber}','{param.VisitDate}'
                          ,'{param.DepartmentId}','{param.DepartmentName}','{param.DiagnosticDoctor}'
                         ,'{param.Operator}','{param.MedicalTreatmentTotalCost}','{param.Remark}','{param.ReceptionStatus}'
-                         ,getDate(),null,'{user.OrganizationCode}','{user.OrganizationName}','{user.UserId}',0,'{param.ReturnJson}'
+                         ,getDate(),null,'{user.OrganizationCode}','{user.OrganizationName}','{user.UserId}',0
                     );";
                     sqlConnection.Execute(strSql);
                     sqlConnection.Close();

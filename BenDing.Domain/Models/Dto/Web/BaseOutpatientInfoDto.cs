@@ -58,21 +58,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
        
         public string DiagnosticDoctor { get; set; }
-        /// <summary>
-        /// 诊断疾病编码
-        /// </summary>
-        
-        public string DiagnosticDiseaseCode { get; set; }
-        /// <summary>
-        /// 诊断疾病名称
-        /// </summary>
-       
-        public string DiagnosticDiseaseName { get; set; }
-        /// <summary>
-        /// 主要病情描述
-        /// </summary>
-      
-        public string DiseaseDesc { get; set; }
+
         /// <summary>
         /// 经办人
         /// </summary>
@@ -93,10 +79,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
 
         public int ReceptionStatus { get; set; }
-        /// <summary>
-        /// 回参json
-        /// </summary>
-        public string ReturnJson { get; set; }
+     
 
     }
 }

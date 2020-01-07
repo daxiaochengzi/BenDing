@@ -17,24 +17,25 @@ namespace BenDing.Service.Interfaces
         /// </summary>
         /// <param name="param"></param>
         ResidentUserInfoDto GetUserInfo(ResidentUserInfoParam param);
+
         /// <summary>
         /// 入院登记
         /// </summary>
         /// <returns></returns>
-        void HospitalizationRegister(ResidentHospitalizationRegisterParam param, UserInfoDto user);
+         void HospitalizationRegister(ResidentHospitalizationRegisterUiParam param);
+
         /// <summary>
         /// 修改入院登记
         /// </summary>
         /// <param name="param"></param>
-        /// <param name="user"></param>
-        void HospitalizationModify(HospitalizationModifyParam param, UserInfoDto user);
+         void HospitalizationModify(HospitalizationModifyUiParam param);
         /// <summary>
         /// 居民住院结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
 
-         HospitalizationPresettlementDto LeaveHospitalSettlement(LeaveHospitalSettlementUiParam param);
+        HospitalizationPresettlementDto LeaveHospitalSettlement(LeaveHospitalSettlementUiParam param);
         /// <summary>
         /// 项目下载
         /// </summary>

@@ -23,11 +23,6 @@ namespace BenDing.Domain.Models.Params.Web
         /// 参数
         /// </summary>
         public GetOutpatientUiParam UiParam { get; set; }
-
-        /// <summary>
-        /// 回参json
-        /// </summary>
-        public string ReturnJson { get; set; }
         /// <summary>
         /// id
         /// </summary>

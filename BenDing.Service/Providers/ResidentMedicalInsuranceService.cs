@@ -57,9 +57,19 @@ namespace BenDing.Service.Providers
         /// 入院登记
         /// </summary>
         /// <returns></returns>
-        public void HospitalizationRegister(ResidentHospitalizationRegisterParam param, UserInfoDto user)
-        {
-            var residentData = _residentMedicalInsuranceRepository.HospitalizationRegister(param);
+        public void HospitalizationRegister(ResidentHospitalizationRegisterUiParam param)
+        { //his登陆
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            userBase.TransKey = param.TransKey;
+            var infoData = new GetInpatientInfoParam()
+            {
+                User = userBase,
+                BusinessId = param.BusinessId,
+            };
+            //获取医保病人
+            var inpatientData = _serviceBasicService.GetInpatientInfo(infoData);
+            var registerParam = GetResidentHospitalizationRegisterParam(param, inpatientData);
+            var residentData = _residentMedicalInsuranceRepository.HospitalizationRegister(registerParam);
             var saveData = new MedicalInsuranceDto
             {
                 AdmissionInfoJson = JsonConvert.SerializeObject(param),
@@ -70,7 +80,7 @@ namespace BenDing.Service.Providers
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized
             };
             //保存中间库
-            _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
+            _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
             //回参构建
             var xmlData = new HospitalizationRegisterXml()
             {
@@ -81,7 +91,7 @@ namespace BenDing.Service.Providers
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
             var saveXml = new SaveXmlDataParam()
             {
-                User = user,
+                User = userBase,
                 MedicalInsuranceBackNum = "CXJB002",
                 MedicalInsuranceCode = "21",
                 BusinessId = param.BusinessId,
@@ -91,15 +101,15 @@ namespace BenDing.Service.Providers
             _webBasicRepository.SaveXmlData(saveXml);
             //更新中间库
             saveData.MedicalInsuranceState = MedicalInsuranceState.HisHospitalized;
-            _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
+            _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
             //日志
             var logParam = new AddHospitalLogParam
             {
-                User = user,
+                User = userBase,
                 RelationId = saveData.Id,
                 JoinOrOldJson = JsonConvert.SerializeObject(param),
                 ReturnOrNewJson = JsonConvert.SerializeObject(residentData),
-                Remark = "医保入院登记;TransactionId:" + user.TransKey
+                Remark = "医保入院登记;TransactionId:" + userBase.TransKey
             };
             _systemManageRepository.AddHospitalLog(logParam);
 
@@ -109,9 +119,12 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <param name="user"></param>
-        public void HospitalizationModify(HospitalizationModifyParam param, UserInfoDto user)
-        {
-            _residentMedicalInsuranceRepository.HospitalizationModify(param, user);
+        public void HospitalizationModify(HospitalizationModifyUiParam param)
+        {//his登陆
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            userBase.TransKey = param.TransKey;
+            var modifyParam = GetResidentHospitalizationModify(param);
+            _residentMedicalInsuranceRepository.HospitalizationModify(modifyParam, userBase);
             // 回参构建
             var xmlData = new HospitalizationRegisterXml()
             {
@@ -120,7 +133,7 @@ namespace BenDing.Service.Providers
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
             var saveXml = new SaveXmlDataParam()
             {
-                User = user,
+                User = userBase,
                 MedicalInsuranceBackNum = "CXJB003",
                 MedicalInsuranceCode = "23",
                 BusinessId = param.BusinessId,
@@ -133,7 +146,7 @@ namespace BenDing.Service.Providers
                 new QueryMedicalInsuranceResidentInfoParam
                 {
                     BusinessId = param.BusinessId,
-                    OrganizationCode = user.OrganizationCode
+                    OrganizationCode = userBase.OrganizationCode
                 });
             if (!string.IsNullOrWhiteSpace(queryData.AdmissionInfoJson))
             {
@@ -142,14 +155,14 @@ namespace BenDing.Service.Providers
                         .AdmissionInfoJson);
                 if (!string.IsNullOrWhiteSpace(param.AdmissionDate))
                     data.AdmissionDate = param.AdmissionDate;
-                if (!string.IsNullOrWhiteSpace(param.AdmissionMainDiagnosis))
-                    data.AdmissionMainDiagnosis = param.AdmissionMainDiagnosis;
-                if (!string.IsNullOrWhiteSpace(param.AdmissionMainDiagnosisIcd10))
-                    data.AdmissionMainDiagnosisIcd10 = param.AdmissionMainDiagnosisIcd10;
-                if (!string.IsNullOrWhiteSpace(param.DiagnosisIcd10Three))
-                    data.DiagnosisIcd10Three = param.DiagnosisIcd10Three;
-                if (!string.IsNullOrWhiteSpace(param.DiagnosisIcd10Two))
-                    data.DiagnosisIcd10Two = param.DiagnosisIcd10Two;
+                if (!string.IsNullOrWhiteSpace(modifyParam.AdmissionMainDiagnosis))
+                    data.AdmissionMainDiagnosis = modifyParam.AdmissionMainDiagnosis;
+                if (!string.IsNullOrWhiteSpace(modifyParam.AdmissionMainDiagnosisIcd10))
+                    data.AdmissionMainDiagnosisIcd10 = modifyParam.AdmissionMainDiagnosisIcd10;
+                if (!string.IsNullOrWhiteSpace(modifyParam.DiagnosisIcd10Three))
+                    data.DiagnosisIcd10Three = modifyParam.DiagnosisIcd10Three;
+                if (!string.IsNullOrWhiteSpace(modifyParam.DiagnosisIcd10Two))
+                    data.DiagnosisIcd10Two = modifyParam.DiagnosisIcd10Two;
                 if (!string.IsNullOrWhiteSpace(param.FetusNumber)) data.FetusNumber = param.FetusNumber;
                 if (!string.IsNullOrWhiteSpace(param.HouseholdNature))
                     data.HouseholdNature = param.HouseholdNature;
@@ -168,10 +181,10 @@ namespace BenDing.Service.Providers
                 IsModify = true,
                 MedicalInsuranceHospitalizationNo = queryData.MedicalInsuranceHospitalizationNo
             };
-            _medicalInsuranceSqlRepository.SaveMedicalInsurance(user, saveData);
+            _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
             //日志
             var logParam = new AddHospitalLogParam();
-            logParam.User = user;
+            logParam.User = userBase;
             logParam.RelationId = queryData.Id;
             logParam.JoinOrOldJson = queryData.AdmissionInfoJson;
             logParam.ReturnOrNewJson = paramStr;
@@ -333,8 +346,6 @@ namespace BenDing.Service.Providers
             _hisSqlRepository.SaveInpatientSettlement(saveParam);
             return data;
         }
-
-
         /// <summary>
         /// 医保项目下载
         /// </summary>
@@ -369,6 +380,63 @@ namespace BenDing.Service.Providers
             return resultData;
         }
 
+        /// <summary>
+        /// 居民入院登记修改
+        /// </summary>
+        /// <param name="param"></param>
+        private HospitalizationModifyParam GetResidentHospitalizationModify(HospitalizationModifyUiParam param)
+        {
+            //主诊断
+            //医保修改
+            var modifyParam = new HospitalizationModifyParam()
+            {
+                AdmissionDate = Convert.ToDateTime(param.AdmissionDate).ToString("yyyyMMdd"),
+                BedNumber = param.BedNumber,
+                BusinessId = param.BusinessId,
+                FetusNumber = param.FetusNumber,
+                HouseholdNature = param.HouseholdNature,
+                MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
+                TransKey = param.TransKey,
+                UserId = param.UserId,
+                InpatientDepartmentCode = param.InpatientDepartmentCode,
+                HospitalizationNo = CommonHelp.GuidToStr(param.BusinessId)
+            };
+            var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
+            modifyParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
+            modifyParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
+            modifyParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
+
+            return modifyParam;
+        }
+        /// <summary>
+        /// 获取居民入院登记入参
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="paramDto"></param>
+        /// <returns></returns>
+        private ResidentHospitalizationRegisterParam GetResidentHospitalizationRegisterParam(
+            ResidentHospitalizationRegisterUiParam param, InpatientInfoDto paramDto)
+        {
+            var iniParam = new ResidentHospitalizationRegisterParam();
+            var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
+            iniParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
+            iniParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
+            iniParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
+            iniParam.AdmissionMainDiagnosis = diagnosisData.DiagnosisDescribe;
+            iniParam.IdentityMark = param.IdentityMark;
+            iniParam.AfferentSign = param.IdentityMark == "1" ? paramDto.IdCardNo : param.AfferentSign;
+            iniParam.MedicalCategory = param.MedicalCategory;
+            iniParam.FetusNumber = param.FetusNumber;
+            iniParam.HouseholdNature = param.HouseholdNature;
+            iniParam.AdmissionDate = Convert.ToDateTime(paramDto.AdmissionDate).ToString("yyyyMMdd");
+            iniParam.InpatientDepartmentCode = paramDto.InDepartmentName;
+            iniParam.BedNumber = paramDto.AdmissionBed;
+            iniParam.HospitalizationNo = paramDto.HospitalizationNo;
+            iniParam.Operators = paramDto.AdmissionOperator;
+            iniParam.InsuranceType = param.InsuranceType;
+            iniParam.BusinessId = param.BusinessId;
+            return iniParam;
+        }
 
     }
 }

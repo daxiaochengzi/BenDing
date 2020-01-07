@@ -11,17 +11,19 @@ using BenDing.Domain.Models.Params.Workers;
 namespace BenDing.Service.Interfaces
 {
    public interface IWorkerMedicalInsuranceService
-   { /// <summary>
+   {
+       /// <summary>
        /// 职工入院登记
        /// </summary>
        /// <param name="param"></param>
        /// <returns></returns>
-        WorkerHospitalizationRegisterDto WorkerHospitalizationRegister(WorKerHospitalizationRegisterParam param);
+       WorkerHospitalizationRegisterDto WorkerHospitalizationRegister(ResidentHospitalizationRegisterUiParam param);
+
         /// <summary>
         /// 职工入院登记修改
         /// </summary>
-        /// <param name="param"></param>
-        void ModifyWorkerHospitalization(ModifyWorkerHospitalizationParam param);
+        /// <param name="uiParam"></param>
+        void ModifyWorkerHospitalization(HospitalizationModifyUiParam uiParam);
         /// <summary>
         /// 职工住院预结算
         /// </summary>
@@ -45,5 +47,12 @@ namespace BenDing.Service.Interfaces
         /// </summary>
         /// <param name="param"></param>
         void WorkerStrokeCard(WorkerStrokeCardParam param);
+        /// <summary>
+        /// 职工结算查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+       QueryWorkerHospitalizationSettlementDto QueryWorkerHospitalizationSettlement(
+           QueryWorkerHospitalizationSettlementParam param);
    }
 }

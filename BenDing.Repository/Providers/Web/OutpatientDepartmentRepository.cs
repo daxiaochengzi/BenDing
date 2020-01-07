@@ -64,61 +64,13 @@ namespace BenDing.Repository.Providers.Web
         {
 
 
-            var xmlStr = XmlHelp.SaveXml(param.Participation);
+            var xmlStr = XmlHelp.SaveXml(param);
             if (xmlStr)
             {
                 var result = MedicalInsuranceDll.CallService_cxjb("TPYP302");
                 if (result == 1)
                 {   //医保执行
                     var data = XmlHelp.DeSerializerModel(new IniDto(), true);
-                    if (data != null)
-                    {
-                        if (data.ReturnState =="1")
-                        {
-                           
-                                var transactionId = param.User.TransKey;
-                                //写入日志
-                                _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
-                                {
-                                    RelationId = param.Id,
-                                    JoinOrOldJson = JsonConvert.SerializeObject(param.Participation),
-                                    ReturnOrNewJson = JsonConvert.SerializeObject(data),
-                                    Remark = "[R][OutpatientDepartment]门诊病人结算取消",
-                                    User= param.User,
-                                });
-                                //回参构建
-                                var xmlData = new OutpatientDepartmentCostCancelXml()
-                                {
-
-                                    SettlementNo = param.Participation.DocumentNo,
-                                };
-                                var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
-                                var strXmlBackParam = XmlSerializeHelper.XmlBackParam();
-                                var saveXmlData = new SaveXmlData();
-                                saveXmlData.OrganizationCode = param.User.OrganizationCode;
-                                saveXmlData.AuthCode = param.User.AuthCode;
-                                saveXmlData.BusinessId = param.BusinessId;
-                                saveXmlData.TransactionId = transactionId;
-                                saveXmlData.MedicalInsuranceBackNum = "TPYP302";
-                                saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-                                saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
-                                saveXmlData.MedicalInsuranceCode = "42MZ";
-                                saveXmlData.UserId = param.User.UserId;
-                                //存基层
-                                _webBasicRepository.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
-                                //更新中间层确认取消成功
-                                _hisSqlRepository.UpdateOutpatient(param.User, new UpdateOutpatientParam()
-                                {
-                                    Id = param.Id,
-                                    SettlementCancelTransactionId = transactionId
-                                });
-                            }
-                           
-                          
-                        
-                    }
-                    
-
                 }
             }
         }

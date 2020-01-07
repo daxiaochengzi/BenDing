@@ -16,6 +16,7 @@ using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Models.Params.Workers;
 using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
+using BenDing.Repository.Providers.Web;
 using BenDing.Service.Interfaces;
 using Newtonsoft.Json;
 
@@ -54,9 +55,21 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public WorkerHospitalizationRegisterDto WorkerHospitalizationRegister(WorKerHospitalizationRegisterParam param)
-        {
-            var registerData = _workerMedicalInsuranceRepository.WorkerHospitalizationRegister(param);
+        public WorkerHospitalizationRegisterDto WorkerHospitalizationRegister(ResidentHospitalizationRegisterUiParam param)
+        {//his登陆
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            userBase.TransKey = param.TransKey;
+            var infoData = new GetInpatientInfoParam()
+            {
+                User = userBase,
+                BusinessId = param.BusinessId,
+            };
+            //获取医保病人
+            var inpatientData = _serviceBasicService.GetInpatientInfo(infoData);
+            var workerParam = GetWorkerHospitalizationRegisterParam(param, inpatientData, userBase);
+
+
+            var registerData = _workerMedicalInsuranceRepository.WorkerHospitalizationRegister(workerParam);
             if (registerData != null && string.IsNullOrWhiteSpace(registerData.MedicalInsuranceHospitalizationNo))
             {
 
@@ -71,7 +84,7 @@ namespace BenDing.Service.Providers
                     MedicalInsuranceHospitalizationNo = registerData.MedicalInsuranceHospitalizationNo
                 };
                 //存中间库
-                _medicalInsuranceSqlRepository.SaveMedicalInsurance(param.User, saveData);
+                _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
                 //回参构建
                 var xmlData = new HospitalizationRegisterXml()
                 {
@@ -82,7 +95,7 @@ namespace BenDing.Service.Providers
                 var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
                 var saveXml = new SaveXmlDataParam()
                 {
-                    User = param.User,
+                    User = userBase,
                     MedicalInsuranceBackNum = "zydj",
                     MedicalInsuranceCode = "21",
                     BusinessId = param.BusinessId,
@@ -92,16 +105,18 @@ namespace BenDing.Service.Providers
                 _webBasicRepository.SaveXmlData(saveXml);
                 saveData.MedicalInsuranceState = MedicalInsuranceState.HisHospitalized;
                 //更新中间库
-                _medicalInsuranceSqlRepository.SaveMedicalInsurance(param.User, saveData);
+                _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
             }
             return registerData;
         }
         /// <summary>
         /// 职工入院登记修改
         /// </summary>
-        /// <param name="param"></param>
-        public void ModifyWorkerHospitalization(ModifyWorkerHospitalizationParam param)
-        {
+        /// <param name="uiParam"></param>
+        public void ModifyWorkerHospitalization(HospitalizationModifyUiParam uiParam)
+        { //his登陆
+            var userBase = _serviceBasicService.GetUserBaseInfo(uiParam.UserId);
+            var param = GetWorkerHospitalizationModify(uiParam, userBase);
             _workerMedicalInsuranceRepository.ModifyWorkerHospitalization(param);
             // 回参构建
             var xmlData = new HospitalizationRegisterXml()
@@ -471,7 +486,7 @@ namespace BenDing.Service.Providers
                     UserId = param.User.UserId,
                     Id = param.Id,
                     CancelTransactionId = cancelTransactionId,
-                    MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceCancelHospitalized,
+                    MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceCancelSettlement,
                     IsHisUpdateState = true
                 };
                 //更新中间层
@@ -480,5 +495,82 @@ namespace BenDing.Service.Providers
             }
             return resultData;
         }
+        /// <summary>
+        /// 职工结算查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public QueryWorkerHospitalizationSettlementDto QueryWorkerHospitalizationSettlement(
+           QueryWorkerHospitalizationSettlementParam param)
+        {
+            var resultData = _workerMedicalInsuranceRepository.QueryWorkerHospitalizationSettlement(param);
+
+            return resultData;
+        }
+        /// <summary>
+        /// 获取职工入院登记修改
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        private ModifyWorkerHospitalizationParam GetWorkerHospitalizationModify(HospitalizationModifyUiParam param, UserInfoDto user)
+        {
+            //获取医院等级
+            var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(user.OrganizationCode);
+            //医保修改
+            var modifyParam = new ModifyWorkerHospitalizationParam()
+            {
+                AdmissionDate = Convert.ToDateTime(param.AdmissionDate).ToString("yyyyMMdd"),
+                BedNumber = param.BedNumber,
+                BusinessId = param.BusinessId,
+                MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
+                HospitalizationNo = CommonHelp.GuidToStr(param.BusinessId),
+                AdministrativeArea = gradeData.AdministrativeArea,
+                Operators = user.UserName,
+            };
+            var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
+            modifyParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
+            modifyParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
+            modifyParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
+            modifyParam.AdmissionMainDiagnosis = diagnosisData.DiagnosisDescribe;
+            return modifyParam;
+        }
+        /// <summary>
+        /// 获取职工入院登记入参
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="paramDto"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        private WorKerHospitalizationRegisterParam GetWorkerHospitalizationRegisterParam(
+            ResidentHospitalizationRegisterUiParam param, InpatientInfoDto paramDto, UserInfoDto user)
+        {
+            var iniParam = new WorKerHospitalizationRegisterParam();
+            var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
+            iniParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
+            iniParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
+            iniParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
+            iniParam.AdmissionMainDiagnosis = diagnosisData.DiagnosisDescribe;
+            //获取医院等级
+            var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(user.OrganizationCode);
+            if (gradeData == null) throw new Exception("获取医院等级失败!!!");
+            if (string.IsNullOrWhiteSpace(gradeData.AdministrativeArea)) throw new Exception("当前医院未设置行政区域!!!");
+            iniParam.IdentityMark = param.IdentityMark;
+            iniParam.AfferentSign = param.AfferentSign;
+            iniParam.MedicalCategory = param.MedicalCategory;
+            iniParam.AdmissionDate = Convert.ToDateTime(paramDto.AdmissionDate).ToString("yyyyMMdd");
+            iniParam.InpatientDepartmentCode = paramDto.InDepartmentName;
+            iniParam.BedNumber = paramDto.AdmissionBed;
+            iniParam.HospitalizationNo = paramDto.HospitalizationNo;
+            iniParam.Operators = paramDto.AdmissionOperator;
+            iniParam.BusinessId = param.BusinessId;
+            iniParam.AdministrativeArea = gradeData.AdministrativeArea;
+            iniParam.InpatientArea = paramDto.AdmissionWard;
+            var userData = _systemManageRepository.QueryHospitalOperator(
+                new QueryHospitalOperatorParam() { UserId = param.UserId });
+            iniParam.OrganizationCode = userData.MedicalInsuranceAccount;
+            return iniParam;
+        }
+
     }
 }

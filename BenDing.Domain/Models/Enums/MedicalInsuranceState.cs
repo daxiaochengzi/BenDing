@@ -10,9 +10,9 @@ namespace BenDing.Domain.Models.Enums
 /// </summary>
     public enum MedicalInsuranceState
     {/// <summary>
-    /// 医保取消入院登记
-    /// </summary>
-        MedicalInsuranceCancelHospitalized=0,
+     /// 医保取消结算
+     /// </summary>
+        MedicalInsuranceCancelSettlement = 0,
         /// <summary>
         /// 医保入院
         /// </summary>

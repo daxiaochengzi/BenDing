@@ -9,35 +9,13 @@ using Newtonsoft.Json;
 
 namespace BenDing.Domain.Models.Params.OutpatientDepartment
 { /// <summary>
-    /// 门诊结算取消
-    /// </summary>
-
-    public class CancelOutpatientDepartmentCostParam
-    {/// <summary>
-        /// 入参
-        /// </summary>
-        public CancelOutpatientDepartmentCostParticipationParam Participation { get; set; }
-        /// <summary>
-        /// 用户信息
-        /// </summary>
-        public UserInfoDto User { get; set; }
-        /// <summary>
-        /// id
-        /// </summary>
-        public Guid Id { get; set; }
-        /// <summary>
-        /// 业务Id
-        /// </summary>
-        public  string BusinessId { get; set; }
-    }
-
-   /// <summary>
-   /// 
-   /// </summary>
+  /// 门诊结算取消
+  /// </summary>
     [XmlRoot("ROW", IsNullable = false)]
-    public  class CancelOutpatientDepartmentCostParticipationParam
+    public class CancelOutpatientDepartmentCostParam
     {
         [XmlElementAttribute("PI_BAE007", IsNullable = false)]
         public string DocumentNo { get; set; }
     }
+
 }
