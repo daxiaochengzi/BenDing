@@ -682,8 +682,7 @@ namespace BenDing.Repository.Providers.Web
                             UploadAmount = d.Amount
                         }).ToList();
                         _medicalInsuranceSqlRepository.UpdateHospitalizationFee(updateFeeParam, false, user);
-                        //保存至基层
-                        var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
+                    
                         //回参
                         var xmlData = new HospitalizationFeeUploadXml()
                         {
@@ -691,19 +690,19 @@ namespace BenDing.Repository.Providers.Web
                             MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
                             RowDataList = rowXml,
                         };
+                        
                         var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-
-                        var saveXmlData = new SaveXmlData();
-                        saveXmlData.OrganizationCode = user.OrganizationCode;
-                        saveXmlData.AuthCode = user.AuthCode;
-                        saveXmlData.BusinessId = businessId;
-                        saveXmlData.TransactionId = transactionId;
-                        saveXmlData.MedicalInsuranceBackNum = "CXJB004";
-                        saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-                        saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
-                        saveXmlData.MedicalInsuranceCode = "31";
-                        saveXmlData.UserId = user.UserId;
-                        _webBasicRepository.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                        user.TransKey = businessId;
+                        var saveXml = new SaveXmlDataParam()
+                        {
+                            User = user,
+                            MedicalInsuranceBackNum = "CXJB004",
+                            MedicalInsuranceCode = "31",
+                            BusinessId = businessId,
+                            BackParam = strXmlBackParam
+                        };
+                        //存基层
+                        _webBasicRepository.SaveXmlData(saveXml);
                         var batchConfirmParam = new BatchConfirmParam()
                         {
                             ConfirmType = 1,
