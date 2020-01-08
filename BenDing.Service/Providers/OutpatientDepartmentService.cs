@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
@@ -203,6 +204,31 @@ namespace BenDing.Service.Providers
             //更新中间层
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
 
+        }
+
+        public List<QueryOutpatientDepartmentCostjsonDto> QueryOutpatientDepartmentCost(BaseUiBusinessIdDataParam param)
+        {
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+
+            //获取医保病人信息
+            var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+            {
+                BusinessId = param.BusinessId,
+                OrganizationCode = userBase.OrganizationCode
+            };
+            var outpatient= _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam(){BusinessId = param.BusinessId });
+            if (outpatient==null) throw new Exception("当前病人查找失败!!!");
+            var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+            if (residentData == null) throw new Exception("当前病人未结算,无结算数据!!!");
+            if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人无结算数据!!!");
+              var data= _outpatientDepartmentRepository.QueryOutpatientDepartmentCost(
+                    new QueryOutpatientDepartmentCostParam()
+                    {
+                        DocumentNo = residentData.SettlementNo,
+                       IdCardNo = outpatient.IdCardNo,
+
+                    });
+            return data;
         }
     }
 }
