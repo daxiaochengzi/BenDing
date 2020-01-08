@@ -360,7 +360,7 @@ namespace BenDing.Service.Providers
             var saveParam = AutoMapper.Mapper.Map<SaveInpatientSettlementParam>(hisSettlement);
             saveParam.Id = (Guid)inpatientInfoData.Id;
             saveParam.User = userBase;
-            saveParam.LeaveHospitalDiagnosisJson = JsonConvert.SerializeObject(hisSettlement.DiagnosisList);
+            saveParam.LeaveHospitalDiagnosisJson = JsonConvert.SerializeObject(param.DiagnosisList);
             _hisSqlRepository.SaveInpatientSettlement(saveParam);
             return resultData;
         }

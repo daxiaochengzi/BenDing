@@ -311,46 +311,46 @@ namespace BenDing.Service.Providers
             };
             //获取his结算
             var hisSettlement = _serviceBasicService.GetHisHospitalizationSettlement(infoData);
-            ////获取医保病人信息
-            //var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-            //if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已办理医保结算,不能办理预结算!!!");
-            //if (residentData.MedicalInsuranceState == MedicalInsuranceState.MedicalInsurancePreSettlement) throw new Exception("当前病人未办理预结算,不能办理结算!!!");
-            //var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
-            ////获取住院病人
-            //var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
-            //if (inpatientInfoData == null) throw new Exception("该病人未在中心库中,请检查是否办理医保入院!!!");
+            //获取医保病人信息
+            var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+            if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已办理医保结算,不能办理预结算!!!");
+            if (residentData.MedicalInsuranceState == MedicalInsuranceState.MedicalInsurancePreSettlement) throw new Exception("当前病人未办理预结算,不能办理结算!!!");
+            var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
+            //获取住院病人
+            var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
+            if (inpatientInfoData == null) throw new Exception("该病人未在中心库中,请检查是否办理医保入院!!!");
 
-            //var settlementParam = new LeaveHospitalSettlementParam()
-            //{
-            //    MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-            //    LeaveHospitalDate = Convert.ToDateTime(hisSettlement.LeaveHospitalDate).ToString("yyyyMMdd"),
-            //    UserId = hisSettlement.LeaveHospitalOperator,
-            //    LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
-            //};
-            ////获取诊断
-            //var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
-            //settlementParam.LeaveHospitalMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
-            //settlementParam.LeaveHospitalDiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
-            //settlementParam.LeaveHospitalDiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
-            //settlementParam.LeaveHospitalMainDiagnosis = diagnosisData.DiagnosisDescribe;
-            //var infoParam = new LeaveHospitalSettlementInfoParam()
-            //{
-            //    User = userBase,
-            //    Id = residentData.Id,
-            //    InsuranceNo = residentData.InsuranceNo,
-            //    BusinessId = inpatientInfoData.BusinessId,
-            //    IdCardNo = inpatientInfoData.IdCardNo,
-            //};
-            ////医保执行
-            //var data = _residentMedicalInsuranceRepository.LeaveHospitalSettlement(settlementParam, infoParam);
-            //if (data == null) throw new Exception("居民住院结算反馈失败");
-            ////结算后保存信息
+            var settlementParam = new LeaveHospitalSettlementParam()
+            {
+                MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                LeaveHospitalDate = Convert.ToDateTime(hisSettlement.LeaveHospitalDate).ToString("yyyyMMdd"),
+                UserId = hisSettlement.LeaveHospitalOperator,
+                LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
+            };
+            //获取诊断
+            var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
+            settlementParam.LeaveHospitalMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
+            settlementParam.LeaveHospitalDiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
+            settlementParam.LeaveHospitalDiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
+            settlementParam.LeaveHospitalMainDiagnosis = diagnosisData.DiagnosisDescribe;
+            var infoParam = new LeaveHospitalSettlementInfoParam()
+            {
+                User = userBase,
+                Id = residentData.Id,
+                InsuranceNo = residentData.InsuranceNo,
+                BusinessId = inpatientInfoData.BusinessId,
+                IdCardNo = inpatientInfoData.IdCardNo,
+            };
+            //医保执行
+            var data = _residentMedicalInsuranceRepository.LeaveHospitalSettlement(settlementParam, infoParam);
+            if (data == null) throw new Exception("居民住院结算反馈失败");
+            //结算后保存信息
             var saveParam = AutoMapper.Mapper.Map<SaveInpatientSettlementParam>(hisSettlement);
-            saveParam.Id = Guid.Empty;//(Guid)inpatientInfoData.Id;
+            saveParam.Id = (Guid)inpatientInfoData.Id;
             saveParam.User = userBase;
-            saveParam.LeaveHospitalDiagnosisJson = JsonConvert.SerializeObject(hisSettlement.DiagnosisList);
+            saveParam.LeaveHospitalDiagnosisJson = JsonConvert.SerializeObject(param.DiagnosisList);
             _hisSqlRepository.SaveInpatientSettlement(saveParam);
-            return new HospitalizationPresettlementDto();
+            return data;
         }
         /// <summary>
         /// 医保项目下载
