@@ -19,7 +19,7 @@ using NFine.Domain._03_Entity.BenDingManage;
 
 namespace BenDing.Repository.Providers.Web
 {
-   public class OutpatientDepartmentRepository: IOutpatientDepartmentRepository
+    public class OutpatientDepartmentRepository : IOutpatientDepartmentRepository
     {
         private readonly MonthlyHospitalizationBase _monthlyHospitalizationBase;
         private readonly IHisSqlRepository _hisSqlRepository;
@@ -41,19 +41,11 @@ namespace BenDing.Repository.Providers.Web
         public OutpatientDepartmentCostInputDto OutpatientDepartmentCostInput(OutpatientDepartmentCostInputParam param)
         {
             OutpatientDepartmentCostInputDto resultData = null;
-
             var xmlStr = XmlHelp.SaveXml(param);
-            if (xmlStr)
-            {
-                var result =MedicalInsuranceDll.CallService_cxjb("TPYP301");
-                if (result == 1)
-                {
-                    resultData = XmlHelp.DeSerializerModel(new OutpatientDepartmentCostInputDto(), true);
-                }
-                else {
-                    throw new Exception("门诊费用医保执行失败!!!");
-                }
-            }
+            if (!xmlStr) throw new Exception("门诊费用录入保存参数出错");
+            var result = MedicalInsuranceDll.CallService_cxjb("TPYP301");
+            if (result != 1) throw new Exception("门诊费用录入执行出错");
+            resultData = XmlHelp.DeSerializerModel(new OutpatientDepartmentCostInputDto(), true);
             return resultData;
         }
 
@@ -62,40 +54,32 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         public void CancelOutpatientDepartmentCost(CancelOutpatientDepartmentCostParam param)
         {
-
-
             var xmlStr = XmlHelp.SaveXml(param);
-            if (xmlStr)
-            {
-                var result = MedicalInsuranceDll.CallService_cxjb("TPYP302");
-                if (result == 1)
-                {   //医保执行
-                    var data = XmlHelp.DeSerializerModel(new IniDto(), true);
-                }
-            }
+            if (!xmlStr) throw new Exception("门诊费取消保存参数出错");
+            var result = MedicalInsuranceDll.CallService_cxjb("TPYP302");
+            if (result != 1) throw new Exception("门诊费取消执行出错");
+            XmlHelp.DeSerializerModel(new IniDto(), true);
+
         }
 
         /// <summary>
         /// 查询门诊费
         /// </summary>
-        public List<QueryOutpatientDepartmentCostjsonDto>  QueryOutpatientDepartmentCost(QueryOutpatientDepartmentCostParam param)
+        public List<QueryOutpatientDepartmentCostjsonDto> QueryOutpatientDepartmentCost(QueryOutpatientDepartmentCostParam param)
         {
 
             var resultData = new List<QueryOutpatientDepartmentCostjsonDto>();
             var xmlStr = XmlHelp.SaveXml(param);
-            if (xmlStr)
+            if (!xmlStr) throw new Exception("查询门诊费保存参数出错");
+            var result = MedicalInsuranceDll.CallService_cxjb("TPYP303");
+            if (result != 1) throw new Exception("门诊费用查询执行出错");
+            string strXml = XmlHelp.DeSerializerModelStr("PO_GHXX");
+            var data = XmlHelp.DeSerializer<QueryOutpatientDepartmentCostDto>(strXml);
+            if (data.Row != null && data.Row.Any())
             {
-                var result = MedicalInsuranceDll.CallService_cxjb("TPYP303");
-                if (result == 1)
-                {
-                    string strXml = XmlHelp.DeSerializerModelStr("PO_GHXX");
-                    var data = XmlHelp.DeSerializer<QueryOutpatientDepartmentCostDto>(strXml);
-                    if (data.Row != null && data.Row.Any())
-                    {
-                        resultData =  AutoMapper.Mapper.Map<List<QueryOutpatientDepartmentCostjsonDto>>(data.Row);
-                    }
-                }
+                resultData = AutoMapper.Mapper.Map<List<QueryOutpatientDepartmentCostjsonDto>>(data.Row);
             }
+
 
             return resultData;
         }
@@ -105,29 +89,26 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="param"></param>
         public MonthlyHospitalizationDto MonthlyHospitalization(MonthlyHospitalizationParam param)
         {
-           
+
             var xmlStr = XmlHelp.SaveXml(param.Participation);
-            var data = new MonthlyHospitalizationDto();
-            if (xmlStr)
+            MonthlyHospitalizationDto data = null;
+            if (!xmlStr) throw new Exception("门诊月结汇总保存参数出错");
+            var result = MedicalInsuranceDll.CallService_cxjb("TPYP214");
+            if (result != 1) throw new Exception("门诊月结汇总执行出错");
+            data = XmlHelp.DeSerializerModel(new MonthlyHospitalizationDto(), true);
+            var insertParam = new MonthlyHospitalizationEntity()
             {
-                var result = MedicalInsuranceDll.CallService_cxjb("TPYP214");
-                if (result == 1)
-                {
-                    data = XmlHelp.DeSerializerModel(new MonthlyHospitalizationDto(), true);
-                    var insertParam = new MonthlyHospitalizationEntity()
-                    {   Amount = data.ReimbursementAllAmount,
-                        Id = Guid.NewGuid(),
-                        DocumentNo = data.DocumentNo,
-                        PeopleNum = data.ReimbursementPeopleNum,
-                        PeopleType = param.Participation.PeopleType,
-                        SummaryType = param.Participation.SummaryType,
-                        StartTime = param.Participation.StartTime,
-                        EndTime = param.Participation.EndTime,
-                    };
-                     _monthlyHospitalizationBase.Insert(insertParam, param.User);
-                   
-                }
-            }
+                Amount = data.ReimbursementAllAmount,
+                Id = Guid.NewGuid(),
+                DocumentNo = data.DocumentNo,
+                PeopleNum = data.ReimbursementPeopleNum,
+                PeopleType = param.Participation.PeopleType,
+                SummaryType = param.Participation.SummaryType,
+                StartTime = param.Participation.StartTime,
+                EndTime = param.Participation.EndTime,
+            };
+            _monthlyHospitalizationBase.Insert(insertParam, param.User);
+
             return data;
         }
         /// <summary>
@@ -136,23 +117,20 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="param"></param>
         public void CancelMonthlyHospitalization(CancelMonthlyHospitalizationParam param)
         {
-
             var xmlStr = XmlHelp.SaveXml(param.Participation);
-            if (xmlStr)
+            if (!xmlStr) throw new Exception("取消门诊月结汇总保存参数出错");
+            var result = MedicalInsuranceDll.CallService_cxjb("TPYP215");
+            if (result != 1) throw new Exception("取消门诊月结汇总执行出错");
+             XmlHelp.DeSerializerModel(new IniDto(), true);
+            var monthlyHospitalization = _monthlyHospitalizationBase.GetForm(param.Id);
+            if (monthlyHospitalization != null)
             {
-                var result = MedicalInsuranceDll.CallService_cxjb("TPYP215");
-                if (result == 1)
-                {
-                    var data = XmlHelp.DeSerializerModel(new IniDto(), true);
-                    var monthlyHospitalization = _monthlyHospitalizationBase.GetForm(param.Id);
-                    if (monthlyHospitalization != null)
-                    {
-                        monthlyHospitalization.IsRevoke = true;
-                        //更新月结状态
-                       _monthlyHospitalizationBase.Modify(monthlyHospitalization, param.User, param.Id);
-                    }
-                }
+                monthlyHospitalization.IsRevoke = true;
+                //更新月结状态
+                _monthlyHospitalizationBase.Modify(monthlyHospitalization, param.User, param.Id);
             }
+
+
         }
     }
 }
