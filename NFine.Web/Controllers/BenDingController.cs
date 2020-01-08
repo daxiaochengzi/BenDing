@@ -928,32 +928,33 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData LeaveHospitalSettlement([FromBody]LeaveHospitalSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
-           {
-               //医保登录
-               _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-               //获取医保病人信息
-               var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
-               {
-                   BusinessId = param.BusinessId
-               });
-               //职工
-               if (residentData.InsuranceType == "310")
-               {
-                   y.Data = _workerMedicalInsuranceService.WorkerHospitalizationSettlement(new WorkerHospitalizationSettlementUiParam()
-                   {
-                       DiagnosisList = param.DiagnosisList,
-                       TransKey = param.TransKey,
-                       BusinessId = param.BusinessId,
-                       LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
-                       UserId = param.UserId,
-                   });
-               }
-               //居民
-               if (residentData.InsuranceType == "342")
-               {
-                   y.Data = _residentService.LeaveHospitalSettlement(param);
-               }
-           });
+            {
+                _residentService.LeaveHospitalSettlement(param);
+                ////医保登录
+                //_residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                ////获取医保病人信息
+                //var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
+                //{
+                //    BusinessId = param.BusinessId
+                //});
+                ////职工
+                //if (residentData.InsuranceType == "310")
+                //{
+                //    y.Data = _workerMedicalInsuranceService.WorkerHospitalizationSettlement(new WorkerHospitalizationSettlementUiParam()
+                //    {
+                //        DiagnosisList = param.DiagnosisList,
+                //        TransKey = param.TransKey,
+                //        BusinessId = param.BusinessId,
+                //        LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
+                //        UserId = param.UserId,
+                //    });
+                //}
+                ////居民
+                //if (residentData.InsuranceType == "342")
+                //{
+                //    y.Data = _residentService.LeaveHospitalSettlement(param);
+                //}
+            });
 
         }
         /// <summary>

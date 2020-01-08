@@ -8,6 +8,7 @@ using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.Web;
 using NFine.Domain._03_Entity.BenDingManage;
 
 namespace NFine.Web.App_Start
@@ -37,6 +38,7 @@ namespace NFine.Web.App_Start
                cfg.CreateMap<BaseOutpatientDetailJsonDto, BaseOutpatientDetailDto>();
                cfg.CreateMap<OutpatientPersonBaseJsonDto, BaseOutpatientInfoDto>();
                cfg.CreateMap<PatientLeaveHospitalInfoDto, LeaveHospitalSettlementInfoParam>();
+                cfg.CreateMap<PatientLeaveHospitalInfoDto , SaveInpatientSettlementParam>();
                 
 
 

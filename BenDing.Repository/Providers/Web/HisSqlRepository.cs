@@ -446,7 +446,7 @@ namespace BenDing.Repository.Providers.Web
                 {
                     sqlConnection.Open();
                    
-                        strSql = $@"update [dbo].[Outpatient] set [UpdateUserId]='{param.User.UserId}',[UpdateTime]=getDate(),
+                        strSql = $@"update [dbo].[Inpatient] set [UpdateUserId]='{param.User.UserId}',[UpdateTime]=getDate(),
                                    LeaveHospitalDiagnosisJson='{param.LeaveHospitalDiagnosisJson}',LeaveHospitalDepartmentId='{param.LeaveHospitalDepartmentId}',
                                    LeaveHospitalDepartmentName='{param.LeaveHospitalDepartmentName}',LeaveHospitalBedNumber='{param.LeaveHospitalBedNumber}',
                                    LeaveHospitalDiagnosticDoctor='{param.LeaveHospitalDiagnosticDoctor}',LeaveHospitalOperator='{param.LeaveHospitalOperator}',
