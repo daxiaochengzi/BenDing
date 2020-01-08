@@ -161,7 +161,7 @@ namespace BenDing.Service.Providers
             if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人未结算,不能取消结算!!!");
             _outpatientDepartmentRepository.CancelOutpatientDepartmentCost(new CancelOutpatientDepartmentCostParam()
             {
-               DocumentNo = residentData.MedicalInsuranceHospitalizationNo
+               DocumentNo = residentData.SettlementNo
             });
 
             //添加日志
