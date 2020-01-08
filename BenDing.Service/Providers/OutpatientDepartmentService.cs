@@ -122,7 +122,7 @@ namespace BenDing.Service.Providers
             {
                 User = param.User,
                 MedicalInsuranceBackNum = "zydj",
-                MedicalInsuranceCode = "21",
+                MedicalInsuranceCode = "48",
                 BusinessId = param.UiParam.BusinessId,
                 BackParam = strXmlBackParam
             };
