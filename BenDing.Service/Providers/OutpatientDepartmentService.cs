@@ -107,7 +107,7 @@ namespace BenDing.Service.Providers
             //回参构建
             var xmlData = new OutpatientDepartmentCostXml()
             {
-
+                AccountBalance= userInfoData.InsuranceType == "342" ? userInfoData.ResidentInsuranceBalance: userInfoData.WorkersInsuranceBalance,
                 MedicalInsuranceOutpatientNo = resultData.DocumentNo,
                 CashPayment = resultData.SelfPayFeeAmount,
                 SettlementNo = resultData.DocumentNo,
@@ -140,7 +140,7 @@ namespace BenDing.Service.Providers
                 SettlementTransactionId = param.User.TransKey,
                 MedicalInsuranceState = MedicalInsuranceState.HisSettlement
             };
-            //存入中间层
+            //更新中间层
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
 
             return resultData;
