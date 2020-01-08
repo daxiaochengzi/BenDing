@@ -60,6 +60,7 @@ namespace BenDing.Service.Providers
             //获取门诊病人数据
             var outpatientPerson = _serviceBasicService.GetOutpatientPerson(param);
             if (outpatientPerson == null) throw new Exception("his中未获取到当前病人!!!");
+            if (string.IsNullOrWhiteSpace(outpatientPerson.IdCardNo)) throw new Exception("当前病人的身份证号码不能为空!!!");
             var inputParam = new OutpatientDepartmentCostInputParam()
             {
                 AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
