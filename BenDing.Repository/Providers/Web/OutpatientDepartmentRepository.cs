@@ -22,17 +22,10 @@ namespace BenDing.Repository.Providers.Web
     public class OutpatientDepartmentRepository : IOutpatientDepartmentRepository
     {
         private readonly MonthlyHospitalizationBase _monthlyHospitalizationBase;
-        private readonly IHisSqlRepository _hisSqlRepository;
-        private readonly ISystemManageRepository _systemManageRepository;
-        private readonly IWebBasicRepository _webBasicRepository;
-        public OutpatientDepartmentRepository(IHisSqlRepository hisSqlRepository,
-            ISystemManageRepository systemManageRepository,
-            IWebBasicRepository webBasicRepository)
+        public OutpatientDepartmentRepository()
         {
             _monthlyHospitalizationBase = new MonthlyHospitalizationBase();
-            _hisSqlRepository = hisSqlRepository;
-            _systemManageRepository = systemManageRepository;
-            _webBasicRepository = webBasicRepository;
+            
         }
 
         /// <summary>
