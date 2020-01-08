@@ -646,7 +646,7 @@ namespace NFine.Web.Controllers
 
         }
         #endregion
-        #region 居民住院医保
+        #region 住院医保
         /// <summary>
         /// 获取居民医保信息
         /// </summary>
