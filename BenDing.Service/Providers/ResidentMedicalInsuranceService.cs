@@ -253,7 +253,7 @@ namespace BenDing.Service.Providers
             //医保执行
             var data = _residentMedicalInsuranceRepository.HospitalizationPreSettlement(new HospitalizationPresettlementParam()
             {
-                LeaveHospitalDate = preSettlementData.EndDate,
+                LeaveHospitalDate =Convert.ToDateTime(preSettlementData.EndDate).ToString("yyyyMMdd"),
                 MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
             });
             resultData = data ?? throw new Exception("居民预结算返回结果有误!!!");

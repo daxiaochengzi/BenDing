@@ -476,18 +476,18 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {  //医保登陆
-                _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                _residentMedicalInsurance.HospitalizationPreSettlement(new HospitalizationPresettlementParam()
-                {
-                    LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
-                    MedicalInsuranceHospitalizationNo = "44116476"
-                });
+            //    _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+            //    _residentMedicalInsurance.HospitalizationPreSettlement(new HospitalizationPresettlementParam()
+            //    {
+            //        LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
+            //        MedicalInsuranceHospitalizationNo = "44116625"
+            //    });
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 userBase.TransKey = param.TransKey;
                 //回参构建
                 var xmlData = new HospitalizationRegisterCancelXml()
                 {
-                    MedicalInsuranceHospitalizationNo = "44116476",
+                    MedicalInsuranceHospitalizationNo = "44116625",
                 };
                 var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
                 var saveXml = new SaveXmlDataParam()

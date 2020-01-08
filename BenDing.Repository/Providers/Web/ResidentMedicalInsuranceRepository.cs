@@ -172,7 +172,7 @@ namespace BenDing.Repository.Providers.Web
         {
             HospitalizationPresettlementDto data = null;
             var xmlStr = XmlHelp.SaveXml(param);
-            if (xmlStr == false) return data;
+            if (!xmlStr) return data;
             int result = MedicalInsuranceDll.CallService_cxjb("CXJB009");
             if (result != 1) throw new Exception("居民住院预结算执行失败!!!");
             var dataIni = XmlHelp.DeSerializerModel(new HospitalizationPresettlementJsonDto(), true);
@@ -193,7 +193,7 @@ namespace BenDing.Repository.Providers.Web
 
             HospitalizationPresettlementDto data = null;
             var xmlStr = XmlHelp.SaveXml(param);
-            if (xmlStr) return data;
+            if (!xmlStr) return data;
             int result = MedicalInsuranceDll.CallService_cxjb("CXJB010");
             if (result != 1) throw new Exception("居民住院结算执行失败!!!");
             var dataIni = XmlHelp.DeSerializerModel(new HospitalizationPresettlementJsonDto(), true);

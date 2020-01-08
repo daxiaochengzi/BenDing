@@ -24,14 +24,14 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
     }
     public class HisHospitalizationPreSettlementDataJsonDto
     {/// <summary>
-        /// 结束日期
-        /// </summary>
-        [JsonProperty(PropertyName = "出院日期")]
+     /// 离院时间
+     /// </summary>
+        [JsonProperty(PropertyName = "结束日期")]
         public string EndDate { get; set; }
         /// <summary>
         /// 经办人
         /// </summary>
-        [JsonProperty(PropertyName = "出院经办人")]
+        [JsonProperty(PropertyName = "经办人")]
         public string Operator { get; set; }
     }
 }
