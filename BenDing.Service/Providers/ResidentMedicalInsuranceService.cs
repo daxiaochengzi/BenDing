@@ -249,6 +249,7 @@ namespace BenDing.Service.Providers
             var preSettlementData = hisPreSettlementData.PreSettlementData.FirstOrDefault();
             //获取医保病人信息
             var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+            if (string.IsNullOrWhiteSpace(preSettlementData.EndDate)) throw  new  Exception("当前病人在基层中未办理出院,不能办理医保预结算!!!");
             //医保执行
             var data = _residentMedicalInsuranceRepository.HospitalizationPreSettlement(new HospitalizationPresettlementParam()
             {

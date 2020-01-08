@@ -205,6 +205,7 @@ namespace BenDing.Service.Providers
             var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
             //获取医院等级
             var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
+            if (string.IsNullOrWhiteSpace(preSettlementData.EndDate)) throw new Exception("当前病人在基层中未办理出院,不能办理医保预结算!!!");
             //获取医保账号
             var userData = _systemManageRepository.QueryHospitalOperator(
                      new QueryHospitalOperatorParam() { UserId = param.UserId });
