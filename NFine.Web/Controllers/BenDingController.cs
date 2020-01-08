@@ -1142,15 +1142,26 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet]
-        public ApiJsonResultData QueryOutpatientDepartmentCost([FromUri]QueryOutpatientDepartmentCostUiParam param)
+        public ApiJsonResultData QueryOutpatientDepartmentCost([FromUri]BaseUiBusinessIdDataParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               
                 //医保登录
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                //获取医保病人信息
+                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    BusinessId = param.BusinessId,
+                    OrganizationCode = userBase.OrganizationCode
+                };
+                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+                if (residentData == null) throw new Exception("当前病人未结算,无结算数据!!!");
+                if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人无结算数据!!!");
                 _outpatientDepartmentRepository.QueryOutpatientDepartmentCost(
                         new QueryOutpatientDepartmentCostParam()
-                        { DocumentNo = param.DocumentNo });
+                        { DocumentNo = residentData.SettlementNo });
 
             });
 

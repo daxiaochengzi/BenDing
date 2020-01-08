@@ -16,8 +16,7 @@ namespace BenDing.Domain.Models.Params.Base
     { /// <summary>
       /// 用户id
       /// </summary>
-        //[JsonProperty(PropertyName = "操作人员ID")]
-        [XmlElement("用户ids", IsNullable = false)]
+
         [Display(Name = "用户id")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
 
@@ -25,7 +24,7 @@ namespace BenDing.Domain.Models.Params.Base
         /// <summary>
         /// 业务id
         /// </summary>
-        //[JsonProperty(PropertyName = "业务ID")]
+      
         [Display(Name = "业务ID")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
 
