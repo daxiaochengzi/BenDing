@@ -437,9 +437,6 @@ namespace BenDing.Service.Providers
             var jsonParam = JsonConvert.SerializeObject(xmlData);
             var data = _webServiceBasic.HIS_Interface("39", jsonParam);
             HisHospitalizationPreSettlementJsonDto dataValue = JsonConvert.DeserializeObject<HisHospitalizationPreSettlementJsonDto>(data.Msg);
-            
-
-
             return dataValue;
         }
 
