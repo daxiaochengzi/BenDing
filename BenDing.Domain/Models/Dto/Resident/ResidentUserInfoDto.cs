@@ -95,11 +95,11 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// <summary>
         /// 重点优抚对象类别
         /// </summary>
-        public decimal PreferentialTreatmentType { get; set; }
+        public string PreferentialTreatmentType { get; set; }
         /// <summary>
         /// 民政特殊人员认定地
         /// </summary>
-        public decimal SpecialPeopleCognizancePlace { get; set; }
+        public string SpecialPeopleCognizancePlace { get; set; }
         /// <summary>
         /// 统筹支付余额
         /// </summary>
