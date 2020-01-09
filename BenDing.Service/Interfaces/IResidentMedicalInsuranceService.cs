@@ -8,6 +8,7 @@ using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
+using BenDing.Domain.Models.Params.Web;
 
 namespace BenDing.Service.Interfaces
 {
@@ -50,7 +51,8 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
          HospitalizationPresettlementDto HospitalizationPreSettlement(UiBaseDataParam param);
-
+        //医保登陆
+        void Login(QueryHospitalOperatorParam param);
 
     }
 }

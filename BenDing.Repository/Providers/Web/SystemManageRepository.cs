@@ -108,13 +108,14 @@ namespace BenDing.Repository.Providers.Web
                     if (resultNum > 0)
                     {
                         sqlStr = $@"update  [dbo].[HospitalOrganizationGrade] 
-                                set [OrganizationGrade]={(int)param.OrganizationGrade},[UpdateTime]=GETDATE(),AdministrativeArea='{param.AdministrativeArea}',UpdateUserId='{param.UserId}'
+                                set [OrganizationGrade]={(int)param.OrganizationGrade},[UpdateTime]=GETDATE(),AdministrativeArea='{param.AdministrativeArea}',UpdateUserId='{param.UserId}',
+                                [MedicalInsuranceAccount] ='{param.MedicalInsuranceAccount}',[MedicalInsurancePwd]='{param.MedicalInsurancePwd}'
                                 where IsDelete=0 and HospitalId='{param.HospitalId}'";
                     }
                     else
                     {
-                        sqlStr = $@"INSERT INTO [dbo].[HospitalOrganizationGrade] (Id,HospitalId,[OrganizationGrade],[UpdateTime],[CreateUserId],IsDelete,[AdministrativeArea])
-                                 values('{Guid.NewGuid()}','{param.HospitalId}',{(int)param.OrganizationGrade},GETDATE(),'{param.UserId}',0,'{param.AdministrativeArea}')";
+                        sqlStr = $@"INSERT INTO [dbo].[HospitalOrganizationGrade] (Id,HospitalId,[OrganizationGrade],[UpdateTime],[CreateUserId],IsDelete,[AdministrativeArea],[MedicalInsuranceAccount],[MedicalInsurancePwd])
+                                 values('{Guid.NewGuid()}','{param.HospitalId}',{(int)param.OrganizationGrade},GETDATE(),'{param.UserId}',0,'{param.AdministrativeArea}','{param.MedicalInsuranceAccount}','{param.MedicalInsurancePwd}')";
                     }
                     sqlConnection.Execute(sqlStr);
 
@@ -129,7 +130,7 @@ namespace BenDing.Repository.Providers.Web
             }
         }
         /// <summary>
-        /// 获取医院等级
+        /// 获取医院信息
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -141,10 +142,11 @@ namespace BenDing.Repository.Providers.Web
             {
                 sqlConnection.Open();
                 string querySql =
-                    $"select   OrganizationGrade,AdministrativeArea from [dbo].[HospitalOrganizationGrade] where IsDelete=0 and HospitalId='{param}'";
+                    $"select   OrganizationGrade,AdministrativeArea,MedicalInsuranceAccount,MedicalInsurancePwd from [dbo].[HospitalOrganizationGrade] where IsDelete=0 and HospitalId='{param}'";
                var resultData = sqlConnection.QueryFirstOrDefault<HospitalOrganizationGradeDto>(querySql);
                 sqlConnection.Close();
                 if (resultData==null)throw  new Exception("当前医院未设置等级,请重新设置");
+                if (resultData.MedicalInsuranceAccount == null) throw new Exception("当前医院未设置医保账号");
                 return resultData;
             }
 

@@ -46,7 +46,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
 
-        void Login(QueryHospitalOperatorParam param);
+        void Login(string organizationCode );
 
         /// <summary>
         /// 处方上传

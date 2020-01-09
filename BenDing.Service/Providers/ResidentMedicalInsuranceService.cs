@@ -24,9 +24,8 @@ namespace BenDing.Service.Providers
         private readonly IHisSqlRepository _hisSqlRepository;
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private readonly ISystemManageRepository _systemManageRepository;
-
-        private readonly IWebServiceBasicService _serviceBasicService;
-        private readonly IWorkerMedicalInsuranceService _workerMedicalInsuranceService;
+        private readonly IWebServiceBasicService _webserviceBasicService;
+      
 
         public ResidentMedicalInsuranceService(
             IResidentMedicalInsuranceRepository residentMedicalInsuranceRepository,
@@ -34,8 +33,8 @@ namespace BenDing.Service.Providers
             IHisSqlRepository hisSqlRepository,
             IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
             ISystemManageRepository systemManageRepository,
-            IWebServiceBasicService serviceBasicService,
-            IWorkerMedicalInsuranceService workerMedicalInsuranceService
+            IWebServiceBasicService serviceBasicService
+           
             )
         {
             _residentMedicalInsuranceRepository = residentMedicalInsuranceRepository;
@@ -43,8 +42,8 @@ namespace BenDing.Service.Providers
             _hisSqlRepository = hisSqlRepository;
             _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
             _systemManageRepository = systemManageRepository;
-            _serviceBasicService = serviceBasicService;
-            _workerMedicalInsuranceService = workerMedicalInsuranceService;
+            _webserviceBasicService = serviceBasicService;
+           
         }
         public ResidentUserInfoDto GetUserInfo(ResidentUserInfoParam param)
         {
@@ -59,7 +58,7 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public void HospitalizationRegister(ResidentHospitalizationRegisterUiParam param)
         { //his登陆
-            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            var userBase = _webserviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
             var infoData = new GetInpatientInfoParam()
             {
@@ -67,7 +66,7 @@ namespace BenDing.Service.Providers
                 BusinessId = param.BusinessId,
             };
             //获取医保病人
-            var inpatientData = _serviceBasicService.GetInpatientInfo(infoData);
+            var inpatientData = _webserviceBasicService.GetInpatientInfo(infoData);
             var registerParam = GetResidentHospitalizationRegisterParam(param, inpatientData);
             var residentData = _residentMedicalInsuranceRepository.HospitalizationRegister(registerParam);
             var saveData = new MedicalInsuranceDto
@@ -114,7 +113,7 @@ namespace BenDing.Service.Providers
             _systemManageRepository.AddHospitalLog(logParam);
             //保存入院数据
             infoData.IsSave = true;
-            _serviceBasicService.GetInpatientInfo(infoData);
+            _webserviceBasicService.GetInpatientInfo(infoData);
 
         }
         /// <summary>
@@ -124,7 +123,7 @@ namespace BenDing.Service.Providers
         /// <param name="user"></param>
         public void HospitalizationModify(HospitalizationModifyUiParam param)
         {//his登陆
-            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            var userBase = _webserviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
             var modifyParam = GetResidentHospitalizationModify(param);
             _residentMedicalInsuranceRepository.HospitalizationModify(modifyParam, userBase);
@@ -232,7 +231,7 @@ namespace BenDing.Service.Providers
         {
             HospitalizationPresettlementDto resultData = null;
             //获取操作人员信息
-            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            var userBase = _webserviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
             var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
             {
@@ -245,7 +244,7 @@ namespace BenDing.Service.Providers
                 BusinessId = param.BusinessId,
             };
             //获取his预结算
-            var hisPreSettlementData = _serviceBasicService.GetHisHospitalizationPreSettlement(infoData);
+            var hisPreSettlementData = _webserviceBasicService.GetHisHospitalizationPreSettlement(infoData);
             var preSettlementData = hisPreSettlementData.PreSettlementData.FirstOrDefault();
             //获取医保病人信息
             var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
@@ -297,7 +296,7 @@ namespace BenDing.Service.Providers
         {
 
             // 获取操作人员信息
-            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            var userBase = _webserviceBasicService.GetUserBaseInfo(param.UserId);
             var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
             {
                 BusinessId = param.BusinessId,
@@ -310,7 +309,7 @@ namespace BenDing.Service.Providers
                 BusinessId = param.BusinessId,
             };
             //获取his结算
-            var hisSettlement = _serviceBasicService.GetHisHospitalizationSettlement(infoData);
+            var hisSettlement = _webserviceBasicService.GetHisHospitalizationSettlement(infoData);
             //获取医保病人信息
             var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
             if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已办理医保结算,不能办理预结算!!!");
@@ -387,6 +386,16 @@ namespace BenDing.Service.Providers
         }
 
         /// <summary>
+        /// 医保登陆
+        /// </summary>
+        /// <param name="param"></param>
+        public void Login(QueryHospitalOperatorParam param)
+        {
+            var userBase = _webserviceBasicService.GetUserBaseInfo(param.UserId);
+            _residentMedicalInsuranceRepository.Login(userBase.OrganizationCode);
+        }
+
+        /// <summary>
         /// 居民入院登记修改
         /// </summary>
         /// <param name="param"></param>
@@ -443,6 +452,7 @@ namespace BenDing.Service.Providers
             iniParam.BusinessId = param.BusinessId;
             return iniParam;
         }
+
 
     }
 }

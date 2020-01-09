@@ -23,6 +23,18 @@ namespace BenDing.Domain.Models.Params.Web
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public  string HospitalId { get; set; }
         /// <summary>
+        /// 操作员账户
+        /// </summary>
+        [Display(Name = "医保账户")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        public string MedicalInsuranceAccount { get; set; }
+        /// <summary>
+        /// 操作员密码
+        /// </summary>
+        [Display(Name = "医保账户")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        public string MedicalInsurancePwd { get; set; }
+        /// <summary>
         /// 行政区划
         /// </summary>
         public string AdministrativeArea { get; set; }

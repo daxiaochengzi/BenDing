@@ -16,5 +16,13 @@ namespace BenDing.Domain.Models.Dto.SystemManage
         /// 医院等级
         /// </summary>
         public OrganizationGrade OrganizationGrade { get; set; }
+        /// <summary>
+        /// 医保账户
+        /// </summary>
+        public string MedicalInsuranceAccount { get; set; }
+        /// <summary>
+        /// 医保密码
+        /// </summary>
+        public  string MedicalInsurancePwd { get; set; }
     }
 }

@@ -24,6 +24,7 @@ namespace BenDing.Repository.Providers.Web
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private readonly ISystemManageRepository _systemManageRepository;
         private readonly IWebBasicRepository _webBasicRepository;
+      
 
 
         /// <summary>
@@ -46,17 +47,20 @@ namespace BenDing.Repository.Providers.Web
             _systemManageRepository = systemManageRepository;
         }
 
-        public void Login(QueryHospitalOperatorParam param)
+        public void Login(string organizationCode)
         {
-            var userInfo = _systemManageRepository.QueryHospitalOperator(param);
+           
+            var hospitalData = _systemManageRepository.QueryHospitalOrganizationGrade(organizationCode);
             var result =
-                MedicalInsuranceDll.ConnectAppServer_cxjb(userInfo.MedicalInsuranceAccount,
-                    userInfo.MedicalInsurancePwd);
+                MedicalInsuranceDll.ConnectAppServer_cxjb(hospitalData.MedicalInsuranceAccount,
+                    hospitalData.MedicalInsurancePwd);
             if (result != 1)
             {
                 XmlHelp.DeSerializerModel(new IniXmlDto(), true);
             }
         }
+       
+        
 
         /// <summary>
         /// 获取个人基础资料
