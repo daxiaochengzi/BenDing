@@ -286,26 +286,24 @@ namespace NFine.Web.Controllers
                {
                    User = userBase,
                    BusinessId = param.BusinessId,
-                   IsSave = true,
-
                };
+               //获取病人信息
                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
+               if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
+               if (string.IsNullOrWhiteSpace(inpatientData.IdCardNo)) throw new Exception("当前病人的身份证不能为空!!!");
+               //获取病人信息 
+               _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               var residentUserBase = _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
+               {
+                   IdentityMark = "1",
+                   InformationNumber = inpatientData.IdCardNo,
+               });
+               var data = inpatientData;
 
-               if (!string.IsNullOrWhiteSpace(inpatientData.BusinessId))
-               {//获取医保个人信息
-                   _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               data.MedicalInsuranceResidentInfo = residentUserBase;
+               y.Data = data;
 
-                   var residentUserBase = _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
-                   {
-                       IdentityMark = "1",
-                       InformationNumber = inpatientData.IdCardNo,
-                   });
-                   var data = inpatientData;
 
-                   data.MedicalInsuranceResidentInfo = residentUserBase;
-                   y.Data = data;
-
-               }
            });
         }
         /// <summary>
@@ -694,7 +692,6 @@ namespace NFine.Web.Controllers
                 if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
                 //医保登录
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-
                 //职工
                 if (param.InsuranceType == "310") _workerMedicalInsuranceService.WorkerHospitalizationRegister(param);
                 //居民
