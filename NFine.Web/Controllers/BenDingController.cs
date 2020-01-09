@@ -31,7 +31,7 @@ namespace NFine.Web.Controllers
         private readonly IWebServiceBasicService _webServiceBasicService;
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private readonly ISystemManageRepository _systemManageRepository;
-        private readonly IResidentMedicalInsuranceRepository _residentMedicalInsurance;
+        private readonly IResidentMedicalInsuranceRepository _residentMedicalInsuranceRepository;
         private readonly IResidentMedicalInsuranceService _residentMedicalInsuranceService;
         private readonly IOutpatientDepartmentService _outpatientDepartmentService;
         private readonly IOutpatientDepartmentRepository _outpatientDepartmentRepository;
@@ -63,7 +63,7 @@ namespace NFine.Web.Controllers
         {
             _webServiceBasicService = webServiceBasicService;
             _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
-            _residentMedicalInsurance = insuranceRepository;
+            _residentMedicalInsuranceRepository = insuranceRepository;
             _hisSqlRepository = hisSqlRepository;
             _systemManageRepository = manageRepository;
             _residentMedicalInsuranceService = residentMedicalInsuranceService;
@@ -288,8 +288,8 @@ namespace NFine.Web.Controllers
                if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
                if (string.IsNullOrWhiteSpace(inpatientData.IdCardNo)) throw new Exception("当前病人的身份证不能为空!!!");
                //获取病人信息 
-             _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-               var residentUserBase = _residentMedicalInsurance.GetUserInfo(new ResidentUserInfoParam()
+               _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               var residentUserBase = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
                {
                    IdentityMark = "1",
                    InformationNumber = inpatientData.IdCardNo,
@@ -652,8 +652,8 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new ResidentUserInfoDto()).RunWithTry(y =>
              {
                  //医保登陆
-               _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                 var userBase = _residentMedicalInsurance.GetUserInfo(param);
+                 _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                 var userBase = _residentMedicalInsuranceRepository.GetUserInfo(param);
                  y.Data = userBase;
              });
 
@@ -669,7 +669,7 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 //医保登陆
-              _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 var data = _residentMedicalInsuranceService.ProjectDownload(param);
                 y.Data = data;
             });
@@ -687,7 +687,7 @@ namespace NFine.Web.Controllers
             {
                 if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
                 //医保登录
-              _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 ////职工
                 //if (param.InsuranceType == "310") _workerMedicalInsuranceService.WorkerHospitalizationRegister(param);
                 //居民
@@ -725,7 +725,7 @@ namespace NFine.Web.Controllers
             {
                 if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
                 //医保登陆
-              _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保病人信息
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
                 {
@@ -769,9 +769,9 @@ namespace NFine.Web.Controllers
            {
                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                //医保登录
-             _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                //处方上传
-               var data = _residentMedicalInsurance.PrescriptionUpload(param, userBase);
+               var data = _residentMedicalInsuranceRepository.PrescriptionUpload(param, userBase);
                if (!string.IsNullOrWhiteSpace(data.Msg))
                {
                    throw new Exception(data.Msg);
@@ -797,7 +797,7 @@ namespace NFine.Web.Controllers
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //医保登录
-              _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 _residentMedicalInsuranceService.PrescriptionUploadAutomatic(new PrescriptionUploadAutomaticParam()
                 { IsTodayUpload = param.IsTodayUpload }, userBase);
 
@@ -837,8 +837,8 @@ namespace NFine.Web.Controllers
                             MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo
                         };
                         //医保登录
-                      _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                        _residentMedicalInsurance.DeletePrescriptionUpload(deleteParam, uploadDataId, userBase);
+                        _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                        _residentMedicalInsuranceRepository.DeletePrescriptionUpload(deleteParam, uploadDataId, userBase);
                     }
                 }
             });
@@ -862,10 +862,10 @@ namespace NFine.Web.Controllers
                   OrganizationCode = userBase.OrganizationCode
               };
               //医保登录
-            _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+              _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
               //获取医保病人信息
               var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-              var queryData = _residentMedicalInsurance.QueryPrescriptionDetail(new QueryPrescriptionDetailParam()
+              var queryData = _residentMedicalInsuranceRepository.QueryPrescriptionDetail(new QueryPrescriptionDetailParam()
               { MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo });
               //分页
               var data = new
@@ -887,7 +887,7 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {    //医保登录
-              _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保病人信息
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
                 {
@@ -920,7 +920,7 @@ namespace NFine.Web.Controllers
             {
 
                 //医保登录
-              _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保病人信息
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
                 {
@@ -964,7 +964,7 @@ namespace NFine.Web.Controllers
                     OrganizationCode = userBase.OrganizationCode
                 };
                 //医保登录
-              _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保病人信息
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
                 if (residentData != null)
@@ -991,7 +991,7 @@ namespace NFine.Web.Controllers
                     //居民
                     if (residentData.InsuranceType == "342")
                     {
-                        var data = _residentMedicalInsurance.QueryLeaveHospitalSettlement(new QueryLeaveHospitalSettlementParam() { MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo });
+                        var data = _residentMedicalInsuranceRepository.QueryLeaveHospitalSettlement(new QueryLeaveHospitalSettlementParam() { MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo });
                         y.Data = data;
                     }
 
@@ -1019,7 +1019,7 @@ namespace NFine.Web.Controllers
                };
                userBase.TransKey = param.TransKey;
                //医保登录
-             _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                //获取医保病人信息
                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
                if (residentData != null)
@@ -1039,7 +1039,7 @@ namespace NFine.Web.Controllers
                            Id = residentData.Id,
                            User = userBase,
                        };
-                       _residentMedicalInsurance.LeaveHospitalSettlementCancel(settlementCancelParam, cancelParam);
+                       _residentMedicalInsuranceRepository.LeaveHospitalSettlementCancel(settlementCancelParam, cancelParam);
                    }
                    //职工
                    if (residentData.InsuranceType == "310")
@@ -1077,7 +1077,7 @@ namespace NFine.Web.Controllers
 
                var data = _systemManageRepository.QueryHospitalOperator(param);
                if (string.IsNullOrWhiteSpace(data.MedicalInsuranceAccount)) throw new Exception("当前用户未授权,医保账户信息,请重新授权!!!");
-             _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
 
            });
 
@@ -1098,7 +1098,7 @@ namespace NFine.Web.Controllers
                 userBase.TransKey = param.TransKey;
 
                 //医保登录
-              _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 var data = _outpatientDepartmentService.OutpatientDepartmentCostInput(new GetOutpatientPersonParam()
                 {
                     User = userBase,
@@ -1120,7 +1120,7 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 //医保登录
-              _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 _outpatientDepartmentService.CancelOutpatientDepartmentCost(param);
             });
 
@@ -1136,7 +1136,7 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 //医保登录
-              _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 y.Data = _outpatientDepartmentService.QueryOutpatientDepartmentCost(param);
 
             });
@@ -1154,7 +1154,7 @@ namespace NFine.Web.Controllers
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //医保登录
-              _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 _outpatientDepartmentRepository.MonthlyHospitalization(
                     new MonthlyHospitalizationParam()
                     {
@@ -1183,7 +1183,7 @@ namespace NFine.Web.Controllers
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //医保登录
-              _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 _outpatientDepartmentRepository.CancelMonthlyHospitalization(
                    new CancelMonthlyHospitalizationParam()
                    {
@@ -1249,7 +1249,7 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 //医保登陆
-              _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
                 {
                     _workerMedicalInsuranceService.ModifyWorkerHospitalization(param);
