@@ -66,6 +66,7 @@ namespace BenDing.Service.Providers
             };
             //获取医保病人
             var inpatientData = _serviceBasicService.GetInpatientInfo(infoData);
+            if (inpatientData == null) throw new Exception("获取医保病人失败!!!");
             var workerParam = GetWorkerHospitalizationRegisterParam(param, inpatientData, userBase);
             var registerData = _workerMedicalInsuranceRepository.WorkerHospitalizationRegister(workerParam);
             if (registerData == null)throw new  Exception("职工入院登记未反馈数据!!!");

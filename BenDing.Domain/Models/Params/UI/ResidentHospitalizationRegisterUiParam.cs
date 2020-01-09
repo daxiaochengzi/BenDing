@@ -45,6 +45,7 @@ namespace BenDing.Domain.Models.Params.UI
         /// </summary>
         [XmlElement("PI_HKXZ", IsNullable = false)]
         public string HouseholdNature { get; set; }
+        
         /// <summary>
         /// 医保类型编码
         /// </summary>
