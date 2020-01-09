@@ -139,6 +139,7 @@
     <Compile Include="Models\Params\Resident\AddProjectBatchParam.cs" />
     <Compile Include="Models\Params\Resident\BatchConfirmParam.cs" />
     <Compile Include="Models\Params\Resident\DeletePrescriptionUploadParam.cs" />
+    <Compile Include="Models\Params\Resident\GetInpatientInfoUiParam.cs" />
     <Compile Include="Models\Params\Resident\HospitalizationModifyParam.cs" />
     <Compile Include="Models\Params\Resident\HospitalizationPreSettlementInfoParam.cs" />
     <Compile Include="Models\Params\Resident\HospitalizationPresettlementParam.cs" />

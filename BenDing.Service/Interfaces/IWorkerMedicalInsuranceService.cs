@@ -17,7 +17,7 @@ namespace BenDing.Service.Interfaces
        /// </summary>
        /// <param name="param"></param>
        /// <returns></returns>
-       WorkerHospitalizationRegisterDto WorkerHospitalizationRegister(ResidentHospitalizationRegisterUiParam param);
+       WorkerHospitalizationRegisterDto WorkerHospitalizationRegister(WorKerHospitalizationRegisterUiParam param);
 
         /// <summary>
         /// 职工入院登记修改

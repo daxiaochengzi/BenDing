@@ -55,7 +55,7 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public WorkerHospitalizationRegisterDto WorkerHospitalizationRegister(ResidentHospitalizationRegisterUiParam param)
+        public WorkerHospitalizationRegisterDto WorkerHospitalizationRegister(WorKerHospitalizationRegisterUiParam param)
         {//his登陆
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
@@ -544,7 +544,7 @@ namespace BenDing.Service.Providers
         /// <param name="user"></param>
         /// <returns></returns>
         private WorKerHospitalizationRegisterParam GetWorkerHospitalizationRegisterParam(
-            ResidentHospitalizationRegisterUiParam param, InpatientInfoDto paramDto, UserInfoDto user)
+            WorKerHospitalizationRegisterUiParam param, InpatientInfoDto paramDto, UserInfoDto user)
         {
             var iniParam = new WorKerHospitalizationRegisterParam();
             var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
@@ -556,7 +556,7 @@ namespace BenDing.Service.Providers
             var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(user.OrganizationCode);
             if (gradeData == null) throw new Exception("获取医院等级失败!!!");
             if (string.IsNullOrWhiteSpace(gradeData.AdministrativeArea)) throw new Exception("当前医院未设置行政区域!!!");
-            iniParam.IdentityMark =(Convert.ToInt32(param.IdentityMark)+1).ToString();
+            iniParam.IdentityMark = param.IdentityMark;
             iniParam.AfferentSign = param.AfferentSign;
             iniParam.MedicalCategory = param.MedicalCategory;
             iniParam.AdmissionDate = Convert.ToDateTime(paramDto.AdmissionDate).ToString("yyyyMMdd");
