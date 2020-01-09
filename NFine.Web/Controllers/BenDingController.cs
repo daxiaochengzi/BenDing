@@ -694,15 +694,11 @@ namespace NFine.Web.Controllers
                 if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
                 //医保登录
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                //获取医保病人信息
-                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
-                {
-                    BusinessId = param.BusinessId
-                });
+
                 //职工
-                if (residentData.InsuranceType == "310") _workerMedicalInsuranceService.WorkerHospitalizationRegister(param);
+                if (param.InsuranceType == "310") _workerMedicalInsuranceService.WorkerHospitalizationRegister(param);
                 //居民
-                if (residentData.InsuranceType == "342") _residentService.HospitalizationRegister(param);
+                if (param.InsuranceType == "342") _residentService.HospitalizationRegister(param);
 
 
             });
