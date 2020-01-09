@@ -105,19 +105,19 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         /// </summary>
 
         [JsonProperty(PropertyName = "PO_JBZHYE")]
-        public string ResidentInsuranceBalance { get; set; }
+        public decimal ResidentInsuranceBalance { get; set; }
         /// <summary>
         /// 职工医保账户余额 
         /// </summary>
 
         [JsonProperty(PropertyName = "PO_ZGZHYE")]
-        public string WorkersInsuranceBalance { get; set; }
+        public decimal WorkersInsuranceBalance { get; set; }
         /// <summary>
         /// 门特余额
         /// </summary>
 
         [JsonProperty(PropertyName = "PO_MTYE")]
-        public string MentorBalance { get; set; }
+        public decimal MentorBalance { get; set; }
         /// <summary>
         /// 建卡贫困户标志
         /// </summary>
@@ -144,6 +144,6 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         /// 统筹支付余额
         /// </summary>
         [JsonProperty(PropertyName = "PO_TCZFYE")]
-        public string OverallPaymentBalance { get; set; }
+        public decimal OverallPaymentBalance { get; set; }
     }
 }

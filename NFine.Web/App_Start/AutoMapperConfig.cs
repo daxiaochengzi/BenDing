@@ -28,7 +28,7 @@ namespace NFine.Web.App_Start
                cfg.CreateMap<InformationJsonDto, InformationDto>();
                cfg.CreateMap<UserInfoJsonDto, UserInfoDto>();
                cfg.CreateMap<InpatientInfoJsonDataDto, InpatientInfoDto>();
-               cfg.CreateMap<ResidentUserInfoJsonDto, ResidentUserInfoDto>();
+               cfg.CreateMap<ResidentUserInfoJsonDto,ResidentUserInfoDto>();
                cfg.CreateMap<QueryInpatientInfoJsonDto, QueryInpatientInfoDto>();
                cfg.CreateMap<HospitalizationPresettlementJsonDto, HospitalizationPresettlementDto>();
                cfg.CreateMap<OutpatientInfoJsonDto, BaseOutpatientInfoDto>();
