@@ -22,7 +22,7 @@ namespace BenDing.Repository.Providers.Web
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private readonly ISystemManageRepository _systemManageRepository;
         private readonly IWebBasicRepository _webServiceBasic;
-     
+
         /// <summary>
         /// 
         /// </summary>
@@ -30,20 +30,20 @@ namespace BenDing.Repository.Providers.Web
         /// <param name="webBasicRepository"></param>
         /// <param name="medicalInsuranceSqlRepository"></param>
         /// <param name="systemManageRepository"></param>
-      
+
         public WorkerMedicalInsuranceRepository(
             IHisSqlRepository hisSqlRepository,
             IWebBasicRepository webBasicRepository,
             IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
             ISystemManageRepository systemManageRepository
-           
+
         )
         {
             _hisSqlRepository = hisSqlRepository;
             _webServiceBasic = webBasicRepository;
             _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
             _systemManageRepository = systemManageRepository;
-           
+
         }
         /// <summary>
         /// 入院登记
@@ -90,22 +90,15 @@ namespace BenDing.Repository.Providers.Web
                 resultState,
                 msg
                 );
-            if (CommonHelp.StrToTransCoding(resultState)!= "1")
+            if (CommonHelp.StrToTransCoding(resultState) != "1") throw new Exception(CommonHelp.StrToTransCoding(msg));
+            resultData = new WorkerHospitalizationRegisterDto()
             {
-                throw new Exception(CommonHelp.StrToTransCoding(msg));
-            }
-            else
-            {
-                resultData = new WorkerHospitalizationRegisterDto()
-                {
-                    MedicalInsuranceHospitalizationNo = CommonHelp.StrToTransCoding(medicalInsuranceHospitalizationNo) ,
-                    ApprovalNumber = CommonHelp.StrToTransCoding(approvalNumber) ,
-                    YearHospitalizationNumber = CommonHelp.StrToTransCoding(yearHospitalizationNumber),
-                    OverallPlanningAlreadyAmount = CommonHelp.StrToTransCoding(overallPlanningAlreadyAmount),
-                    OverallPlanningCanAmount = CommonHelp.StrToTransCoding(overallPlanningCanAmount),
-                };
-            }
-
+                MedicalInsuranceHospitalizationNo = CommonHelp.StrToTransCoding(medicalInsuranceHospitalizationNo),
+                ApprovalNumber = CommonHelp.StrToTransCoding(approvalNumber),
+                YearHospitalizationNumber = CommonHelp.StrToTransCoding(yearHospitalizationNumber),
+                OverallPlanningAlreadyAmount = CommonHelp.StrToTransCoding(overallPlanningAlreadyAmount),
+                OverallPlanningCanAmount = CommonHelp.StrToTransCoding(overallPlanningCanAmount),
+            };
 
             return resultData;
         }
@@ -134,10 +127,9 @@ namespace BenDing.Repository.Providers.Web
                  resultState,
                  msg
                 );
-            if (CommonHelp.StrToTransCoding(resultState) != "1")
-            {
-                throw new Exception(CommonHelp.StrToTransCoding(msg));
-            }
+            if (CommonHelp.StrToTransCoding(resultState) != "1") throw new Exception(CommonHelp.StrToTransCoding(msg));
+
+
 
         }
         /// <summary>
@@ -197,10 +189,8 @@ namespace BenDing.Repository.Providers.Web
                  resultState,
                  msg
                 );
-            if (CommonHelp.StrToTransCoding(resultState) != "1")
-            {
-                throw new Exception(CommonHelp.StrToTransCoding(msg));
-            }
+            if (CommonHelp.StrToTransCoding(resultState) != "1") throw new Exception(CommonHelp.StrToTransCoding(msg));
+
             var resultData = new WorkerHospitalizationPreSettlementDto()
             {
                 DocumentNo = CommonHelp.StrToTransCoding(documentNo),
@@ -280,10 +270,7 @@ namespace BenDing.Repository.Providers.Web
                  resultState,
                  msg
                 );
-            if (CommonHelp.StrToTransCoding(resultState) != "1")
-            {
-                throw new Exception(CommonHelp.StrToTransCoding(msg));
-            }
+            if (CommonHelp.StrToTransCoding(resultState) != "1") throw new Exception(CommonHelp.StrToTransCoding(msg));
             var resultData = new WorkerHospitalizationPreSettlementDto()
             {
                 DocumentNo = documentNo.ToString(),
@@ -349,7 +336,7 @@ namespace BenDing.Repository.Providers.Web
             }
             return cancelData;
         }
-       
+
         /// <summary>
         /// 职工结算信息查询
         /// </summary>
@@ -358,7 +345,7 @@ namespace BenDing.Repository.Providers.Web
         public QueryWorkerHospitalizationSettlementDto QueryWorkerHospitalizationSettlement(
             QueryWorkerHospitalizationSettlementParam param)
         {
-            
+
             //基本统筹支付
             var basicOverallPay = new byte[1024];
             //补充医疗保险支付金额
@@ -387,7 +374,7 @@ namespace BenDing.Repository.Providers.Web
             var msg = new byte[1024];
             // param.OrganizationCode==cpq2677
             var result = WorkerMedicalInsurance.QueryWorkerHospitalSettlement
-            (   param.OrganizationCode,
+            (param.OrganizationCode,
                 param.MedicalInsuranceHospitalizationNo,
                 param.AdministrativeArea,
                 basicOverallPay,
@@ -404,14 +391,9 @@ namespace BenDing.Repository.Providers.Web
                 resultState,
                 msg
             );
-            if (CommonHelp.StrToTransCoding(resultState) != "1")
-            {
-                throw new Exception(CommonHelp.StrToTransCoding(msg));
-            }
+            if (CommonHelp.StrToTransCoding(resultState) != "1") throw new Exception(CommonHelp.StrToTransCoding(msg));
             var resultData = new QueryWorkerHospitalizationSettlementDto()
             {
-              
-             
                 BasicOverallPay = Convert.ToDecimal(CommonHelp.StrToTransCoding(basicOverallPay)),
                 SupplementPayAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(supplementPayAmount)),
                 SpecialFundPayAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(specialFundPayAmount)),
@@ -422,7 +404,7 @@ namespace BenDing.Repository.Providers.Web
                 CashPayment = Convert.ToDecimal(CommonHelp.StrToTransCoding(cashPayment)),
                 PaidAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(paidAmount)),
                 Remark = CommonHelp.StrToTransCoding(cashPayment),
-                SettlementTime= CommonHelp.StrToTransCoding(settlementTime),
+                SettlementTime = CommonHelp.StrToTransCoding(settlementTime),
 
             };
             return resultData;

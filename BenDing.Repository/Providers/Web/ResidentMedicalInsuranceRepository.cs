@@ -24,7 +24,7 @@ namespace BenDing.Repository.Providers.Web
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private readonly ISystemManageRepository _systemManageRepository;
         private readonly IWebBasicRepository _webBasicRepository;
-     
+
 
         /// <summary>
         /// 
@@ -48,9 +48,7 @@ namespace BenDing.Repository.Providers.Web
 
         public void Login(QueryHospitalOperatorParam param)
         {
-
             var userInfo = _systemManageRepository.QueryHospitalOperator(param);
-
             var result =
                 MedicalInsuranceDll.ConnectAppServer_cxjb(userInfo.MedicalInsuranceAccount,
                     userInfo.MedicalInsurancePwd);
@@ -58,8 +56,6 @@ namespace BenDing.Repository.Providers.Web
             {
                 XmlHelp.DeSerializerModel(new IniXmlDto(), true);
             }
-
-
         }
 
         /// <summary>
@@ -70,12 +66,10 @@ namespace BenDing.Repository.Providers.Web
         {
             ResidentUserInfoDto resulData = null;
             var xmlStr = XmlHelp.SaveXml(param);
-            if (xmlStr)
-            {
-                MedicalInsuranceDll.CallService_cxjb("CXJB001");
-                var data = XmlHelp.DeSerializerModel(new ResidentUserInfoJsonDto(), true);
-                resulData = AutoMapper.Mapper.Map<ResidentUserInfoDto>(data);
-            }
+            if (!xmlStr) throw new Exception("获取个人基础资料保存参数出错");
+            MedicalInsuranceDll.CallService_cxjb("CXJB001");
+            var data = XmlHelp.DeSerializerModel(new ResidentUserInfoJsonDto(), true);
+            resulData = AutoMapper.Mapper.Map<ResidentUserInfoDto>(data);
             return resulData;
         }
 
@@ -88,7 +82,7 @@ namespace BenDing.Repository.Providers.Web
             ResidentHospitalizationRegisterDto data = null;
 
             var xmlStr = XmlHelp.SaveXml(param);
-            if (xmlStr == false) return data;
+            if (!xmlStr) throw new Exception("入院登记保存参数出错");
             int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
             if (result != 1) throw new Exception("居民医保执行出错!!!");
             data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto(), true);
@@ -103,7 +97,7 @@ namespace BenDing.Repository.Providers.Web
         public void HospitalizationModify(HospitalizationModifyParam param, UserInfoDto user)
         {
             var xmlStr = XmlHelp.SaveXml(param);
-            if (xmlStr == false) return;
+            if (!xmlStr) throw new Exception("修改入院登记保存参数出错");
             int result = MedicalInsuranceDll.CallService_cxjb("CXJB003");
             if (result != 1) throw new Exception("居民医保修改入院登记出错!!!");
             XmlHelp.DeSerializerModel(new IniDto(), true);
@@ -116,22 +110,13 @@ namespace BenDing.Repository.Providers.Web
         public ResidentProjectDownloadDto ProjectDownload(ResidentProjectDownloadParam param)
         {
 
-            var data = new ResidentProjectDownloadDto();
+            ResidentProjectDownloadDto data = null;
             var xmlStr = XmlHelp.SaveXml(param);
-
-
-            if (xmlStr)
-            {
-                int result = MedicalInsuranceDll.CallService_cxjb("CXJB019");
-                if (result == 1)
-                {
-                    string strXml = XmlHelp.DeSerializerModelStr("ROWDATA");
-                    data = XmlHelp.DeSerializer<ResidentProjectDownloadDto>(strXml);
-
-                }
-            }
-
-
+            if (!xmlStr) throw new Exception("项目下载保存参数出错");
+            int result = MedicalInsuranceDll.CallService_cxjb("CXJB019");
+            if (result != 1) throw new Exception("项目下载执行出错!!!");
+            string strXml = XmlHelp.DeSerializerModelStr("ROWDATA");
+            data = XmlHelp.DeSerializer<ResidentProjectDownloadDto>(strXml);
             return data;
 
 
@@ -147,17 +132,11 @@ namespace BenDing.Repository.Providers.Web
 
             Int64 resultData = 0;
             var xmlStr = XmlHelp.SaveXml(param);
-            if (xmlStr)
-            {
-
-                int result = MedicalInsuranceDll.CallService_cxjb("CXJB019");
-                if (result == 1)
-                {
-                    var data = XmlHelp.DeSerializerModel(new ProjectDownloadCountDto(), true);
-                    resultData = data.PO_CNT;
-                }
-            }
-
+            if (!xmlStr) throw new Exception("项目下载总条数保存参数出错");
+            int result = MedicalInsuranceDll.CallService_cxjb("CXJB019");
+            if (result != 1) throw new Exception("项目下载总条数执行出错!!!");
+            var data = XmlHelp.DeSerializerModel(new ProjectDownloadCountDto(), true);
+            resultData = data.PO_CNT;
             return resultData;
 
         }
@@ -197,7 +176,7 @@ namespace BenDing.Repository.Providers.Web
             int result = MedicalInsuranceDll.CallService_cxjb("CXJB010");
             if (result != 1) throw new Exception("居民住院结算执行失败!!!");
             var dataIni = XmlHelp.DeSerializerModel(new HospitalizationPresettlementJsonDto(), true);
-                data = AutoMapper.Mapper.Map<HospitalizationPresettlementDto>(dataIni);
+            data = AutoMapper.Mapper.Map<HospitalizationPresettlementDto>(dataIni);
             //报销金额 =统筹支付+补充险支付+生育补助+民政救助+民政重大疾病救助+精准扶贫+民政优抚+其它支付
             decimal reimbursementExpenses =
                 data.BasicOverallPay + data.SupplementPayAmount + data.BirthAallowance +
@@ -272,28 +251,16 @@ namespace BenDing.Repository.Providers.Web
         /// <returns></returns>
         public HospitalizationPresettlementDto QueryLeaveHospitalSettlement(QueryLeaveHospitalSettlementParam param)
         {
-
-
             var data = new HospitalizationPresettlementDto();
             var xmlStr = XmlHelp.SaveXml(param);
-            if (xmlStr)
+            if (!xmlStr) throw new Exception("查询医保出院结算信息保存参数出错");
+            int result = MedicalInsuranceDll.CallService_cxjb("CXJB012");
+            if (result != 1) throw new Exception("查询医保出院结算信息执行出错");
+            var dataIni = XmlHelp.DeSerializerModel(new HospitalizationPresettlementJsonDto(), true);
+            if (dataIni != null)
             {
-                int result = MedicalInsuranceDll.CallService_cxjb("CXJB012");
-                if (result == 1)
-                {
-                    var dataIni = XmlHelp.DeSerializerModel(new HospitalizationPresettlementJsonDto(), true);
-                    if (dataIni != null) //var c = AutoMapper.Mapper.Map<b>(a);
-                    {
-                        data = AutoMapper.Mapper.Map<HospitalizationPresettlementDto>(dataIni);
-                    }
-                    //data = XmlHelp.DeSerializerModel(new HospitalizationPresettlementDto(), true);
-                }
-                else
-                {
-                    throw new Exception("医保出院结算信息查询执行失败!!!");
-                }
+                data = AutoMapper.Mapper.Map<HospitalizationPresettlementDto>(dataIni);
             }
-
             return data;
 
 
@@ -351,7 +318,7 @@ namespace BenDing.Repository.Providers.Web
 
                 if (cancelLimit == "2") //取消结算,并删除资料<==>删除资料与取消入院
                 {
-                  
+
                     //回参构建
                     var xmlData = new HospitalizationRegisterXml()
                     {
@@ -682,7 +649,7 @@ namespace BenDing.Repository.Providers.Web
                             UploadAmount = d.Amount
                         }).ToList();
                         _medicalInsuranceSqlRepository.UpdateHospitalizationFee(updateFeeParam, false, user);
-                    
+
                         //回参
                         var xmlData = new HospitalizationFeeUploadXml()
                         {
@@ -690,7 +657,7 @@ namespace BenDing.Repository.Providers.Web
                             MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
                             RowDataList = rowXml,
                         };
-                        
+
                         var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
                         user.TransKey = businessId;
                         var saveXml = new SaveXmlDataParam()

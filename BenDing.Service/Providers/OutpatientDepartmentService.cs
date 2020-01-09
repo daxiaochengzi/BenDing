@@ -206,7 +206,7 @@ namespace BenDing.Service.Providers
 
         }
 
-        public List<QueryOutpatientDepartmentCostjsonDto> QueryOutpatientDepartmentCost(BaseUiBusinessIdDataParam param)
+        public QueryOutpatientDepartmentCostjsonDto QueryOutpatientDepartmentCost(BaseUiBusinessIdDataParam param)
         {
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
 
@@ -226,7 +226,6 @@ namespace BenDing.Service.Providers
                   {
                       DocumentNo = residentData.SettlementNo,
                       IdCardNo = outpatient.IdCardNo,
-
                   });
             return data;
         }
