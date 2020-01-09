@@ -14,10 +14,6 @@ namespace BenDing.Domain.Models.Dto.Web
         [Display(Name = "用户id")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string UserId { get; set; }
-        /// <summary>
-        /// 是否his账户
-        /// </summary>
-        public bool IsHis { get; set; }
 
         /// <summary>
         /// 操作员账户

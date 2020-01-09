@@ -49,14 +49,11 @@ namespace BenDing.Repository.Providers.Web
                     var resultNum = sqlConnection.QueryFirst<int>(querySql);
                     if (resultNum > 0)
                     {
-                        var updateSql = param.IsHis ? $"update [dbo].[HospitalOperator] set HisUserAccount='{param.UserAccount}',HisUserPwd='{param.UserPwd}',UpdateTime=GETDATE(),UpdateUserId='{param.UserId}',OrganizationCode='{param.OrganizationCode}',ManufacturerNumber='{param.ManufacturerNumber}' where [HisUserId]='{param.UserId}'"
-                            : $"update [dbo].[HospitalOperator] set [MedicalInsuranceAccount]='{param.UserAccount}',[MedicalInsurancePwd]='{param.UserPwd}',UpdateTime=GETDATE(),UpdateUserId='{param.UserId}' where [HisUserId]='{param.UserId}'";
-                        sqlConnection.Execute(updateSql);
+                         insertSql =
+                            $"update [dbo].[HospitalOperator] set HisUserAccount='{param.UserAccount}',HisUserPwd='{param.UserPwd}',UpdateTime=GETDATE(),UpdateUserId='{param.UserId}',OrganizationCode='{param.OrganizationCode}',ManufacturerNumber='{param.ManufacturerNumber}' where [HisUserId]='{param.UserId}'";
                     }
                     else
                     {
-                        if (param.IsHis)
-                        {
                             insertSql = $@"
                                    INSERT INTO [dbo].[HospitalOperator]
                                    ([Id] ,[FixedEncoding],[HisUserId],ManufacturerNumber,
@@ -64,20 +61,8 @@ namespace BenDing.Repository.Providers.Web
                                    )
                              VALUES('{Guid.NewGuid()}','{BitConverter.ToInt64(Guid.Parse(param.UserId).ToByteArray(), 0)}','{param.UserId}','{param.ManufacturerNumber}',
                                      '{param.UserAccount}','{param.UserPwd}',GETDATE(),'{param.UserId}','{param.HisUserName}',0)";
-                        }
-                        else
-                        {
-                            insertSql = $@"
-                                   INSERT INTO [dbo].[HospitalOperator]
-                                   ([Id] ,[FixedEncoding],[HisUserId],
-                                   [MedicalInsuranceAccount],[MedicalInsurancePwd] ,[CreateTime],[CreateUserId],[IsDelete]
-                                   )
-                             VALUES('{Guid.NewGuid()}','{BitConverter.ToInt64(Guid.Parse(param.UserId).ToByteArray(), 0)}','{param.UserId}',
-                                      '{param.UserAccount}','{param.UserPwd}',GETDATE(),'{param.UserId}',0)";
-                        }
-                        sqlConnection.Execute(insertSql);
-
                     }
+                    sqlConnection.Execute(insertSql);
                 }
                 catch (Exception e)
                 {

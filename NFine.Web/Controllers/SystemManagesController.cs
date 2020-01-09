@@ -41,7 +41,7 @@ namespace NFine.Web.Controllers
             _systemManage = iManageRepository;
         }
         /// <summary>
-        /// 添加医保账户与基层his账户
+        /// 添加基层his账户
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -49,8 +49,7 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry( y =>
              {
-                 if (param.IsHis)
-                 {
+
                      if (string.IsNullOrWhiteSpace(param.ManufacturerNumber))
                      {
                          throw new Exception("厂商编号不能为空!!!");
@@ -70,17 +69,8 @@ namespace NFine.Web.Controllers
                      }
 
                      _systemManage.AddHospitalOperator(param);
-                 }
-                 else
-                 {
-                     var login = MedicalInsuranceDll.ConnectAppServer_cxjb(param.UserAccount, param.UserPwd);
-                     if (login != 1)
-                     {
-                         throw new Exception("医保登陆失败,请核对账户与密码!!!");
-                     }
+                 
 
-                     _systemManage.AddHospitalOperator(param);
-                 }
 
 
              });
