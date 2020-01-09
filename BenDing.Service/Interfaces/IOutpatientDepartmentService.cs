@@ -29,6 +29,6 @@ namespace BenDing.Service.Interfaces
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        List<QueryOutpatientDepartmentCostjsonDto>QueryOutpatientDepartmentCost(BaseUiBusinessIdDataParam param);
+        QueryOutpatientDepartmentCostjsonDto QueryOutpatientDepartmentCost(BaseUiBusinessIdDataParam param);
     }
 }

@@ -26,7 +26,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        List<QueryOutpatientDepartmentCostjsonDto> QueryOutpatientDepartmentCost(
+       QueryOutpatientDepartmentCostjsonDto QueryOutpatientDepartmentCost(
               QueryOutpatientDepartmentCostParam param);
         /// <summary>
         /// 门诊月结汇总

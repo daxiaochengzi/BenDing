@@ -5,6 +5,8 @@ using System.Text;
 using System.Web;
 using System.Web.Http;
 using BenDing.Domain.Models.Dto;
+using BenDing.Domain.Models.Dto.JsonEntity;
+using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.HisXml;
 using BenDing.Domain.Models.Params.Base;
@@ -185,38 +187,41 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public void TestXml()
         {
-            var ddd =new List<InpatientDiagnosisDto>();
-            ddd.Add(new InpatientDiagnosisDto()
-            {
-                 IsMainDiagnosis = true,
-                DiagnosisCode = "T82.003",
-                DiagnosisName = "主动脉机械瓣周漏"
-            });
-            ddd.Add(new InpatientDiagnosisDto()
-            {
-                IsMainDiagnosis = true,
-                DiagnosisCode = "T82.201",
-                DiagnosisName = "冠状动脉搭桥术机械性并发症"
-            });
-            ddd.Add(new InpatientDiagnosisDto()
-            {
-                IsMainDiagnosis = true,
-                DiagnosisCode = "T82.812",
-                DiagnosisName = "主动脉机械瓣周漏"
-            });
-            ddd.Add(new InpatientDiagnosisDto()
-            {
-                IsMainDiagnosis = false,
-                DiagnosisCode = "T83.304",
-                DiagnosisName = "子宫内节育器脱落"
-            });
-            ddd.Add(new InpatientDiagnosisDto()
-            {
-                IsMainDiagnosis = false,
-                DiagnosisCode = "T84.502",
-                DiagnosisName = "膝关节假体植入感染"
-            });
-            var ddds=CommonHelp.GetDiagnosis(ddd);
+            var data = XmlHelp.DeSerializerModel(new QueryOutpatientDepartmentCostDto(), true);
+            if (data == null) throw new Exception("门诊费用查询出错");
+            var cc = AutoMapper.Mapper.Map<QueryOutpatientDepartmentCostjsonDto>(data);
+            //var ddd =new List<InpatientDiagnosisDto>();
+            //ddd.Add(new InpatientDiagnosisDto()
+            //{
+            //     IsMainDiagnosis = true,
+            //    DiagnosisCode = "T82.003",
+            //    DiagnosisName = "主动脉机械瓣周漏"
+            //});
+            //ddd.Add(new InpatientDiagnosisDto()
+            //{
+            //    IsMainDiagnosis = true,
+            //    DiagnosisCode = "T82.201",
+            //    DiagnosisName = "冠状动脉搭桥术机械性并发症"
+            //});
+            //ddd.Add(new InpatientDiagnosisDto()
+            //{
+            //    IsMainDiagnosis = true,
+            //    DiagnosisCode = "T82.812",
+            //    DiagnosisName = "主动脉机械瓣周漏"
+            //});
+            //ddd.Add(new InpatientDiagnosisDto()
+            //{
+            //    IsMainDiagnosis = false,
+            //    DiagnosisCode = "T83.304",
+            //    DiagnosisName = "子宫内节育器脱落"
+            //});
+            //ddd.Add(new InpatientDiagnosisDto()
+            //{
+            //    IsMainDiagnosis = false,
+            //    DiagnosisCode = "T84.502",
+            //    DiagnosisName = "膝关节假体植入感染"
+            //});
+            //var ddds=CommonHelp.GetDiagnosis(ddd);
 
 
 

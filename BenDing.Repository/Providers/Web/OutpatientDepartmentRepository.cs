@@ -58,20 +58,18 @@ namespace BenDing.Repository.Providers.Web
         /// <summary>
         /// 查询门诊费
         /// </summary>
-        public List<QueryOutpatientDepartmentCostjsonDto> QueryOutpatientDepartmentCost(QueryOutpatientDepartmentCostParam param)
+        public QueryOutpatientDepartmentCostjsonDto QueryOutpatientDepartmentCost(QueryOutpatientDepartmentCostParam param)
         {
 
-            var resultData = new List<QueryOutpatientDepartmentCostjsonDto>();
+            QueryOutpatientDepartmentCostjsonDto resultData = null;
             var xmlStr = XmlHelp.SaveXml(param);
             if (!xmlStr) throw new Exception("查询门诊费保存参数出错");
             var result = MedicalInsuranceDll.CallService_cxjb("TPYP303");
             if (result != 1) throw new Exception("门诊费用查询执行出错");
-            string strXml = XmlHelp.DeSerializerModelStr("PO_GHXX");
-            var data = XmlHelp.DeSerializer<QueryOutpatientDepartmentCostDto>(strXml);
-            if (data.Row != null && data.Row.Any())
-            {
-                resultData = AutoMapper.Mapper.Map<List<QueryOutpatientDepartmentCostjsonDto>>(data.Row);
-            }
+            var data = XmlHelp.DeSerializerModel(new QueryOutpatientDepartmentCostDto(),true) ;
+           if (data==null) throw new Exception("门诊费用查询出错");
+            resultData = AutoMapper.Mapper.Map<QueryOutpatientDepartmentCostjsonDto>(data);
+            //QueryOutpatientDepartmentCostDto
 
 
             return resultData;

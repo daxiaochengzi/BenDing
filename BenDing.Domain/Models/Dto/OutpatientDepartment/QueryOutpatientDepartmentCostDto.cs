@@ -9,42 +9,41 @@ using Newtonsoft.Json;
 
 namespace BenDing.Domain.Models.Dto.OutpatientDepartment
 {
-    [XmlRootAttribute("PO_GHXX", IsNullable = false)]
+   
     public class QueryOutpatientDepartmentCostDto
     {
-        [XmlElementAttribute("ROW")]
-        [JsonProperty(PropertyName = "Row")]
-        public List<QueryOutpatientDepartmentCostDataRowDto> Row { get; set; }
-    }
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public class QueryOutpatientDepartmentCostDataRowDto
-    {/// <summary>
-     /// 身份证号
-     /// </summary>
-        [XmlElementAttribute("PO_AAC002", IsNullable = false)]
+        /// <summary>
+        /// 身份证号
+        /// </summary>
+        [JsonProperty(PropertyName = "PO_AAC002")]
+      
         public string IdCardNo { get; set; }
         /// <summary>
         /// 患者姓名
         /// </summary>
-        [XmlElementAttribute("PO_AAC003", IsNullable = false)]
+        [JsonProperty(PropertyName = "PO_AAC003")]
+     
         public string PatientName { get; set; }
         /// <summary>
         /// 结算人群
         /// </summary>
-        [XmlElementAttribute("PO_CKA549", IsNullable = false)]
+       
+        [JsonProperty(PropertyName = "PO_CKA549")]
         public string SettlementCrowd { get; set; }
 
         /// <summary>
         ///挂号医院
         /// </summary>
-        [XmlElementAttribute("PO_CKB519", IsNullable = false)]
+        [JsonProperty(PropertyName = "PO_CKB519")]
+       
         public string RegisterHospital { get; set; }
 
         /// <summary>
         /// 合计金额
         /// </summary>
-
+       
         [JsonProperty(PropertyName = "PO_ZFY")]
+      
         public decimal AllAmount { get; set; }
 
         /// <summary>
@@ -52,6 +51,7 @@ namespace BenDing.Domain.Models.Dto.OutpatientDepartment
         /// </summary>
 
         [JsonProperty(PropertyName = "PO_XJZ")]
+      
         public decimal SelfPayFeeAmount { get; set; }
 
         /// <summary>
@@ -59,12 +59,14 @@ namespace BenDing.Domain.Models.Dto.OutpatientDepartment
         /// </summary>
 
         [JsonProperty(PropertyName = "PO_GHBZ")]
+      
         public decimal ReimbursementExpensesAmount { get; set; }
         /// <summary>
         /// 报销说明备注
         /// </summary>
         [JsonProperty(PropertyName = "PO_XJZF")]
-
+     
         public string Remark { get; set; }
     }
+   
 }
