@@ -72,7 +72,7 @@ namespace BenDing.Service.Providers
             //医保数据写入
             resultData = _outpatientDepartmentRepository.OutpatientDepartmentCostInput(inputParam);
             if (resultData == null) throw new Exception("门诊费用医保执行失败!!!");
-          
+
             param.IsSave = true;
             param.Id = Guid.NewGuid();
             //保存门诊病人
@@ -109,7 +109,7 @@ namespace BenDing.Service.Providers
             //回参构建
             var xmlData = new OutpatientDepartmentCostXml()
             {
-                AccountBalance= userInfoData.InsuranceType == "342" ? userInfoData.ResidentInsuranceBalance: userInfoData.WorkersInsuranceBalance,
+                AccountBalance = userInfoData.InsuranceType == "342" ? userInfoData.ResidentInsuranceBalance : userInfoData.WorkersInsuranceBalance,
                 MedicalInsuranceOutpatientNo = resultData.DocumentNo,
                 CashPayment = resultData.SelfPayFeeAmount,
                 SettlementNo = resultData.DocumentNo,
@@ -133,7 +133,7 @@ namespace BenDing.Service.Providers
             var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
             {
                 UserId = param.User.UserId,
-                ReimbursementExpensesAmount =resultData.ReimbursementExpensesAmount,
+                ReimbursementExpensesAmount = resultData.ReimbursementExpensesAmount,
                 SelfPayFeeAmount = resultData.SelfPayFeeAmount,
                 OtherInfo = JsonConvert.SerializeObject(resultData),
                 Id = saveData.Id,
@@ -163,7 +163,7 @@ namespace BenDing.Service.Providers
             if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人未结算,不能取消结算!!!");
             _outpatientDepartmentRepository.CancelOutpatientDepartmentCost(new CancelOutpatientDepartmentCostParam()
             {
-               DocumentNo = residentData.SettlementNo
+                DocumentNo = residentData.SettlementNo
             });
 
             //添加日志
@@ -179,7 +179,7 @@ namespace BenDing.Service.Providers
             //回参构建
             var xmlData = new OutpatientDepartmentCostCancelXml()
             {
-              SettlementNo = residentData.SettlementNo
+                SettlementNo = residentData.SettlementNo
             };
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
             var saveXml = new SaveXmlDataParam()
@@ -216,18 +216,18 @@ namespace BenDing.Service.Providers
                 BusinessId = param.BusinessId,
                 OrganizationCode = userBase.OrganizationCode
             };
-            var outpatient= _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam(){BusinessId = param.BusinessId });
-            if (outpatient==null) throw new Exception("当前病人查找失败!!!");
+            var outpatient = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam() { BusinessId = param.BusinessId });
+            if (outpatient == null) throw new Exception("当前病人查找失败!!!");
             var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
             if (residentData == null) throw new Exception("当前病人未结算,无结算数据!!!");
             if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人无结算数据!!!");
-              var data= _outpatientDepartmentRepository.QueryOutpatientDepartmentCost(
-                    new QueryOutpatientDepartmentCostParam()
-                    {
-                        DocumentNo = residentData.SettlementNo,
-                       IdCardNo = outpatient.IdCardNo,
+            var data = _outpatientDepartmentRepository.QueryOutpatientDepartmentCost(
+                  new QueryOutpatientDepartmentCostParam()
+                  {
+                      DocumentNo = residentData.SettlementNo,
+                      IdCardNo = outpatient.IdCardNo,
 
-                    });
+                  });
             return data;
         }
     }

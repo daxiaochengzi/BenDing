@@ -36,7 +36,7 @@ namespace NFine.Web.Controllers
         private readonly IOutpatientDepartmentService _outpatientDepartmentService;
         private readonly IOutpatientDepartmentRepository _outpatientDepartmentRepository;
         private readonly IWorkerMedicalInsuranceService _workerMedicalInsuranceService;
-      
+
         /// <summary>
         /// 
         /// </summary>
@@ -59,9 +59,9 @@ namespace NFine.Web.Controllers
             IWebBasicRepository webServiceBasic,
             IOutpatientDepartmentService outpatientDepartmentService,
             IOutpatientDepartmentRepository outpatientDepartmentRepository,
-          
+
             IWorkerMedicalInsuranceService workerMedicalInsuranceService
-           
+
             )
         {
             _webServiceBasicService = webServiceBasicService;
@@ -73,7 +73,7 @@ namespace NFine.Web.Controllers
             _webServiceBasic = webServiceBasic;
             _outpatientDepartmentService = outpatientDepartmentService;
             _outpatientDepartmentRepository = outpatientDepartmentRepository;
-          
+
             _workerMedicalInsuranceService = workerMedicalInsuranceService;
         }
         #region 基层接口
@@ -476,12 +476,12 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {  //医保登陆
-            //    _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-            //    _residentMedicalInsurance.HospitalizationPreSettlement(new HospitalizationPresettlementParam()
-            //    {
-            //        LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
-            //        MedicalInsuranceHospitalizationNo = "44116625"
-            //    });
+               //    _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               //    _residentMedicalInsurance.HospitalizationPreSettlement(new HospitalizationPresettlementParam()
+               //    {
+               //        LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
+               //        MedicalInsuranceHospitalizationNo = "44116625"
+               //    });
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 userBase.TransKey = param.TransKey;
                 //回参构建
@@ -500,7 +500,7 @@ namespace NFine.Web.Controllers
                 };
                 //存基层
                 _webServiceBasic.SaveXmlData(saveXml);
-            
+
                 //var dd = new ResidentUserInfoParam();
                 //dd.IdentityMark = "1";
                 //dd.InformationNumber = "111";
@@ -1148,7 +1148,7 @@ namespace NFine.Web.Controllers
             {
                 //医保登录
                 _residentMedicalInsurance.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-              y.Data=_outpatientDepartmentService.QueryOutpatientDepartmentCost(param);
+                y.Data = _outpatientDepartmentService.QueryOutpatientDepartmentCost(param);
 
             });
 
