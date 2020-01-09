@@ -556,7 +556,7 @@ namespace BenDing.Service.Providers
             var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(user.OrganizationCode);
             if (gradeData == null) throw new Exception("获取医院等级失败!!!");
             if (string.IsNullOrWhiteSpace(gradeData.AdministrativeArea)) throw new Exception("当前医院未设置行政区域!!!");
-            iniParam.IdentityMark = param.IdentityMark;
+            iniParam.IdentityMark =(Convert.ToInt32(param.IdentityMark)+1).ToString();
             iniParam.AfferentSign = param.AfferentSign;
             iniParam.MedicalCategory = param.MedicalCategory;
             iniParam.AdmissionDate = Convert.ToDateTime(paramDto.AdmissionDate).ToString("yyyyMMdd");
