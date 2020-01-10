@@ -51,6 +51,8 @@ namespace BenDing.Repository.Providers.Web
         {
            
             var hospitalData = _systemManageRepository.QueryHospitalOrganizationGrade(organizationCode);
+            if (hospitalData == null) throw new Exception("当前医院无等级信息，请设置");
+            if (string.IsNullOrWhiteSpace(hospitalData.MedicalInsuranceAccount)) throw new Exception("当前医院未设置，医保账户，请设置！！！");
             var result =
                 MedicalInsuranceDll.ConnectAppServer_cxjb(hospitalData.MedicalInsuranceAccount,
                     hospitalData.MedicalInsurancePwd);

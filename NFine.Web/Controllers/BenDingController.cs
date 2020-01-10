@@ -984,7 +984,7 @@ namespace NFine.Web.Controllers
                                 MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
                                 User = userBase,
                                 AdministrativeArea = gradeData.AdministrativeArea,
-                                OrganizationCode = userData.MedicalInsuranceAccount,
+                                OrganizationCode = gradeData.MedicalInsuranceAccount,
                             });
 
                     }
@@ -1074,10 +1074,10 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
            {
-
-               var data = _systemManageRepository.QueryHospitalOperator(param);
-               if (string.IsNullOrWhiteSpace(data.MedicalInsuranceAccount)) throw new Exception("当前用户未授权,医保账户信息,请重新授权!!!");
+               var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+               //医保登录
                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+              
 
            });
 

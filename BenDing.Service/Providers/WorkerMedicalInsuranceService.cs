@@ -220,7 +220,7 @@ namespace BenDing.Service.Providers
                 AdministrativeArea = gradeData.AdministrativeArea,
                 Operators = preSettlementData.Operator,
                 IsHospitalizationFrequency = "0",
-                OrganizationCode = userData.MedicalInsuranceAccount,
+                OrganizationCode = gradeData.MedicalInsuranceAccount,
             };
             //医保结算
             var resultData = _workerMedicalInsuranceRepository.WorkerHospitalizationPreSettlement(preSettlement);
@@ -299,7 +299,7 @@ namespace BenDing.Service.Providers
                 LeaveHospitalDate = Convert.ToDateTime(hisSettlement.LeaveHospitalDate).ToString("yyyyMMdd"),
                 LeaveHospitalState = param.LeaveHospitalInpatientState,
                 Operators = userBase.UserName,
-                OrganizationCode = userData.MedicalInsuranceAccount,
+                OrganizationCode = gradeData.MedicalInsuranceAccount,
                 AdministrativeArea = gradeData.AdministrativeArea
             };
             //获取诊断
@@ -570,7 +570,7 @@ namespace BenDing.Service.Providers
             iniParam.InpatientArea = paramDto.AdmissionWard;
             var userData = _systemManageRepository.QueryHospitalOperator(
                 new QueryHospitalOperatorParam() { UserId = param.UserId });
-            iniParam.OrganizationCode = userData.MedicalInsuranceAccount;
+            iniParam.OrganizationCode = gradeData.MedicalInsuranceAccount;
             return iniParam;
         }
 
