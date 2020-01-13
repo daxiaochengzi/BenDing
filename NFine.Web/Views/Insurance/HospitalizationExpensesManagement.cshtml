@@ -251,28 +251,7 @@
             var UploadMark = "0";
             tableDataLoad(tableId, UploadMark);
         });
-        //更新费用
-        function renewalCost() {
       
-            $.ajax({
-                url: host + "/GetInpatientInfoDetail?UserId=" + $("#empid").val() + "&BusinessId="+$("#bid").val(),
-                dataType: "json",
-                type: 'get',
-                success: function (res) {
-                    if (data.Success === false) {
-                        var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
-                    } else {
-                        console.log(data);
-                        layer.msg('费用更新成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
-                    }
-                },
-                complete: function () {
-                    form.render();
-                }
-            });
-        }
         //全部上传
         function allUpload() {
      
@@ -349,7 +328,24 @@
         //更新费用
         form.on('submit(renewalCost)', function (data) {
             console.log("123");
-            renewalCost();
+            $.ajax({
+                url: host + "/GetInpatientInfoDetail?UserId=" + $("#empid").val() + "&BusinessId=" + $("#bid").val(),
+                dataType: "json",
+                type: 'get',
+                success: function (res) {
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        //样式类名:墨绿深蓝风
+                        layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                    } else {
+                        console.log(data);
+                        layer.msg('费用更新成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                    }
+                },
+                complete: function () {
+                    form.render();
+                }
+            });
         });
         //更新费用
         form.on('submit(allUpload)', function (data) {
