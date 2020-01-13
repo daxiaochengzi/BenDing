@@ -28,8 +28,8 @@
                     <div class="layui-inline">
                         <button class="layui-btn" lay-submit lay-filter="LAY-bill-data-list">查询</button>
                         <button class="layui-btn" data-type="cleanSearch">清除</button>
-                        <button class="layui-btn" id="renewalCost" data-type="renewalCost">更新费用</button>
-                        <button class="layui-btn"  id="allUpload" data-type="allUpload">全部上传</button>
+                        <button class="layui-btn" lay-submit lay-filter="renewalCost" >更新费用</button>
+                        <button class="layui-btn" lay-submit lay-filter="allUpload" data-type="allUpload">全部上传</button>
                     </div>
                 </div>
             </div>
@@ -297,18 +297,27 @@
             ]]
         });
     });
-    $(function () {
+    //监听Tab-已传费用明细
+    form.on('submit(LAY-updated-data-list)', function (data) {
+        console.log(data.field)
+        layTableId = "dataTableUpdatedId";//Table ID
+        var params = {
+            "UploadMark": "1" /*上传状态*/
+            , "DirectoryName": data.field.DirectoryName /*药品名称*/
+            , "BillTime": $("#date2").val() /*费用日期*/
+            , "BusinessId": $("#bid").val() /*业务ID*/
+            , "UserId": $("#empid").val() /*授权操作人的ID*/
+        }
+        tableDataQuery("GET", "/QueryHospitalizationFee", params, true, layTableId);
+        return false;//阻止表单跳转
+    });
+    $("#renewalCost").click(function(){
         //更新费用
-        $("#renewalCost").click(function () {
-            //更新费用
-            renewalCost();
-        });
+        renewalCost();
+    });
+    $("#allUpload").click(function(){
         //全部上传
-      
-        $("#allUpload").click(function () {
-            //更新费用
-            allUpload();
-        });
+        allUpload();
     });
     //更新费用
     function renewalCost() {
@@ -334,7 +343,7 @@
     }
     //全部上传
     function allUpload() {
-       console.log(11);
+     
         var params = {
             "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
             , "UserId": $("#empid").val() /*授权操作人的ID*/
