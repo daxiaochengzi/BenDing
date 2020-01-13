@@ -9,14 +9,13 @@ namespace BenDing.Domain.Models.Dto.Base
 { 
    public class WorkerBaseParam
     { /// <summary>
-      /// 组织机构编码
+      /// 医疗机构号
       /// </summary>
         public string OrganizationCode { get; set; }
         /// <summary>
         /// 医保住院号
         /// </summary>
         public string MedicalInsuranceHospitalizationNo { get; set; }
-
         /// <summary>
         /// 行政区域
         /// </summary>

@@ -215,6 +215,20 @@ namespace BenDing.Repository.Providers.Web
         /// <returns></returns>
         public WorkerHospitalizationPreSettlementDto WorkerHospitalizationSettlement(WorkerHospitalizationSettlementParam param)
         {
+            param.OrganizationCode = "627";
+            param.MedicalInsuranceHospitalizationNo = "44116666";
+            param.IsHospitalizationFrequency = "1";
+            param.AdministrativeArea = "511599";
+            param.Operators = "cpq2677";
+            param.LeaveHospitalDate = "20200110";
+            param.AdmissionMainDiagnosisIcd10 = "A00.000x001";
+            param.LeaveHospitalMainDiagnosis = "古典生物型霍乱";
+        
+         
+         
+          
+           
+           
             //社保住院号
             var documentNo = new byte[1024];
             //发生费用金额
