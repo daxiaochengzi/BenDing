@@ -68,7 +68,7 @@
 
         //方法级渲染
         table.render({
-            elem: '#dataTable'
+            elem: '#dataTablePairCode'
             , url: host +'/QueryProjectDownload' //数据接口
             , where: {
                 UserId: $("#empid").val() //必传参数
@@ -181,7 +181,7 @@
         var $ = layui.$, active = {
             dataSearch: function () {
                 //执行重载
-                table.reload('dataTableId', {
+                table.reload('dataTable', {
                     page: {
                         curr: 1 //重新从第 1 页开始
                     }
