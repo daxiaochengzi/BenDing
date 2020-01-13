@@ -188,289 +188,309 @@
         autocomplete: 'layAutoComplete'
     });
 
-    layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'], function () {
-        var $ = layui.$
-            , element = layui.element
-            , form = layui.form
-            , layer = layui.layer
-            , table = layui.table
-            , laydate = layui.laydate;
+    layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'],
+        function() {
+            var $ = layui.$,
+                element = layui.element,
+                form = layui.form,
+                layer = layui.layer,
+                table = layui.table,
+                laydate = layui.laydate;
 
-        form.render(null, 'LAY-form-render');
-        //执行一个laydate实例
-        laydate.render({ elem: '#date1' });
-        //指定入院日期,外部事件调用
-        lay('#date2').on('click', function () {
-            laydate.render({
-                elem: '#date2'
-                , format: 'yyyy-MM-dd HH:mm:ss'
-                , show: true
-                , closeStop: '#date2'
-            });
-        });
+            form.render(null, 'LAY-form-render');
+            //执行一个laydate实例
+            laydate.render({ elem: '#date1' });
+            //指定入院日期,外部事件调用
+            lay('#date2').on('click',
+                function() {
+                    laydate.render({
+                        elem: '#date2',
+                        format: 'yyyy-MM-dd HH:mm:ss',
+                        show: true,
+                        closeStop: '#date2'
+                    });
+                });
 
 
-        //form数据回显:数据回显到Form表单主体部分
-        var jsonToForm = function (jsonData, formFilter) {
-            var PersonalCoding = jsonData.MedicalInsuranceResidentInfo.PersonalCoding
-            var InsuranceType = jsonData.MedicalInsuranceResidentInfo.InsuranceType
-            var PersonnelClassification = jsonData.MedicalInsuranceResidentInfo.PersonnelClassification
-            //给表单赋值
-            form.val(formFilter, {
-                "AdmissionDate": jsonData.AdmissionDate,
-                "HospitalizationNo": jsonData.HospitalizationNo,
-                "BusinessId": jsonData.BusinessId,
-                "PatientName": jsonData.PatientName,
-                "IdCardNo": jsonData.IdCardNo,
-                "PatientSex": jsonData.PatientSex,
-                "InDepartmentName": jsonData.InDepartmentName,
-                "InDepartmentId": jsonData.InDepartmentId,
-                "AdmissionDiagnosticDoctor": jsonData.AdmissionDiagnosticDoctor,
-                "AdmissionBed": jsonData.AdmissionBed,
-                "AdmissionWard": jsonData.AdmissionWard,
-                "AdmissionOperator": jsonData.AdmissionOperator,
-                "PersonalCoding": PersonalCoding,
-                "InsuranceType": InsuranceType,
-                "PersonnelClassification": PersonnelClassification,
-            });
-        }
-
-        /**根据当前住院病人的业务ID查询,返回数据回显到下面表单里面*/
-        form.on('submit(LAY-form-search)', function (data) {
-
-            //var params = {
-            //    "IdCardNo": $("#IdCardNo").val() /*身份证号*/
-            //    , "StartTime": $("#date1").val() /*查询开始日期，必传*/
-            //    , "IdentityMark": $("#IdentityMark").val() /*身份标志，1:身份证,2:医保个人编码*/
-            //    , "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
-            //    , "UserId": $("#empid").val() /*授权操作人的ID*/
-            //}
-
-            var params = {
-                  "TransKey": $("#transkey").val() /*医保交易码*/
-                , "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
-                , "UserId": $("#empid").val() /*授权操作人的ID*/
+            //form数据回显:数据回显到Form表单主体部分
+            var jsonToForm = function(jsonData, formFilter) {
+                var PersonalCoding = jsonData.MedicalInsuranceResidentInfo.PersonalCoding
+                var InsuranceType = jsonData.MedicalInsuranceResidentInfo.InsuranceType
+                var PersonnelClassification = jsonData.MedicalInsuranceResidentInfo.PersonnelClassification
+                //给表单赋值
+                form.val(formFilter,
+                    {
+                        "AdmissionDate": jsonData.AdmissionDate,
+                        "HospitalizationNo": jsonData.HospitalizationNo,
+                        "BusinessId": jsonData.BusinessId,
+                        "PatientName": jsonData.PatientName,
+                        "IdCardNo": jsonData.IdCardNo,
+                        "PatientSex": jsonData.PatientSex,
+                        "InDepartmentName": jsonData.InDepartmentName,
+                        "InDepartmentId": jsonData.InDepartmentId,
+                        "AdmissionDiagnosticDoctor": jsonData.AdmissionDiagnosticDoctor,
+                        "AdmissionBed": jsonData.AdmissionBed,
+                        "AdmissionWard": jsonData.AdmissionWard,
+                        "AdmissionOperator": jsonData.AdmissionOperator,
+                        "PersonalCoding": PersonalCoding,
+                        "InsuranceType": InsuranceType,
+                        "PersonnelClassification": PersonnelClassification,
+                    });
             }
 
-            $.ajax({
-                type: 'POST',
-                url: host +'/GetInpatientInfo',
-                data: params,
-                dataType: "json",
-                async: false,
-                success: function (data) {
-                    if (data.Success === false) {
-                        var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                    } else {
-                        var resData = data.Data;
-                        //查询之前，主体部分所有输入或选择框是禁用的，现在要去掉
-                        $(".layui-input-inline").each(function (i, e) {
-                            var itemInput = $(this).find("input");
-                            var itemSelect = $(this).find("select");
-                            if (itemInput.attr("disabled")) {
-                                itemInput.removeAttr("disabled").removeClass("layui-disabled");
-                            }
-                            if (itemSelect.attr("disabled")) {
-                                itemSelect.removeAttr("disabled");
-                            }
-                        });
-                        //查询返回的数据回显到主体部分
-                        //jsonToForm(resData, "LAY-form");
-                        jsonToForm(resData, "LAY-form-render");
+            /**根据当前住院病人的业务ID查询,返回数据回显到下面表单里面*/
+            form.on('submit(LAY-form-search)',
+                function(data) {
 
-                        //诊断表初始化
-                        $.ajax({
-                            type: 'POST',
-                            url: host+'/GetInpatientDiagnosis',
-                            data: params,
-                            dataType: "json",
-                            async: false,
-                            success: function (result) {
-                                var oldData = result.Data;
-                                tableIns.reload({
-                                    data: oldData, where: params, parseData: function (result) {
-                                        return {
-                                            "code": result.Code
-                                            , "msg": result.Message
-                                            , "data": result.Data
-                                        };
+                    //var params = {
+                    //    "IdCardNo": $("#IdCardNo").val() /*身份证号*/
+                    //    , "StartTime": $("#date1").val() /*查询开始日期，必传*/
+                    //    , "IdentityMark": $("#IdentityMark").val() /*身份标志，1:身份证,2:医保个人编码*/
+                    //    , "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
+                    //    , "UserId": $("#empid").val() /*授权操作人的ID*/
+                    //}
+
+                    var params = {
+                        "TransKey": $("#transkey").val() /*医保交易码*/,
+                        "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
+                        "UserId": $("#empid").val() /*授权操作人的ID*/
+                    }
+
+                    $.ajax({
+                        type: 'POST',
+                        url: host + '/GetInpatientInfo',
+                        data: params,
+                        dataType: "json",
+                        async: false,
+                        success: function(data) {
+                            if (data.Success === false) {
+                                var errData = data.Message;
+                                //样式类名:墨绿深蓝风
+                                layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                            } else {
+                                var resData = data.Data;
+                                //查询之前，主体部分所有输入或选择框是禁用的，现在要去掉
+                                $(".layui-input-inline").each(function(i, e) {
+                                    var itemInput = $(this).find("input");
+                                    var itemSelect = $(this).find("select");
+                                    if (itemInput.attr("disabled")) {
+                                        itemInput.removeAttr("disabled").removeClass("layui-disabled");
+                                    }
+                                    if (itemSelect.attr("disabled")) {
+                                        itemSelect.removeAttr("disabled");
+                                    }
+                                });
+                                //查询返回的数据回显到主体部分
+                                //jsonToForm(resData, "LAY-form");
+                                jsonToForm(resData, "LAY-form-render");
+
+                                //诊断表初始化
+                                $.ajax({
+                                    type: 'POST',
+                                    url: host + '/GetInpatientDiagnosis',
+                                    data: params,
+                                    dataType: "json",
+                                    async: false,
+                                    success: function(result) {
+                                        var oldData = result.Data;
+                                        tableIns.reload({
+                                            data: oldData,
+                                            where: params,
+                                            parseData: function(result) {
+                                                return {
+                                                    "code": result.Code,
+                                                    "msg": result.Message,
+                                                    "data": result.Data
+                                                };
+                                            }
+                                        });
                                     }
                                 });
                             }
-                        });
-                    }
-                },
-                complete: function () {
-                    form.render();
-                },
-            });
-            return false;//阻止表单跳转
-        });
-        //数据表格实例化
-        var layTableId = "layTable";
-        var tableIns = table.render({
-            elem: '#dataTable',
-            id: layTableId,
-            page: false,
-            cols: [[
-                { title: '序号', type: 'numbers', width: 80 },
-                , { field: 'DiagnosisName', title: '诊断名称', width: 280 }
-                , { field: 'DiagnosisCode', title: '诊断代码', width: 280 }
-                , {
-                    field: 'IsMainDiagnosis', title: '主诊', width: 120, event: 'diagnosis', templet: function (d) {
-                        var html = ['<input type="checkbox" name="IsMainDiagnosis" lay-skin="switch" lay-text="是|否"'];
-                        html.push(d.IsMainDiagnosis == true ? 'checked' : '');
-                        html.push('/>');
-                        return html.join('');
-                    }
-                }
-                , {
-                    title: '操作', fixed: 'right', templet: function (d) {
-                        return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="' + d.DiagnosisCode + '"><i class="layui-icon layui-icon-delete"></i>移除</a>';
-                    }
-                }
-            ]]
-        });
-
-
-        //录入诊断
-        layui.autocomplete({
-            element: '#DiagnosisSearch',
-            num: 2,
-            display: 'DiseaseName',
-            shortcut: 'MnemonicCode',
-            url: '/BenDing/QueryICD10',
-            query: {},
-            resArray: 'Data',
-            count: 10,
-            done: function (item) {
-                var oldData = table.cache[layTableId];
-                var newRow = {
-                    DiagnosisName: item.DiseaseName,
-                    DiagnosisCode: item.DiseaseCoding,
-                    IsMainDiagnosis: false,
-                    Id: item.Id
-                };
-                oldData.push(newRow);
-                tableIns.reload({
-                    data: oldData
-                });
-            }
-        });
-        //定义事件集合
-        var active = {
-            updateRow: function (obj) {
-                var oldData = table.cache[layTableId];
-                console.log(oldData);
-                for (var i = 0, row; i < oldData.length; i++) {
-                    row = oldData[i];
-                    if (row.DiagnosisCode == obj.DiagnosisCode) {
-                        $.extend(oldData[i], obj);
-                        return;
-                    }
-                }
-                tableIns.reload({
-                    data: oldData
-                });
-            },
-            removeEmptyTableCache: function () {
-                var oldData = table.cache[layTableId];
-                for (var i = 0, row; i < oldData.length; i++) {
-                    row = oldData[i];
-                    if (!row || !row.Id) {
-                        oldData.splice(i, 1);    //删除一项
-                    }
-                    continue;
-                }
-                tableIns.reload({
-                    data: oldData
-                });
-            },
-        };
-        //注册按钮事件
-        $('.layui-btn[data-type]').on('click', function () {
-            var type = $(this).data('type');
-            activeByType(type);
-        });
-        //激活事件
-        var activeByType = function (type, arg) {
-            if (arguments.length === 2) {
-                active[type] ? active[type].call(this, arg) : '';
-            } else {
-                active[type] ? active[type].call(this) : '';
-            }
-        }
-        //监听工具条
-        table.on('tool(dataTable)', function (obj) {
-            var data = obj.data, event = obj.event, tr = obj.tr; //获得当前行 tr 的DOM对象;
-            switch (event) {
-                case "diagnosis":
-                    var stateVal = tr.find("input[name='IsMainDiagnosis']").prop('checked') ? true : false;
-                    $.extend(obj.data, { 'IsMainDiagnosis': stateVal })
-                    activeByType('updateRow', obj.data);	//更新行记录对象
-                    break;
-                case "del":
-                    layer.confirm('真的删除行么？', function (index) {
-                        obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                        layer.close(index);
-                        activeByType('removeEmptyTableCache');
+                        },
+                        complete: function() {
+                            form.render();
+                        },
                     });
-                    break;
-            }
-        });
+                    return false; //阻止表单跳转
+                });
+            //数据表格实例化
+            var layTableId = "layTable";
+            var tableIns = table.render({
+                elem: '#dataTable',
+                id: layTableId,
+                page: false,
+                cols: [
+                    [
+                        { title: '序号', type: 'numbers', width: 80 },,
+                        { field: 'DiagnosisName', title: '诊断名称', width: 280 },
+                        { field: 'DiagnosisCode', title: '诊断代码', width: 280 }, {
+                            field: 'IsMainDiagnosis',
+                            title: '主诊',
+                            width: 120,
+                            event: 'diagnosis',
+                            templet: function(d) {
+                                var html = [
+                                    '<input type="checkbox" name="IsMainDiagnosis" lay-skin="switch" lay-text="是|否"'
+                                ];
+                                html.push(d.IsMainDiagnosis == true ? 'checked' : '');
+                                html.push('/>');
+                                return html.join('');
+                            }
+                        }, {
+                            title: '操作',
+                            fixed: 'right',
+                            templet: function(d) {
+                                return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="' +
+                                    d.DiagnosisCode +
+                                    '"><i class="layui-icon layui-icon-delete"></i>移除</a>';
+                            }
+                        }
+                    ]
+                ]
+            });
 
-        //登记
-        form.on('submit(reg)', function (data) {
-            var field = data.field;
-            if (field.IdentityMark == 1) {
-                //身份证号
-                field.AfferentSign = field.IdCardNo
-            }
-            if (field.IdentityMark == 2) {
-                //医保个人编码
-                field.AfferentSign = field.PersonalCoding
-            }
-            //科室ID
-            //field.InpatientDepartmentCode = field.InDepartmentId
-            //床位号
-            //field.BedNumber = field.AdmissionBed
-            //经办人
-            //field.Operators = field.UserId
-            //获取入院病人查询开始时间
-            //field.StartTime = field.AdmissionDate
-            //业务ID
-            field.BusinessId = field.BusinessId;
-            //医保交易码
-            field.TransKey = $("#transkey").val();
-            //授权操作人的ID
-            field.UserId = $("#empid").val();
-            //诊断列表
-            var dataTable1 = table.cache[layTableId];
 
-            //诊断列表 add
-            field.DiagnosisList = dataTable1;
-            $.ajax({
-                type: 'POST',
-                url: host+'/HospitalizationRegister',
-                async: false,
-                data: JSON.stringify(field),
-                dataType: "json",
-                contentType: 'application/json',
-                success: function (data) {
-                    if (data.Success === false) {
-                        var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.msg('登记失败\n' + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' })
-                    } else {
-                        console.log(data);
-                        layer.msg('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' })
-                    }
+            //录入诊断
+            layui.autocomplete({
+                element: '#DiagnosisSearch',
+                num: 2,
+                display: 'DiseaseName',
+                shortcut: 'MnemonicCode',
+                url: '/BenDing/QueryICD10',
+                query: {},
+                resArray: 'Data',
+                count: 10,
+                done: function(item) {
+                    var oldData = table.cache[layTableId];
+                    var newRow = {
+                        DiagnosisName: item.DiseaseName,
+                        DiagnosisCode: item.DiseaseCoding,
+                        IsMainDiagnosis: false,
+                        Id: item.Id
+                    };
+                    oldData.push(newRow);
+                    tableIns.reload({
+                        data: oldData
+                    });
                 }
             });
-            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            //定义事件集合
+            var active = {
+                updateRow: function(obj) {
+                    var oldData = table.cache[layTableId];
+                    console.log(oldData);
+                    for (var i = 0, row; i < oldData.length; i++) {
+                        row = oldData[i];
+                        if (row.DiagnosisCode == obj.DiagnosisCode) {
+                            $.extend(oldData[i], obj);
+                            return;
+                        }
+                    }
+                    tableIns.reload({
+                        data: oldData
+                    });
+                },
+                removeEmptyTableCache: function() {
+                    var oldData = table.cache[layTableId];
+                    for (var i = 0, row; i < oldData.length; i++) {
+                        row = oldData[i];
+                        if (!row || !row.Id) {
+                            oldData.splice(i, 1); //删除一项
+                        }
+                        continue;
+                    }
+                    tableIns.reload({
+                        data: oldData
+                    });
+                },
+            };
+            //注册按钮事件
+            $('.layui-btn[data-type]').on('click',
+                function() {
+                    var type = $(this).data('type');
+                    activeByType(type);
+                });
+            //激活事件
+            var activeByType = function(type, arg) {
+                if (arguments.length === 2) {
+                    active[type] ? active[type].call(this, arg) : '';
+                } else {
+                    active[type] ? active[type].call(this) : '';
+                }
+            }
+            //监听工具条
+            table.on('tool(dataTable)',
+                function(obj) {
+                    var data = obj.data, event = obj.event, tr = obj.tr; //获得当前行 tr 的DOM对象;
+                    switch (event) {
+                    case "diagnosis":
+                        var stateVal = tr.find("input[name='IsMainDiagnosis']").prop('checked') ? true : false;
+                        $.extend(obj.data, { 'IsMainDiagnosis': stateVal })
+                        activeByType('updateRow', obj.data); //更新行记录对象
+                        break;
+                    case "del":
+                        layer.confirm('真的删除行么？',
+                            function(index) {
+                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                                layer.close(index);
+                                activeByType('removeEmptyTableCache');
+                            });
+                        break;
+                    }
+                });
+
+            //登记
+            form.on('submit(reg)',
+                function(data) {
+                    var field = data.field;
+                    if (field.IdentityMark == 1) {
+                        //身份证号
+                        field.AfferentSign = field.IdCardNo
+                    }
+                    if (field.IdentityMark == 2) {
+                        //医保个人编码
+                        field.AfferentSign = field.PersonalCoding
+                    }
+                    //科室ID
+                    //field.InpatientDepartmentCode = field.InDepartmentId
+                    //床位号
+                    //field.BedNumber = field.AdmissionBed
+                    //经办人
+                    //field.Operators = field.UserId
+                    //获取入院病人查询开始时间
+                    //field.StartTime = field.AdmissionDate
+                    //业务ID
+                    field.BusinessId = field.BusinessId;
+                    //医保交易码
+                    field.TransKey = $("#transkey").val();
+                    //授权操作人的ID
+                    field.UserId = $("#empid").val();
+                    //诊断列表
+                    var dataTable1 = table.cache[layTableId];
+
+                    //诊断列表 add
+                    field.DiagnosisList = dataTable1;
+                    $.ajax({
+                        type: 'POST',
+                        url: host + '/HospitalizationRegister',
+                        async: false,
+                        data: JSON.stringify(field),
+                        dataType: "json",
+                        contentType: 'application/json',
+                        success: function(data) {
+                            if (data.Success === false) {
+                                var errData = data.Message;
+                                //样式类名:墨绿深蓝风
+                                layer.msg('登记失败\n' + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                            } else {
+                                console.log(data);
+                                layer.msg('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' })
+                            }
+                        }
+                    });
+                    return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+                });
         });
-    })
 
 </script>
