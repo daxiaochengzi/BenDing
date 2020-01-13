@@ -68,7 +68,7 @@
 
         //方法级渲染
         table.render({
-            elem: '#dataTablePairCode'
+            elem: '#dataTable'
             , url: host +'/QueryProjectDownload' //数据接口
             , where: {
                 UserId: $("#empid").val() //必传参数
@@ -106,7 +106,7 @@
             ]]
             , height: $(window).height() - 128
             , page: true
-            , id: 'dataTableId'
+            , id: 'dataTable'
         });
 
         //监听搜索
