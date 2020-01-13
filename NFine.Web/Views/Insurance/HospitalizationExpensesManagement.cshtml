@@ -299,7 +299,7 @@
     });
     //更新费用
     function renewalCost() {
-        console.log(11);
+        console.log(host);
         $.ajax({
             url: host + "/GetInpatientInfoDetail?UserId=" + $("#empid").val() + "&BusinessId="+$("#bid").val(),
             dataType: "json",
