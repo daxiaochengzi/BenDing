@@ -28,8 +28,8 @@
                     <div class="layui-inline">
                         <button class="layui-btn" lay-submit lay-filter="LAY-bill-data-list">查询</button>
                         <button class="layui-btn" data-type="cleanSearch">清除</button>
-                        <button class="layui-btn" onclick="renewalCost()" data-type="renewalCost">更新费用</button>
-                        <button class="layui-btn" onclick="allUpload()" data-type="allUpload">全部上传</button>
+                        <button class="layui-btn" id="renewalCost" data-type="renewalCost">更新费用</button>
+                        <button class="layui-btn"  id="allUpload" data-type="allUpload">全部上传</button>
                     </div>
                 </div>
             </div>
@@ -297,9 +297,22 @@
             ]]
         });
     });
+    $(function () {
+        //更新费用
+        $("#renewalCost").click(function () {
+            //更新费用
+            renewalCost();
+        });
+        //全部上传
+      
+        $("#allUpload").click(function () {
+            //更新费用
+            allUpload();
+        });
+    });
     //更新费用
     function renewalCost() {
-        console.log(host);
+      
         $.ajax({
             url: host + "/GetInpatientInfoDetail?UserId=" + $("#empid").val() + "&BusinessId="+$("#bid").val(),
             dataType: "json",
