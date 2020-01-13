@@ -296,6 +296,15 @@
                 , { field: 'OrganizationCode', title: '组织机构', width: 280, hide: true }
             ]]
         });
+        $("#renewalCost").click(function(){
+            //更新费用
+            console.log("123");
+            renewalCost();
+        });
+        $("#allUpload").click(function(){
+            //全部上传
+            allUpload();
+        });
     });
     //监听Tab-已传费用明细
     form.on('submit(LAY-updated-data-list)', function (data) {
@@ -311,14 +320,7 @@
         tableDataQuery("GET", "/QueryHospitalizationFee", params, true, layTableId);
         return false;//阻止表单跳转
     });
-    $("#renewalCost").click(function(){
-        //更新费用
-        renewalCost();
-    });
-    $("#allUpload").click(function(){
-        //全部上传
-        allUpload();
-    });
+  
     //更新费用
     function renewalCost() {
       
