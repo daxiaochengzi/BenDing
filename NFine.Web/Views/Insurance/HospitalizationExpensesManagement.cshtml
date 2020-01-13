@@ -222,7 +222,7 @@
                 , "UserId": $("#empid").val() /*授权操作人的ID*/
                 , "DataIdList": tableData
             }
-            tableDataQuery("POST", "/PrescriptionUpload", params, true,layTableId)
+            tableDataQuery("POST", "/PrescriptionUpload", params, true, layTableId);
         }
         //头工具栏事件
         table.on('toolbar(dataTableBillId)', function (obj) {
@@ -244,7 +244,7 @@
                     //layer.alert(JSON.stringify(dataUp));
                     break;
             };
-        });
+        });   
         //页面初始化加载默认数据
         $(function () {
             var tableId = layTableId;
