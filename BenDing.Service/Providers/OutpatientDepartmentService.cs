@@ -224,7 +224,7 @@ namespace BenDing.Service.Providers
             var data = _outpatientDepartmentRepository.QueryOutpatientDepartmentCost(
                   new QueryOutpatientDepartmentCostParam()
                   {
-                      DocumentNo = residentData.SettlementNo,
+                      DocumentNo = "1027384812", //residentData.SettlementNo,
                       IdCardNo = outpatient.IdCardNo,
                   });
             return data;

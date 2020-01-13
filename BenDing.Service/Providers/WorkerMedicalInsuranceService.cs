@@ -308,7 +308,8 @@ namespace BenDing.Service.Providers
             infoParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
             infoParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
             infoParam.LeaveHospitalMainDiagnosis = diagnosisData.DiagnosisDescribe;
-            infoParam.IsHospitalizationFrequency = "0";
+            infoParam.IsHospitalizationFrequency = "1";
+         
 
             // 医保
             var resultData = _workerMedicalInsuranceRepository.WorkerHospitalizationSettlement(infoParam);
