@@ -252,34 +252,7 @@
             tableDataLoad(tableId, UploadMark);
         });
       
-        //全部上传
-        function allUpload() {
      
-            var params = {
-                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
-                , "UserId": $("#empid").val() /*授权操作人的ID*/
-
-            };
-            $.ajax({
-                url: host + "/PrescriptionUpload",
-                data: params,
-                dataType: "json",
-                type: 'post',
-                success: function (res) {
-                    if (data.Success === false) {
-                        var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
-                    } else {
-                        console.log(data);
-                        layer.msg('费用上传成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
-                    }
-                },
-                complete: function () {
-                    form.render();
-                }
-            });
-        }
         //已传费用明细
         table.render({
             elem: '#dataTableUpdatedId'
@@ -327,7 +300,7 @@
         });
         //更新费用
         form.on('submit(renewalCost)', function (data) {
-            console.log("123");
+          
             $.ajax({
                 url: host + "/GetInpatientInfoDetail?UserId=" + $("#empid").val() + "&BusinessId=" + $("#bid").val(),
                 dataType: "json",
@@ -347,10 +320,32 @@
                 }
             });
         });
-        //更新费用
+        //医保费用上传
         form.on('submit(allUpload)', function (data) {
-            //全部上传
-            allUpload();
+            var params = {
+                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
+                , "UserId": $("#empid").val() /*授权操作人的ID*/
+
+            };
+            $.ajax({
+                url: host + "/PrescriptionUpload",
+                data: params,
+                dataType: "json",
+                type: 'post',
+                success: function (res) {
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        //样式类名:墨绿深蓝风
+                        layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                    } else {
+                        console.log(data);
+                        layer.msg('费用上传成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                    }
+                },
+                complete: function () {
+                    form.render();
+                }
+            });
         });
 
 
