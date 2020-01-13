@@ -296,33 +296,18 @@
                 , { field: 'OrganizationCode', title: '组织机构', width: 280, hide: true }
             ]]
         });
-
-        form.on('submit(LAY-bill-data-list)', function (data) {
-            var params = {
-                "UploadMark":"0" /*上传状态*/
-                , "DirectoryName": data.field.DirectoryName /*药品名称*/
-                , "BillTime": $("#date1").val() /*费用日期*/
-                , "BusinessId": $("#bid").val() /*业务ID*/
-                , "UserId": $("#empid").val() /*授权操作人的ID*/
-            }
-            tableDataQuery("GET", "/QueryHospitalizationFee", params, true, layTableId);
-            return false;//阻止表单跳转
-        });
-        $('#renewalCost').on('click', function(){
-            //更新费用
+        //更新费用
+        form.on('submit(renewalCost)', function (data) {
             console.log("123");
             renewalCost();
         });
-
-        $('#renewalCost').on('click', function(){
-            //更新费用
-            console.log("123");
-            renewalCost();
-        });
-        $("#allUpload").click(function(){
+        //更新费用
+        form.on('submit(allUpload)', function (data) {
             //全部上传
             allUpload();
         });
+
+
     });
     //监听Tab-已传费用明细
     form.on('submit(LAY-updated-data-list)', function (data) {
