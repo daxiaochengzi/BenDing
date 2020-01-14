@@ -286,18 +286,18 @@ namespace NFine.Web.Controllers
                //获取病人信息
                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
                if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
-               if (string.IsNullOrWhiteSpace(inpatientData.IdCardNo)) throw new Exception("当前病人的身份证不能为空!!!");
-               //获取病人信息 
-               _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-               var residentUserBase = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
-               {
-                   IdentityMark = "1",
-                   InformationNumber = inpatientData.IdCardNo,
-               });
-               var data = inpatientData;
+               //if (string.IsNullOrWhiteSpace(inpatientData.IdCardNo)) throw new Exception("当前病人的身份证不能为空!!!");
+               ////获取病人信息 
+               //_residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               //var residentUserBase = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
+               //{
+               //    IdentityMark = "1",
+               //    InformationNumber = inpatientData.IdCardNo,
+               //});
+               //var data = inpatientData;
 
-               data.MedicalInsuranceResidentInfo = residentUserBase;
-               y.Data = data;
+               //data.MedicalInsuranceResidentInfo = residentUserBase;
+               y.Data = inpatientData;
 
 
            });

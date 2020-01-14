@@ -159,27 +159,6 @@ namespace BenDing.Domain.Models.Dto.Web
         ///// <summary>
         ///// 出院床位
         ///// </summary>
-
-        //public string LeaveHospitalBed { get; set; }
-        ///// <summary>
-        ///// 出院主诊断
-        ///// </summary>
-
-        //public string LeaveHospitalMainDiagnosis { get; set; }
-        ///// <summary>
-        ///// 出院主诊断ICD10
-        ///// </summary>
-
-        //public string LeaveHospitalMainDiagnosisIcd10 { get; set; }
-        ///// <summary>
-        ///// 出院次诊断
-        ///// </summary>
-
-        //public string LeaveHospitalSecondaryDiagnosis { get; set; }
-        ///// <summary>
-        ///// 出院次诊断ICD10
-        ///// </summary>
-
         //public string LeaveHospitalSecondaryDiagnosisIcd10 { get; set; }
         ///// <summary>
         ///// 在院状态
@@ -196,9 +175,9 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 交易码
         /// </summary>
         public  string TransactionId { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public ResidentUserInfoDto MedicalInsuranceResidentInfo { get; set; }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        //public ResidentUserInfoDto MedicalInsuranceResidentInfo { get; set; }
     }
 }

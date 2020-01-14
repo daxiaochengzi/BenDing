@@ -213,13 +213,39 @@
                         closeStop: '#date2'
                     });
                 });
+            var params = {
+                "TransKey": $("#transkey").val() /*医保交易码*/,
+                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
+                "UserId": $("#empid").val() /*授权操作人的ID*/
+            }
+            //获取病人信息
+            $.ajax({
+                url: host + '/GetInpatientInfo',
+                data: params,
+                dataType: "json",
+                type: 'post',
+                success: function (res) {
+                      
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        //样式类名:墨绿深蓝风
+                        layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                    } else {
+                        console.log(data);
+                        //layer.msg('费用上传成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                    }
+                },
+                complete: function () {
+                    form.render();
+                }
+            });
 
 
             //form数据回显:数据回显到Form表单主体部分
             var jsonToForm = function(jsonData, formFilter) {
-                var PersonalCoding = jsonData.MedicalInsuranceResidentInfo.PersonalCoding
-                var InsuranceType = jsonData.MedicalInsuranceResidentInfo.InsuranceType
-                var PersonnelClassification = jsonData.MedicalInsuranceResidentInfo.PersonnelClassification
+                var PersonalCoding = jsonData.MedicalInsuranceResidentInfo.PersonalCoding;
+                var InsuranceType = jsonData.MedicalInsuranceResidentInfo.InsuranceType;
+                var PersonnelClassification = jsonData.MedicalInsuranceResidentInfo.PersonnelClassification;
                 //给表单赋值
                 form.val(formFilter,
                     {
