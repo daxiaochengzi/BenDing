@@ -647,14 +647,19 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData GetUserInfo([FromBody]ResidentUserInfoParam param)
+        public ApiJsonResultData GetUserInfo([FromBody]GetUserInfoUiParam param)
         {
             return new ApiJsonResultData(ModelState, new ResidentUserInfoDto()).RunWithTry(y =>
              {
                  //医保登陆
                  _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                 var userBase = _residentMedicalInsuranceRepository.GetUserInfo(param);
-                 y.Data = userBase;
+                 var userInfoParam = new ResidentUserInfoParam()
+                 {
+                     InformationNumber = param.InformationNumber,
+                     IdentityMark = param.IdentityMark
+                 };
+                 y.Data = _residentMedicalInsuranceRepository.GetUserInfo(userInfoParam);
+                 
              });
 
         }

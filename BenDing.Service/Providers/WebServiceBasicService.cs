@@ -309,7 +309,6 @@ namespace BenDing.Service.Providers
         public InpatientInfoDto GetInpatientInfo(GetInpatientInfoParam param)
         {
             var resultData = new InpatientInfoDto();
-          
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.BusinessId;
             xmlData.HealthInsuranceNo = "21";
