@@ -741,10 +741,11 @@ namespace BenDing.Service.Providers
                 });
                 if (!string.IsNullOrWhiteSpace(data.DiagnosisIcd10Two))
                 {
-                    var icd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam()
-                        {DiseaseCoding = data.DiagnosisIcd10Two});
+                    var queryIcd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam()
+                        {DiseaseCoding = data.DiagnosisIcd10Two,Page = 1,Limit = 10000});
+                    var icd10Data = queryIcd10Data.Values.FirstOrDefault();
                     if (icd10Data.Any())
-                    {
+                    { 
                         var Icd10Two = icd10Data.FirstOrDefault();
                         diagnosisList.Add(new InpatientDiagnosisDto
                         {
@@ -757,8 +758,11 @@ namespace BenDing.Service.Providers
 
                 if (!string.IsNullOrWhiteSpace(data.DiagnosisIcd10Three))
                 {
-                    var icd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam()
-                        {DiseaseCoding = data.DiagnosisIcd10Three});
+                    
+                    var queryIcd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam()
+                        { DiseaseCoding = data.DiagnosisIcd10Three, Page = 1, Limit = 10000 });
+                    var icd10Data = queryIcd10Data.Values.FirstOrDefault();
+
                     if (icd10Data.Any())
                     {
                         var Icd10Three = icd10Data.FirstOrDefault();
@@ -780,76 +784,7 @@ namespace BenDing.Service.Providers
         }
 
 
-        public QueryWorkerMedicalInsuranceDto QueryWorKerMedicalInsuranceDetail(
-            QueryMedicalInsuranceUiParam param)
-        {
-            var resultData = new QueryWorkerMedicalInsuranceDto();
-            var userBase = GetUserBaseInfo(param.UserId);
-            var queryData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(
-                new QueryMedicalInsuranceResidentInfoParam()
-                {
-                    OrganizationCode = userBase.OrganizationCode,
-                    BusinessId = param.BusinessId
-                });
-            if (!string.IsNullOrWhiteSpace(queryData.AdmissionInfoJson))
-            {
-                var data = JsonConvert.DeserializeObject<WorKerHospitalizationRegisterParam>(queryData.AdmissionInfoJson);
-                resultData.Id = queryData.Id;
-                resultData.MedicalInsuranceHospitalizationNo = queryData.MedicalInsuranceHospitalizationNo;
-                resultData.AdmissionDate = DateTime
-                    .ParseExact(data.AdmissionDate, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture)
-                    .ToString("yyyy-MM-dd");
-                resultData.BedNumber = data.BedNumber;
-                resultData.HospitalizationNo = data.HospitalizationNo;
-                //1为医保卡号2为公民身份号码 3为个人编号
-                if (data.IdentityMark == "1") resultData.WorkerCardNo = data.AfferentSign;
-                if (data.IdentityMark == "2") resultData.IdCardNo = data.AfferentSign;
-                if (data.IdentityMark == "3") resultData.PersonNumber = data.AfferentSign;
-                //诊疗
-                var diagnosisList = new List<InpatientDiagnosisDto>();
-                diagnosisList.Add(new InpatientDiagnosisDto
-                {
-                    IsMainDiagnosis = true,
-                    DiagnosisName = data.AdmissionMainDiagnosis,
-                    DiagnosisCode = data.AdmissionMainDiagnosisIcd10
-                });
-                if (!string.IsNullOrWhiteSpace(data.DiagnosisIcd10Two))
-                {
-                    var icd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam()
-                        {DiseaseCoding = data.DiagnosisIcd10Two});
-                    if (icd10Data.Any())
-                    {
-                        var Icd10Two = icd10Data.FirstOrDefault();
-                        diagnosisList.Add(new InpatientDiagnosisDto
-                        {
-                            IsMainDiagnosis = false,
-                            DiagnosisName = Icd10Two.DiseaseName,
-                            DiagnosisCode = data.DiagnosisIcd10Two
-                        });
-                    }
-                }
-                if (!string.IsNullOrWhiteSpace(data.DiagnosisIcd10Three))
-                {
-                    var icd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam()
-                        {DiseaseCoding = data.DiagnosisIcd10Three});
-                    if (icd10Data.Any())
-                    {
-                        var Icd10Three = icd10Data.FirstOrDefault();
-                        diagnosisList.Add(new InpatientDiagnosisDto
-                        {
-                            IsMainDiagnosis = false,
-                            DiagnosisName = Icd10Three.DiseaseName,
-                            DiagnosisCode = data.DiagnosisIcd10Three
-                        });
-                    }
-                }
-                resultData.DiagnosisList = diagnosisList;
-
-
-            }
-
-            return resultData;
-        }
+      
     }
 }
 

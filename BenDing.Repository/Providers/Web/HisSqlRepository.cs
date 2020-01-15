@@ -316,43 +316,63 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public List<QueryICD10InfoDto> QueryICD10(QueryICD10UiParam param)
+        public Dictionary<int, List<QueryICD10InfoDto>>QueryICD10(QueryICD10UiParam param)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                string strSql = null;
+                List<QueryICD10InfoDto> dataList;
+                var dataListNew = new List<QueryICD10InfoDto>();
+                var resultData = new Dictionary<int, List<QueryICD10InfoDto>>();
+                string executeSql = null;
                 try
                 {
                     sqlConnection.Open();
-                           strSql = $"select  [id],[DiseaseCoding],[DiseaseName] ,[MnemonicCode],[Remark] ,DiseaseId from [dbo].[ICD10]  where IsDelete=0";
+                    string querySql = $@"
+                             select  [id],[DiseaseCoding],[DiseaseName] ,[MnemonicCode],[Remark] ,DiseaseId from [dbo].[ICD10]  where IsDelete=0";
+                    string countSql = $@"select  count(*) from [dbo].[ICD10]  where IsDelete=0";
+                  
                     string regexstr = @"[\u4e00-\u9fa5]";
+                    string whereSql = "";
                     if (!string.IsNullOrWhiteSpace(param.DiseaseCoding))
                     {
-                        strSql += $" and DiseaseCoding ='{param.DiseaseCoding}'";
+                        whereSql += $" and DiseaseCoding ='{param.DiseaseCoding}'";
                     }
                     else
                     {
-                        if (Regex.IsMatch(param.Search, regexstr))
+                        if (!string.IsNullOrWhiteSpace(param.Search))
                         {
-                            strSql += " and DiseaseName like '" + param.Search + "%'";
+                            if (Regex.IsMatch(param.Search, regexstr))
+                            {
+                                whereSql += " and DiseaseName like '" + param.Search + "%'";
+                            }
+                            else
+                            {
+                                whereSql += " and MnemonicCode like '" + param.Search + "%'";
+                            }
                         }
-                        else
-                        {
-                            strSql += " and MnemonicCode like '" + param.Search + "%'";
-                        }
+
+                        
                     }
-
-
-
-                    var data = sqlConnection.Query<QueryICD10InfoDto>(strSql);
+                   
+                  
+                    if (param.Limit != 0 && param.Page > 0)
+                    {
+                        var skipCount = param.Limit * (param.Page - 1);
+                        querySql += whereSql + " order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.Limit + " ROWS ONLY;";
+                    }
+                     executeSql = countSql + whereSql + ";" + querySql;
+                    var result = sqlConnection.QueryMultiple(executeSql);
+                    int totalPageCount = result.Read<int>().FirstOrDefault();
+                    dataList = (from t in result.Read<QueryICD10InfoDto>()
+                        select t).ToList();
+                    resultData.Add(totalPageCount, dataList);
                     sqlConnection.Close();
-                   return data.ToList();
-
+                    return resultData;
 
                 }
                 catch (Exception e)
                 {
-                    _log.Debug(strSql);
+                    _log.Debug(executeSql);
                     throw new Exception(e.Message);
                 }
             }

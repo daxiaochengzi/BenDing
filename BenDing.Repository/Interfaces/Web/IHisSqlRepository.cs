@@ -134,7 +134,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        List<QueryICD10InfoDto> QueryICD10(QueryICD10UiParam param);
+        Dictionary<int, List<QueryICD10InfoDto>> QueryICD10(QueryICD10UiParam param);
         /// <summary>
         /// 保存住院结算
         /// </summary>

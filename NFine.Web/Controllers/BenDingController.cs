@@ -179,13 +179,19 @@ namespace NFine.Web.Controllers
         /// 查询ICD10
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
-        public ApiJsonResultData QueryIcd10([FromBody]QueryICD10UiParam param)
+        [HttpGet]
+        public ApiJsonResultData QueryIcd10([FromUri]QueryICD10UiParam param)
         {
             return new ApiJsonResultData(ModelState, new QueryICD10InfoDto()).RunWithTry(y =>
-             {
+            {
+              
+                    var queryData = _hisSqlRepository.QueryICD10(param);
 
-                 var data = _hisSqlRepository.QueryICD10(param);
+                 var data = new
+                 {
+                     data = queryData.Values.FirstOrDefault(),
+                     count = queryData.Keys.FirstOrDefault()
+                 };
                  y.Data = data;
              });
         }
@@ -274,7 +280,7 @@ namespace NFine.Web.Controllers
         [HttpPost]
         public ApiJsonResultData GetInpatientInfo([FromBody]UiBaseDataParam param)
         {
-            return new ApiJsonResultData(ModelState, new ResidentUserInfoDto()).RunWithTry(y =>
+            return new ApiJsonResultData(ModelState, new InpatientInfoDto()).RunWithTry(y =>
            {
                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                userBase.TransKey = param.TransKey;
@@ -651,7 +657,7 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new ResidentUserInfoDto()).RunWithTry(y =>
              {
-                 //医保登陆
+                 ////医保登陆
                  _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                  var userInfoParam = new ResidentUserInfoParam()
                  {
@@ -659,7 +665,8 @@ namespace NFine.Web.Controllers
                      IdentityMark = param.IdentityMark
                  };
                  y.Data = _residentMedicalInsuranceRepository.GetUserInfo(userInfoParam);
-                 
+
+
              });
 
         }
@@ -781,12 +788,10 @@ namespace NFine.Web.Controllers
                {
                    throw new Exception(data.Msg);
                }
-               else
+
+               if (data.Num > 0)
                {
-                   if (data.Num > 0)
-                   {
-                       y.Data = "处方上传成功" + data.Num + " 条,失败" + (data.Count - data.Num) + " 条";
-                   }
+                   y.Data = "处方上传成功" + data.Num + " 条,失败" + (data.Count - data.Num) + " 条";
                }
            });
 
