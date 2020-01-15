@@ -416,7 +416,7 @@
                     ]
                 },
                 done: function (elem, data) {
-                    debugger;
+               
                     //获取table缓存
                     var oldData = table.cache[layTableId];
                     var oldDataTable = new Array;
@@ -446,53 +446,9 @@
                     });
 
                     console.log(data);
-                    //debugger;
-                    //var NEWJSON = [];
-                    //layui.each(data.data,
-                    //    function (index, item) {
-                    //        NEWJSON.push(item.username);
-                    //    });
-                    //elem.val(NEWJSON.join(","));
+                   
                 }
             });
-
-
-            ////表单赋值
-            //layui.$('#DiagnosisSearchData').on('click', function(){
-            //    layui.autocomplete({
-            //        element: '#DiagnosisSearch',
-            //        num: 2,
-            //        display: 'DiseaseName',
-            //        shortcut: 'MnemonicCode',
-            //        url: host + '/QueryICD10',
-            //        query: {},
-            //        resArray: 'Data',
-            //        count: 10,
-            //        done: function(item) {
-
-            //            //var oldData = table.cache[layTableId];
-            //            var oldData = new Array;
-
-            //            var newRow = {
-            //                DiagnosisName: item.DiseaseName,
-            //                DiagnosisCode: item.DiseaseCoding,
-            //                IsMainDiagnosis: false,
-            //                Id: item.Id
-            //            };
-            //            oldData.push(newRow);
-            //            tableIns.reload({
-            //                data: oldData
-            //            });
-            //        }
-            //    });
-
-            //});
-
-
-
-
-
-
             //定义事件集合
             var active = {
                 updateRow: function (obj) {

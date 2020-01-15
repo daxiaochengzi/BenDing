@@ -920,25 +920,28 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData HospitalizationPreSettlement([FromUri]UiBaseDataParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
-            {    //医保登录
-                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                //获取医保病人信息
-                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
-                {
-                    BusinessId = param.BusinessId
-                });
-                if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已医保结算,不能预结算");
-                //职工
-                if (residentData.InsuranceType == "310")
-                {
-                    y.Data = _workerMedicalInsuranceService.WorkerHospitalizationPreSettlement(param);
-                }
-                //居民
-                if (residentData.InsuranceType == "342")
-                {
-                    y.Data = _residentMedicalInsuranceService.HospitalizationPreSettlement(param);
-                }
-
+            {
+                ////医保登录
+                //_residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                ////获取医保病人信息
+                //var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
+                //{
+                //    BusinessId = param.BusinessId
+                //});
+                //if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已医保结算,不能预结算");
+                ////职工
+                //if (residentData.InsuranceType == "310")
+                //{
+                //    y.Data = _workerMedicalInsuranceService.WorkerHospitalizationPreSettlement(param);
+                //}
+                ////居民
+                //if (residentData.InsuranceType == "342")
+                //{
+                //    y.Data = _residentMedicalInsuranceService.HospitalizationPreSettlement(param);
+                //}
+                y.Data = new HospitalizationPresettlementDto()
+                {AccurateAssistancePayAmount = 11, 
+                };
             });
 
         }

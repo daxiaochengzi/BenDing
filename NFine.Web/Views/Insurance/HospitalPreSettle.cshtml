@@ -1,6 +1,8 @@
 ﻿@{
     Layout = "~/Views/Shared/_Base.cshtml";
 }
+<link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
+
 <style>
     .layui-card-header.layuibd-card-header-auto {
         padding-top: 15px;
@@ -17,7 +19,7 @@
 </style>
 <div class="layui-fluid">
     <div class="layui-card">
-        <form class="layui-form layui-form-pane" lay-filter="LAY-form-render">
+        <form class="layui-form"  id="LAY-form"  lay-filter="LAY-form-render">
             <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
             <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
             <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
@@ -76,14 +78,9 @@
                             <input type="text" name="HospitalizationTotalCost" autocomplete="off" class="layui-input">
                         </div>
                     </div>
+
                     <div class="layui-inline">
-                        <label class="layui-form-label">住院总费用</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="HospitalizationTotalCost" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">入院诊断医生</label>
+                        <label class="layui-form-label">诊断医生</label>
                         <div class="layui-input-inline">
                             <input type="text" name="AdmissionDiagnosticDoctor" autocomplete="off" class="layui-input">
                         </div>
@@ -91,133 +88,113 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">经办人</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="Operator" autocomplete="off" class="layui-input">
+                            <input type="text" name="PreSettlementOperator" autocomplete="off" class="layui-input">
                         </div>
                     </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">经办人</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="Operator" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <button class="layui-btn" lay-submit="" lay-filter="LAY-form-search">
-                           预结算
-                        </button>
+                    <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
+                        <button type="button" Id="PreSettlement" class="layui-btn layui-btn-radius" >预结算</button>
                     </div>
                 </div>
             </div>
 
             <div class="layui-card-body" lay-size="sm">
-              
-                <!--诊断列表-->
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
+                    <legend>医保预结算信息</legend>
+                </fieldset>
+                <!--医保预结算信息-->
                 <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">医保预结算信息</label>
                     <div class="layui-input-block">
-                        <textarea  class="layui-textarea"></textarea>
+                        <textarea class="layui-textarea" id="PreSettlementData"></textarea>
                     </div>
                 </div>
             </div>
-         
+
         </form>
     </div>
 </div>
 <script>
-    (function () {
-        //加载列表的后端 url
-        var getListUrl = '';
-        //对于任意一个 table，按照官方的说法，有三种不同的初始化渲染方式，不多介绍，而这里使用的方式姑且看做第三种：转换静态表格 方式
-        //转换静态表格方式，自然首先需要有一个已经存在的表格，然后再通过 js 方式转化为 Layui 表格
-        //无论哪种方式的 Layui table 初始化自然需要配置项
-        //通过转化的方式初始化 Layui table，配置项部分可以在 源table中，部分在js中，源 table 的源代码上文已经给出，下面给出一个示例的 js 中的配置项
-        var tableOptions = {
-            url: getListUrl, //请求地址
-            method: 'POST', //方式
-            id: 'listReload', //生成 Layui table 的标识 id，必须提供，用于后文刷新操作，笔者该处出过问题
-            page: false, //是否分页
-            where: { type: "all" }, //请求后端接口的条件，该处就是条件错误点，按照官方给出的代码示例，原先写成了 where: { key : { type: "all" } }，结果并不是我想的那样，如此写，key 将是后端的一个类作为参数，里面有 type 属性，如果误以为 key 是 Layui 提供的格式，那就大错特错了
-            response: { //定义后端 json 格式，详细参见官方文档
-                statusName: 'Code', //状态字段名称
-                statusCode: '200', //状态字段成功值
-                msgName: 'Message', //消息字段
-                countName: 'Total', //总数字段
-                dataName: 'Result' //数据字段
-            }
-        };
-
-        layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate'], function () {
-            var $ = layui.$
-                //Tab的切换功能，切换事件监听等，需要依赖element模块
-                , element = layui.element
-                , form = layui.form
-                , layer = layui.layer
-                , table = layui.table
-                , laydate = layui.laydate;
-            /**
-            form.render(); //更新全部
-            form.render('select'); //刷新select选择框渲染,checkbox,radio
-            form.render('select', 'test2'); //更新 lay-filter="test2" 所在容器内的全部 select 状态
-            */
-            form.render(null, 'LAY-form-render'); //更新 lay-filter="LAY-form-render" 所在容器内的全部表单状态
-            //执行一个laydate实例
-            laydate.render({elem: '#AdmissionDate1'});
-            //指定入院日期
-            laydate.render({elem: '#AdmissionDate'});
-
-            form.on('submit(LAY-form-search)', function (data) {
-                var IdCardNo = $("#IdCardNo").val();
-                var StartTime = $("#AdmissionDate1").val();
-                var IdentityMark = $("#IdentityMark").val();
-                var BusinessId = $("#bid").val();
-                var UserId = $("#empid").val();
-                $.ajax({
-                    type: 'POST',
-                    url: '/BenDing/GetInpatientInfo',
-                    data: {
-                        "UserId": UserId,
-                        "BusinessId": BusinessId,
-                        "IdCardNo": IdCardNo,
-                        "StartTime": StartTime,
-                        //"IdentityMark": IdentityMark
-                    },
-                    //dataType: "json",
-                    async: false,
-                    success: function (data) {
-                        if (data.Success === false) {
-                            alert(data.Message)
-                            var jsonData = data.Data;
-                            console.log(jsonData)
-                        } else {
-                            var jsonData = data.Data;
-                            console.log(jsonData)
-                            layer.alert("用户名或密码错误",{ title: '登录失败' });
-                        }
-                    }
+    layui.config({
+        base: '/Content/js/layui/plugin/'
+    }).extend({
+        autocomplete: 'layAutoComplete'
+        });
+    layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'], function() {
+        var $ = layui.$,
+            element = layui.element,
+            form = layui.form,
+            layer = layui.layer,
+            table = layui.table;
+        //form数据回显:数据回显到Form表单主体部分
+        var jsonToForm = function (jsonData, formFilter) {
+            //给表单赋值
+            form.val(formFilter,
+                {
+                    "HospitalName": jsonData.HospitalName,
+                    "AdmissionDate": jsonData.AdmissionDate,
+                    "LeaveHospitalDate": jsonData.LeaveHospitalDate,
+                    "HospitalizationNo": jsonData.HospitalizationNo,
+                    "PatientName": jsonData.PatientName,
+                    "IdCardNo": jsonData.IdCardNo,
+                    "DepartmentName": jsonData.InDepartmentName,
+                    "AdmissionDiagnosticDoctor": jsonData.AdmissionDiagnosticDoctor,
+                    "HospitalizationTotalCost": jsonData.HospitalizationTotalCost,
+                    "PreSettlementOperator": jsonData.PreSettlementOperator
                 });
-                return false;
+
+        }
+        var params = {
+            "TransKey": $("#transkey").val() /*医保交易码*/,
+            "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
+            "UserId": $("#empid").val() /*授权操作人的ID*/
+        }
+        $('#PreSettlement').on('click', function () {
+            $.ajax({
+                type: 'get',
+                url: host + '/HospitalizationPreSettlement',
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                 
+                    if (data.Success === false) {
+                        
+                        var errData = data.Message;
+                        //样式类名:墨绿深蓝风
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                    } else {
+                       
+                        $('#PreSettlementData').val(data.Data);
+
+                    }
+                }
+
             });
-            //表初始化
-            var createTable = function () {
-                table.init('EditListTable', tableOptions); // table lay-filter
-            };
-            //表初始化
-            createTable();
+        });
 
-            //表刷新方法
-            var reloadTable = function (item) {
-                table.reload("listReload", { //此处是上文提到的 初始化标识id
-                    where: {
-                        //key: { //该写法上文已经提到
-                        type: item.type,
-                        id: item.id
-                        //}
-                    }
-                });
-            };
-        })
-    })();
+        $.ajax({
+            type: 'get',
+            url: host + '/GetHisHospitalizationPreSettlement',
+            data: params,
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                console.log(data);
+                if (data.Success === false) {
+                    var errData = data.Message;
+                    //样式类名:墨绿深蓝风
+                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                } else {
+                    jsonToForm(data.Data, "LAY-form-render");
+
+                }
+            },
+            complete: function () {
+                form.render();
+            }
+        });
+
+  
+    });
+
 
 </script>
-<script type="text/html" id="handleBtn">
-    <a class="layui-btn layui-btn-mini" lay-event="edit">编辑</a>
-</script> 
