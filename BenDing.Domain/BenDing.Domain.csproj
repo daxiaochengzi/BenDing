@@ -89,6 +89,7 @@
     <Compile Include="Models\Dto\SystemManage\HospitalOrganizationGradeDto.cs" />
     <Compile Include="Models\Dto\Web\AddHospitalOperatorParam.cs" />
     <Compile Include="Models\Dto\Web\GetLeaveHospitalSettlementInfoDto.cs" />
+    <Compile Include="Models\Dto\Web\HisHospitalizationPreSettlementDto.cs" />
     <Compile Include="Models\Dto\Web\HospitalThreeCatalogueCodeDto.cs" />
     <Compile Include="Models\Dto\Web\InpatientDiagnosisDto.cs" />
     <Compile Include="Models\Dto\Web\MedicalInsuranceXmlDto.cs" />

@@ -38,8 +38,8 @@ namespace NFine.Web.App_Start
                cfg.CreateMap<BaseOutpatientDetailJsonDto, BaseOutpatientDetailDto>();
                cfg.CreateMap<OutpatientPersonBaseJsonDto, BaseOutpatientInfoDto>();
                cfg.CreateMap<PatientLeaveHospitalInfoDto, LeaveHospitalSettlementInfoParam>();
-                cfg.CreateMap<PatientLeaveHospitalInfoDto , SaveInpatientSettlementParam>();
-                
+               cfg.CreateMap<PatientLeaveHospitalInfoDto , SaveInpatientSettlementParam>();
+               cfg.CreateMap<InpatientInfoDto, HisHospitalizationPreSettlementDto>();
 
 
 

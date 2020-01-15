@@ -7,101 +7,95 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace BenDing.Domain.Models.Dto.Resident
-    {/// <summary>
-    /// 住院预结算
-    /// </summary>
-    [XmlRootAttribute("ROW", IsNullable = false)]
+    {
     public class HospitalizationPresettlementDto
     {/// <summary>
      /// 发生费用金额
      /// </summary>
-        [XmlElementAttribute("PO_FYZE", IsNullable = false)]
-        [JsonProperty(PropertyName = "PO_FYZE")]
+       
+        [JsonProperty(PropertyName = "发生费用金额")]
         public decimal TotalAmount { get; set; }
         /// <summary>
         /// 基本统筹支付
         /// </summary>
-        [XmlElementAttribute("PO_TCZF", IsNullable = false)]
-        [JsonProperty(PropertyName = "PO_TCZF")]
+     
+        [JsonProperty(PropertyName = "基本统筹支付")]
         public decimal BasicOverallPay { get; set; }
         /// <summary>
         /// 补充医疗保险支付金额
         /// </summary>
-        [XmlElementAttribute("PO_BCZF", IsNullable = false)]
-        [JsonProperty(PropertyName = "PO_BCZF")]
+       
+        [JsonProperty(PropertyName = "补充医疗保险支付金额")]
         public decimal SupplementPayAmount { get; set; }
         /// <summary>
         /// 生育补助
         /// </summary>
-        [XmlElementAttribute("PO_SYBZ", IsNullable = false)]
-        [JsonProperty(PropertyName = "PO_SYBZ")]
+       
+        [JsonProperty(PropertyName = "生育补助")]
         public decimal BirthAallowance { get; set; }
         /// <summary>
         /// 民政救助报销支付金额
         /// </summary>
-        [XmlElementAttribute("PO_MZJZ", IsNullable = false)]
-        [JsonProperty(PropertyName = "PO_MZJZ")]
+       
+        [JsonProperty(PropertyName = "民政救助报销支付金额")]
         public decimal CivilAssistancePayAmount { get; set; }
         /// <summary>
         ///  民政重大疾病救助报销支付金额
         /// </summary>
-        [XmlElementAttribute("PO_MZDBJZ", IsNullable = false)]
-        [JsonProperty(PropertyName = "PO_MZDBJZ")]
+        
+        [JsonProperty(PropertyName = "民政重大疾病救助报销支付金额")]
         public decimal CivilAssistanceSeriousIllnessPayAmount { get; set; }
         /// <summary>
         ///  精准扶贫报销支付金额
         /// </summary>
-        [XmlElementAttribute("PO_JZFP", IsNullable = false)]
-        [JsonProperty(PropertyName = "PO_JZFP")]
+      
+        [JsonProperty(PropertyName = "精准扶贫报销支付金额")]
         public decimal AccurateAssistancePayAmount { get; set; }
         /// <summary>
         ///  民政优扶报销支付金额
         /// </summary>
-        [XmlElementAttribute("PO_MZYF", IsNullable = false)]
-        [JsonProperty(PropertyName = "PO_MZYF")]
+        [JsonProperty(PropertyName = "民政优扶报销支付金额")]
         public decimal CivilServicessistancePayAmount { get; set; }
         /// <summary>
         ///  其它支付金额
         /// </summary>
-        [XmlElementAttribute("PO_QTZF", IsNullable = false)]
-        [JsonProperty(PropertyName = "PO_QTZF")]
+       
+        [JsonProperty(PropertyName = "其它支付金额")]
         public decimal OtherPaymentAmount { get; set; }
         /// <summary>
         ///  备注
         /// </summary>
-        [XmlElementAttribute("PO_BZ", IsNullable = false)]
-        [JsonProperty(PropertyName = "PO_BZ")]
+        
+        [JsonProperty(PropertyName = "备注")]
         public string Remark { get; set; }
         /// <summary>
         /// 现金支付
         /// </summary>
-        [XmlElementAttribute("PO_XJZF", IsNullable = false)]
-        [JsonProperty(PropertyName = "PO_XJZF")]
+       
+        [JsonProperty(PropertyName = "现金支付")]
         public decimal CashPayment { get; set; }
         /// <summary>
         /// 起付金额
         /// </summary>
-        [XmlElementAttribute("PO_QFJE", IsNullable = false)]
-        [JsonProperty(PropertyName = "PO_QFJE")]
+     
+        [JsonProperty(PropertyName = "起付金额")]
         public decimal PaidAmount { get; set; }
         /// <summary>
         /// 单据号
         /// </summary>
-        [XmlElementAttribute("PO_DJH", IsNullable = false)]
-        [JsonProperty(PropertyName = "PO_DJH")]
+        [JsonIgnore]
         public string DocumentNo { get; set; }
         /// <summary>
         /// 过程返回值(为1时正常，否则不正常)
         /// </summary>
-        [JsonProperty(PropertyName = "PO_FHZ")]
-        [XmlElementAttribute("PO_FHZ", IsNullable = false)]
+        [JsonIgnore]
 
         public string ResultState { get; set; }
         /// <summary>
         /// 系统错误信息
         /// </summary>
-        [JsonProperty(PropertyName = "PO_MSG")]
-        [XmlElementAttribute("PO_MSG", IsNullable = false)]
+       [JsonIgnore]
+      
         public string Msg { get; set; }
 
 

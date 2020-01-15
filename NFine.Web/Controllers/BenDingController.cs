@@ -292,17 +292,7 @@ namespace NFine.Web.Controllers
                //获取病人信息
                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
                if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
-               //if (string.IsNullOrWhiteSpace(inpatientData.IdCardNo)) throw new Exception("当前病人的身份证不能为空!!!");
-               ////获取病人信息 
-               //_residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-               //var residentUserBase = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
-               //{
-               //    IdentityMark = "1",
-               //    InformationNumber = inpatientData.IdCardNo,
-               //});
-               //var data = inpatientData;
-
-               //data.MedicalInsuranceResidentInfo = residentUserBase;
+           
                y.Data = inpatientData;
 
 
@@ -443,6 +433,38 @@ namespace NFine.Web.Controllers
 
             });
         }
+
+        /// <summary>
+        ///获取his预结算数据
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData GetHisHospitalizationPreSettlement([FromUri]UiBaseDataParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
+                var infoData = new GetInpatientInfoParam()
+                {
+                    User = userBase,
+                    BusinessId = param.BusinessId,
+                };
+                
+                //获取his预结算
+                var hisPreSettlementData = _webServiceBasicService.GetHisHospitalizationPreSettlement(infoData);
+                var preSettlementData= hisPreSettlementData.PreSettlementData.FirstOrDefault();
+                //获取病人信息
+                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
+                if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
+                var data=AutoMapper.Mapper.Map<HisHospitalizationPreSettlementDto>(inpatientData);
+                data.LeaveHospitalDate = preSettlementData.EndDate;
+                data.PreSettlementOperator = preSettlementData.Operator;
+                y.Data = data;
+            });
+        }
+
         /// <summary>
         ///获取his结算数据
         /// </summary>
@@ -466,6 +488,8 @@ namespace NFine.Web.Controllers
 
              });
         }
+
+
         /// <summary>
         /// 基层入院登记取消
         /// </summary>
