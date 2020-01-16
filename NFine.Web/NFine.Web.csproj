@@ -804,6 +804,9 @@
     <Content Include="Views\Insurance\HospitalPreSettle.cshtml" />
     <Content Include="Views\Insurance\LeaveHospitalSettlement.cshtml" />
     <Content Include="Views\Insurance\LeaveHospitalSettlementCancel.cshtml" />
+    <Content Include="Views\Insurance\DoorDiagnosisPatientSettlement.cshtml" />
+    <Content Include="Views\Insurance\DoorDiagnosisPatientSettlementCancel.cshtml" />
+    <Content Include="Views\Insurance\DoorDiagnosisPatientSettlePrint.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.UI;
 
 namespace BenDing.Domain.Models.Params.Web
@@ -22,7 +23,7 @@ namespace BenDing.Domain.Models.Params.Web
         /// <summary>
         /// 参数
         /// </summary>
-        public GetOutpatientUiParam UiParam { get; set; }
+        public UiBaseDataParam UiParam { get; set; }
         /// <summary>
         /// id
         /// </summary>

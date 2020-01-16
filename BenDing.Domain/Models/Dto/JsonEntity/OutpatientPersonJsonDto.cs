@@ -34,7 +34,7 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         /// 医生姓名
         /// </summary>
         [JsonProperty(PropertyName = "医生姓名")]
-        public  string DoctorName { get; set; }
+        public  string DiagnosticDoctor { get; set; }
         /// <summary>
         /// 科室名称
         /// </summary>
@@ -46,6 +46,11 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         /// </summary>
         [JsonProperty(PropertyName = "门诊号")]
         public string OutpatientNumber { get; set; }
+        /// <summary>
+        /// 发票号
+        /// </summary>
+        [JsonProperty(PropertyName = "发票号")]
+        public  string InvoiceNo { get; set; }
         /// <summary>
         /// 收费日期
         /// </summary>

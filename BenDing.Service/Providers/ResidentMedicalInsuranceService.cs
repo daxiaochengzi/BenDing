@@ -262,6 +262,7 @@ namespace BenDing.Service.Providers
                 data.CivilAssistancePayAmount + data.CivilAssistanceSeriousIllnessPayAmount +
                 data.AccurateAssistancePayAmount + data.CivilServicessistancePayAmount +
                 data.OtherPaymentAmount;
+            resultData.ReimbursementExpenses = reimbursementExpenses;
             var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
             {
                 ReimbursementExpensesAmount = CommonHelp.ValueToDouble(reimbursementExpenses),

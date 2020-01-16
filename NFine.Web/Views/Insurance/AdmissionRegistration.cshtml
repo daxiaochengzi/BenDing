@@ -296,9 +296,6 @@
                         $("#HouseholdNatureId").hide();
                     }
                 });
-
-
-
             /**处方明细查询*/
 
             form.on('select(IdentityMark)',
@@ -559,8 +556,8 @@
                                 //样式类名:墨绿深蓝风
                                 layer.msg('登记失败\n' + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' })
                             } else {
-                                console.log(data);
-                                layer.msg('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' })
+                                
+                                layer.msg('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                             }
                         }
                     });

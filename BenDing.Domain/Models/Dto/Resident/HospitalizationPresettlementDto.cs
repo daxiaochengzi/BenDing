@@ -81,6 +81,11 @@ namespace BenDing.Domain.Models.Dto.Resident
         [JsonProperty(PropertyName = "起付金额")]
         public decimal PaidAmount { get; set; }
         /// <summary>
+        /// 报销合计金额
+        /// </summary>
+        [JsonIgnore]
+        public decimal ReimbursementExpenses { get; set; }
+        /// <summary>
         /// 单据号
         /// </summary>
         [JsonIgnore]

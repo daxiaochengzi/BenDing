@@ -187,7 +187,7 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public void TestXml()
         {
-            var data = XmlHelp.DeSerializerModel(new QueryOutpatientDepartmentCostDto(), true);
+            var data = XmlHelp.DeSerializerModel(new BenDing.Domain.Models.Dto.OutpatientDepartment.QueryOutpatientDepartmentCostDto(), true);
             if (data == null) throw new Exception("门诊费用查询出错");
             var cc = AutoMapper.Mapper.Map<QueryOutpatientDepartmentCostjsonDto>(data);
             //var ddd =new List<InpatientDiagnosisDto>();

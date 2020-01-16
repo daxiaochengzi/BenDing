@@ -66,7 +66,7 @@ namespace BenDing.Repository.Providers.Web
             if (!xmlStr) throw new Exception("查询门诊费保存参数出错");
             var result = MedicalInsuranceDll.CallService_cxjb("TPYP303");
             if (result != 1) throw new Exception("门诊费用查询执行出错");
-            var data = XmlHelp.DeSerializerModel(new QueryOutpatientDepartmentCostDto(),true) ;
+            var data = XmlHelp.DeSerializerModel(new Domain.Models.Dto.OutpatientDepartment.QueryOutpatientDepartmentCostDto(),true) ;
            if (data==null) throw new Exception("门诊费用查询出错");
             resultData = AutoMapper.Mapper.Map<QueryOutpatientDepartmentCostjsonDto>(data);
             //QueryOutpatientDepartmentCostDto

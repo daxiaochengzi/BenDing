@@ -177,6 +177,46 @@ namespace NFine.Web.Controllers
             ViewBag.title = "住院取消结算";
             return View();
         }
+        /// <summary>
+        /// 门诊结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public ActionResult DoorDiagnosisPatientSettlement(GetHisBaseParam param)
+        {
+            ViewBag.empid = param.EmpId;
+            ViewBag.bid = param.BId;
+            ViewBag.transkey = param.TransKey;
+           
+            return View();
+        }
+
+        /// <summary>
+        /// 门诊结算取消  
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public ActionResult DoorDiagnosisPatientSettlementCancel(GetHisBaseParam param)
+        {
+            ViewBag.empid = param.EmpId;
+            ViewBag.bid = param.BId;
+            ViewBag.transkey = param.TransKey;
+
+            return View();
+        }
+        /// <summary>
+        /// 门诊结算打印
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public ActionResult DoorDiagnosisPatientSettlePrint(GetHisBaseParam param)
+        {
+            ViewBag.empid = param.EmpId;
+            ViewBag.bid = param.BId;
+            ViewBag.transkey = param.TransKey;
+
+            return View();
+        }
 
 
     }

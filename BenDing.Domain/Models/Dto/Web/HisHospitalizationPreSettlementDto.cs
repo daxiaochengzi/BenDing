@@ -8,8 +8,14 @@ namespace BenDing.Domain.Models.Dto.Web
 {
    public class HisHospitalizationPreSettlementDto: InpatientInfoDto
     {/// <summary>
-    /// 预结算经办人
+    /// 经办人
     /// </summary>
-        public string PreSettlementOperator { get; set; }
+        public string Operator { get; set; }
+        
+     
+        /// <summary>
+        /// 诊断
+        /// </summary>
+        public List<InpatientDiagnosisDto> DiagnosisList { get; set; }
     }
 }

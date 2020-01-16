@@ -85,6 +85,7 @@
     <Compile Include="Models\Dto\Resident\ResidentProjectDownloadRow.cs" />
     <Compile Include="Models\Dto\Resident\ResidentUserInfoDto.cs" />
     <Compile Include="Models\Dto\Resident\RetrunPrescriptionUploadDto.cs" />
+    <Compile Include="Models\Dto\Resident\SettlementDto.cs" />
     <Compile Include="Models\Dto\Resident\UploadMedicalInsuranceResidentHisDto.cs" />
     <Compile Include="Models\Dto\SystemManage\HospitalOrganizationGradeDto.cs" />
     <Compile Include="Models\Dto\Web\AddHospitalOperatorParam.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Models\Dto\Web\HospitalThreeCatalogueCodeDto.cs" />
     <Compile Include="Models\Dto\Web\InpatientDiagnosisDto.cs" />
     <Compile Include="Models\Dto\Web\MedicalInsuranceXmlDto.cs" />
+    <Compile Include="Models\Dto\Web\QueryOutpatientDepartmentCostDataDto.cs" />
     <Compile Include="Models\Dto\Web\QueryCatalogDto.cs" />
     <Compile Include="Models\Dto\Web\QueryHospitalizationFeeDto.cs" />
     <Compile Include="Models\Dto\Web\QueryHospitalOperatorAll.cs" />

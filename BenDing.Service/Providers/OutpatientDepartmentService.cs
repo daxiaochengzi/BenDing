@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.JsonEntity;
@@ -206,10 +207,12 @@ namespace BenDing.Service.Providers
 
         }
 
-        public QueryOutpatientDepartmentCostjsonDto QueryOutpatientDepartmentCost(BaseUiBusinessIdDataParam param)
+        public QueryOutpatientDepartmentCostjsonDto QueryOutpatientDepartmentCost(UiBaseDataParam param)
         {
-            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
 
+            var resultData = new QueryOutpatientDepartmentCostjsonDto();
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            
             //获取医保病人信息
             var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
             {
@@ -221,13 +224,15 @@ namespace BenDing.Service.Providers
             var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
             if (residentData == null) throw new Exception("当前病人未结算,无结算数据!!!");
             if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人无结算数据!!!");
-            var data = _outpatientDepartmentRepository.QueryOutpatientDepartmentCost(
-                  new QueryOutpatientDepartmentCostParam()
-                  {
-                      DocumentNo = "1027384812", //residentData.SettlementNo,
-                      IdCardNo = outpatient.IdCardNo,
-                  });
-            return data;
+            //var data = _outpatientDepartmentRepository.QueryOutpatientDepartmentCost(
+            //      new QueryOutpatientDepartmentCostParam()
+            //      {
+            //          DocumentNo = "1027384812", //residentData.SettlementNo,
+            //          IdCardNo = outpatient.IdCardNo,
+            //      });
+            resultData.ReimbursementExpensesAmount = residentData.ReimbursementExpensesAmount;
+            resultData.SelfPayFeeAmount = residentData.SelfPayFeeAmount;
+            return resultData;
         }
     }
 }

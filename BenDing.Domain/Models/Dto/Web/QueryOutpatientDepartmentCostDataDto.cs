@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace BenDing.Domain.Models.Dto.Web
-{/// <summary>
-/// 
-/// </summary>
-   public class BaseOutpatientInfoDto
-    {/// <summary>
-    /// id
-    /// </summary>
-        public Guid Id { get; set; }=Guid.Empty;
-          /// <summary>
-         /// 姓名
-         /// </summary>
-      
+{
+   public class QueryOutpatientDepartmentCostDataDto
+    {  /// <summary>
+        /// 姓名
+        /// </summary>
+
         public string PatientName { get; set; }
         /// <summary>
         /// 身份证号码
@@ -25,22 +20,22 @@ namespace BenDing.Domain.Models.Dto.Web
         /// <summary>
         /// 性别
         /// </summary>
-      
+
         public string PatientSex { get; set; }
         /// <summary>
         /// 业务ID
         /// </summary>
-     
+
         public string BusinessId { get; set; }
         /// <summary>
         /// 门诊号
         /// </summary>
-       
+
         public string OutpatientNumber { get; set; }
         /// <summary>
         /// 发票号
         /// </summary>
-      
+
         public string InvoiceNo { get; set; }
         /// <summary>
         /// 就诊日期
@@ -50,40 +45,33 @@ namespace BenDing.Domain.Models.Dto.Web
         /// <summary>
         /// 科室
         /// </summary>
-       
+
         public string DepartmentName { get; set; }
-        /// <summary>
-        /// 科室编码
-        /// </summary>
-       
-        public string DepartmentId { get; set; }
+
+
         /// <summary>
         /// 诊断医生
         /// </summary>
-       
+
         public string DiagnosticDoctor { get; set; }
 
         /// <summary>
         /// 经办人
         /// </summary>
-       
+
         public string Operator { get; set; }
         /// <summary>
         /// 就诊总费用
         /// </summary>
-       
+
         public decimal MedicalTreatmentTotalCost { get; set; }
         /// <summary>
-        /// 备注
+        /// 报销金额
         /// </summary>
-       
-        public string Remark { get; set; }
+        public decimal ReimbursementExpensesAmount { get; set; }
         /// <summary>
-        /// 接诊状态0未截至、1接诊中、2已接诊
+        /// 自付金额
         /// </summary>
-
-        public int ReceptionStatus { get; set; }
-     
-
+        public decimal SelfPayFeeAmount { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using BenDing.Domain.Models.Params.Web;
 using System;
 using System.Collections.Generic;
 using BenDing.Domain.Models.Dto.JsonEntity;
+using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 
@@ -47,9 +48,7 @@ namespace BenDing.Service.Interfaces
         /// <summary>
         /// 获取门诊病人
         /// </summary>
-        /// <param name="user"></param>
         /// <param name="param"></param>
-        /// <param name="isSave"></param>
         /// <returns></returns>
         BaseOutpatientInfoDto GetOutpatientPerson(GetOutpatientPersonParam param);
 

@@ -141,21 +141,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
        
         public string DocumentNo { get; set; }
-        ///// <summary>
-        ///// 出院科室
-        ///// </summary>
-
-        //public string LeaveDepartmentName { get; set; }
-        ///// <summary>
-        ///// 出院科室编码
-        ///// </summary>
-
-        //public string LeaveDepartmentId { get; set; }
-        ///// <summary>
-        ///// 出院病区
-        ///// </summary>
-
-        //public string LeaveHospitalWard { get; set; }
+      
         ///// <summary>
         ///// 出院床位
         ///// </summary>
