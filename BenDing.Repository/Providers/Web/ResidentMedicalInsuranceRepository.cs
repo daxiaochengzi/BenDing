@@ -236,6 +236,8 @@ namespace BenDing.Repository.Providers.Web
             //更新中间层
             updateParam.IsHisUpdateState = true;
             updateParam.MedicalInsuranceState = MedicalInsuranceState.HisSettlement;
+            //存入中间库
+            _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
             //添加日志
             var logParam = new AddHospitalLogParam()
             {

@@ -1021,6 +1021,7 @@ namespace NFine.Web.Controllers
                     resultData.TotalAmount = residentSettlementData.TotalAmount;
                 }
 
+                y.Data = resultData;
 
             });
 
