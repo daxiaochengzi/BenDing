@@ -59,6 +59,12 @@
                         </div>
                     </div>
                     <div class="layui-inline">
+                        <label class="layui-form-label">医保费用</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="MedicalInsuranceAllAmount" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
                         <label class="layui-form-label">现金支付</label>
                         <div class="layui-input-inline">
                             <input type="text" id="CashPayment" name="CashPayment" autocomplete="off" disabled class="layui-input layui-disabled">
@@ -126,7 +132,9 @@
                     "ReimbursementExpenses": jsonData.ReimbursementExpensesAmount,
                     "CashPayment": jsonData.SelfPayFeeAmount,
                     "SettlementNo": jsonData.SettlementNo,
-                    "DiagnosticDoctor": jsonData.DiagnosticDoctor
+                    "DiagnosticDoctor": jsonData.DiagnosticDoctor,
+                
+                  
 
                 });
 
@@ -173,10 +181,7 @@
                         //样式类名:墨绿深蓝风
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
-
-                        $('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
-                        $('#CashPayment').val(data.Data.SelfPayFeeAmount);
-                        layer.msg('门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        layer.msg('取消门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
 
                     }
                 }

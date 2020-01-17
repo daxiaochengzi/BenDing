@@ -1247,6 +1247,8 @@ namespace NFine.Web.Controllers
                 resultData.IdCardNo= queryData.IdCardNo;
                 resultData.Operator = cancelSettlementData.CancelOperator;
                 resultData.PatientName = queryData.PatientName;
+                resultData.OutpatientNumber = queryData.OutpatientNumber;
+                resultData.VisitDate = queryData.VisitDate;
                 //医保门诊结算查询
                 var queryOutpatientData = _outpatientDepartmentService.QueryOutpatientDepartmentCost(param);
                 resultData.ReimbursementExpensesAmount = queryOutpatientData.ReimbursementExpensesAmount;
