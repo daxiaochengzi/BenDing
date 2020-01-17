@@ -1199,7 +1199,7 @@ namespace NFine.Web.Controllers
             {
                 var resultData = new QueryOutpatientDepartmentCostDataDto();
                 //医保登录
-                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var paramIni = new GetOutpatientPersonParam();
                 if (baseUser != null)

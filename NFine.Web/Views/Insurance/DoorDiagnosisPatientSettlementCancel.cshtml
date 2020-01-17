@@ -148,6 +148,29 @@
             "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
             "UserId": $("#empid").val() /*授权操作人的ID*/
         }
+        //数据初始化
+        $.ajax({
+            type: 'get',
+            url: host + '/QueryOutpatientDepartmentCost',
+            data: params,
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                console.log(data);
+                if (data.Success === false) {
+                    var errData = data.Message;
+                    //样式类名:墨绿深蓝风
+                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                } else {
+                    jsonToForm(data.Data, "LAY-form-render");
+
+                }
+            },
+            complete: function () {
+                form.render();
+            }
+        });
+        //取消结算
         $('#SettlementCancel').on('click', function () {
             $.ajax({
                 type: 'get',
@@ -172,27 +195,7 @@
             });
         });
 
-        $.ajax({
-            type: 'get',
-            url: host + '/QueryOutpatientDepartmentCost',
-            data: params,
-            dataType: "json",
-            async: false,
-            success: function (data) {
-                console.log(data);
-                if (data.Success === false) {
-                    var errData = data.Message;
-                    //样式类名:墨绿深蓝风
-                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                } else {
-                    jsonToForm(data.Data, "LAY-form-render");
-
-                }
-            },
-            complete: function () {
-                form.render();
-            }
-        });
+    
 
 
     });
