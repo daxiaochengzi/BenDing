@@ -356,11 +356,7 @@
                         //样式类名:墨绿深蓝风
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
-                        $('#SettlementData').val(data.Data.PayMsg);
-                        $('#ReimbursementExpenses').val(data.Data.ReimbursementExpenses);
-                        $('#CashPayment').val(data.Data.CashPayment);
-                        $('#HospitalizationTotalCost').val(data.Data.TotalAmount);
-                        layer.msg('住院取消结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                       layer.msg('住院取消结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                     }
                 }
 
