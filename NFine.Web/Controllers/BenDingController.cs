@@ -491,7 +491,6 @@ namespace NFine.Web.Controllers
                  data.Operator = settlementData.LeaveHospitalOperator;
                  data.DiagnosisList = settlementData.DiagnosisList;
                  data.LeaveHospitalDate = settlementData.LeaveHospitalDate;
-
                  y.Data = data;
 
              });
@@ -1018,7 +1017,6 @@ namespace NFine.Web.Controllers
             {   //获取操作人员信息
                 var resultData = new SettlementDto();
 
-
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
                 {
@@ -1049,8 +1047,6 @@ namespace NFine.Web.Controllers
                         resultData.CashPayment = workerSettlementData.CashPayment;
                         resultData.PayMsg = JsonConvert.SerializeObject(workerSettlementData);
                         resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
-
-
                     }
                     //居民
                     if (residentData.InsuranceType == "342")
@@ -1063,7 +1059,6 @@ namespace NFine.Web.Controllers
                     }
                     resultData.TotalAmount = residentData.MedicalInsuranceAllAmount;
                 }
-
                 y.Data = resultData;
             });
 
@@ -1424,7 +1419,6 @@ namespace NFine.Web.Controllers
 
             });
         }
-
         /// <summary>
         /// 职工划卡
         /// </summary>
