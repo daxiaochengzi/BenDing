@@ -130,7 +130,7 @@
                 </div>
                 <div class="layui-form-item">
                     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
-                        <legend>诊断信息</legend>
+                        <legend>出院诊断信息</legend>
                     </fieldset>
                     <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
                     <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
@@ -178,7 +178,7 @@
                     "DepartmentName": jsonData.InDepartmentName,
                     "AdmissionDiagnosticDoctor": jsonData.AdmissionDiagnosticDoctor,
                     "Operator": jsonData.CancelOperator,
-                    "SettlementNo": jsonData.DiagnosisNo,
+                    "SettlementNo": jsonData.SettlementNo,
                     "DiagnosisNo": jsonData.DiagnosisNo
                 });
 
@@ -233,7 +233,7 @@
                     tableIns.reload({
                         data: data.Data.DiagnosisList
                     });
-                    queryLeaveHospitalSettlement();
+                    //queryLeaveHospitalSettlement();
                 }
             },
             complete: function () {

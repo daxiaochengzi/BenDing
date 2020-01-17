@@ -93,7 +93,7 @@ namespace BenDing.Repository.Providers.Web
         public void SaveXmlData(SaveXmlDataParam param)
         {
             //更新医保信息
-            var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
+            //var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
             var xmlParam = new SaveXmlData()
             {
                 OrganizationCode = param.User.OrganizationCode,
@@ -102,7 +102,7 @@ namespace BenDing.Repository.Providers.Web
                 TransactionId = param.User.TransKey,
                 MedicalInsuranceBackNum = param.MedicalInsuranceBackNum,
                 BackParam = CommonHelp.EncodeBase64("utf-8", param.BackParam),
-                IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam),
+                IntoParam = CommonHelp.EncodeBase64("utf-8", param.BackParam),
                 MedicalInsuranceCode = param.MedicalInsuranceCode,
                 UserId = param.User.UserId,
             };

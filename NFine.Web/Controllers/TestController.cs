@@ -78,6 +78,12 @@ namespace NFine.Web.Controllers
             });
 
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         [HttpGet]
         public ApiJsonResultData MedicalInsuranceXml([FromUri] MedicalInsuranceXmlUiParam param)
         {
@@ -109,6 +115,11 @@ namespace NFine.Web.Controllers
             });
 
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         [HttpGet]
         public ApiJsonResultData MedicalInsuranceXmlCancel([FromUri] MedicalInsuranceXmlUiParam param)
         {
@@ -141,6 +152,11 @@ namespace NFine.Web.Controllers
             });
 
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         [HttpGet]
         public ApiJsonResultData MedicalInsuranceXmlUpload([FromUri] MedicalInsuranceXmlUiParam param)
         {

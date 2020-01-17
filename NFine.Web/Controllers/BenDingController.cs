@@ -539,95 +539,35 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData HospitalizationRegisterCancel([FromUri]UiBaseDataParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
-            {  //医保登陆
-               //  _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-               //    _residentMedicalInsurance.HospitalizationPreSettlement(new HospitalizationPresettlementParam()
-               //    {
-               //        LeaveHospitalDate = DateTime.Now.ToString("yyyyMMdd"),
-               //        MedicalInsuranceHospitalizationNo = "44116625"
-               //    });
+            { 
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 userBase.TransKey = param.TransKey;
-
-
                 var infoData = new GetInpatientInfoParam()
                 {
                     User = userBase,
                     BusinessId = param.BusinessId,
                 };
                 //获取病人信息
-                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
+                // var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
 
-                ////回参构建
-                //var xmlData = new HospitalSettlementXml()
-                //{
-                //    MedicalInsuranceHospitalizationNo = "44116683",
-                //    CashPayment =Convert.ToDecimal(33.8) ,
-                //    SettlementNo = "47714139",
-                //    PaidAmount = Convert.ToDecimal(0.1),
-                //    AllAmount = Convert.ToDecimal(33.8),
-                //    PatientName = "曾渝钦",
-                //    AccountBalance = 10,
-                //    AccountAmountPay = 0
-                //};
-                //var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-                //var saveXml = new SaveXmlDataParam()
-                //{
-                //    User = userBase,
-                //    MedicalInsuranceBackNum = "CXJB009",
-                //    MedicalInsuranceCode = "41",
-                //    BusinessId = param.BusinessId,
-                //    BackParam = strXmlBackParam
-                //};
+
+                //回参构建
+                var xmlData = new HospitalizationRegisterCancelXml()
+                {
+                    MedicalInsuranceHospitalizationNo = "44116683"
+                };
+                var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                var saveXml = new SaveXmlDataParam()
+                {
+                    User = userBase,
+                    MedicalInsuranceBackNum = "CXJB004",
+                    MedicalInsuranceCode = "42",
+                    BusinessId = param.BusinessId,
+                    BackParam = strXmlBackParam
+                };
                 //存基层
-                var resultData = new PatientLeaveHospitalInfoDto();
-                var xmlData = new MedicalInsuranceXmlDto();
-                xmlData.BusinessId = param.BusinessId;
-                xmlData.HealthInsuranceNo = "41";
-                xmlData.TransactionId = userBase.TransKey;
-                xmlData.AuthCode = userBase.AuthCode;
-                xmlData.UserId = userBase.UserId;
-                xmlData.OrganizationCode = userBase.OrganizationCode;
-                var jsonParam = JsonConvert.SerializeObject(xmlData);
-                var data = _webServiceBasicRepository.HIS_Interface("39", jsonParam);
-
-                //_webServiceBasicRepository.SaveXmlData(saveXml);
-                //存基层
-
-
-                ////回参构建
-                //var xmlData = new HospitalizationRegisterCancelXml()
-                //{
-                //    MedicalInsuranceHospitalizationNo = "44116625",
-                //};
-                //var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-                //var saveXml = new SaveXmlDataParam()
-                //{
-                //    User = userBase,
-                //    MedicalInsuranceBackNum = "Qxjs",
-                //    MedicalInsuranceCode = "22",
-                //    BusinessId = param.BusinessId,
-                //    BackParam = strXmlBackParam
-                //};
-
-
-                //var dd = new ResidentUserInfoParam();
-                //dd.IdentityMark = "1";
-                //dd.InformationNumber = "111";
-                //var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                //var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(dd);
-                //var strXmlBackParam = XmlSerializeHelper.XmlSerialize(dd);
-                //var saveXmlData = new SaveXmlData();
-                //saveXmlData.OrganizationCode = userBase.OrganizationCode;
-                //saveXmlData.AuthCode = userBase.AuthCode;
-                //saveXmlData.BusinessId = param.BusinessId;
-                //saveXmlData.TransactionId = param.BusinessId;
-                //saveXmlData.MedicalInsuranceBackNum = "CXJB004";
-                //saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
-                //saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-                //saveXmlData.MedicalInsuranceCode = "22";
-                //saveXmlData.UserId = param.UserId;
-                //_webServiceBasic.HIS_Interface("38", JsonConvert.SerializeObject(saveXmlData));
+                _webServiceBasicRepository.SaveXmlData(saveXml);
+               
 
             });
         }
