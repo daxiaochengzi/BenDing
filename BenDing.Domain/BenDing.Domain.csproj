@@ -70,7 +70,8 @@
     <Compile Include="Models\Dto\JsonEntity\ResidentUserInfoJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\UserInfoJsonDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\MonthlyHospitalizationDto.cs" />
-    <Compile Include="Models\Dto\OutpatientDepartment\OutpatientDepartmentCostInputDto.cs" />
+    <Compile Include="Models\Dto\OutpatientDepartment\OutpatientCostReturnDataDto.cs" />
+    <Compile Include="Models\Dto\JsonEntity\OutpatientDepartmentCostInputJsonDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\QueryOutpatientDepartmentCostDto.cs" />
     <Compile Include="Models\Dto\Resident\DirectoryComparisonManagementDto.cs" />
     <Compile Include="Models\Dto\Resident\HisHospitalizationSettlementCancelDto.cs" />

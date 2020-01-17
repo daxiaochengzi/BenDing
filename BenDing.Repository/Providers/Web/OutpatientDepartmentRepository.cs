@@ -31,14 +31,14 @@ namespace BenDing.Repository.Providers.Web
         /// <summary>
         /// 门诊费用录入
         /// </summary>
-        public OutpatientDepartmentCostInputDto OutpatientDepartmentCostInput(OutpatientDepartmentCostInputParam param)
+        public OutpatientDepartmentCostInputJsonDto OutpatientDepartmentCostInput(OutpatientDepartmentCostInputParam param)
         {
-            OutpatientDepartmentCostInputDto resultData = null;
+            OutpatientDepartmentCostInputJsonDto resultData = null;
             var xmlStr = XmlHelp.SaveXml(param);
             if (!xmlStr) throw new Exception("门诊费用录入保存参数出错");
             var result = MedicalInsuranceDll.CallService_cxjb("TPYP301");
             if (result != 1) throw new Exception("门诊费用录入执行出错");
-            resultData = XmlHelp.DeSerializerModel(new OutpatientDepartmentCostInputDto(), true);
+            resultData = XmlHelp.DeSerializerModel(new OutpatientDepartmentCostInputJsonDto(), true);
             return resultData;
         }
 

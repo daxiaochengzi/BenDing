@@ -41,7 +41,8 @@ namespace NFine.Web.App_Start
                cfg.CreateMap<PatientLeaveHospitalInfoDto, SaveInpatientSettlementParam>();
                cfg.CreateMap<InpatientInfoDto, HisHospitalizationPreSettlementDto>();
                cfg.CreateMap<BaseOutpatientInfoDto, QueryOutpatientDepartmentCostDataDto>();
-               cfg.CreateMap<QueryInpatientInfoDto, HisHospitalizationSettlementCancelDto>(); 
+               cfg.CreateMap<QueryInpatientInfoDto, HisHospitalizationSettlementCancelDto>();
+               
             });
         }
     }

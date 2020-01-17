@@ -1187,8 +1187,17 @@ namespace NFine.Web.Controllers
                     User = userBase,
                     UiParam = param
                 });
-              
-                y.Data = data;
+
+                if (data == null)throw  new Exception("获取门诊结算反馈数据失败!!!");
+
+                y.Data = new OutpatientCostReturnDataDto()
+                {
+                    ReimbursementExpensesAmount = data.ReimbursementExpensesAmount,
+                    SelfPayFeeAmount = data.SelfPayFeeAmount
+                };
+
+
+
 
             });
 

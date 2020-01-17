@@ -12,7 +12,7 @@ namespace BenDing.Domain.Models.Dto.OutpatientDepartment
  /// 
  /// </summary>
    
-    public class OutpatientDepartmentCostInputDto: IniDto
+    public class OutpatientDepartmentCostInputJsonDto : IniDto
     {/// <summary>
      /// 业务流水号
      /// </summary>

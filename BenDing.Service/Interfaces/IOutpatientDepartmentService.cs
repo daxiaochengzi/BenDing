@@ -13,11 +13,11 @@ namespace BenDing.Service.Interfaces
 {
   public  interface IOutpatientDepartmentService
     {/// <summary>
-    /// 门诊结算
-    /// </summary>
-    /// <param name="param"></param>
-    /// <returns></returns>
-        OutpatientDepartmentCostInputDto OutpatientDepartmentCostInput(GetOutpatientPersonParam param);
+     /// 门诊结算
+     /// </summary>
+     /// <param name="param"></param>
+     /// <returns></returns>
+        OutpatientDepartmentCostInputJsonDto OutpatientDepartmentCostInput(GetOutpatientPersonParam param);
 
         /// <summary>
         /// 取消门诊结算

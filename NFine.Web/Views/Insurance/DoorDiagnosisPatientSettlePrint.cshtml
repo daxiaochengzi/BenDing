@@ -1,8 +1,204 @@
 ﻿
 @{
-    ViewBag.Title = "门诊结算单打印";
+    ViewBag.Title = "门诊取消结算";
     Layout = "~/Views/Shared/_Base.cshtml";
 }
 
-<h2>DoorDiagnosisPatientSettlePrint</h2>
+<link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
 
+<style>
+    .layui-card-header.layuibd-card-header-auto {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        height: auto;
+    }
+
+    .layuibd-card-header-auto i.layuibd-button-btn {
+        position: relative;
+        right: 0;
+        top: 0;
+        vertical-align: middle
+    }
+</style>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <form class="layui-form" id="LAY-form" lay-filter="LAY-form-render">
+            <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
+            <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
+            <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
+
+            <div class="layui-card-header layuibd-card-header-auto">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
+                    <legend>病人信息</legend>
+                </fieldset>
+                <!--病人信息-->
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">门诊号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="OutpatientNumber" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">身份证号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="IdCardNo" @*lay-verify="required|number"*@ autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">患者姓名</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="PatientName" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">就诊日期</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="VisitDate" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">住院科室</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="DepartmentName" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">住院总费用</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="MedicalTreatmentTotalCost" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">现金支付</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="CashPayment" name="CashPayment" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">报销金额</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="ReimbursementExpenses" name="ReimbursementExpenses" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">诊断医生</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="DiagnosticDoctor" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">经办人</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="Operator" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">发票号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="InvoiceNo" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
+                        <button type="button" Id="SettlementCancel" class="layui-btn layui-btn-radius">取消门诊结算</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script>
+    layui.config({
+        base: '/Content/js/layui/plugin/'
+    }).extend({
+        autocomplete: 'layAutoComplete'
+        });
+    layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'], function() {
+        var $ = layui.$,
+            element = layui.element,
+            form = layui.form,
+            layer = layui.layer,
+            table = layui.table;
+        //form数据回显:数据回显到Form表单主体部分
+        var jsonToForm = function (jsonData, formFilter) {
+            //给表单赋值
+            form.val(formFilter,
+                {
+                    "OutpatientNumber": jsonData.OutpatientNumber,
+                    "IdCardNo": jsonData.IdCardNo,
+                    "PatientName": jsonData.PatientName,
+                    "VisitDate": jsonData.VisitDate,
+                    "DepartmentName": jsonData.DepartmentName,
+                    "MedicalTreatmentTotalCost": jsonData.MedicalTreatmentTotalCost,
+                    "Operator": jsonData.Operator,
+                    "ReimbursementExpenses": jsonData.ReimbursementExpensesAmount,
+                    "CashPayment": jsonData.SelfPayFeeAmount,
+                    "InvoiceNo": jsonData.InvoiceNo,
+                    "DiagnosticDoctor": jsonData.DiagnosticDoctor
+                });
+
+        }
+        var params = {
+            "TransKey": $("#transkey").val() /*医保交易码*/,
+            "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
+            "UserId": $("#empid").val() /*授权操作人的ID*/
+        }
+        //数据初始化
+        $.ajax({
+            type: 'get',
+            url: host + '/QueryOutpatientDepartmentCost',
+            data: params,
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                console.log(data);
+                if (data.Success === false) {
+                    var errData = data.Message;
+                    //样式类名:墨绿深蓝风
+                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                } else {
+                    jsonToForm(data.Data, "LAY-form-render");
+
+                }
+            },
+            complete: function () {
+                form.render();
+            }
+        });
+        //取消结算
+        $('#SettlementCancel').on('click', function () {
+            $.ajax({
+                type: 'get',
+                url: host + '/CancelOutpatientDepartmentCost',
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        //样式类名:墨绿深蓝风
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                    } else {
+
+                        $('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
+                        $('#CashPayment').val(data.Data.SelfPayFeeAmount);
+                        layer.msg('门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+
+                    }
+                }
+
+            });
+        });
+
+
+
+
+    });
+
+
+</script>
