@@ -447,7 +447,7 @@ namespace BenDing.Service.Providers
             var resultData = new PatientLeaveHospitalInfoDto();
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.BusinessId;
-            xmlData.HealthInsuranceNo = "41";
+            xmlData.HealthInsuranceNo = "42";
             xmlData.TransactionId = param.User.TransKey;
             xmlData.AuthCode = param.User.AuthCode;
             xmlData.UserId = param.User.UserId;
