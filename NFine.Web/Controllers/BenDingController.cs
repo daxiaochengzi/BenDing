@@ -368,7 +368,6 @@ namespace NFine.Web.Controllers
 
             });
         }
-
         /// <summary>
         /// 获取门诊病人明细
         /// </summary>
@@ -497,7 +496,6 @@ namespace NFine.Web.Controllers
 
              });
         }
-
 
         /// <summary>
         /// 基层入院登记取消
@@ -1009,7 +1007,7 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
-        /// 查询医保出院费用结算
+        /// 查询医保出院结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -1018,6 +1016,8 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {   //获取操作人员信息
+                var resultData = new SettlementDto();
+
 
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
@@ -1034,12 +1034,10 @@ namespace NFine.Web.Controllers
                     //职工
                     if (residentData.InsuranceType == "310")
                     {
-                        //获取医保账号
-                        var userData = _systemManageRepository.QueryHospitalOperator(
-                            new QueryHospitalOperatorParam() { UserId = param.UserId });
+
                         //获取医院等级
                         var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
-                        y.Data = _workerMedicalInsuranceService.QueryWorkerHospitalizationSettlement(
+                        var workerSettlementData = _workerMedicalInsuranceService.QueryWorkerHospitalizationSettlement(
                             new QueryWorkerHospitalizationSettlementParam()
                             {
                                 BusinessId = param.BusinessId,
@@ -1048,17 +1046,25 @@ namespace NFine.Web.Controllers
                                 AdministrativeArea = gradeData.AdministrativeArea,
                                 OrganizationCode = gradeData.MedicalInsuranceAccount,
                             });
+                        resultData.CashPayment = workerSettlementData.CashPayment;
+                        resultData.PayMsg = JsonConvert.SerializeObject(workerSettlementData);
+                        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
+
 
                     }
                     //居民
                     if (residentData.InsuranceType == "342")
                     {
-                        var data = _residentMedicalInsuranceRepository.QueryLeaveHospitalSettlement(new QueryLeaveHospitalSettlementParam() { MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo });
-                        y.Data = data;
-                    }
+                        var residentSettlementData = _residentMedicalInsuranceRepository.QueryLeaveHospitalSettlement(new QueryLeaveHospitalSettlementParam() { MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo });
+                        resultData.PayMsg = JsonConvert.SerializeObject(residentSettlementData);
+                        resultData.CashPayment = residentSettlementData.CashPayment;
+                        resultData.ReimbursementExpenses = residentSettlementData.ReimbursementExpenses;
 
+                    }
+                    resultData.TotalAmount = residentData.MedicalInsuranceAllAmount;
                 }
 
+                y.Data = resultData;
             });
 
         }
@@ -1340,85 +1346,84 @@ namespace NFine.Web.Controllers
             });
 
         }
-        ///// <summary>
-        ///// 职工住院预结算
-        ///// </summary>
-        ///// <param name="param"></param>
-        ///// <returns></returns>
-        //[HttpGet]
-        //public ApiJsonResultData WorkerHospitalizationPreSettlement([FromUri]UiBaseDataParam param)
-        //{
-        //    return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
-        //    {
-        //        //医保登录
-        //      _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-        //        var data = _workerMedicalInsuranceService.WorkerHospitalizationPreSettlement(param);
-        //        y.Data = data;
-        //    });
+        /// <summary>
+        /// 职工住院预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData WorkerHospitalizationPreSettlement([FromUri]UiBaseDataParam param)
+        {
+            return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
+            {
+                //医保登录
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                var data = _workerMedicalInsuranceService.WorkerHospitalizationPreSettlement(param);
+                y.Data = data;
+            });
 
-        //}
-        ///// <summary>
-        ///// 职工住院结算
-        ///// </summary>
-        ///// <param name="param"></param>
-        ///// <returns></returns>
-        //[HttpPost]
-        //public ApiJsonResultData WorkerHospitalizationSettlement([FromBody]WorkerHospitalizationSettlementUiParam param)
-        //{
-        //    return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
-        //    {     //医保登录
-        //      _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-        //        var data = _workerMedicalInsuranceService.WorkerHospitalizationSettlement(param);
-        //        y.Data = data;
-        //    });
+        }
+        /// <summary>
+        /// 职工住院结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData WorkerHospitalizationSettlement([FromBody]WorkerHospitalizationSettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
+            {     //医保登录
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                var data = _workerMedicalInsuranceService.WorkerHospitalizationSettlement(param);
+                y.Data = data;
+            });
 
-        //}
+        }
+        /// <summary>
+        /// 职工取消结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData WorkerSettlementCancel([FromUri] LeaveHospitalSettlementCancelUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {   //获取操作人员信息
 
-        ///// <summary>
-        ///// 职工取消结算
-        ///// </summary>
-        ///// <param name="param"></param>
-        ///// <returns></returns>
-        //[HttpGet]
-        //public ApiJsonResultData WorkerSettlementCancel([FromUri] LeaveHospitalSettlementCancelUiParam param)
-        //{
-        //    return new ApiJsonResultData(ModelState).RunWithTry(y =>
-        //    {   //获取操作人员信息
-
-        //        var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-        //        var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
-        //        {
-        //            BusinessId = param.BusinessId,
-        //            OrganizationCode = userBase.OrganizationCode
-        //        };
-        //        userBase.TransKey = param.TransKey;
-        //        //医保登录
-        //      _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-        //        //获取医保病人信息
-        //        var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-        //        if (residentData != null)
-        //        {
-        //            if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人未医保结算");
-        //            //获取医院等级
-        //            var gradeData = _systemManage.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
-        //            var cancelParam = new WorkerSettlementCancelParam()
-        //            {
-        //                BusinessId = param.BusinessId,
-        //                Id = residentData.Id,
-        //                User = userBase,
-        //                SettlementNo = residentData.SettlementNo,
-        //                CancelLimit = param.CancelLimit,
-        //                MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-        //                AdministrativeArea = gradeData.AdministrativeArea,
-        //                OrganizationCode = userBase.OrganizationCode,
-        //            };
-        //            _workerMedicalInsuranceService.WorkerSettlementCancel(cancelParam);
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    BusinessId = param.BusinessId,
+                    OrganizationCode = userBase.OrganizationCode
+                };
+                userBase.TransKey = param.TransKey;
+                //医保登录
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                //获取医保病人信息
+                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+                if (residentData != null)
+                {
+                    if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人未医保结算");
+                    //获取医院等级
+                    var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
+                    var cancelParam = new WorkerSettlementCancelParam()
+                    {
+                        BusinessId = param.BusinessId,
+                        Id = residentData.Id,
+                        User = userBase,
+                        SettlementNo = residentData.SettlementNo,
+                        CancelLimit = param.CancelLimit,
+                        MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                        AdministrativeArea = gradeData.AdministrativeArea,
+                        OrganizationCode = userBase.OrganizationCode,
+                    };
+                    _workerMedicalInsuranceService.WorkerSettlementCancel(cancelParam);
 
 
-        //        }
+                }
 
-        //    });
-        //}
+            });
+        }
 
         /// <summary>
         /// 职工划卡

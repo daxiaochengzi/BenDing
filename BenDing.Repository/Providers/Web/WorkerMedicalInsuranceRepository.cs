@@ -408,6 +408,10 @@ namespace BenDing.Repository.Providers.Web
                 SettlementTime = CommonHelp.StrToTransCoding(settlementTime),
 
             };
+            decimal reimbursementExpenses = resultData.BasicOverallPay + resultData.SupplementPayAmount + resultData.SpecialFundPayAmount
+                                            + resultData.CivilServantsSubsidies + resultData.CivilServantsSubsidy + resultData.OtherPaymentAmount;
+            resultData.ReimbursementExpenses = reimbursementExpenses;
+
             return resultData;
         }
     }

@@ -317,6 +317,7 @@ namespace BenDing.Service.Providers
             //公务员补贴+公务员补助+其它支付金额
             decimal reimbursementExpenses = resultData.BasicOverallPay + resultData.SupplementPayAmount + resultData.SpecialFundPayAmount
             + resultData.CivilServantsSubsidies + resultData.CivilServantsSubsidy + resultData.OtherPaymentAmount;
+            resultData.ReimbursementExpenses = reimbursementExpenses;
             var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
             {
                 UserId = userBase.UserId,
@@ -329,6 +330,7 @@ namespace BenDing.Service.Providers
                 SettlementTransactionId = userBase.UserId,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceSettlement
             };
+
             var userInfo = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
             {
                 IdentityMark = "1",
@@ -507,7 +509,7 @@ namespace BenDing.Service.Providers
            QueryWorkerHospitalizationSettlementParam param)
         {
             var resultData = _workerMedicalInsuranceRepository.QueryWorkerHospitalizationSettlement(param);
-
+         
             return resultData;
         }
         /// <summary>

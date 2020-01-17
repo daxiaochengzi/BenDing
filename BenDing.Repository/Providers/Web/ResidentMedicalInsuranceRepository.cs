@@ -189,6 +189,8 @@ namespace BenDing.Repository.Providers.Web
                 data.CivilAssistancePayAmount + data.CivilAssistanceSeriousIllnessPayAmount +
                 data.AccurateAssistancePayAmount + data.CivilServicessistancePayAmount +
                 data.OtherPaymentAmount;
+
+            data.ReimbursementExpenses = reimbursementExpenses;
             var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
             {
                 UserId = infoParam.User.UserId,

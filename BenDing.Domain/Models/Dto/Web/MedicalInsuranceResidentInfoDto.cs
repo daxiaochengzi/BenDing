@@ -24,9 +24,9 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
         public string InsuranceNo { get; set; }
         /// <summary>
-        /// 医保年度余额
+        /// 合计金额
         /// </summary>
-        public string MedicalInsuranceAllAmount { get; set; }
+        public decimal MedicalInsuranceAllAmount { get; set; }
         /// <summary>
         /// 医保住院号
         /// </summary>
