@@ -418,7 +418,6 @@ namespace BenDing.Service.Providers
             resultData.DiagnosisList = diagnosisList;
             return resultData;
         }
-
         /// <summary>
         /// 获取his住院预结算
         /// </summary>
@@ -437,6 +436,26 @@ namespace BenDing.Service.Providers
             var data = _webServiceBasic.HIS_Interface("39", jsonParam);
             HisHospitalizationPreSettlementJsonDto dataValue = JsonConvert.DeserializeObject<HisHospitalizationPreSettlementJsonDto>(data.Msg);
             return dataValue;
+        }
+        /// <summary>
+        /// 获取基础取消结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public HisHospitalizationSettlementCancelInfoJsonDto GetHisHospitalizationSettlementCancel(SettlementCancelParam param)
+        {
+            var resultData = new PatientLeaveHospitalInfoDto();
+            var xmlData = new MedicalInsuranceXmlDto();
+            xmlData.BusinessId = param.BusinessId;
+            xmlData.HealthInsuranceNo = "41";
+            xmlData.TransactionId = param.User.TransKey;
+            xmlData.AuthCode = param.User.AuthCode;
+            xmlData.UserId = param.User.UserId;
+            xmlData.OrganizationCode = param.User.OrganizationCode;
+            var jsonParam = JsonConvert.SerializeObject(xmlData);
+            var data = _webServiceBasic.HIS_Interface("39", jsonParam);
+            HisHospitalizationSettlementCancelJsonDto dataValue = JsonConvert.DeserializeObject<HisHospitalizationSettlementCancelJsonDto>(data.Msg);
+            return dataValue.InfoData;
         }
 
         /// <summary>
@@ -488,7 +507,6 @@ namespace BenDing.Service.Providers
 
             return resultData;
         }
-
         /// <summary>
         /// 医保信息保存
         /// </summary>

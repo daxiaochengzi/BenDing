@@ -495,6 +495,40 @@ namespace NFine.Web.Controllers
 
              });
         }
+        /// <summary>
+        /// 获取取消结算参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData GetHisHospitalizationSettlementCancel([FromUri]UiBaseDataParam param)
+        {
+            return new ApiJsonResultData(ModelState, new PatientLeaveHospitalInfoDto()).RunWithTry(y =>
+            { ////获取操作人员信息
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
+                var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
+                //获取住院病人
+                var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
+                if (inpatientInfoData==null) throw  new  Exception("获取当前病人失败!!!");
+                var data = AutoMapper.Mapper.Map<HisHospitalizationSettlementCancelDto>(inpatientInfoData);
+                if (!string.IsNullOrWhiteSpace(inpatientInfoData.LeaveHospitalDiagnosisJson))
+                {
+                    data.DiagnosisList= JsonConvert.DeserializeObject<List<InpatientDiagnosisDto>>(inpatientInfoData.LeaveHospitalDiagnosisJson);
+                }
+                var settlementCancelData= _webServiceBasicService.GetHisHospitalizationSettlementCancel(new SettlementCancelParam()
+                {
+                    BusinessId = param.BusinessId,
+                    User = userBase
+                });
+                if (settlementCancelData == null) throw new Exception("获取住院结算取消基层信息失败!!!");
+                data.CancelOperator = settlementCancelData.CancelOperator;
+                data.SettlementNo= settlementCancelData.SettlementNo;
+                data.DiagnosisNo = settlementCancelData.DiagnosisNo;
+                y.Data = data;
+
+            });
+        }
 
         /// <summary>
         /// 基层入院登记取消
@@ -514,22 +548,68 @@ namespace NFine.Web.Controllers
                //    });
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 userBase.TransKey = param.TransKey;
-                //回参构建
-                var xmlData = new HospitalizationRegisterCancelXml()
-                {
-                    MedicalInsuranceHospitalizationNo = "44116625",
-                };
-                var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-                var saveXml = new SaveXmlDataParam()
+
+
+                var infoData = new GetInpatientInfoParam()
                 {
                     User = userBase,
-                    MedicalInsuranceBackNum = "Qxjs",
-                    MedicalInsuranceCode = "22",
                     BusinessId = param.BusinessId,
-                    BackParam = strXmlBackParam
                 };
+                //获取病人信息
+                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
+
+                ////回参构建
+                //var xmlData = new HospitalSettlementXml()
+                //{
+                //    MedicalInsuranceHospitalizationNo = "44116683",
+                //    CashPayment =Convert.ToDecimal(33.8) ,
+                //    SettlementNo = "47714139",
+                //    PaidAmount = Convert.ToDecimal(0.1),
+                //    AllAmount = Convert.ToDecimal(33.8),
+                //    PatientName = "曾渝钦",
+                //    AccountBalance = 10,
+                //    AccountAmountPay = 0
+                //};
+                //var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                //var saveXml = new SaveXmlDataParam()
+                //{
+                //    User = userBase,
+                //    MedicalInsuranceBackNum = "CXJB009",
+                //    MedicalInsuranceCode = "41",
+                //    BusinessId = param.BusinessId,
+                //    BackParam = strXmlBackParam
+                //};
                 //存基层
-                _webServiceBasicRepository.SaveXmlData(saveXml);
+                var resultData = new PatientLeaveHospitalInfoDto();
+                var xmlData = new MedicalInsuranceXmlDto();
+                xmlData.BusinessId = param.BusinessId;
+                xmlData.HealthInsuranceNo = "41";
+                xmlData.TransactionId = userBase.TransKey;
+                xmlData.AuthCode = userBase.AuthCode;
+                xmlData.UserId = userBase.UserId;
+                xmlData.OrganizationCode = userBase.OrganizationCode;
+                var jsonParam = JsonConvert.SerializeObject(xmlData);
+                var data = _webServiceBasicRepository.HIS_Interface("39", jsonParam);
+
+                //_webServiceBasicRepository.SaveXmlData(saveXml);
+                //存基层
+
+
+                ////回参构建
+                //var xmlData = new HospitalizationRegisterCancelXml()
+                //{
+                //    MedicalInsuranceHospitalizationNo = "44116625",
+                //};
+                //var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                //var saveXml = new SaveXmlDataParam()
+                //{
+                //    User = userBase,
+                //    MedicalInsuranceBackNum = "Qxjs",
+                //    MedicalInsuranceCode = "22",
+                //    BusinessId = param.BusinessId,
+                //    BackParam = strXmlBackParam
+                //};
+
 
                 //var dd = new ResidentUserInfoParam();
                 //dd.IdentityMark = "1";

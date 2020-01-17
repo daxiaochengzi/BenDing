@@ -170,9 +170,13 @@ namespace BenDing.Domain.Models.Dto.Web
        
         public string LeaveHospitalBed { get; set; }
         /// <summary>
+        /// 出院诊断json
+        /// </summary>
+        public string LeaveHospitalDiagnosisJson { get; set; }
+        /// <summary>
         /// 出院主诊断
         /// </summary>
-     
+
         public string LeaveHospitalMainDiagnosis { get; set; }
         /// <summary>
         /// 出院主诊断ICD10

@@ -113,5 +113,13 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
          HisHospitalizationPreSettlementJsonDto GetHisHospitalizationPreSettlement(GetInpatientInfoParam param);
+
+        /// <summary>
+        /// 获取基础取消结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+         HisHospitalizationSettlementCancelInfoJsonDto GetHisHospitalizationSettlementCancel(
+            SettlementCancelParam param);
     }
 }

@@ -53,6 +53,7 @@
     <Compile Include="Models\Dto\Base\PaginationUserDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\BaseOutpatientDetailJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\HisHospitalizationPreSettlementJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntity\HisHospitalizationSettlementCancelJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\HospitalizationPresettlementJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\InformationJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\InpatientDetailJsonDto.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Models\Dto\OutpatientDepartment\OutpatientDepartmentCostInputDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\QueryOutpatientDepartmentCostDto.cs" />
     <Compile Include="Models\Dto\Resident\DirectoryComparisonManagementDto.cs" />
+    <Compile Include="Models\Dto\Resident\HisHospitalizationSettlementCancelDto.cs" />
     <Compile Include="Models\Dto\Resident\HospitalizationPresettlementDto.cs" />
     <Compile Include="Models\Dto\Resident\IniXmlDto.cs" />
     <Compile Include="Models\Dto\Resident\PrescriptionUploadDto.cs" />
@@ -260,6 +262,7 @@
     <Compile Include="Models\Params\Web\SaveInpatientSettlementParam.cs" />
     <Compile Include="Models\Params\Web\SaveXmlData.cs" />
     <Compile Include="Models\Params\Web\SaveXmlDataParam.cs" />
+    <Compile Include="Models\Params\Web\SettlementCancelParam.cs" />
     <Compile Include="Models\Params\Web\SingleResidentInfQueryUiParam.cs" />
     <Compile Include="Models\Params\Web\UiCatalogParam.cs" />
     <Compile Include="Models\Params\Web\UpdateHospitalizationFeeParam.cs" />
