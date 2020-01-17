@@ -146,7 +146,7 @@
             "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
             "UserId": $("#empid").val() /*授权操作人的ID*/
         }
-        $('#PreSettlement').on('click', function () {
+        $('#Settlement').on('click', function () {
             $.ajax({
                 type: 'get',
                 url: host + '/OutpatientDepartmentCostInput',
