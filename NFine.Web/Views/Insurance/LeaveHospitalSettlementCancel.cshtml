@@ -114,6 +114,18 @@
                             <input type="text" name="Operator" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">结算编号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="SettlementNo" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">就诊编号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="DiagnosisNo" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
 
                 </div>
                 <div class="layui-form-item">
@@ -165,7 +177,9 @@
                     "IdCardNo": jsonData.IdCardNo,
                     "DepartmentName": jsonData.InDepartmentName,
                     "AdmissionDiagnosticDoctor": jsonData.AdmissionDiagnosticDoctor,
-                    "Operator": jsonData.CancelOperator
+                    "Operator": jsonData.CancelOperator,
+                    "SettlementNo": jsonData.DiagnosisNo,
+                    "DiagnosisNo": jsonData.DiagnosisNo
                 });
 
         }
