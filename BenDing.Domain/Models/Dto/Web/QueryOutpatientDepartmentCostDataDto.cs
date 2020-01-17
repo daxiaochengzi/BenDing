@@ -73,5 +73,9 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 自付金额
         /// </summary>
         public decimal SelfPayFeeAmount { get; set; }
+        /// <summary>
+        /// 结算单据号
+        /// </summary>
+         public string SettlementNo { get; set; }
     }
 }

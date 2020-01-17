@@ -51,6 +51,12 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
         BaseOutpatientInfoDto GetOutpatientPerson(GetOutpatientPersonParam param);
+        /// <summary>
+        /// 门诊结算取消
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+         HisHospitalizationSettlementCancelInfoJsonDto GetOutpatientSettlementCancel(SettlementCancelParam param);
 
         /// <summary>
         /// 获取门诊病人明细

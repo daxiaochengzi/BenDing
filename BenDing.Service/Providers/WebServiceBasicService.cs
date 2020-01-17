@@ -223,7 +223,7 @@ namespace BenDing.Service.Providers
             BaseOutpatientInfoDto resultData =null;
             var xmlData = new MedicalInsuranceXmlDto();
             xmlData.BusinessId = param.UiParam.BusinessId;
-            xmlData.HealthInsuranceNo = "48";
+            xmlData.HealthInsuranceNo = "48";//42MZ
             xmlData.TransactionId = param.UiParam.TransKey;
             xmlData.AuthCode = param.User.AuthCode;
             xmlData.UserId = param.User.UserId;
@@ -276,7 +276,21 @@ namespace BenDing.Service.Providers
 
 
         }
-
+        public HisHospitalizationSettlementCancelInfoJsonDto GetOutpatientSettlementCancel(SettlementCancelParam param)
+        {
+            var resultData = new PatientLeaveHospitalInfoDto();
+            var xmlData = new MedicalInsuranceXmlDto();
+            xmlData.BusinessId = param.BusinessId;
+            xmlData.HealthInsuranceNo = "42MZ";
+            xmlData.TransactionId = param.User.TransKey;
+            xmlData.AuthCode = param.User.AuthCode;
+            xmlData.UserId = param.User.UserId;
+            xmlData.OrganizationCode = param.User.OrganizationCode;
+            var jsonParam = JsonConvert.SerializeObject(xmlData);
+            var data = _webServiceBasic.HIS_Interface("39", jsonParam);
+            HisHospitalizationSettlementCancelJsonDto dataValue = JsonConvert.DeserializeObject<HisHospitalizationSettlementCancelJsonDto>(data.Msg);
+            return dataValue.InfoData;
+        }
         /// <summary>
         /// 获取门诊病人费用明细
         /// </summary>

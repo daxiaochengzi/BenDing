@@ -58,19 +58,6 @@
                             <input type="text" name="VisitDate" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
-
-                    <div class="layui-inline">
-                        <label class="layui-form-label">住院科室</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="DepartmentName" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">住院总费用</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="MedicalTreatmentTotalCost" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">现金支付</label>
                         <div class="layui-input-inline">
@@ -97,9 +84,9 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label">发票号</label>
+                        <label class="layui-form-label">结算编号</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="InvoiceNo" autocomplete="off" disabled class="layui-input layui-disabled">
+                            <input type="text" name="SettlementNo" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
 
@@ -138,8 +125,9 @@
                     "Operator": jsonData.Operator,
                     "ReimbursementExpenses": jsonData.ReimbursementExpensesAmount,
                     "CashPayment": jsonData.SelfPayFeeAmount,
-                    "InvoiceNo": jsonData.InvoiceNo,
+                    "SettlementNo": jsonData.SettlementNo,
                     "DiagnosticDoctor": jsonData.DiagnosticDoctor
+
                 });
 
         }
@@ -179,6 +167,7 @@
                 dataType: "json",
                 async: false,
                 success: function (data) {
+                    console.log(data);
                     if (data.Success === false) {
                         var errData = data.Message;
                         //样式类名:墨绿深蓝风

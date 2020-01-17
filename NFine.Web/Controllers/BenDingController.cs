@@ -1230,22 +1230,29 @@ namespace NFine.Web.Controllers
             {
                 var resultData = new QueryOutpatientDepartmentCostDataDto();
                 //医保登录
-               _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var paramIni = new GetOutpatientPersonParam();
-                if (baseUser != null)
+                baseUser.TransKey = param.TransKey;
+                var paramIni = new SettlementCancelParam
                 {
-                    paramIni.User = baseUser;
-                    paramIni.IsSave = false;
-                    paramIni.UiParam = param;
-                    //获取门诊病人信息
-                    var patientPerson = _webServiceBasicService.GetOutpatientPerson(paramIni);
-                    resultData = AutoMapper.Mapper.Map<QueryOutpatientDepartmentCostDataDto>(patientPerson);
-                    //医保门诊结算查询
-                    var queryOutpatientData = _outpatientDepartmentService.QueryOutpatientDepartmentCost(param);
-                    resultData.ReimbursementExpensesAmount = queryOutpatientData.ReimbursementExpensesAmount;
-                    resultData.SelfPayFeeAmount = queryOutpatientData.SelfPayFeeAmount;
-                }
+                    User = baseUser,
+                    BusinessId = param.BusinessId
+                };
+                var cancelSettlementData = _webServiceBasicService.GetOutpatientSettlementCancel(paramIni);
+                var queryData = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam() { BusinessId = param.BusinessId });
+               if (queryData==null) throw  new  Exception("获取门诊结算病人失败!!!");
+                //获取门诊病人信息
+                resultData.DepartmentName = queryData.DepartmentName;
+                resultData.DiagnosticDoctor = queryData.DiagnosticDoctor;
+                resultData.IdCardNo= queryData.IdCardNo;
+                resultData.Operator = cancelSettlementData.CancelOperator;
+                resultData.PatientName = queryData.PatientName;
+                //医保门诊结算查询
+                var queryOutpatientData = _outpatientDepartmentService.QueryOutpatientDepartmentCost(param);
+                resultData.ReimbursementExpensesAmount = queryOutpatientData.ReimbursementExpensesAmount;
+                resultData.SelfPayFeeAmount = queryOutpatientData.SelfPayFeeAmount;
+                resultData.MedicalTreatmentTotalCost = queryOutpatientData.AllAmount;
+                resultData.SettlementNo = cancelSettlementData.SettlementNo;
                 y.Data = resultData;
 
             });
