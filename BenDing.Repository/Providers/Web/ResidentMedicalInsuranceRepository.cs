@@ -291,7 +291,7 @@ namespace BenDing.Repository.Providers.Web
             if (param.CancelLimit == "1")
             {
                 cancelData = Cancel(param);
-
+              
             }
             else
             {
@@ -334,8 +334,8 @@ namespace BenDing.Repository.Providers.Web
                 var saveXml = new SaveXmlDataParam()
                 {
                     User = infoParam.User,
-                    MedicalInsuranceBackNum = "CXJB004",
-                    MedicalInsuranceCode = "22",
+                    MedicalInsuranceBackNum = "CXJB011",
+                    MedicalInsuranceCode = "42",
                     BusinessId = infoParam.BusinessId,
                     BackParam = strXmlBackParam
                 };
