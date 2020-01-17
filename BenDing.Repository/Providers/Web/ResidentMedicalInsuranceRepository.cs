@@ -325,27 +325,24 @@ namespace BenDing.Repository.Providers.Web
                     Remark = "居民住院结算取消",
                     RelationId = infoParam.Id,
                 };
-
+                //回参构建
+                var xmlData = new HospitalizationRegisterXml()
+                {
+                    MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
+                };
+                var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                var saveXml = new SaveXmlDataParam()
+                {
+                    User = infoParam.User,
+                    MedicalInsuranceBackNum = "CXJB004",
+                    MedicalInsuranceCode = "22",
+                    BusinessId = infoParam.BusinessId,
+                    BackParam = strXmlBackParam
+                };
+                //存基层
+                _webBasicRepository.SaveXmlData(saveXml);
                 if (cancelLimit == "2") //取消结算,并删除资料<==>删除资料与取消入院
                 {
-
-                    //回参构建
-                    var xmlData = new HospitalizationRegisterXml()
-                    {
-                        MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
-                    };
-                    var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-                    var saveXml = new SaveXmlDataParam()
-                    {
-                        User = infoParam.User,
-                        MedicalInsuranceBackNum = "CXJB004",
-                        MedicalInsuranceCode = "22",
-                        BusinessId = infoParam.BusinessId,
-                        BackParam = strXmlBackParam
-                    };
-                    //存基层
-                    _webBasicRepository.SaveXmlData(saveXml);
-
                     var updateParamData = new UpdateMedicalInsuranceResidentSettlementParam()
                     {
                         UserId = infoParam.User.UserId,

@@ -60,7 +60,7 @@ namespace BenDing.Repository.Providers.Web
                             strSql = $@" update MedicalInsurance set SettlementUserId='{param.UserId}',SettlementTime=NULL,SettlementCancelTime=GETDATE(),[MedicalInsuranceState]={(int)param.MedicalInsuranceState}, 
                                     SettlementCancelUserId='{param.UserId}',OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
                                     SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
-                                    SettlementNo='{param.SettlementNo}',CancelTransactionId='{param.CancelTransactionId}',CancelTransactionId='{param.CancelTransactionId}'
+                                    SettlementNo='{param.SettlementNo}',CancelTransactionId='{param.CancelTransactionId}'
                                     where Id='{param.Id}' ";
                         }
                         else if (!string.IsNullOrWhiteSpace(param.SettlementTransactionId))
