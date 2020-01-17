@@ -232,6 +232,7 @@ namespace BenDing.Service.Providers
             //      });
             resultData.ReimbursementExpensesAmount = residentData.ReimbursementExpensesAmount;
             resultData.SelfPayFeeAmount = residentData.SelfPayFeeAmount;
+            resultData.AllAmount = residentData.MedicalInsuranceAllAmount;
             return resultData;
         }
     }
