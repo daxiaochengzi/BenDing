@@ -8,6 +8,7 @@ using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using NFine.Domain._03_Entity.BenDingManage;
 
@@ -42,7 +43,8 @@ namespace NFine.Web.App_Start
                cfg.CreateMap<InpatientInfoDto, HisHospitalizationPreSettlementDto>();
                cfg.CreateMap<BaseOutpatientInfoDto, QueryOutpatientDepartmentCostDataDto>();
                cfg.CreateMap<QueryInpatientInfoDto, HisHospitalizationSettlementCancelDto>();
-               
+                cfg.CreateMap<ResidentHospitalizationRegisterUiParam, WorKerHospitalizationRegisterUiParam>();
+
             });
         }
     }
