@@ -420,17 +420,19 @@
                     layui.each(oldData,
                         function (index, item) {
                             console.log(oldData);
-                            debugger;
+                            
                             //排除空值
-                            if (item.DiagnosisCode !== undefined && item.DiagnosisCode !== "") {
+                            if (item.DiagnosisCode !== undefined) {
                                 var itemRow = {
                                     DiagnosisName: item.DiagnosisName,
                                     DiagnosisCode: item.DiagnosisCode,
                                     IsMainDiagnosis: item.IsMainDiagnosis
                                 };
+                                oldDataTable.push(itemRow);
+                                
                             }
                            
-                            oldDataTable.push(itemRow);
+                           
                         });
 
                     var newRow = {
