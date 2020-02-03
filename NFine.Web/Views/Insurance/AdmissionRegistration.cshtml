@@ -391,8 +391,8 @@
             tableSelect.render({
                 elem: '#DiagnosisSearchData',
                 checkedKey: 'id',
-                searchKey: 'Search',	//搜索输入框的name值 默认keyword
-                searchPlaceholder: '请输入诊断名称/编码/助记码',	//搜索输入框的提示文字 默认关键词搜索
+                searchKey: 'Search',//搜索输入框的name值 默认keyword
+                searchPlaceholder: '名称/编码/助记码',	//搜索输入框的提示文字 默认关键词搜索
                 table: {
                     url: host + '/QueryICD10',
                     parseData: function (result) {
@@ -419,17 +419,21 @@
                     var oldDataTable = new Array;
                     layui.each(oldData,
                         function (index, item) {
-                            console.log(oldData);
-                            
                             //排除空值
                             if (item.DiagnosisCode !== undefined) {
-                                var itemRow = {
-                                    DiagnosisName: item.DiagnosisName,
-                                    DiagnosisCode: item.DiagnosisCode,
-                                    IsMainDiagnosis: item.IsMainDiagnosis
-                                };
-                                oldDataTable.push(itemRow);
-                                
+                                //新增诊断编码
+                                var addDiseaseCoding = data.data[0].DiseaseCoding;
+                                //诊断去重
+                                if (item.DiagnosisCode !== addDiseaseCoding)
+                                {
+                                    var itemRow = {
+                                        DiagnosisName: item.DiagnosisName,
+                                        DiagnosisCode: item.DiagnosisCode,
+                                        IsMainDiagnosis: item.IsMainDiagnosis
+                                    };
+                                    oldDataTable.push(itemRow);
+
+                                }  
                             }
                            
                            
