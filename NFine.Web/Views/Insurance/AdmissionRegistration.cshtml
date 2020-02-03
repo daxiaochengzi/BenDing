@@ -419,13 +419,17 @@
                     var oldDataTable = new Array;
                     layui.each(oldData,
                         function (index, item) {
-
-                            var itemRow = {
-                                DiagnosisName: item.DiagnosisName,
-                                DiagnosisCode: item.DiagnosisCode,
-                                IsMainDiagnosis: item.IsMainDiagnosis
-
-                            };
+                            console.log(oldData);
+                            debugger;
+                            //排除空值
+                            if (item.DiagnosisCode !== undefined && item.DiagnosisCode !== "") {
+                                var itemRow = {
+                                    DiagnosisName: item.DiagnosisName,
+                                    DiagnosisCode: item.DiagnosisCode,
+                                    IsMainDiagnosis: item.IsMainDiagnosis
+                                };
+                            }
+                           
                             oldDataTable.push(itemRow);
                         });
 
@@ -501,9 +505,7 @@
                             activeByType('updateRow', obj.data); //更新行记录对象
                             break;
                         case "del":
-                            //layer.confirm('真的删除行么', function(index){
-                            //    obj.del(); //删除对应行（tr）的DOM结构
-                            //    layer.close(index);
+               
 
                             layer.confirm('真的删除行么？',
                                 function (index) {
