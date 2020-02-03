@@ -501,11 +501,15 @@
                             activeByType('updateRow', obj.data); //更新行记录对象
                             break;
                         case "del":
+                            //layer.confirm('真的删除行么', function(index){
+                            //    obj.del(); //删除对应行（tr）的DOM结构
+                            //    layer.close(index);
+
                             layer.confirm('真的删除行么？',
                                 function (index) {
                                     obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
                                     layer.close(index);
-                                    activeByType('removeEmptyTableCache');
+                                    //activeByType('removeEmptyTableCache');
                                 });
                             break;
                     }
