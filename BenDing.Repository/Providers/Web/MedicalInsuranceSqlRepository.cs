@@ -21,7 +21,6 @@ namespace BenDing.Repository.Providers.Web
         private readonly string _connectionString;
         private readonly Log _log;
         private readonly ISystemManageRepository _iSystemManageRepository;
-
         /// <summary>
         /// 构造函数
         /// </summary>

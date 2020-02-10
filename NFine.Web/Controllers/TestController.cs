@@ -10,6 +10,7 @@ using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.HisXml;
 using BenDing.Domain.Models.Params.Base;
+using BenDing.Domain.Models.Params.DifferentPlaces;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
@@ -56,8 +57,26 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
-                y.DataDescribe = CommonHelp.GetPropertyAliasDict(new UserInfoDto());
-                y.Data = userService.GetUserInfo();
+                var paramList = new List<DifferentPlacesOtherDiagnosis>();
+                var param = new DifferentPlacesHospitalizationRegisterParam()
+                {
+                    AdmissionDate = "123123",
+                    DiagnosisList = paramList,
+
+                };
+                paramList.Add(new DifferentPlacesOtherDiagnosis()
+                {
+                    DiagnosisCode = "123",
+                    DiagnosisName = "sss"
+                });
+                paramList.Add(new DifferentPlacesOtherDiagnosis()
+                {
+                    DiagnosisCode = "13323",
+                    DiagnosisName = "ss333s"
+                });
+                var xmlStr = XmlHelp.SaveXml(param);
+                //y.DataDescribe = CommonHelp.GetPropertyAliasDict(new UserInfoDto());
+                //y.Data = userService.GetUserInfo();
 
             });
 

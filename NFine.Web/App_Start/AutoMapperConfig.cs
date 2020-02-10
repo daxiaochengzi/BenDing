@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using AutoMapper;
+using BenDing.Domain.Models.Dto.DifferentPlaces;
 using BenDing.Domain.Models.Dto.JsonEntity;
+using BenDing.Domain.Models.Dto.JsonEntity.DifferentPlaces;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
@@ -18,7 +20,7 @@ namespace NFine.Web.App_Start
 /// </summary>
     public class AutoMapperConfig
     {/// <summary>
-    /// 
+    /// 实体映射
     /// </summary>
         public static void Config()
         {
@@ -43,8 +45,11 @@ namespace NFine.Web.App_Start
                cfg.CreateMap<InpatientInfoDto, HisHospitalizationPreSettlementDto>();
                cfg.CreateMap<BaseOutpatientInfoDto, QueryOutpatientDepartmentCostDataDto>();
                cfg.CreateMap<QueryInpatientInfoDto, HisHospitalizationSettlementCancelDto>();
-                cfg.CreateMap<ResidentHospitalizationRegisterUiParam, WorKerHospitalizationRegisterUiParam>();
-
+               cfg.CreateMap<ResidentHospitalizationRegisterUiParam, WorKerHospitalizationRegisterUiParam>();
+                //异地
+               cfg.CreateMap<DifferentPlacesUserInfoJsonDto, DifferentPlacesUserInfoDto>();
+               cfg.CreateMap<DifferentPlacesHospitalizationRegisterJsonDto, DifferentPlacesHospitalizationRegisterDto>();
+                
             });
         }
     }

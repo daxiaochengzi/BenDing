@@ -141,7 +141,7 @@
                 , {
                     field: 'IsMainDiagnosis', title: '主诊', width: 120, event: 'diagnosis', templet: function (d) {
                         var html = ['<input type="checkbox" name="IsMainDiagnosis" lay-skin="switch" lay-text="是|否"'];
-                        html.push(d.IsMainDiagnosis == true ? 'checked' : '');
+                        html.push(d.IsMainDiagnosis === true ? 'checked' : '');
                         html.push('/>');
                         return html.join('');
                     }
@@ -242,7 +242,7 @@
             var dataTable1 = table.cache[layTableId];
             //诊断列表 add
             field.DiagnosisList = dataTable1;
-            console.log(field)
+            console.log(field);
             $.ajax({
                 type: 'POST',
                 url: host +'/HospitalizationModify',
@@ -254,7 +254,7 @@
                     if (data.Success === false) {
                         var errData = data.Message;
                         //样式类名:墨绿深蓝风
-                        layer.msg('修改失败\n' + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                        layer.msg('修改失败' + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' })
                     } else {
                         console.log(data);
                         layer.msg('修改成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' })
@@ -281,7 +281,7 @@
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
                         var data = res.Data;
-                        console.log(data)
+                        console.log(data);
                         //表单初始赋值
                         form.val('LAY-form-render', data);
                         //默认选择的科室ID

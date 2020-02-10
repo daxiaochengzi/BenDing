@@ -130,7 +130,7 @@ namespace BenDing.Domain.Xml
                 XmlDeclaration xmlSM = xmlDoc.CreateXmlDeclaration("1.0", "GBK", null);
                 //追加xmldecl位置
                 xmlDoc.AppendChild(xmlSM);
-                //添加一个名为Gen的根节点
+                //添加一个名为Row的根节点
                 XmlElement xml = xmlDoc.CreateElement("", "ROW", "");
                 string strXml = xmlDocXml.SelectSingleNode("ROW").InnerXml.ToString();
                 xml.InnerXml = strXml;

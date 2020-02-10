@@ -66,6 +66,7 @@
     <Compile Include="Interfaces\Web\IWebBasicRepository.cs" />
     <Compile Include="Interfaces\Web\IWorkerMedicalInsuranceRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\Web\DifferentPlacesMedicalInsuranceRepository.cs" />
     <Compile Include="Providers\Web\MedicalInsuranceSqlRepository.cs" />
     <Compile Include="Providers\Web\HisSqlRepository.cs" />
     <Compile Include="Providers\Web\OutpatientDepartmentRepository.cs" />
