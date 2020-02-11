@@ -37,5 +37,25 @@ namespace NFine.Domain.Entity.SystemManage
         public string F_LastModifyUserId { get; set; }
         public DateTime? F_DeleteTime { get; set; }
         public string F_DeleteUserId { get; set; }
+        /// <summary>
+        /// 医院id
+        /// </summary>
+        public string F_HospitalId { get; set; }
+        /// <summary>
+        ///  医院等级
+        /// </summary>
+        public int F_OrganizationGrade { get; set; }
+        /// <summary>
+        /// 医院行政区域
+        /// </summary>
+        public string F_AdministrativeArea { get; set; }
+        /// <summary>
+        /// 医保账户
+        /// </summary>
+        public string F_MedicalInsuranceAccount { get; set; }
+        /// <summary>
+        /// 医保密码
+        /// </summary>
+        public string F_MedicalInsurancePwd { get; set; }
     }
 }

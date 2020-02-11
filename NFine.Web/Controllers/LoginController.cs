@@ -21,18 +21,18 @@ namespace NFine.Web.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly IUserService _userService;
+        //private readonly IUserService _userService;
 
         public LoginController()
         {
-            _userService = Bootstrapper.UnityIOC.Resolve<IUserService>();
+            //_userService = Bootstrapper.UnityIOC.Resolve<IUserService>();
         }
 
         [HttpGet]
         public virtual ActionResult Index()
         {
-            var dd = _userService.GetUserInfo();
-            var test = string.Format("{0:E2}", 1);
+            //var dd = _userService.GetUserInfo();
+            //var test = string.Format("{0:E2}", 1);
           
             return View();
         }

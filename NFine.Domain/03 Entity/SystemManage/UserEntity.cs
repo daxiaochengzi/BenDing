@@ -38,5 +38,21 @@ namespace NFine.Domain.Entity.SystemManage
         public string F_LastModifyUserId { get; set; }
         public DateTime? F_DeleteTime { get; set; }
         public string F_DeleteUserId { get; set; }
+        /// <summary>
+        ///his用户Id
+        /// </summary>
+        public string F_HisUserId { get; set; }
+        /// <summary>
+        /// 基层账户
+        /// </summary>
+        public string F_HisUserAccount { get; set; }
+        /// <summary>
+        /// 基层账户密码
+        /// </summary>
+        public string F_HisUserPwd { get; set; }
+        /// <summary>
+        /// 厂商编号
+        /// </summary>
+        public  string F_ManufacturerNumber { get; set; }
     }
 }

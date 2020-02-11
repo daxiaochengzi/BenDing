@@ -164,16 +164,53 @@
             resArray: 'Data',
             count: 10,
             done: function (item) {
+                //获取table缓存
                 var oldData = table.cache[layTableId];
+                var oldDataTable = new Array;
+                layui.each(oldData,
+                    function (index, item) {
+                        //排除空值
+                        if (item.DiagnosisCode !== undefined) {
+                            //新增诊断编码
+                            var addDiseaseCoding = data.data[0].DiseaseCoding;
+                            //诊断去重
+                            if (item.DiagnosisCode !== addDiseaseCoding)
+                            {
+                                var itemRow = {
+                                    DiagnosisName: item.DiagnosisName,
+                                    DiagnosisCode: item.DiagnosisCode,
+                                    IsMainDiagnosis: item.IsMainDiagnosis
+                                };
+                                oldDataTable.push(itemRow);
+
+                            }  
+                        }
+                           
+                           
+                    });
+
                 var newRow = {
-                    DiagnosisName: item.DiseaseName,
-                    DiagnosisCode: item.DiseaseCoding,
-                    IsMainDiagnosis: false,
+                    DiagnosisName: data.data[0].DiseaseName,
+                    DiagnosisCode: data.data[0].DiseaseCoding,
+                    IsMainDiagnosis: false
                 };
-                oldData.push(newRow);
+                //添加选中后的诊断
+                oldDataTable.push(newRow);
+
+                //更新table
                 tableIns.reload({
-                    data: oldData
+                    data: oldDataTable
                 });
+                //var oldData = table.cache[layTableId];
+                //var newRow = {
+                //    DiagnosisName: item.DiseaseName,
+                //    DiagnosisCode: item.DiseaseCoding,
+                //    IsMainDiagnosis: false
+                //};
+                //oldData.push(newRow);
+                //tableIns.reload({
+                //    data: oldData
+                //});
             }
         });
         //定义事件集合
@@ -182,7 +219,7 @@
                 var oldData = table.cache[layTableId];
                 for (var i = 0, row; i < oldData.length; i++) {
                     row = oldData[i];
-                    if (row.DiagnosisCode == obj.DiagnosisCode) {
+                    if (row.DiagnosisCode === obj.DiagnosisCode) {
                         $.extend(oldData[i], obj);
                         return;
                     }
@@ -231,7 +268,7 @@
                     layer.confirm('真的删除行么？', function (index) {
                         obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
                         layer.close(index);
-                        activeByType('removeEmptyTableCache');
+                        //activeByType('removeEmptyTableCache');
                     });
                     break;
             }
