@@ -42,10 +42,10 @@ namespace NFine.Domain.Entity.SystemManage
         ///his用户Id
         /// </summary>
         public string F_HisUserId { get; set; }
-        /// <summary>
-        /// 基层账户
-        /// </summary>
-        public string F_HisUserAccount { get; set; }
+        ///// <summary>
+        ///// 是否基层账户
+        ///// </summary>
+        public bool? F_IsHisAccount { get; set; }
         /// <summary>
         /// 基层账户密码
         /// </summary>

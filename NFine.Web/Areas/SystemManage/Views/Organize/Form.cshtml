@@ -19,9 +19,13 @@
         }
     });
     function initControl() {
-        $("#F_CategoryId").select2({ minimumResultsForSearch: -1 })
+        $("#F_CategoryId").select2({ minimumResultsForSearch: -1 });
         $("#F_ParentId").bindSelect({
-            url: "/SystemManage/Organize/GetTreeSelectJson",
+            url: "/SystemManage/Organize/GetTreeSelectJson"
+        });
+        $("#F_OrganizationGrade").bindSelect({
+            url: "/SystemManage/ItemsData/GetSelectJson",
+            param: { enCode: "HospitalGrade" }
         });
     }
     function submitForm() {
@@ -31,11 +35,11 @@
         $.submitForm({
             url: "/SystemManage/Organize/SubmitForm?keyValue=" + keyValue,
             param: $("#form1").formSerialize(),
-            success: function () {
+            success: function() {
                 $.currentWindow().$("#gridList").resetSelection();
                 $.currentWindow().$("#gridList").trigger("reloadGrid");
             }
-        })
+        });
     }
 </script>
 <form id="form1">
@@ -53,28 +57,53 @@
                             <option value="0">父节点</option>
                         </select>
                     </td>
-                    <th class="formTitle">类型</th>
+                    <th class="formTitle">医院等级</th>
                     <td class="formValue">
-                        <select id="F_CategoryId" name="F_Target" class="form-control required">
-                            <option value="">==请选择==</option>
-                            <option value="Group">集团</option>
-                            <option value="Company">公司</option>
-                            <option value="Department">部门</option>
-                            <option value="WorkGroup">小组</option>
-                        </select>
+                        <select id="F_OrganizationGrade" name="F_OrganizationGrade" ></select>
                     </td>
+                    @*<th class="formTitle">类型</th>
+            <td class="formValue">
+                <select id="F_CategoryId" name="F_Target" class="form-control">
+                    <option value="">==请选择==</option>
+                    <option value="Group">集团</option>
+                    <option value="Company">公司</option>
+                    <option value="Department">部门</option>
+                    <option value="WorkGroup">小组</option>
+                </select>
+            </td>*@
                 </tr>
                 <tr>
                     <th class="formTitle">名称</th>
                     <td class="formValue">
-                        <input id="F_FullName" name="F_FullName" type="text" class="form-control required" placeholder="请输入名称" />
+                        <input id="F_FullName" name="F_FullName" type="text" class="form-control" />
                     </td>
-                    <th class="formTitle">编号</th>
+                    <th class="formTitle">机构编号</th>
                     <td class="formValue">
-                        <input id="F_EnCode" name="F_EnCode" type="text" class="form-control required" placeholder="请输入编号" />
+                        <input id="F_EnCode" name="F_EnCode" type="text" class="form-control required"    />
                     </td>
                 </tr>
                 <tr>
+                    <th class="formTitle">医保账户</th>
+                    <td class="formValue">
+                        <input id="F_MedicalInsuranceAccount" name="F_MedicalInsuranceAccount" type="text" class="form-control required"   placeholder="医保账户"/>
+                    </td>
+                    <th class="formTitle">医保密码</th>
+                    <td class="formValue">
+                        <input id="F_MedicalInsurancePwd" name="F_MedicalInsurancePwd" type="text" class="form-control required"   placeholder="医保密码" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">医院行政区域</th>
+                    <td class="formValue">
+                        <input id="F_AdministrativeArea" name="F_AdministrativeArea" type="text" class="form-control required"   placeholder="医院行政区域"/>
+                    </td>
+                    <th class="formTitle">地址</th>
+                    <td class="formValue">
+                        <input id="F_Address" name="F_Address" type="text" class="form-control" />
+                    </td>
+
+
+                </tr>
                 <tr>
                     <th class="formTitle">负责人</th>
                     <td class="formValue">
@@ -86,33 +115,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <th class="formTitle">微信</th>
-                    <td class="formValue">
-                        <input id="F_WeChat" name="F_ManagerId" type="text" class="form-control" />
-                    </td>
-                    <th class="formTitle">电话</th>
-                    <td class="formValue">
-                        <input id="F_TelePhone" name="F_TelePhone" type="text" class="form-control" />
-                    </td>
-                </tr>
-                <tr>
-
-                    <th class="formTitle">邮箱</th>
-                    <td class="formValue">
-                        <input id="F_Email" name="F_MobilePhone" type="text" class="form-control" />
-                    </td>
-                    <th class="formTitle">传真</th>
-                    <td class="formValue">
-                        <input id="F_Fax" name="F_MobilePhone" type="text" class="form-control" />
-                    </td>
-                </tr>
-                <tr>
-                    <th class="formTitle">地址</th>
-                    <td class="formValue" colspan="3">
-                        <input id="F_Address" name="F_Address" type="text" class="form-control" />
-                    </td>
-                </tr>
-                <tr>
                     <th class="formTitle" style="height: 35px;">选项</th>
                     <td class="formValue" colspan="3" style="padding-top: 1px;">
                         <div class="ckbox">
@@ -121,7 +123,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <th class="formTitle" valign="top" style="padding-top: 5px;">备注
+                    <th class="formTitle" valign="top" style="padding-top: 5px;">
+                        备注
                     </th>
                     <td class="formValue" colspan="3">
                         <textarea id="F_Description" name="F_Descriptions" class="form-control" style="height: 60px;"></textarea>

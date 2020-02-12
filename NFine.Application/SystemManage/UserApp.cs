@@ -54,6 +54,18 @@ namespace NFine.Application.SystemManage
         {
             service.Update(userEntity);
         }
+        /// <summary>
+        /// 更新账户密码
+        /// </summary>
+        /// <param name="keyValue"></param>
+        /// <param name="pwd"></param>
+        public void UpDateHisUserPwd(string keyValue, string pwd)
+        {
+            var userEntity = service.FindEntity(keyValue);
+            userEntity.Modify(keyValue);
+            userEntity.F_HisUserPwd = pwd;
+            service.Update(userEntity);
+        }
         public UserEntity CheckLogin(string username, string password)
         {
             UserEntity userEntity = service.FindEntity(t => t.F_Account == username);

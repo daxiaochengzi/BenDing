@@ -90,6 +90,7 @@ namespace NFine.Web.Areas.SystemManage.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SubmitForm(OrganizeEntity organizeEntity, string keyValue)
         {
+            organizeEntity.F_CategoryId = "Department";
             organizeApp.SubmitForm(organizeEntity, keyValue);
             return Success("操作成功。");
         }

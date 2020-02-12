@@ -48,6 +48,7 @@ namespace NFine.Web.Areas.SystemManage.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SubmitForm(ItemsDetailEntity itemsDetailEntity, string keyValue)
         {
+            if (itemsDetailEntity.F_DeleteMark == null) itemsDetailEntity.F_DeleteMark = false;
             itemsDetailApp.SubmitForm(itemsDetailEntity, keyValue);
             return Success("操作成功。");
         }

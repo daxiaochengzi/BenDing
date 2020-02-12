@@ -25,6 +25,18 @@ namespace NFine.Application.SystemManage
         {
             return service.FindEntity(keyValue);
         }
+        /// <summary>
+        /// 更新机构
+        /// </summary>
+        /// <param name="keyValue"></param>
+        public void UpDateEnCode(string keyValue,string enCode)
+        {
+          var organizeEntity = service.FindEntity(keyValue);
+            organizeEntity.Modify(keyValue);
+            organizeEntity.F_EnCode=enCode;
+            service.Update(organizeEntity);
+        }
+       
         public void DeleteForm(string keyValue)
         {
             if (service.IQueryable().Count(t => t.F_ParentId.Equals(keyValue)) > 0)

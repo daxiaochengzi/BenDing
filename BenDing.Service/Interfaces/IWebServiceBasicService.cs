@@ -23,6 +23,8 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
         InpatientInfoDto GetInpatientInfo(GetInpatientInfoParam param);
+
+      
         /// <summary>
         /// 获取机构
         /// </summary>

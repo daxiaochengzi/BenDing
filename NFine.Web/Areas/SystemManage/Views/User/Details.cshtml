@@ -62,12 +62,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <th class="formTitle">公司</th>
+                    <th class="formTitle">机构类型</th>
                     <td class="formValue">
                         <select id="F_OrganizeId" name="F_OrganizeId" class="form-control">
                         </select>
                     </td>
-                    <th class="formTitle">部门</th>
+                    <th class="formTitle">机构名称</th>
                     <td class="formValue">
                         <select id="F_DepartmentId" name="F_DepartmentId" class="form-control">
                             <option value="">==请选择==</option>
@@ -112,6 +112,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <th class="formTitle">是否基层账户</th>
+                    <td class="formValue">
+                        <select id="F_IsHisAccount" name="F_IsHisAccount" class="form-control">
+                            <option value="true">是</option>
+                            <option value="false">否</option>
+                        </select>
+                    </td>
+                    <th class="formTitle">厂商编号</th>
+                    <td class="formValue">
+                        <input id="F_ManufacturerNumber" name="F_ManufacturerNumber" type="text" class="form-control required"  placeholder="请输厂商编号" />
+                    </td>
+                </tr>
+                @*<tr>
                     <th class="formTitle">微信</th>
                     <td class="formValue">
                         <input id="F_WeChat" name="F_WeChat" type="text" class="form-control" />
@@ -120,7 +133,7 @@
                     <td class="formValue">
                         <input id="F_Email" name="F_Email" type="text" class="form-control" />
                     </td>
-                </tr>
+                </tr>*@
                 <tr>
                     <th class="formTitle">类型</th>
                     <td class="formValue">
@@ -136,6 +149,7 @@
                             <option value="false">否</option>
                         </select>
                     </td>
+                
                 </tr>
                 <tr>
                     <th class="formTitle" valign="top" style="padding-top: 5px;">备注
