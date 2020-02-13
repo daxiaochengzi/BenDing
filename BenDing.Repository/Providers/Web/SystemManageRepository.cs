@@ -127,7 +127,8 @@ namespace BenDing.Repository.Providers.Web
             {
                 sqlConnection.Open();
                 string querySql =
-                    $"select   OrganizationGrade,AdministrativeArea,MedicalInsuranceAccount,MedicalInsurancePwd from [dbo].[HospitalOrganizationGrade] where IsDelete=0 and HospitalId='{param}'";
+                    $"select top 1  F_OrganizationGrade as OrganizationGrade,F_AdministrativeArea as AdministrativeArea," +
+                    $"F_MedicalInsuranceAccount as MedicalInsuranceAccount,F_MedicalInsurancePwd as MedicalInsurancePwd from [dbo].[Sys_Organize] where F_DeleteMark=0 and F_EnCode='{param}'";
                var resultData = sqlConnection.QueryFirstOrDefault<HospitalOrganizationGradeDto>(querySql);
                 sqlConnection.Close();
                 if (resultData==null)throw  new Exception("当前医院未设置等级,请重新设置");
@@ -148,7 +149,7 @@ namespace BenDing.Repository.Providers.Web
             {
                 var resultData = new QueryHospitalOperatorDto();
                 sqlConnection.Open();
-                string querySql = $"select top 1 [HisUserAccount],[HisUserPwd],ManufacturerNumber from [dbo].[HospitalOperator] where [HisUserId]='{param.UserId}' ";
+                string querySql = $"select top 1 F_Account as HisUserAccount,F_HisUserPwd as HisUserPwd,F_ManufacturerNumber as ManufacturerNumber   from [dbo].[Sys_User] where [F_HisUserId]='{param.UserId}' ";
                 var data = sqlConnection.QueryFirstOrDefault<QueryHospitalOperatorDto>(querySql);
                 if (data != null)
                 {

@@ -65,24 +65,13 @@ namespace NFine.Web.Areas.SystemManage.Controllers
                     Pwd = userLogOnEntity.F_UserPassword,
                     ManufacturerNumber = userEntity.F_ManufacturerNumber,
                 };
-                try
-                {
                     string inputParamJson = JsonConvert.SerializeObject(inputParam, Formatting.Indented);
                     var verificationCode = _basicService.GetVerificationCode("01", inputParamJson);
                     //获取userid
-                    if (verificationCode != null)
-                    {
+                    if (verificationCode == null) throw  new  Exception("基层用户登陆失败!!!");
                         userEntity.F_HisUserId = verificationCode.UserId;
                         organizationCode = verificationCode.OrganizationCode;
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    return Error(e.Message);
-                }
             }
-
             userApp.SubmitForm(userEntity, userLogOnEntity, keyValue);
             //是否机构账户
             if (userEntity.F_IsHisAccount == true)
@@ -90,7 +79,8 @@ namespace NFine.Web.Areas.SystemManage.Controllers
                 organizeApp.UpDateEnCode(userEntity.F_DepartmentId, organizationCode);
             }
             return Success("操作成功。");
-        }
+           
+    }
         [HttpPost]
         [HandlerAuthorize]
         [HandlerAjaxOnly]

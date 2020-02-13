@@ -21,13 +21,13 @@
                 {
                     label: '分类', name: 'F_CategoryId', width: 80, align: 'left',
                     formatter: function (cellvalue) {
-                        if (cellvalue == "Group") {
+                        if (cellvalue === "Group") {
                             return "集团";
-                        } else if (cellvalue == "Company") {
+                        } else if (cellvalue === "Company") {
                             return "公司";
-                        } else if (cellvalue == "Department") {
+                        } else if (cellvalue === "Department") {
                             return "部门";
-                        } else if (cellvalue == "WorkGroup") {
+                        } else if (cellvalue === "WorkGroup") {
                             return "小组";
                         }
                     }

@@ -4,12 +4,16 @@
  * Description: NFine快速开发平台
  * Website：http://www.nfine.cn
 *********************************************************************************/
+
+using System;
 using NFine.Application.SystemManage;
 using NFine.Code;
 using NFine.Domain.Entity.SystemManage;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using BenDing.Domain.Models.Dto.Resident;
+using BenDing.Domain.Xml;
 
 namespace NFine.Web.Areas.SystemManage.Controllers
 {
@@ -91,6 +95,21 @@ namespace NFine.Web.Areas.SystemManage.Controllers
         public ActionResult SubmitForm(OrganizeEntity organizeEntity, string keyValue)
         {
             organizeEntity.F_CategoryId = "Department";
+            try
+            { //医保账户认证
+                var result =
+                    MedicalInsuranceDll.ConnectAppServer_cxjb(organizeEntity.F_MedicalInsuranceAccount,
+                        organizeEntity.F_MedicalInsurancePwd);
+                if (result != 1)
+                {
+                    XmlHelp.DeSerializerModel(new IniXmlDto(), true);
+                }
+            }
+            catch (Exception e)
+            {
+                return Error(e.Message);
+            }
+          
             organizeApp.SubmitForm(organizeEntity, keyValue);
             return Success("操作成功。");
         }
