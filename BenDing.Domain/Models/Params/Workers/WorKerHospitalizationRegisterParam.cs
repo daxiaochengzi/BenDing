@@ -74,8 +74,8 @@ namespace BenDing.Domain.Models.Params.Workers
         /// 经办人
         /// </summary>
         public string Operators { get; set; }
-      
-     
-      
-}
+        public List<InpatientDiagnosisDto> DiagnosisList { get; set; } = null;
+
+
+    }
 }
