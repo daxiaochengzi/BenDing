@@ -33,7 +33,7 @@ namespace BenDing.Repository.Providers.Web
      /// <param name="pi_cwh">床位号</param>
      /// <param name="pi_yyzyh">住院号</param>
      /// <returns></returns>
-        [DllImport("yyjk.dll", EntryPoint = "zydj", CharSet = CharSet.Ansi, PreserveSig = false, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("yyjk.dll", EntryPoint = "zydj", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern int HospitalizationRegister(string pi_sfbz, string pi_crbz, string pi_xzqh, string pi_yybh,
             string pi_yllb, string pi_ryrq, string pi_icd10, string pi_icd10_2, string pi_icd10_3, string pi_ryzd,
             string pi_zybq, string pi_cwh, string pi_yyzyh, string pi_jbr,byte[] po_zyh, byte[] po_spbh, byte[] po_bnyzycs,
