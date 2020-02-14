@@ -24,6 +24,15 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// <summary>
         /// 支付信息
         /// </summary>
-        public string PayMsg { get; set; }
+        public List<PayMsgData> PayMsg { get; set; }
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    public class PayMsgData
+    {
+        public string Name { get; set; }
+        public string Value { get; set; }
+    }
+
 }
