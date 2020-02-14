@@ -105,15 +105,15 @@
             </div>
 
             <div class="layui-card-body" lay-size="sm">
-                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
+                <fieldset id="PreSettleData" class="layui-elem-field layui-field-title" style="margin-top: 10px;">
                     <legend>医保预结算信息</legend>
                 </fieldset>
                 <!--医保预结算信息-->
-                <div class="layui-form-item layui-form-text">
+                @*<div class="layui-form-item layui-form-text">
                     <div class="layui-input-block">
                         <textarea class="layui-textarea" style="font-size: 20px" id="PreSettlementData"></textarea>
                     </div>
-                </div>
+                </div>*@
             </div>
 
         </form>
@@ -170,7 +170,10 @@
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
                     
-                        $('#PreSettlementData').val(data.Data.PayMsg);
+                       // $('#PreSettlementData').val(data.Data.PayMsg);
+                        if (data.Data.PayMsg !== null) {
+                            preSettlement(data.Data.PayMsg);
+                        }
                         $('#ReimbursementExpenses').val(data.Data.ReimbursementExpenses);
                         $('#CashPayment').val(data.Data.CashPayment);
                         $('#HospitalizationTotalCost').val(data.Data.TotalAmount);
@@ -180,6 +183,26 @@
                
             });
         });
+        //获取
+        function preSettlement(data) {
+            var html = "";
+            for (var i in data) {
+                if (data.hasOwnProperty(i)) {
+
+                    html += '<div class="layui-inline">';
+                    html += '     <label class="layui-form-label">' + data[i].Name+'</label>';
+                    html += '     <div class="layui-input-inline">';
+                    html += '     <input type="text" name="AdmissionDiagnosticDoctor" autocomplete="off"   value="' + data[i].Value+'" disabled class="layui-input layui-disabled">';
+                    html += '     </div>';
+                    html += '</div>';
+                }
+            }
+            if (html !== "") {
+                $("#PreSettleData").append(html);
+            }
+           
+         }
+      
 
         $.ajax({
             type: 'get',

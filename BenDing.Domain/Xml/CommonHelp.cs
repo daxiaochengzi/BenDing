@@ -296,6 +296,30 @@ namespace BenDing.Domain.Xml
 
             return resultData;
         }
+        /// <summary>
+        /// 获取结算反馈结果
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static List<PayMsgData> GetPayMsg(string param)
+        {
+            List<string> listMsg = new List<string>(param.Split(','));
+            var msg = new List<PayMsgData>();
+            foreach (var item in listMsg)
+            {
+                var itemData = new List<string>(item.Split(':'));
+                var itemName = itemData[0].Replace("{", "").Replace("}", "");
+                msg.Add(new PayMsgData()
+                {
+                    Name = itemName.ToString(),
+                    Value = itemData[1],
+                });
+
+            }
+
+            return msg;
+        }
     }
+    
 
 }

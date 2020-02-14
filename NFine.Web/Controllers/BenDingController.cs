@@ -18,6 +18,7 @@ using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace NFine.Web.Controllers
 {
@@ -444,23 +445,23 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                userBase.TransKey = param.TransKey;
-                var infoData = new GetInpatientInfoParam()
-                {
-                    User = userBase,
-                    BusinessId = param.BusinessId,
-                };
-                //获取his预结算
-                var hisPreSettlementData = _webServiceBasicService.GetHisHospitalizationPreSettlement(infoData);
-                var preSettlementData= hisPreSettlementData.PreSettlementData.FirstOrDefault();
-                //获取病人信息
-                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
-                if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
-                var data=AutoMapper.Mapper.Map<HisHospitalizationPreSettlementDto>(inpatientData);
-                data.LeaveHospitalDate = preSettlementData.EndDate;
-                data.Operator = preSettlementData.Operator;
-                y.Data = data;
+                //var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //userBase.TransKey = param.TransKey;
+                //var infoData = new GetInpatientInfoParam()
+                //{
+                //    User = userBase,
+                //    BusinessId = param.BusinessId,
+                //};
+                ////获取his预结算
+                //var hisPreSettlementData = _webServiceBasicService.GetHisHospitalizationPreSettlement(infoData);
+                //var preSettlementData= hisPreSettlementData.PreSettlementData.FirstOrDefault();
+                ////获取病人信息
+                //var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
+                //if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
+                //var data=AutoMapper.Mapper.Map<HisHospitalizationPreSettlementDto>(inpatientData);
+                //data.LeaveHospitalDate = preSettlementData.EndDate;
+                //data.Operator = preSettlementData.Operator;
+                y.Data = new HisHospitalizationPreSettlementDto();
             });
         }
 
@@ -945,7 +946,7 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData HospitalizationPreSettlement([FromUri]UiBaseDataParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
-            {
+            {  //
                 var resultData = new SettlementDto();
                 //医保登录
                 _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
@@ -959,7 +960,7 @@ namespace NFine.Web.Controllers
                 if (residentData.InsuranceType == "310")
                 {
                     var workerSettlementData = _workerMedicalInsuranceService.WorkerHospitalizationPreSettlement(param);
-                    resultData.PayMsg = JsonConvert.SerializeObject(workerSettlementData);
+                    resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
                     resultData.CashPayment = workerSettlementData.CashPayment;
                     resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
                     resultData.TotalAmount = workerSettlementData.TotalAmount;
@@ -968,7 +969,7 @@ namespace NFine.Web.Controllers
                 if (residentData.InsuranceType == "342")
                 {
                     var residentSettlementData = _residentMedicalInsuranceService.HospitalizationPreSettlement(param);
-                    resultData.PayMsg = JsonConvert.SerializeObject(residentSettlementData);
+                    resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(residentSettlementData));
                     resultData.CashPayment = residentSettlementData.CashPayment;
                     resultData.ReimbursementExpenses = residentSettlementData.ReimbursementExpenses;
                     resultData.TotalAmount = residentSettlementData.TotalAmount;
@@ -1008,7 +1009,7 @@ namespace NFine.Web.Controllers
                         UserId = param.UserId,
                     });
                     resultData.CashPayment = workerSettlementData.CashPayment;
-                    resultData.PayMsg = JsonConvert.SerializeObject(workerSettlementData);
+                    resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
                     resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
                     resultData.TotalAmount = workerSettlementData.TotalAmount;
                 }
@@ -1016,7 +1017,7 @@ namespace NFine.Web.Controllers
                 if (residentData.InsuranceType == "342")
                 {
                     var residentSettlementData = _residentMedicalInsuranceService.LeaveHospitalSettlement(param);
-                    resultData.PayMsg = JsonConvert.SerializeObject(residentSettlementData);
+                    resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(residentSettlementData));
                     resultData.CashPayment = residentSettlementData.CashPayment;
                     resultData.ReimbursementExpenses = residentSettlementData.ReimbursementExpenses;
                     resultData.TotalAmount = residentSettlementData.TotalAmount;
@@ -1067,17 +1068,18 @@ namespace NFine.Web.Controllers
                                 OrganizationCode = gradeData.MedicalInsuranceAccount,
                             });
                         resultData.CashPayment = workerSettlementData.CashPayment;
-                        resultData.PayMsg = JsonConvert.SerializeObject(workerSettlementData);
+                        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
                         resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
+                     
                     }
                     //居民
                     if (residentData.InsuranceType == "342")
                     {
                         var residentSettlementData = _residentMedicalInsuranceRepository.QueryLeaveHospitalSettlement(new QueryLeaveHospitalSettlementParam() { MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo });
-                        resultData.PayMsg = JsonConvert.SerializeObject(residentSettlementData);
+                        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(residentSettlementData));
                         resultData.CashPayment = residentSettlementData.CashPayment;
                         resultData.ReimbursementExpenses = residentSettlementData.ReimbursementExpenses;
-
+                       
                     }
                     resultData.TotalAmount = residentData.MedicalInsuranceAllAmount;
                 }

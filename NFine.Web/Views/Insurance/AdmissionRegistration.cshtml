@@ -40,7 +40,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label" id="markTextLable">身份证号</label>
                         <div class="layui-input-inline">
-                            <input type="text" id="identityMarkText" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
+                            <input type="text" id="identityMarkText" name="AfferentSign" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -115,7 +115,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">险种类型</label>
                         <div class="layui-input-inline">
-                            <select name="InsuranceType" disabled>
+                            <select id="InsuranceType" name="InsuranceType" disabled>
                                 <option value="">请选择险种类型</option>
                                 <option value="310">城镇职工</option>
                                 <option value="342">城乡居民</option>
@@ -527,14 +527,24 @@
             form.on('submit(reg)',
                 function (data) {
                     var field = data.field;
+                    debugger;
                     if (field.IdentityMark === 1) {
                         //身份证号
-                        field.AfferentSign = field.IdCardNo;
+                        field.AfferentSign = field.AfferentSign;
                     }
                     if (field.IdentityMark === 2) {
                         //医保个人编码
-                        field.AfferentSign = field.PersonalCoding;
+                       
+                        field.AfferentSign = field.AfferentSign;
                     }
+                    if ($("#InsuranceType").val() === "310") {
+                        if (field.IdentityMark === 1) {
+                            field.IdentityMark = 2;
+                        }
+                        if (field.IdentityMark === 2) {
+                            field.IdentityMark = 3;
+                        }
+                    } 
                     //科室ID
                     //field.InpatientDepartmentCode = field.InDepartmentId
                     ////床位号

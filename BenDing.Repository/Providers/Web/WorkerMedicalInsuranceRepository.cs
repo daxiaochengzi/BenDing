@@ -66,7 +66,7 @@ namespace BenDing.Repository.Providers.Web
             var resultState = new byte[1024];
             //消息
             var msg = new byte[1024];
-
+            //  param.AdministrativeArea,
             WorkerMedicalInsurance.HospitalizationRegister
                 (param.AfferentSign,
                 param.IdentityMark,
