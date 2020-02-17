@@ -48,10 +48,23 @@ namespace NFine.Web.Controllers
             hisSqlRepository = _hisSqlRepository;
         }
         /// <summary>
-        /// get测试
+        /// 测试专用
         /// </summary>
-        /// <param name="pagination"></param>
         /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData TestData()
+        {
+            return new ApiJsonResultData().RunWithTry(y =>
+            {
+                string str = "2222333";
+                string[] sArray = str.Split(',');
+
+                //y.DataDescribe = CommonHelp.GetPropertyAliasDict(new UserInfoDto());
+                //y.Data = userService.GetUserInfo();
+
+            });
+
+        }
         [HttpGet]
         public ApiJsonResultData PageList([FromUri] UserInfo pagination)
         {

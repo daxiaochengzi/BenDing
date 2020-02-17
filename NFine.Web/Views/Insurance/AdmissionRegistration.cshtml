@@ -129,7 +129,7 @@
                             <select id="MedicalCategory" name="MedicalCategory" lay-filter="MedicalCategoryType"></select>
                         </div>
                     </div>
-                    <div class="layui-inline" id="HouseholdNatureId" style="display: none;">
+                    @*<div class="layui-inline" id="HouseholdNatureId" style="display: none;">
                         <label class="layui-form-label">户口性质</label>
                         <div class="layui-input-inline">
                             <select name="HouseholdNature" disabled>
@@ -144,7 +144,7 @@
                         <div class="layui-input-inline">
                             <input type="text" name="FetusNumber" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
-                    </div>
+                    </div>*@
                 </div>
                 <!--诊断部分-->
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
@@ -224,7 +224,6 @@
                             layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
                         } else {
                             inpatientInfoData = data;
-
                             $("#identityMarkText").val(data.Data.IdCardNo);
                             //layer.msg('费用上传成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         }
@@ -527,7 +526,7 @@
             form.on('submit(reg)',
                 function (data) {
                     var field = data.field;
-                    debugger;
+                    
                     if (field.IdentityMark === 1) {
                         //身份证号
                         field.AfferentSign = field.AfferentSign;

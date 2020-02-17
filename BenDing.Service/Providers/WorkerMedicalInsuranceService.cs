@@ -565,7 +565,7 @@ namespace BenDing.Service.Providers
             iniParam.AfferentSign = param.AfferentSign;
             iniParam.MedicalCategory = param.MedicalCategory;
             iniParam.AdmissionDate = Convert.ToDateTime(paramDto.AdmissionDate).ToString("yyyyMMdd");
-            iniParam.InpatientDepartmentCode = paramDto.InDepartmentName;
+            iniParam.InpatientDepartmentCode = paramDto.InDepartmentId;
             iniParam.BedNumber = paramDto.AdmissionBed;
             iniParam.HospitalizationNo = paramDto.HospitalizationNo;
             iniParam.Operators = paramDto.AdmissionOperator;

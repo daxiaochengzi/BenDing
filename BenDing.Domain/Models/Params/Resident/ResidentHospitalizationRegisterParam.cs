@@ -80,11 +80,16 @@ namespace BenDing.Domain.Models.Params.Resident
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string AdmissionMainDiagnosis { get; set; }
         /// <summary>
-        /// 住院科室编号 
+        /// 住院科室名称
         /// </summary>
         [XmlElementAttribute("PI_ZYBQ", IsNullable = false)]
-        [Display(Name = "住院科室编号")]
+        [Display(Name = "住院科室名称")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
+        public string InpatientDepartmentName { get; set; }
+      /// <summary>
+      /// 住院科室编号
+      /// </summary>
+        [XmlIgnoreAttribute]
         public string InpatientDepartmentCode { get; set; }
         /// <summary>
         /// 床位号

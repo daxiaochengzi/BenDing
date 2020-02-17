@@ -446,7 +446,8 @@ namespace BenDing.Service.Providers
             iniParam.FetusNumber = param.FetusNumber;
             iniParam.HouseholdNature = param.HouseholdNature;
             iniParam.AdmissionDate = Convert.ToDateTime(paramDto.AdmissionDate).ToString("yyyyMMdd");
-            iniParam.InpatientDepartmentCode = paramDto.InDepartmentName;
+            iniParam.InpatientDepartmentCode = paramDto.InDepartmentId;
+            iniParam.InpatientDepartmentName = paramDto.InDepartmentName;
             iniParam.BedNumber = paramDto.AdmissionBed;
             iniParam.HospitalizationNo = paramDto.HospitalizationNo;
             iniParam.Operators = paramDto.AdmissionOperator;

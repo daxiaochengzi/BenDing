@@ -20,14 +20,14 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 诊断列表
         /// </summary>
         public List<InpatientDiagnosisDto> DiagnosisList { get; set; }
-        /// <summary>
-        /// 身份证号
-        /// </summary>
-        public string IdCardNo { get; set; }
-        /// <summary>
-        /// 个人编码
-        /// </summary>
-        public string PersonNumber { get; set; }
+        ///// <summary>
+        ///// 身份证号
+        ///// </summary>
+        //public string IdCardNo { get; set; }
+        ///// <summary>
+        ///// 个人编码
+        ///// </summary>
+        //public string PersonNumber { get; set; }
         /// <summary>
         /// 入院日期
         /// </summary>
@@ -47,10 +47,6 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
         public string InpatientDepartmentCode { get; set; }
         /// <summary>
-        /// 部门名称
-        /// </summary>
-        public string InpatientDepartmentName { get; set; }
-        /// <summary>
         /// 床位号
         /// </summary>
 
@@ -60,6 +56,11 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
        
         public string HospitalizationNo { get; set; }
-       
+        /// <summary>
+        /// 医保类型
+        /// </summary>
+        public  string InsuranceType { get; set; }
+
+
     }
 }

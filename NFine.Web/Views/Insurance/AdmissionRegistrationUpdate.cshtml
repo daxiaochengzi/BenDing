@@ -20,6 +20,7 @@
         <form class="layui-form layui-form-pane" lay-filter="LAY-form-render">
             <input type="hidden" id="bid" name="BusinessId" value="@ViewBag.bid" placeholder="业务ID" />
             <input type="hidden" id="empid" name="UserId" value="@ViewBag.empid" placeholder="用户ID" />
+            <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
             <div class="layui-card-header layuibd-card-header-auto">
                 <!--可修改的住院信息-->
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
@@ -53,19 +54,19 @@
                         </div>
                     </div>
 
-                    <div class="layui-inline">
+                    <div class="layui-inline "  >
                         <label class="layui-form-label">床位号</label>
                         <div class="layui-input-inline">
                             <input type="text" name="BedNumber" autocomplete="off" class="layui-input">
                         </div>
                     </div>
-                    <div class="layui-inline">
+                    <div class="layui-inline" id="FetusNumberDiv">
                         <label class="layui-form-label">胎儿数</label>
                         <div class="layui-input-inline">
                             <input type="text" name="FetusNumber" autocomplete="off" class="layui-input">
                         </div>
                     </div>
-                    <div class="layui-inline">
+                    <div class="layui-inline"  id="HouseholdNatureDiv">
                         <label class="layui-form-label">户口性质</label>
                         <div class="layui-input-inline">
                             <select name="HouseholdNature">
@@ -85,7 +86,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">录入诊断</label>
                         <div class="layui-input-inline" style="width:280px;">
-                            <input type="text" id="DiagnosisSearch" placeholder="请输入诊断名称/编码/助记码" class="layui-input">
+                            <input type="text" id="DiagnosisSearch" placeholder="请输入诊断" class="layui-input">
                         </div>
                     </div>
                 </div>
@@ -94,7 +95,7 @@
 
                 <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
                     <button type="submit" class="layui-btn layui-btn-radius" lay-submit lay-filter="updateRegister">修改登记</button>
-                    <button type="button" class="layui-btn layui-btn-radius" id="cancelRegister">取消登记</button>
+                    @*<button type="button" class="layui-btn layui-btn-radius" id="cancelRegister">取消登记</button>*@
                 </div>
             </div>
         </form>
@@ -153,17 +154,33 @@
                 }
             ]]
         });
-        //录入诊断
-        layui.autocomplete({
-            element: '#DiagnosisSearch',
-            num: 2,
-            display: 'DiseaseName',
-            shortcut: 'MnemonicCode',
-            url: host +'/QueryICD10',
-            query: {},
-            resArray: 'Data',
-            count: 10,
-            done: function (item) {
+        var tableSelect = layui.tableSelect;
+        tableSelect.render({
+            elem: '#DiagnosisSearch',
+            checkedKey: 'id',
+            searchKey: 'Search',//搜索输入框的name值 默认keyword
+            searchPlaceholder: '名称/编码/助记码',	//搜索输入框的提示文字 默认关键词搜索
+            table: {
+                url: host + '/QueryICD10',
+                parseData: function (result) {
+                    return {
+                        "code": result.Code,
+                        "msg": result.Message,
+                        "data": result.Data.data,
+                        "count": result.Data.count
+                    };
+                },
+                cols: [
+                    [
+                        { type: 'radio' },
+                        { field: 'DiseaseCoding', title: '疾病编码' },
+                        { field: 'DiseaseName', title: '疾病名称' },
+                        { field: 'MnemonicCode', title: '速记码' }
+                    ]
+                ]
+            },
+            done: function (elem, data) {
+
                 //获取table缓存
                 var oldData = table.cache[layTableId];
                 var oldDataTable = new Array;
@@ -174,19 +191,17 @@
                             //新增诊断编码
                             var addDiseaseCoding = data.data[0].DiseaseCoding;
                             //诊断去重
-                            if (item.DiagnosisCode !== addDiseaseCoding)
-                            {
+                            if (item.DiagnosisCode !== addDiseaseCoding) {
                                 var itemRow = {
                                     DiagnosisName: item.DiagnosisName,
                                     DiagnosisCode: item.DiagnosisCode,
                                     IsMainDiagnosis: item.IsMainDiagnosis
                                 };
                                 oldDataTable.push(itemRow);
-
-                            }  
+                            }
                         }
-                           
-                           
+
+
                     });
 
                 var newRow = {
@@ -201,18 +216,12 @@
                 tableIns.reload({
                     data: oldDataTable
                 });
-                //var oldData = table.cache[layTableId];
-                //var newRow = {
-                //    DiagnosisName: item.DiseaseName,
-                //    DiagnosisCode: item.DiseaseCoding,
-                //    IsMainDiagnosis: false
-                //};
-                //oldData.push(newRow);
-                //tableIns.reload({
-                //    data: oldData
-                //});
+
+
+
             }
         });
+        
         //定义事件集合
         var active = {
             updateRow: function (obj) {
@@ -305,6 +314,7 @@
             var params = {
                 "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
                 , "UserId": $("#empid").val() /*授权操作人的ID*/
+                , "Transkey": $("#transkey").val() /*医保交易ID*/
             }
             $.ajax({
                 url: host +'/QueryMedicalInsurance',
@@ -318,13 +328,18 @@
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
                         var data = res.Data;
-                        console.log(data);
+                      
+                        //判断是否生育入院登记
+                        if (data.HouseholdNature === null || data.FetusNumber == null && data.InsuranceType !== "342")
+                        {
+                            $("#FetusNumberDiv").hide();
+                            $("#HouseholdNatureDiv").hide();
+                        }
                         //表单初始赋值
                         form.val('LAY-form-render', data);
                         //默认选择的科室ID
-                        var DepartmentCode = data.InpatientDepartmentCode;
-                        selectDepartmentName(DepartmentCode);
-
+                        var departmentCode = data.InpatientDepartmentCode;
+                        selectDepartmentName(departmentCode);
                         //诊断表初始化
                         var oldData = data.DiagnosisList;
                         tableIns.reload({
@@ -332,7 +347,12 @@
                         });
                         
                     }
+
+                },
+                complete: function () {
+                    form.render();
                 }
+              
             });
             
 
@@ -371,16 +391,18 @@
                     var deptSel = document.getElementById("InpatientDepartmentCode"); //add_role_name给select定义的id
                     for (var i = 0; i < list.length; i++) {
                         var option = document.createElement("option"); // 创建添加option属性
-                        var lay_value = list[i].FixedEncoding;
+                        var lay_value = list[i].DirectoryCode;
                         option.setAttribute("value", lay_value); // 给option的value添加值
                         option.innerText = list[i].DirectoryName; // 打印option对应的纯文本
                         deptSel.appendChild(option); // 给select 添加option子标签
                         form.render(); // 刷性select，显示出数据
                     }
                     //状态选中项
-                    var opts = $('.layer_update .layui-input-inline dl.layui-anim dd')
+                    var opts = $('.layer_update .layui-input-inline dl.layui-anim dd');
                     for (var i = 0; i < opts.length; i++) {
-                        if (opts[i].getAttribute('lay-value') == defaultCode) {
+                      
+                        var cc = opts[i].getAttribute('lay-value');
+                        if (opts[i].getAttribute('lay-value') === defaultCode) {
                             var select = 'dd[lay-value=' + opts[i].getAttribute('lay-value') + ']';
                             $('#InpatientDepartmentCode').siblings("div.layui-form-select").find('dl').find(select).click();
                         }

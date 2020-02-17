@@ -750,7 +750,7 @@ namespace NFine.Web.Controllers
                 if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
                 //医保登录
                 _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                ////职工
+                //职工
                 if (param.InsuranceType == "310") _workerMedicalInsuranceService.WorkerHospitalizationRegister(workerParam);
                 //居民
                 if (param.InsuranceType == "342") _residentMedicalInsuranceService.HospitalizationRegister(param);
@@ -770,6 +770,7 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new QueryMedicalInsuranceDetailInfoDto()).RunWithTry(y =>
             {
                 var data = _webServiceBasicService.QueryMedicalInsuranceDetail(param);
+                data.HouseholdNature = "10";
                 y.Data = data;
 
             });
