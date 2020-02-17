@@ -123,15 +123,10 @@
                 </div>
             </div>
             <div class="layui-card-body" lay-size="sm">
-                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
+                <fieldset id="SettleData" class="layui-elem-field layui-field-title" style="margin-top: 10px;">
                     <legend>医保结算信息</legend>
                 </fieldset>
-                <!--医保结算信息-->
-                <div class="layui-form-item layui-form-text">
-                    <div class="layui-input-block">
-                        <textarea class="layui-textarea" style="font-size: 20px" id="SettlementData"></textarea>
-                    </div>
-                </div>
+             
             </div>
 
         </form>
@@ -327,7 +322,9 @@
                         //样式类名:墨绿深蓝风
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
-                        $('#SettlementData').val(data.Data.PayMsg);
+                        if (data.Data.PayMsg !== null) {
+                           settlementData(data.Data.PayMsg);
+                        }
                         $('#ReimbursementExpenses').val(data.Data.ReimbursementExpenses);
                         $('#CashPayment').val(data.Data.CashPayment);
                         $('#HospitalizationTotalCost').val(data.Data.TotalAmount);
@@ -337,6 +334,26 @@
 
             });
         });
+
+        //获取结算返回值
+        function settlementData(data) {
+            var html = "";
+            for (var i in data) {
+                if (data.hasOwnProperty(i)) {
+
+                    html += '<div class="layui-inline">';
+                    html += '     <label class="layui-form-label">' + data[i].Name+'</label>';
+                    html += '     <div class="layui-input-inline">';
+                    html += '     <input type="text" name="AdmissionDiagnosticDoctor" autocomplete="off"   value="' + data[i].Value+'" disabled class="layui-input layui-disabled">';
+                    html += '     </div>';
+                    html += '</div>';
+                }
+            }
+            if (html !== "") {
+                $("#SettleData").append(html);
+            }
+           
+        }
     
 
     });
