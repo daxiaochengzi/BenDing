@@ -789,7 +789,7 @@ namespace NFine.Web.Controllers
                
                 if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
                 //医保登陆
-                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+               _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保病人信息
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
                 {
