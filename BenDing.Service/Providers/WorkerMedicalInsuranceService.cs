@@ -128,7 +128,7 @@ namespace BenDing.Service.Providers
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
             var saveXml = new SaveXmlDataParam()
             {
-                User = param.User,
+                User = userBase,
                 MedicalInsuranceBackNum = "zyzlxgall",
                 MedicalInsuranceCode = "23",
                 BusinessId = param.BusinessId,
