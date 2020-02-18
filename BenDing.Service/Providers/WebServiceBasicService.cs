@@ -774,7 +774,7 @@ namespace BenDing.Service.Providers
         private QueryMedicalInsuranceDetailInfoDto QueryResidentMedicalInsuranceDetail(string param)
         {
             var resultData = new QueryMedicalInsuranceDetailInfoDto();
-            var data = JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailDto>(param);
+            var data = JsonConvert.DeserializeObject<ResidentHospitalizationRegisterParam>(param);
             resultData.AdmissionDate = DateTime
                 .ParseExact(data.AdmissionDate, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture)
                 .ToString("yyyy-MM-dd");

@@ -155,8 +155,8 @@ namespace BenDing.Service.Providers
                 var data =
                     JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailDto>(queryData
                         .AdmissionInfoJson);
-                if (!string.IsNullOrWhiteSpace(param.AdmissionDate))
-                    data.AdmissionDate = param.AdmissionDate;
+                if (!string.IsNullOrWhiteSpace(modifyParam.AdmissionDate))
+                    data.AdmissionDate = modifyParam.AdmissionDate;
                 if (!string.IsNullOrWhiteSpace(modifyParam.AdmissionMainDiagnosis))
                     data.AdmissionMainDiagnosis = modifyParam.AdmissionMainDiagnosis;
                 if (!string.IsNullOrWhiteSpace(modifyParam.AdmissionMainDiagnosisIcd10))
