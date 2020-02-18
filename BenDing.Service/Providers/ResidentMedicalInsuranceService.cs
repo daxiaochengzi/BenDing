@@ -71,10 +71,10 @@ namespace BenDing.Service.Providers
             var residentData = _residentMedicalInsuranceRepository.HospitalizationRegister(registerParam);
             var saveData = new MedicalInsuranceDto
             {
-                AdmissionInfoJson = JsonConvert.SerializeObject(param),
+                AdmissionInfoJson = JsonConvert.SerializeObject(registerParam),
                 BusinessId = param.BusinessId,
                 Id = Guid.NewGuid(),
-                InsuranceType = Convert.ToInt32(param.InsuranceType),
+                InsuranceType =342,
                 MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceInpatientNo,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized
             };
@@ -446,13 +446,12 @@ namespace BenDing.Service.Providers
             iniParam.FetusNumber = param.FetusNumber;
             iniParam.HouseholdNature = param.HouseholdNature;
             iniParam.AdmissionDate = Convert.ToDateTime(paramDto.AdmissionDate).ToString("yyyyMMdd");
-            iniParam.InpatientDepartmentCode = paramDto.InDepartmentId;
-            iniParam.InpatientDepartmentName = paramDto.InDepartmentName;
+            iniParam.InpatientDepartmentCode = paramDto.InDepartmentName;
             iniParam.BedNumber = paramDto.AdmissionBed;
             iniParam.HospitalizationNo = paramDto.HospitalizationNo;
             iniParam.Operators = paramDto.AdmissionOperator;
             iniParam.InsuranceType = param.InsuranceType;
-            iniParam.BusinessId = param.BusinessId;
+            //iniParam.BusinessId = param.BusinessId;
             return iniParam;
         }
 

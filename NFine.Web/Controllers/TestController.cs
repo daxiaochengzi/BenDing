@@ -56,9 +56,23 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData().RunWithTry(y =>
             {
-                string str = "2222333";
-                string[] sArray = str.Split(',');
+                var ddd = new ResidentHospitalizationRegisterParam()
+                {
+                    IdentityMark = "1",
+                    AfferentSign = "511521201704210171",
+                    MedicalCategory="11",
+                    AdmissionDate = "20200218",
+                    HospitalizationNo = "052020200218001",
+                    AdmissionMainDiagnosis = "腹泻",
+                    InpatientDepartmentCode = "内科",
+                    AdmissionMainDiagnosisIcd10 = "K52.916",
+                    Operators = "李茜"
 
+
+
+                };
+
+                y.Data= JsonConvert.SerializeObject(ddd);
                 //y.DataDescribe = CommonHelp.GetPropertyAliasDict(new UserInfoDto());
                 //y.Data = userService.GetUserInfo();
 
