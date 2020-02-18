@@ -127,22 +127,22 @@ namespace BenDing.Service.Providers
             userBase.TransKey = param.TransKey;
             var modifyParam = GetResidentHospitalizationModify(param);
             _residentMedicalInsuranceRepository.HospitalizationModify(modifyParam, userBase);
-            // 回参构建
-            var xmlData = new HospitalizationRegisterXml()
-            {
-                MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
-            };
-            var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-            var saveXml = new SaveXmlDataParam()
-            {
-                User = userBase,
-                MedicalInsuranceBackNum = "CXJB003",
-                MedicalInsuranceCode = "23",
-                BusinessId = param.BusinessId,
-                BackParam = strXmlBackParam
-            };
-            //存基层
-            _webBasicRepository.SaveXmlData(saveXml);
+            //// 回参构建
+            //var xmlData = new HospitalizationRegisterXml()
+            //{
+            //    MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
+            //};
+            //var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+            //var saveXml = new SaveXmlDataParam()
+            //{
+            //    User = userBase,
+            //    MedicalInsuranceBackNum = "CXJB003",
+            //    MedicalInsuranceCode = "23",
+            //    BusinessId = param.BusinessId,
+            //    BackParam = strXmlBackParam
+            //};
+            ////存基层
+            //_webBasicRepository.SaveXmlData(saveXml);
             var paramStr = "";
             var queryData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(
                 new QueryMedicalInsuranceResidentInfoParam

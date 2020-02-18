@@ -121,21 +121,21 @@ namespace BenDing.Service.Providers
             //医保执行
             _workerMedicalInsuranceRepository.ModifyWorkerHospitalization(param);
             // 回参构建
-            var xmlData = new HospitalizationRegisterXml()
+            var xmlData = new HospitalizationModifyXml()
             {
                 MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
             };
-            var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-            var saveXml = new SaveXmlDataParam()
-            {
-                User = param.User,
-                MedicalInsuranceBackNum = "zyzlxgall",
-                MedicalInsuranceCode = "23",
-                BusinessId = param.BusinessId,
-                BackParam = strXmlBackParam
-            };
-            //存基层
-            _webBasicRepository.SaveXmlData(saveXml);
+            //var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+            //var saveXml = new SaveXmlDataParam()
+            //{
+            //    User = param.User,
+            //    MedicalInsuranceBackNum = "zyzlxgall",
+            //    MedicalInsuranceCode = "23",
+            //    BusinessId = param.BusinessId,
+            //    BackParam = strXmlBackParam
+            //};
+            ////存基层
+            //_webBasicRepository.SaveXmlData(saveXml);
             var paramStr = "";
             var queryData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(
                 new QueryMedicalInsuranceResidentInfoParam
@@ -530,7 +530,6 @@ namespace BenDing.Service.Providers
                 HospitalizationNo = CommonHelp.GuidToStr(param.BusinessId),
                 AdministrativeArea = gradeData.AdministrativeArea,
                 Operators = user.UserName,
-                OrganizationCode = gradeData.MedicalInsuranceAccount
             };
             var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
             modifyParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
