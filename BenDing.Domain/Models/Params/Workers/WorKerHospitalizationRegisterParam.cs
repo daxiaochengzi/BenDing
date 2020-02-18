@@ -12,6 +12,8 @@ namespace BenDing.Domain.Models.Params.Workers
 /// </summary>
   public  class WorKerHospitalizationRegisterParam: WorkerBaseParam
     {
+        public Guid Id { get; set; }
+
         ///<summary>
         /// 身份标识(为’1’表示卡号,’2’身份证号,3为个人编号)
         /// </summary>
@@ -74,7 +76,8 @@ namespace BenDing.Domain.Models.Params.Workers
         /// 经办人
         /// </summary>
         public string Operators { get; set; }
-        public List<InpatientDiagnosisDto> DiagnosisList { get; set; } = null;
+
+        //public List<InpatientDiagnosisDto> DiagnosisList { get; set; } = null;
 
 
     }

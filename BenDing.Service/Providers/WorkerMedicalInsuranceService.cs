@@ -116,6 +116,7 @@ namespace BenDing.Service.Providers
         public void ModifyWorkerHospitalization(HospitalizationModifyUiParam uiParam)
         { //his登陆
             var userBase = _serviceBasicService.GetUserBaseInfo(uiParam.UserId);
+            userBase.TransKey = uiParam.TransKey;
             var param = GetWorkerHospitalizationModify(uiParam, userBase);
             //医保执行
             _workerMedicalInsuranceRepository.ModifyWorkerHospitalization(param);
@@ -145,18 +146,14 @@ namespace BenDing.Service.Providers
             if (!string.IsNullOrWhiteSpace(queryData.AdmissionInfoJson))
             {
                 var data =
-                    JsonConvert.DeserializeObject<QueryMedicalInsuranceDetailDto>(queryData
+                    JsonConvert.DeserializeObject<WorKerHospitalizationRegisterParam>(queryData
                         .AdmissionInfoJson);
-                if (!string.IsNullOrWhiteSpace(param.AdmissionDate))
-                    data.AdmissionDate = param.AdmissionDate;
-                if (!string.IsNullOrWhiteSpace(param.AdmissionMainDiagnosis))
-                    data.AdmissionMainDiagnosis = param.AdmissionMainDiagnosis;
-                if (!string.IsNullOrWhiteSpace(param.AdmissionMainDiagnosisIcd10))
-                    data.AdmissionMainDiagnosisIcd10 = param.AdmissionMainDiagnosisIcd10;
-                if (!string.IsNullOrWhiteSpace(param.DiagnosisIcd10Three))
-                    data.DiagnosisIcd10Three = param.DiagnosisIcd10Three;
-                if (!string.IsNullOrWhiteSpace(param.DiagnosisIcd10Two))
-                    data.DiagnosisIcd10Two = param.DiagnosisIcd10Two;
+                if (!string.IsNullOrWhiteSpace(param.AdmissionDate)) data.AdmissionDate = param.AdmissionDate;
+                if (!string.IsNullOrWhiteSpace(param.AdmissionMainDiagnosis)) data.AdmissionMainDiagnosis = param.AdmissionMainDiagnosis;
+                if (!string.IsNullOrWhiteSpace(param.AdmissionMainDiagnosisIcd10)) data.AdmissionMainDiagnosisIcd10 = param.AdmissionMainDiagnosisIcd10;
+                if (!string.IsNullOrWhiteSpace(param.DiagnosisIcd10Three)) data.DiagnosisIcd10Three = param.DiagnosisIcd10Three;
+                if (!string.IsNullOrWhiteSpace(param.DiagnosisIcd10Two)) data.DiagnosisIcd10Two = param.DiagnosisIcd10Two;
+                if (!string.IsNullOrWhiteSpace(param.InpatientDepartmentCode)) data.InpatientDepartmentCode = param.InpatientDepartmentCode;
                 if (!string.IsNullOrWhiteSpace(param.BedNumber)) data.BedNumber = param.BedNumber;
                 data.Id = queryData.Id;
                 paramStr = JsonConvert.SerializeObject(data);
@@ -539,6 +536,8 @@ namespace BenDing.Service.Providers
             modifyParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
             modifyParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
             modifyParam.AdmissionMainDiagnosis = diagnosisData.DiagnosisDescribe;
+            modifyParam.InpatientDepartmentCode = param.InpatientDepartmentCode;
+            modifyParam.User = user;
             return modifyParam;
         }
         /// <summary>
@@ -572,7 +571,7 @@ namespace BenDing.Service.Providers
             iniParam.BusinessId = param.BusinessId;
             iniParam.AdministrativeArea = gradeData.AdministrativeArea;
             iniParam.InpatientArea = paramDto.AdmissionWard;
-            iniParam.DiagnosisList = param.DiagnosisList;
+            //iniParam.DiagnosisList = param.DiagnosisList;
             var userData = _systemManageRepository.QueryHospitalOperator(
                 new QueryHospitalOperatorParam() { UserId = param.UserId });
             iniParam.OrganizationCode = gradeData.MedicalInsuranceAccount;

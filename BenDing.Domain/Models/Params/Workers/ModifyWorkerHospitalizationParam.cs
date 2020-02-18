@@ -39,7 +39,11 @@ namespace BenDing.Domain.Models.Params.Workers
         /// 病区
         /// </summary>
         public string InpatientArea { get; set; }
-    
+        /// <summary>
+        /// 科室编号
+        /// </summary>
+        public string InpatientDepartmentCode { get; set; }
+
         /// <summary>
         /// 床位号
         /// </summary>

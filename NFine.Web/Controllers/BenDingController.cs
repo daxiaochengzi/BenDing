@@ -770,7 +770,7 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new QueryMedicalInsuranceDetailInfoDto()).RunWithTry(y =>
             {
                 var data = _webServiceBasicService.QueryMedicalInsuranceDetail(param);
-                data.HouseholdNature = "10";
+              
                 y.Data = data;
 
             });
@@ -786,6 +786,7 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
+               
                 if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
                 //医保登陆
                 _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });

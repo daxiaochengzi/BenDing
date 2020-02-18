@@ -738,7 +738,6 @@ namespace BenDing.Service.Providers
             {
                 resultData = QueryResidentMedicalInsuranceDetail(queryData.AdmissionInfoJson);
             }
-
             resultData.Id = queryData.Id;
             resultData.MedicalInsuranceHospitalizationNo = queryData.MedicalInsuranceHospitalizationNo;
             resultData.InsuranceType = queryData.InsuranceType;
@@ -815,7 +814,7 @@ namespace BenDing.Service.Providers
                 {
                     IsMainDiagnosis = true,
                     DiagnosisName = c.DiseaseName,
-                    DiagnosisCode = c.MnemonicCode
+                    DiagnosisCode = c.DiseaseCoding
                 }).ToList());
             }
             if (!string.IsNullOrWhiteSpace(two))
@@ -827,7 +826,7 @@ namespace BenDing.Service.Providers
                 {
                     IsMainDiagnosis = false,
                     DiagnosisName = c.DiseaseName,
-                    DiagnosisCode = c.MnemonicCode
+                    DiagnosisCode = c.DiseaseCoding
                 }).ToList());
             }
             if (!string.IsNullOrWhiteSpace(three))
@@ -839,7 +838,7 @@ namespace BenDing.Service.Providers
                 {
                     IsMainDiagnosis = false,
                     DiagnosisName = c.DiseaseName,
-                    DiagnosisCode = c.MnemonicCode
+                    DiagnosisCode = c.DiseaseCoding
                 }).ToList());
             }
             //获取诊断字符串集

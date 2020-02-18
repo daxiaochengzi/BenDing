@@ -35,11 +35,11 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
        
         public string OrganizationName { get; set; }
-        /// <summary>
-        /// 管辖区划
-        /// </summary>
-      
-        public List<string> RegionCodeList { get; set; }
+        ///// <summary>
+        ///// 管辖区划
+        ///// </summary>
+
+        //public List<string> RegionCodeList { get; set; } = null;
         /// <summary>
         /// 医保交易码
         /// </summary>
