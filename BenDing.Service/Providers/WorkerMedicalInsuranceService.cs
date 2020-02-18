@@ -530,6 +530,7 @@ namespace BenDing.Service.Providers
                 HospitalizationNo = CommonHelp.GuidToStr(param.BusinessId),
                 AdministrativeArea = gradeData.AdministrativeArea,
                 Operators = user.UserName,
+                OrganizationCode= gradeData.MedicalInsuranceAccount
             };
             var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
             modifyParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
