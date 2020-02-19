@@ -101,7 +101,7 @@
             toolbar: '#toolbarOne',
             cols: [[
                 { type: 'checkbox', fixed: 'left' },
-                { title: '序号', type: 'numbers', align: 'center' },
+                { title: '序号', type: 'numbers', align: 'center' }
                 , { field: 'UploadMark', title: '上传状态', width: 100, toolbar: '#tableBtn', align: 'center' }
                 , { field: 'DirectoryCode', title: '药品编码', width: 320, hide: true }
                 , { field: 'DirectoryName', title: '药品名称', width: 280 }
@@ -176,6 +176,9 @@
                         //样式类名:墨绿深蓝风
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
+                        if (url === "/PrescriptionUpload") {
+                            layer.msg(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        }
                         if (reloadTable) {
                             //重新加载表格
                             tableDataLoad(tableId);
@@ -271,7 +274,7 @@
             , toolbar: '#toolbarTwo'
             , page: true
             , cols: [[
-                { title: '序号', type: 'numbers', align: 'center' },
+                { title: '序号', type: 'numbers', align: 'center' }
                 , { field: 'UploadMark', title: '上传状态', width: 100, toolbar: '#tableBtn', align: 'center' }
                 , { field: 'DirectoryCode', title: '药品编码', width: 320, hide: true }
                 , { field: 'DirectoryName', title: '药品名称', width: 280 }
@@ -309,8 +312,8 @@
                         //样式类名:墨绿深蓝风
                         layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
                     } else {
-                        console.log(data);
-                        layer.msg('费用更新成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                       
+                        layer.msg(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                     }
                 },
                 complete: function () {
@@ -337,7 +340,7 @@
                         layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
                     } else {
 
-                        layer.msg('费用上传成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        layer.msg(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                     }
                 },
                 complete: function () {
@@ -368,7 +371,7 @@
 
 <script type="text/html" id="toolbarOne">
     
-    <div class="layui-btn-container" Id="batchUpdateDataDiv">
+    <div class="layui-btn-container" >
         <button class="layui-btn layui-btn-sm" lay-event="batchUpdateData">批量上传</button>
     </div>
 </script>
@@ -380,3 +383,11 @@
     <a class="layui-btn layui-btn-xs" lay-event="updatePairCode">已上传</a>
     {{#  }}}
 </script>
+
+@*<script type="text/html" id="tableBtnTwo">
+    {{#  if(d.UploadMark == 0){ }}
+    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="pairCode">未上传</a>
+    {{#  } else { }}
+    <a class="layui-btn layui-btn-xs" lay-event="updatePairCode">已上传</a>
+    {{#  }}}
+</script>*@

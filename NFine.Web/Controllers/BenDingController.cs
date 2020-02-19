@@ -337,8 +337,8 @@ namespace NFine.Web.Controllers
                if (userBase != null)
                {
                    var data = _webServiceBasicService.GetInpatientInfoDetail(userBase, param.BusinessId);
-                   y.Data = data;
-
+                   //y.Data = data;
+                   y.Data = "成功更新数据:"+data.Count()+"条!!!";
                }
 
            });
