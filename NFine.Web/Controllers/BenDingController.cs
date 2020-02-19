@@ -185,16 +185,16 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new QueryICD10InfoDto()).RunWithTry(y =>
             {
-              
-                    var queryData = _hisSqlRepository.QueryICD10(param);
 
-                 var data = new
-                 {
-                     data = queryData.Values.FirstOrDefault(),
-                     count = queryData.Keys.FirstOrDefault()
-                 };
-                 y.Data = data;
-             });
+                var queryData = _hisSqlRepository.QueryICD10(param);
+
+                var data = new
+                {
+                    data = queryData.Values.FirstOrDefault(),
+                    count = queryData.Keys.FirstOrDefault()
+                };
+                y.Data = data;
+            });
         }
         /// <summary>
         /// 更新机构
@@ -293,7 +293,7 @@ namespace NFine.Web.Controllers
                //获取病人信息
                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
                if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
-           
+
                y.Data = inpatientData;
 
 
@@ -362,7 +362,7 @@ namespace NFine.Web.Controllers
                     paramIni.IsSave = false;
                     paramIni.UiParam = param;
                     var data = _webServiceBasicService.GetOutpatientPerson(paramIni);
-                 
+
                     y.Data = data;
 
                 }
@@ -511,20 +511,20 @@ namespace NFine.Web.Controllers
                 var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
                 //获取住院病人
                 var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
-                if (inpatientInfoData==null) throw  new  Exception("获取当前病人失败!!!");
+                if (inpatientInfoData == null) throw new Exception("获取当前病人失败!!!");
                 var data = AutoMapper.Mapper.Map<HisHospitalizationSettlementCancelDto>(inpatientInfoData);
                 if (!string.IsNullOrWhiteSpace(inpatientInfoData.LeaveHospitalDiagnosisJson))
                 {
-                    data.DiagnosisList= JsonConvert.DeserializeObject<List<InpatientDiagnosisDto>>(inpatientInfoData.LeaveHospitalDiagnosisJson);
+                    data.DiagnosisList = JsonConvert.DeserializeObject<List<InpatientDiagnosisDto>>(inpatientInfoData.LeaveHospitalDiagnosisJson);
                 }
-                var settlementCancelData= _webServiceBasicService.GetHisHospitalizationSettlementCancel(new SettlementCancelParam()
+                var settlementCancelData = _webServiceBasicService.GetHisHospitalizationSettlementCancel(new SettlementCancelParam()
                 {
                     BusinessId = param.BusinessId,
                     User = userBase
                 });
                 if (settlementCancelData == null) throw new Exception("获取住院结算取消基层信息失败!!!");
                 data.CancelOperator = settlementCancelData.CancelOperator;
-                data.SettlementNo= settlementCancelData.SettlementNo;
+                data.SettlementNo = settlementCancelData.SettlementNo;
                 data.DiagnosisNo = settlementCancelData.DiagnosisNo;
                 y.Data = data;
 
@@ -540,7 +540,7 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData HospitalizationRegisterCancel([FromUri]UiBaseDataParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
-            { 
+            {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 userBase.TransKey = param.TransKey;
                 var infoData = new GetInpatientInfoParam()
@@ -568,7 +568,7 @@ namespace NFine.Web.Controllers
                 };
                 //存基层
                 _webServiceBasicRepository.SaveXmlData(saveXml);
-               
+
 
             });
         }
@@ -662,7 +662,7 @@ namespace NFine.Web.Controllers
              {
                  var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                  param.OrganizationCode = userBase.OrganizationCode;
-            
+
                  var queryData = _medicalInsuranceSqlRepository.DirectoryComparisonManagement(param);
                  var data = new
                  {
@@ -770,7 +770,7 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new QueryMedicalInsuranceDetailInfoDto()).RunWithTry(y =>
             {
                 var data = _webServiceBasicService.QueryMedicalInsuranceDetail(param);
-              
+
                 y.Data = data;
 
             });
@@ -786,10 +786,10 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-               
+
                 if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
                 //医保登陆
-               _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保病人信息
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
                 {
@@ -957,7 +957,18 @@ namespace NFine.Web.Controllers
                 {
                     BusinessId = param.BusinessId
                 });
-                if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已医保结算,不能预结算");
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //更新病人处方明细
+                _webServiceBasicService.GetInpatientInfoDetail(userBase, param.BusinessId);
+                var queryParam = new InpatientInfoDetailQueryParam()
+                {
+                    BusinessId = param.BusinessId
+                };
+                //获取病人处方明细
+                var queryData = _hisSqlRepository.InpatientInfoDetailQuery(queryParam);
+                if (!queryData.Any()) throw new Exception("当前病人没有处方明细,不能进行预结算!!!");
+                if (queryData.Count(c => c.UploadMark == 0) > 0) throw new Exception("当前病人还有处方明细未上传至医保,不能进行预结算!!!");
+                if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已医保结算,不能预结算!!!");
                 //职工
                 if (residentData.InsuranceType == "310")
                 {
@@ -1072,7 +1083,7 @@ namespace NFine.Web.Controllers
                         resultData.CashPayment = workerSettlementData.CashPayment;
                         resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
                         resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
-                     
+
                     }
                     //居民
                     if (residentData.InsuranceType == "342")
@@ -1081,7 +1092,7 @@ namespace NFine.Web.Controllers
                         resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(residentSettlementData));
                         resultData.CashPayment = residentSettlementData.CashPayment;
                         resultData.ReimbursementExpenses = residentSettlementData.ReimbursementExpenses;
-                       
+
                     }
                     resultData.TotalAmount = residentData.MedicalInsuranceAllAmount;
                 }
@@ -1166,7 +1177,7 @@ namespace NFine.Web.Controllers
                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                //医保登录
                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-              
+
 
            });
 
@@ -1182,7 +1193,7 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData OutpatientDepartmentCostInput([FromUri]UiBaseDataParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
-            {   
+            {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 userBase.TransKey = param.TransKey;
                 //医保登录
@@ -1193,7 +1204,7 @@ namespace NFine.Web.Controllers
                     UiParam = param
                 });
 
-                if (data == null)throw  new Exception("获取门诊结算反馈数据失败!!!");
+                if (data == null) throw new Exception("获取门诊结算反馈数据失败!!!");
 
                 y.Data = new OutpatientCostReturnDataDto()
                 {
@@ -1245,11 +1256,11 @@ namespace NFine.Web.Controllers
                 };
                 var cancelSettlementData = _webServiceBasicService.GetOutpatientSettlementCancel(paramIni);
                 var queryData = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam() { BusinessId = param.BusinessId });
-               if (queryData==null) throw  new  Exception("获取门诊结算病人失败!!!");
+                if (queryData == null) throw new Exception("获取门诊结算病人失败!!!");
                 //获取门诊病人信息
                 resultData.DepartmentName = queryData.DepartmentName;
                 resultData.DiagnosticDoctor = queryData.DiagnosticDoctor;
-                resultData.IdCardNo= queryData.IdCardNo;
+                resultData.IdCardNo = queryData.IdCardNo;
                 resultData.Operator = cancelSettlementData.CancelOperator;
                 resultData.PatientName = queryData.PatientName;
                 resultData.OutpatientNumber = queryData.OutpatientNumber;

@@ -734,10 +734,11 @@ namespace BenDing.Repository.Providers.Web
 
                 string querySql = $@"
                              select * from [dbo].[HospitalizationFee] 
-                             where HospitalizationId=(select top 1 a.HospitalizationId from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
+                             where HospitalizationId='{param.BusinessId}' and IsDelete=0 ";
                 string countSql = $@"select COUNT(*) from [dbo].[HospitalizationFee] 
-                              where HospitalizationId=(select top 1 a.HospitalizationId from [dbo].[Inpatient] as a where a.[BusinessId]='{param.BusinessId}')";
+                              where HospitalizationId='{param.BusinessId}' and IsDelete=0 ";
                 string whereSql = "";
+                if (param.UploadMark == 1) whereSql += "  and UploadMark=1";
                 if (param.Limit != 0 && param.Page > 0)
                 {
                     var skipCount = param.Limit * (param.Page - 1);
@@ -798,7 +799,6 @@ namespace BenDing.Repository.Providers.Web
                                 BillDepartment = c.BillDepartment,
                                 DirectoryCode = c.DirectoryCode,
                                 DirectoryName = c.DirectoryName,
-                              
                                 UnitPrice = c.UnitPrice,
                                 UploadUserName = c.UploadUserName,
                                 Quantity = c.Quantity,

@@ -387,7 +387,7 @@
                 async: false,
                 data: { "DirectoryType": "0", "UserId": $("#empid").val() },
                 success: function (res) {
-                    debugger;
+                   
                     var list = res.Data; //返回的数据
                     var deptSel = document.getElementById("InpatientDepartmentCode"); //add_role_name给select定义的id
                     for (var i = 0; i < list.length; i++) {

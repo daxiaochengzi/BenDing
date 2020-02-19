@@ -10,7 +10,9 @@
     <div class="layui-tab-content">
         <input type="hidden" id="bid" name="BusinessId" value="@ViewBag.bid" placeholder="业务ID" />
         <input type="hidden" id="empid" name="UserId" value="@ViewBag.empid" placeholder="用户ID" />
+
         <div class="layui-tab-item layui-show">
+
             <div class="layui-form" lay-filter="LAY-bill-data-list">
                 <div class="layui-form-item">
                     <div class="layui-inline">
@@ -28,15 +30,14 @@
                     <div class="layui-inline">
                         <button class="layui-btn" lay-submit lay-filter="LAY-bill-data-list">查询</button>
                         <button class="layui-btn" data-type="cleanSearch">清除</button>
-                        <button class="layui-btn" id="renewalCost" lay-submit lay-filter="renewalCost" >更新费用</button>
-                        <button class="layui-btn" id="allUpload"  lay-submit lay-filter="allUpload" >全部上传</button>
+                        <button class="layui-btn" id="renewalCost" lay-submit lay-filter="renewalCost">更新费用</button>
+                        <button class="layui-btn" id="allUpload" lay-submit lay-filter="allUpload">全部上传</button>
                     </div>
                 </div>
             </div>
             <!--院内费用明细列表-->
             <table id="dataTableBillId" lay-filter="dataTableBillId"></table>
         </div>
-
         <div class="layui-tab-item">
             <div class="layui-form">
                 <div class="layui-form-item">
@@ -85,6 +86,11 @@
 
         form.render(null, "LAY-bill-data-list");
         form.render(null, "LAY-updated-data-list");
+
+        element.on('tab(test)', function (elem) {
+            location.hash = 'test=' + $(this).attr('lay-id');
+        });
+
         //数据表格实例化
         var layTableId = "dataTableBillId"; //默认
         var tableIns = table.render({
@@ -92,10 +98,10 @@
             id: layTableId,
             limits: [10, 20, 50],
             page: true,
-            toolbar: '#toolbarDemo', 
+            toolbar: '#toolbarOne',
             cols: [[
                 { type: 'checkbox', fixed: 'left' },
-                { title: '序号', type: 'numbers', align:'center' },
+                { title: '序号', type: 'numbers', align: 'center' },
                 , { field: 'UploadMark', title: '上传状态', width: 100, toolbar: '#tableBtn', align: 'center' }
                 , { field: 'DirectoryCode', title: '药品编码', width: 320, hide: true }
                 , { field: 'DirectoryName', title: '药品名称', width: 280 }
@@ -105,7 +111,7 @@
                 , { field: 'Amount', title: '金额', width: 100 }
                 , { field: 'BillTime', title: '费用日期', width: 160 }
                 , { field: 'UploadUserName', title: '操作员', width: 100, hide: true }
-                , { field: 'RecipeCode', title: '处方号', width: 310, hide: true}
+                , { field: 'RecipeCode', title: '处方号', width: 310, hide: true }
                 , { field: 'BillDepartment', title: '科室', width: 100 }
                 , { field: 'OperateDoctorName', title: '执行医生', width: 100 }
                 , { field: 'ProjectCode', title: '医保编码', width: 100 }
@@ -114,33 +120,27 @@
                 , { field: 'ProjectLevel', title: '项目等级', width: 100 }
                 , { field: 'SelfPayProportion', title: '自付比例', width: 100 }
                 , { field: 'BlockPrice', title: '限制价格', width: 100 }
-                , { field: 'BlockRemark', title: '限制使用说明', width: 100, hide: true}
-                , { field: 'Specification', title: '规格', width: 100, hide: true}
-               
-                , { field: 'AdjustmentDifferenceValue', title: '调整差值', width: 100, hide: true}
-                , { field: 'OrganizationCode', title: '组织机构', width: 280, hide: true}
-                , {
-                    title: '操作', fixed: 'right', width: 100, templet: function (d) {
-                        return '<a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="add" lay-id="' + d.DiagnosisCode + '"><i class="layui-icon layui-icon-add"></i>上传</a>';
-                    }
-                }
+                , { field: 'BlockRemark', title: '限制使用说明', width: 100, hide: true }
+                , { field: 'Specification', title: '规格', width: 100, hide: true }
+                , { field: 'AdjustmentDifferenceValue', title: '调整差值', width: 100, hide: true }
+                , { field: 'OrganizationCode', title: '组织机构', width: 280, hide: true }
             ]]
         });
-       
-        var tableDataLoad = function (tableId, UploadMark) {
+
+
+        var tableDataLoad = function (tableId) {
             //默认tab1选中执行
             var params = {
                 "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
                 , "UserId": $("#empid").val() /*授权操作人的ID*/
-                , "UploadMark": UploadMark /*上传状态*/
-
+                , "UploadMark": 0 /*上传状态*/
             };
             $.ajax({
                 url: host + "/QueryHospitalizationFee",
                 data: params,
                 dataType: "json",
                 async: false,
-              
+
                 success: function (res) {
                     if (res.Success === false) {
                         var errData = res.Message;
@@ -162,7 +162,8 @@
                 }
             });
         }
-        var tableDataQuery = function (method, url, params, reloadTable,tableId) {
+        //表格查询
+        var tableDataQuery = function (method, url, params, reloadTable, tableId) {
             $.ajax({
                 type: method,
                 url: host + url,
@@ -176,9 +177,8 @@
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
                         if (reloadTable) {
-                            tableDataLoad(tableId, params.UploadMark)
-                        } else {
-                            layer.alert("操作成功", { skin: 'layui-layer-molv', icon: 6, title: '提示' });
+                            //重新加载表格
+                            tableDataLoad(tableId);
                         }
                     }
                 },
@@ -187,11 +187,12 @@
                 }
             });
         }
-       
+
         /**处方明细查询*/
         form.on('submit(LAY-bill-data-list)', function (data) {
+
             var params = {
-                "UploadMark":"0" /*上传状态*/
+                "UploadMark": "0" /*上传状态*/
                 , "DirectoryName": data.field.DirectoryName /*药品名称*/
                 , "BillTime": $("#date1").val() /*费用日期*/
                 , "BusinessId": $("#bid").val() /*业务ID*/
@@ -202,8 +203,9 @@
         });
         //监听Tab-已传费用明细
         form.on('submit(LAY-updated-data-list)', function (data) {
-            console.log(data.field)
-            layTableId = "dataTableUpdatedId";//Table ID
+
+
+            var layTableIdTwo = "dataTableUpdatedId";//Table ID
             var params = {
                 "UploadMark": "1" /*上传状态*/
                 , "DirectoryName": data.field.DirectoryName /*药品名称*/
@@ -211,12 +213,14 @@
                 , "BusinessId": $("#bid").val() /*业务ID*/
                 , "UserId": $("#empid").val() /*授权操作人的ID*/
             }
-            tableDataQuery("GET", "/QueryHospitalizationFee", params, true, layTableId);
+            tableDataQuery("GET", "/QueryHospitalizationFee", params, true, layTableIdTwo);
+
+
             return false;//阻止表单跳转
         });
 
         //处方上传（费用清单上传）
-        var PrescriptionUpload = function (tableData) {
+        var prescriptionUpload = function (tableData) {
             var params = {
                 "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
                 , "UserId": $("#empid").val() /*授权操作人的ID*/
@@ -233,46 +237,40 @@
                     //排除已经上传了的数据
                     var dataIds = [];
                     for (var i in data) {
-                        if (data[i].UploadMark == '0') {
+                        if (data[i].UploadMark === '0') {
                             dataIds.push(data[i].Id);
-                        }                        
+                        }
                     }
-                    console.log(dataIds);
-                    layer.msg('选中了：' + dataIds.length + ' 个未上传的数据');
-                    PrescriptionUpload(dataIds);
-                    
-                    //layer.alert(JSON.stringify(dataUp));
+                    //layer.msg('选中了：' + dataIds.length + ' 个未上传的数据');
+                    prescriptionUpload(dataIds);
                     break;
             };
-        });   
+        });
         //页面初始化加载默认数据
         $(function () {
-            var tableId = layTableId;
-            var UploadMark = "0";
-            tableDataLoad(tableId, UploadMark);
+            tableDataLoad(layTableId);
         });
-      
-     
+
+
         //已传费用明细
         table.render({
             elem: '#dataTableUpdatedId'
             , id: "dataTableUpdatedId"
-            , url: host+'/QueryHospitalizationFee'
+            , url: host + '/QueryHospitalizationFee'
             , where: {
-                "UploadMark": "1" , "BusinessId": $("#bid").val(), "UserId": $("#empid").val()
+                "UploadMark": "1", "BusinessId": $("#bid").val(), "UserId": $("#empid").val()
             }
             , parseData: function (res) { //res 即为原始返回的数据
                 return {
-                    "code":res.Code,
+                    "code": res.Code,
                     "count": res.Data.count, //解析数据长度
                     "data": res.Data.data //解析数据列表
                 };
             }
             , limits: [10, 20, 50]
-            , toolbar: '#toolbarDemo'
+            , toolbar: '#toolbarTwo'
             , page: true
             , cols: [[
-                { type: 'checkbox', fixed: 'left' },
                 { title: '序号', type: 'numbers', align: 'center' },
                 , { field: 'UploadMark', title: '上传状态', width: 100, toolbar: '#tableBtn', align: 'center' }
                 , { field: 'DirectoryCode', title: '药品编码', width: 320, hide: true }
@@ -300,7 +298,7 @@
         });
         //更新费用
         form.on('submit(renewalCost)', function (data) {
-          
+
             $.ajax({
                 url: host + "/GetInpatientInfoDetail?UserId=" + $("#empid").val() + "&BusinessId=" + $("#bid").val(),
                 dataType: "json",
@@ -338,7 +336,7 @@
                         //样式类名:墨绿深蓝风
                         layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
                     } else {
-                        console.log(data);
+
                         layer.msg('费用上传成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                     }
                 },
@@ -350,26 +348,27 @@
 
 
     });
-    //监听Tab-已传费用明细
-    form.on('submit(LAY-updated-data-list)', function (data) {
-        console.log(data.field)
-        layTableId = "dataTableUpdatedId";//Table ID
-        var params = {
-            "UploadMark": "1" /*上传状态*/
-            , "DirectoryName": data.field.DirectoryName /*药品名称*/
-            , "BillTime": $("#date2").val() /*费用日期*/
-            , "BusinessId": $("#bid").val() /*业务ID*/
-            , "UserId": $("#empid").val() /*授权操作人的ID*/
-        }
-        tableDataQuery("GET", "/QueryHospitalizationFee", params, true, layTableId);
-        return false;//阻止表单跳转
-    });
-  
+    ////监听Tab-已传费用明细
+    //form.on('submit(LAY-updated-data-list)', function (data) {
+
+    //   var  layTableIdTwo = "dataTableUpdatedId";//Table ID
+    //    var params = {
+    //        "UploadMark": "1" /*上传状态*/
+    //        , "DirectoryName": data.field.DirectoryName /*药品名称*/
+    //        , "BillTime": $("#date2").val() /*费用日期*/
+    //        , "BusinessId": $("#bid").val() /*业务ID*/
+    //        , "UserId": $("#empid").val() /*授权操作人的ID*/
+    //    }
+    //    tableDataQuery("GET", "/QueryHospitalizationFee", params, true, layTableIdTwo);
+    //    return false;//阻止表单跳转
+    //});
+
 
 </script>
 
-<script type="text/html" id="toolbarDemo">
-    <div class="layui-btn-container">
+<script type="text/html" id="toolbarOne">
+    
+    <div class="layui-btn-container" Id="batchUpdateDataDiv">
         <button class="layui-btn layui-btn-sm" lay-event="batchUpdateData">批量上传</button>
     </div>
 </script>
