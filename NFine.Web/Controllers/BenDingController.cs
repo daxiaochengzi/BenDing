@@ -662,7 +662,7 @@ namespace NFine.Web.Controllers
              {
                  var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                  param.OrganizationCode = userBase.OrganizationCode;
-                 param.State = 0;
+            
                  var queryData = _medicalInsuranceSqlRepository.DirectoryComparisonManagement(param);
                  var data = new
                  {
