@@ -236,14 +236,16 @@
             var checkStatus = table.checkStatus(obj.config.id);
             switch (obj.event) {
                 case 'batchUpdateData':
+                  
                     var data = checkStatus.data;//选中行的数据
                     //排除已经上传了的数据
                     var dataIds = [];
                     for (var i in data) {
-                        if (data[i].UploadMark === '0') {
+                        if (data[i].UploadMark === 0) {
                             dataIds.push(data[i].Id);
                         }
                     }
+                  
                     //layer.msg('选中了：' + dataIds.length + ' 个未上传的数据');
                     prescriptionUpload(dataIds);
                     break;
