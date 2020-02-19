@@ -687,8 +687,7 @@ namespace BenDing.Repository.Providers.Web
                 try
                 {
                      sqlConnection.Open();
-                     strSql = @"select (select  top 1 a.BusinessId from [dbo].[Inpatient] as a where a.HospitalizationNo=HospitalizationNo and IsDelete=0) as BusinessId,
-                                  * from [dbo].[HospitalizationFee]  where  IsDelete=0 ";
+                     strSql = @"select   HospitalizationId as BusinessId, * from [dbo].[HospitalizationFee]  where  IsDelete=0 ";
                     if (param.IdList != null && param.IdList.Any())
                     {
                         var idlist = CommonHelp.ListToStr(param.IdList);
@@ -698,7 +697,7 @@ namespace BenDing.Repository.Providers.Web
                     {
                         if (!string.IsNullOrWhiteSpace(param.BusinessId))
                         {
-                            strSql += $@" and HospitalizationId =(select top 1 HospitalizationId from [dbo].[Inpatient] where BusinessId='{param.BusinessId}' and IsDelete=0)";
+                            strSql += $@" and HospitalizationId ='{param.BusinessId}' ";
                         }
                     }
 
