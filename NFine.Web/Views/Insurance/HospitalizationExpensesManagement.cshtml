@@ -257,8 +257,6 @@
         $(function () {
             tableDataLoad(layTableId);
         });
-
-
         //已传费用明细
         table.render({
             elem: '#dataTableUpdatedId'
@@ -278,29 +276,28 @@
             , toolbar: '#toolbarTwo'
             , page: true
             , cols: [[
-                { title: '序号', type: 'numbers', align: 'center' }
-                , { field: 'UploadMark', title: '上传状态', width: 100, toolbar: '#tableBtn', align: 'center' }
-                , { field: 'DirectoryCode', title: '药品编码', width: 320}
-                , { field: 'DirectoryName', title: '药品名称', width: 280 }
-                , { field: 'DirectoryCategoryCode', title: '药品类别', width: 100 }
-                , { field: 'Quantity', title: '数量', width: 100 }
-                , { field: 'UnitPrice', title: '单价', width: 100 }
-                , { field: 'Amount', title: '金额', width: 100 }
-                , { field: 'BillTime', title: '费用日期', width: 160 }
-                , { field: 'UploadUserName', title: '上传人员', width: 100 }
-                , { field: 'UploadTime', title: '上传时间', width: 100 }
-                , { field: 'RecipeCode', title: '处方号', width: 310 }
-                , { field: 'BillDepartment', title: '科室', width: 100 }
-                , { field: 'OperateDoctorName', title: '执行医生', width: 100 }
-                , { field: 'ProjectCode', title: '医保编码', width: 100 }
-                , { field: 'ProjectCodeType', title: '医保类别', width: 100 }
-                , { field: 'UploadAmount', title: '医保上传金额', width: 100 }
-                , { field: 'ProjectLevel', title: '项目等级', width: 100 }
-                , { field: 'SelfPayProportion', title: '自付比例', width: 100 }
-                , { field: 'BlockPrice', title: '限制价格', width: 100 }
-                , { field: 'BlockRemark', title: '限制使用说明', width: 100 }
-                , { field: 'Specification', title: '规格', width: 100, hide: true }
-                , { field: 'AdjustmentDifferenceValue', title: '调整差值', width: 100}
+               
+                { title: '序号', type: 'numbers', align: 'center' },
+                { field: 'UploadMark', title: '上传状态', width: 100, toolbar: '#tableBtn', align: 'center' },
+                { field: 'BatchNumber', title: '医保批次号', width: 150 },
+                { field: 'DirectoryCode', title: '药品编码', width: 320, hide: true },
+                { field: 'DirectoryName', title: '药品名称', width: 200 },
+                { field: 'DirectoryCategoryCode', title: '药品类别', width: 100 },
+                { field: 'Quantity', title: '数量', width: 100 }, { field: 'UnitPrice', title: '单价', width: 100 },
+                { field: 'Amount', title: '金额', width: 100 }, { field: 'BillTime', title: '费用日期', width: 160 },
+                { field: 'BillDepartment', title: '科室', width: 100 },
+                { field: 'DetailId', title: '处方流水号', width: 250, hide: true },
+                { field: 'OperateDoctorName', title: '执行医生', width: 100 , hide: true  },
+                { field: 'UploadUserName', title: '上传操作员', width: 100},
+                { field: 'UploadTime', title: '上传时间', width: 100 },
+                { field: 'ProjectCode', title: '医保编码', width: 100 },
+                { field: 'ProjectCodeType', title: '医保类别', width: 100 },
+                { field: 'UploadAmount', title: '医保上传金额', width: 100 },
+                { field: 'ProjectLevel', title: '项目等级', width: 100 },
+                { field: 'SelfPayProportion', title: '自付比例', width: 100 },
+                { field: 'BlockPrice', title: '限制价格', width: 100 },
+                { field: 'BlockRemark', title: '限制使用说明', width: 100 },
+                { field: 'Specification', title: '规格', width: 100}
             ]]
         });
         //更新费用
