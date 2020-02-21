@@ -148,13 +148,20 @@ namespace BenDing.Service.Providers
                 var data =
                     JsonConvert.DeserializeObject<WorKerHospitalizationRegisterParam>(queryData
                         .AdmissionInfoJson);
-                if (!string.IsNullOrWhiteSpace(param.AdmissionDate)) data.AdmissionDate = param.AdmissionDate;
-                if (!string.IsNullOrWhiteSpace(param.AdmissionMainDiagnosis)) data.AdmissionMainDiagnosis = param.AdmissionMainDiagnosis;
-                if (!string.IsNullOrWhiteSpace(param.AdmissionMainDiagnosisIcd10)) data.AdmissionMainDiagnosisIcd10 = param.AdmissionMainDiagnosisIcd10;
-                if (!string.IsNullOrWhiteSpace(param.DiagnosisIcd10Three)) data.DiagnosisIcd10Three = param.DiagnosisIcd10Three;
-                if (!string.IsNullOrWhiteSpace(param.DiagnosisIcd10Two)) data.DiagnosisIcd10Two = param.DiagnosisIcd10Two;
-                if (!string.IsNullOrWhiteSpace(param.InpatientDepartmentCode)) data.InpatientDepartmentCode = param.InpatientDepartmentCode;
-                if (!string.IsNullOrWhiteSpace(param.BedNumber)) data.BedNumber = param.BedNumber;
+                if (!string.IsNullOrWhiteSpace(param.AdmissionDate))
+                    data.AdmissionDate = param.AdmissionDate;
+                if (!string.IsNullOrWhiteSpace(param.AdmissionMainDiagnosis))
+                    data.AdmissionMainDiagnosis = param.AdmissionMainDiagnosis;
+                if (!string.IsNullOrWhiteSpace(param.AdmissionMainDiagnosisIcd10))
+                    data.AdmissionMainDiagnosisIcd10 = param.AdmissionMainDiagnosisIcd10;
+                if (!string.IsNullOrWhiteSpace(param.DiagnosisIcd10Three))
+                    data.DiagnosisIcd10Three = param.DiagnosisIcd10Three;
+                if (!string.IsNullOrWhiteSpace(param.DiagnosisIcd10Two))
+                    data.DiagnosisIcd10Two = param.DiagnosisIcd10Two;
+                if (!string.IsNullOrWhiteSpace(param.InpatientDepartmentCode))
+                    data.InpatientDepartmentCode = param.InpatientDepartmentCode;
+                if (!string.IsNullOrWhiteSpace(param.BedNumber))
+                    data.BedNumber = param.BedNumber;
                 data.Id = queryData.Id;
                 paramStr = JsonConvert.SerializeObject(data);
             }

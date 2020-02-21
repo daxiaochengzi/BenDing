@@ -51,6 +51,7 @@
     <Compile Include="Models\Dto\Base\DiagnosisData.cs" />
     <Compile Include="Models\Dto\Base\PaginationDto.cs" />
     <Compile Include="Models\Dto\Base\PaginationUserDto.cs" />
+    <Compile Include="Models\Dto\Base\QueryDateBaseDto.cs" />
     <Compile Include="Models\Dto\DifferentPlaces\CanCelDifferentPlacesHospitalizationRegisterDto.cs" />
     <Compile Include="Models\Dto\DifferentPlaces\DifferentPlacesHospitalizationRegisterDto.cs" />
     <Compile Include="Models\Dto\DifferentPlaces\DifferentPlacesUserInfoDto.cs" />
@@ -132,6 +133,7 @@
     <Compile Include="Models\Enums\ProjectCodeType.cs" />
     <Compile Include="Models\Enums\ProjectLevel.cs" />
     <Compile Include="Models\Enums\SummaryType.cs" />
+    <Compile Include="Models\HisXml\HospitalizationFeeUploadCancelXml.cs" />
     <Compile Include="Models\HisXml\HospitalizationFeeUploadXml.cs" />
     <Compile Include="Models\HisXml\HospitalizationModifyXml.cs" />
     <Compile Include="Models\HisXml\HospitalizationRegisterCancelXml.cs" />

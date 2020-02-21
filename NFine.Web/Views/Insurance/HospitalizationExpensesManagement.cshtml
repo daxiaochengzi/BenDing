@@ -10,6 +10,7 @@
     <div class="layui-tab-content">
         <input type="hidden" id="bid" name="BusinessId" value="@ViewBag.bid" placeholder="业务ID" />
         <input type="hidden" id="empid" name="UserId" value="@ViewBag.empid" placeholder="用户ID" />
+        <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
 
         <div class="layui-tab-item layui-show">
 
@@ -81,19 +82,27 @@
             , laydate = layui.laydate;
 
         //执行一个laydate实例
-        laydate.render({ elem: '#date1' });
-        laydate.render({ elem: '#date2' });
 
-        form.render(null, "LAY-bill-data-list");
-        form.render(null, "LAY-updated-data-list");
-
-        element.on('tab(test)', function (elem) {
-            location.hash = 'test=' + $(this).attr('lay-id');
-        });
-
+        laydate.render({ elem: '#date1', range: true });
+        laydate.render({ elem: '#date2', range: true });
+       
+        var tab1params = {
+            BusinessId: $("#bid").val(), /*当前住院记录的业务ID*/
+            UserId: $("#empid").val(),/*授权操作人的ID*/
+            UploadMark: 0, /*上传状态*/
+            TransKey: $("#empid").val()
+        };
+        var tab2params = {
+            BusinessId: $("#bid").val(), /*当前住院记录的业务ID*/
+            UserId: $("#empid").val(),/*授权操作人的ID*/
+            UploadMark: 1, /*上传状态*/
+            TransKey: $("#empid").val()
+        };
+        var layTableIdTwo = "dataTableUpdatedId";
         //数据表格实例化
         var layTableId = "dataTableBillId"; //默认
-        var tableIns = table.render({
+        //院内费用明细
+        table.render({
             elem: '#' + layTableId,
             id: layTableId,
             limits: [10, 20, 50],
@@ -110,7 +119,6 @@
                 , { field: 'UnitPrice', title: '单价', width: 100 }
                 , { field: 'Amount', title: '金额', width: 100 }
                 , { field: 'BillTime', title: '费用日期', width: 160 }
-                , { field: 'UploadUserName', title: '操作员', width: 100, hide: true }
                 , { field: 'RecipeCode', title: '处方号', width: 310, hide: true }
                 , { field: 'BillDepartment', title: '科室', width: 100 }
                 , { field: 'OperateDoctorName', title: '执行医生', width: 100 }
@@ -120,105 +128,117 @@
                 , { field: 'ProjectLevel', title: '项目等级', width: 100 }
                 , { field: 'SelfPayProportion', title: '自付比例', width: 100 }
                 , { field: 'BlockPrice', title: '限制价格', width: 100 }
-                , { field: 'BlockRemark', title: '限制使用说明', width: 100, hide: true }
+                , { field: 'BlockRemark', title: '限制使用说明', width: 100}
+                , { field: 'Specification', title: '规格', width: 100}
+                , { field: 'AdjustmentDifferenceValue', title: '调整差值', width: 100 }
+               
+            ]]
+        });
+        //已传费用明细
+        table.render({
+            elem: layTableIdTwo
+            , id: layTableIdTwo
+            , limits: [10, 20, 50]
+            , toolbar: '#toolbarTwo'
+            , page: true
+            , cols: [[
+                { title: '序号', type: 'numbers', align: 'center' }
+                , { field: 'UploadMark', title: '上传状态', width: 100, toolbar: '#tableBtn', align: 'center' }
+                , { field: 'DirectoryCode', title: '药品编码', width: 320 }
+                , { field: 'DirectoryName', title: '药品名称', width: 280 }
+                , { field: 'DirectoryCategoryCode', title: '药品类别', width: 100 }
+                , { field: 'Quantity', title: '数量', width: 100 }
+                , { field: 'UnitPrice', title: '单价', width: 100 }
+                , { field: 'Amount', title: '金额', width: 100 }
+                , { field: 'BillTime', title: '费用日期', width: 160 }
+                , { field: 'UploadUserName', title: '上传人员', width: 100 }
+                , { field: 'UploadTime', title: '上传时间', width: 100 }
+                , { field: 'RecipeCode', title: '处方号', width: 310 }
+                , { field: 'BillDepartment', title: '科室', width: 100 }
+                , { field: 'OperateDoctorName', title: '执行医生', width: 100 }
+                , { field: 'ProjectCode', title: '医保编码', width: 100 }
+                , { field: 'ProjectCodeType', title: '医保类别', width: 100 }
+                , { field: 'UploadAmount', title: '医保上传金额', width: 100 }
+                , { field: 'ProjectLevel', title: '项目等级', width: 100 }
+                , { field: 'SelfPayProportion', title: '自付比例', width: 100 }
+                , { field: 'BlockPrice', title: '限制价格', width: 100 }
+                , { field: 'BlockRemark', title: '限制使用说明', width: 100 }
                 , { field: 'Specification', title: '规格', width: 100, hide: true }
-                , { field: 'AdjustmentDifferenceValue', title: '调整差值', width: 100, hide: true }
-                , { field: 'OrganizationCode', title: '组织机构', width: 280, hide: true }
+                , { field: 'AdjustmentDifferenceValue', title: '调整差值', width: 100 }
             ]]
         });
 
-
-        var tableDataLoad = function (tableId) {
-            //默认tab1选中执行
-            var params = {
-                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
-                , "UserId": $("#empid").val() /*授权操作人的ID*/
-                , "UploadMark": 0 /*上传状态*/
-            };
-            $.ajax({
-                url: host + "/QueryHospitalizationFee",
-                data: params,
-                dataType: "json",
-                async: false,
-
-                success: function (res) {
-                    if (res.Success === false) {
-                        var errData = res.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                    } else {
-                        var data = res.Data;
-                        //费用列表初始化
-                        tableIns.reload({
-                            elem: '#' + tableId,
-                            id: tableId,
-                            data: data.data,
-                            count: data.count
-                        });
+        var tableDataLoad = function (tableId, whereParams) {
+            //执行重载
+            table.reload(tableId,
+                {
+                    url: host + '/QueryHospitalizationFee',
+                    where: whereParams
+                    , parseData: function (res) { //res 即为原始返回的数据
+                        if (res.Success === false) layer.alert(res.Message, { skin: 'layui-layer-molv', icon: 3, title: '提示' });;
+                        return {
+                            "code": res.Code,
+                            "count": res.Data.count, //解析数据长度
+                            "data": res.Data.data //解析数据列表
+                        };
                     }
                 },
-                complete: function () {
-                    form.render();
-                }
-            });
+                'data');
+            
         }
-        //表格查询
-        var tableDataQuery = function (method, url, params, reloadTable, tableId) {
-            $.ajax({
-                type: method,
-                url: host + url,
-                data: params,
-                dataType: "json",
-                async: false,
-                success: function (res) {
-                    if (res.Success === false) {
-                        var errData = res.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                    } else {
-                        if (url === "/PrescriptionUpload") {
-                            layer.msg(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
-                        }
-                        if (reloadTable) {
-                            //重新加载表格
-                            tableDataLoad(tableId);
-                        }
-                    }
-                },
-                complete: function () {
-                    form.render();
-                }
-            });
-        }
+        ////表格查询
+        //var tableDataQuery = function (method, url, params, reloadTable, tableId) {
+        //    $.ajax({
+        //        type: method,
+        //        url: host + url,
+        //        data: params,
+        //        dataType: "json",
+        //        async: false,
+        //        success: function (res) {
+        //            if (res.Success === false) {
+        //                var errData = res.Message;
+        //                //样式类名:墨绿深蓝风
+        //                layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+        //            } else {
+        //                if (url === "/PrescriptionUpload") {
+        //                    layer.msg(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+        //                }
+        //                if (reloadTable) {
+        //                    //重新加载表格
+        //                    tableDataLoad(tableId);
+        //                }
+        //            }
+        //        },
+        //        complete: function () {
+        //            form.render();
+        //        }
+        //    });
+        //}
 
         /**处方明细查询*/
         form.on('submit(LAY-bill-data-list)', function (data) {
-
-            var params = {
-                "UploadMark": "0" /*上传状态*/
-                , "DirectoryName": data.field.DirectoryName /*药品名称*/
-                , "BillTime": $("#date1").val() /*费用日期*/
-                , "BusinessId": $("#bid").val() /*业务ID*/
-                , "UserId": $("#empid").val() /*授权操作人的ID*/
-            }
-            tableDataQuery("GET", "/QueryHospitalizationFee", params, true, layTableId);
-            return false;//阻止表单跳转
+            tab1params["BillTime"] = $("#date1").val();/*费用日期*/
+            tab1params["DirectoryName"] = data.field.DirectoryName;/*药品名称*/
+            //执行查询
+            tableDataLoad(layTableId,tab1params);
         });
         //监听Tab-已传费用明细
         form.on('submit(LAY-updated-data-list)', function (data) {
 
+            //Table ID
+            //var params = {
+            //    "UploadMark": "1" /*上传状态*/
+            //    , "DirectoryName": data.field.DirectoryName /*药品名称*/
+            //    , "BillTime": $("#date2").val() /*费用日期*/
+            //    , "BusinessId": $("#bid").val() /*业务ID*/
+            //    , "UserId": $("#empid").val() /*授权操作人的ID*/
+            //}
+            //tableDataQuery("GET", "/QueryHospitalizationFee", params, true, layTableIdTwo);
 
-            var layTableIdTwo = "dataTableUpdatedId";//Table ID
-            var params = {
-                "UploadMark": "1" /*上传状态*/
-                , "DirectoryName": data.field.DirectoryName /*药品名称*/
-                , "BillTime": $("#date2").val() /*费用日期*/
-                , "BusinessId": $("#bid").val() /*业务ID*/
-                , "UserId": $("#empid").val() /*授权操作人的ID*/
-            }
-            tableDataQuery("GET", "/QueryHospitalizationFee", params, true, layTableIdTwo);
-
-
+            tab2params["BillTime"] = $("#date2").val();/*费用日期*/
+            tab2params["DirectoryName"] = data.field.DirectoryName;/*药品名称*/
+            //执行查询
+            tableDataLoad(layTableIdTwo, tab2params);
             return false;//阻止表单跳转
         });
 
@@ -228,6 +248,7 @@
                 "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
                 , "UserId": $("#empid").val() /*授权操作人的ID*/
                 , "DataIdList": tableData
+                , "TransKey": $("#transkey").val()
             }
             tableDataQuery("POST", "/PrescriptionUpload", params, true, layTableId);
         }
@@ -253,54 +274,11 @@
         });
         //页面初始化加载默认数据
         $(function () {
-            tableDataLoad(layTableId);
+            tableDataLoad(layTableId, tab1params);
         });
 
 
-        //已传费用明细
-        table.render({
-            elem: '#dataTableUpdatedId'
-            , id: "dataTableUpdatedId"
-            , url: host + '/QueryHospitalizationFee'
-            , where: {
-                "UploadMark": "1", "BusinessId": $("#bid").val(), "UserId": $("#empid").val()
-            }
-            , parseData: function (res) { //res 即为原始返回的数据
-                return {
-                    "code": res.Code,
-                    "count": res.Data.count, //解析数据长度
-                    "data": res.Data.data //解析数据列表
-                };
-            }
-            , limits: [10, 20, 50]
-            , toolbar: '#toolbarTwo'
-            , page: true
-            , cols: [[
-                { title: '序号', type: 'numbers', align: 'center' }
-                , { field: 'UploadMark', title: '上传状态', width: 100, toolbar: '#tableBtn', align: 'center' }
-                , { field: 'DirectoryCode', title: '药品编码', width: 320, hide: true }
-                , { field: 'DirectoryName', title: '药品名称', width: 280 }
-                , { field: 'DirectoryCategoryCode', title: '药品类别', width: 100 }
-                , { field: 'Quantity', title: '数量', width: 100 }
-                , { field: 'UnitPrice', title: '单价', width: 100 }
-                , { field: 'Amount', title: '金额', width: 100 }
-                , { field: 'BillTime', title: '费用日期', width: 160 }
-                , { field: 'UploadUserName', title: '操作员', width: 100, hide: true }
-                , { field: 'RecipeCode', title: '处方号', width: 310, hide: true }
-                , { field: 'BillDepartment', title: '科室', width: 100 }
-                , { field: 'OperateDoctorName', title: '执行医生', width: 100 }
-                , { field: 'ProjectCode', title: '医保编码', width: 100 }
-                , { field: 'ProjectCodeType', title: '医保类别', width: 100 }
-                , { field: 'UploadAmount', title: '医保上传金额', width: 100 }
-                , { field: 'ProjectLevel', title: '项目等级', width: 100 }
-                , { field: 'SelfPayProportion', title: '自付比例', width: 100 }
-                , { field: 'BlockPrice', title: '限制价格', width: 100 }
-                , { field: 'BlockRemark', title: '限制使用说明', width: 100, hide: true }
-                , { field: 'Specification', title: '规格', width: 100, hide: true }
-                , { field: 'AdjustmentDifferenceValue', title: '调整差值', width: 100, hide: true }
-                , { field: 'OrganizationCode', title: '组织机构', width: 280, hide: true }
-            ]]
-        });
+      
         //更新费用
         form.on('submit(renewalCost)', function (data) {
 
@@ -328,7 +306,7 @@
             var params = {
                 "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
                 , "UserId": $("#empid").val() /*授权操作人的ID*/
-
+                , "TransKey": $("#transkey").val()
             };
             $.ajax({
                 url: host + "/PrescriptionUpload",
@@ -353,21 +331,7 @@
 
 
     });
-    ////监听Tab-已传费用明细
-    //form.on('submit(LAY-updated-data-list)', function (data) {
-
-    //   var  layTableIdTwo = "dataTableUpdatedId";//Table ID
-    //    var params = {
-    //        "UploadMark": "1" /*上传状态*/
-    //        , "DirectoryName": data.field.DirectoryName /*药品名称*/
-    //        , "BillTime": $("#date2").val() /*费用日期*/
-    //        , "BusinessId": $("#bid").val() /*业务ID*/
-    //        , "UserId": $("#empid").val() /*授权操作人的ID*/
-    //    }
-    //    tableDataQuery("GET", "/QueryHospitalizationFee", params, true, layTableIdTwo);
-    //    return false;//阻止表单跳转
-    //});
-
+    
 
 </script>
 

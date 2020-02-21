@@ -24,7 +24,7 @@ namespace BenDing.Repository.Providers.Web
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private readonly ISystemManageRepository _systemManageRepository;
         private readonly IWebBasicRepository _webBasicRepository;
-      
+
 
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace BenDing.Repository.Providers.Web
 
         public void Login(string organizationCode)
         {
-           
+
             var hospitalData = _systemManageRepository.QueryHospitalOrganizationGrade(organizationCode);
             if (hospitalData == null) throw new Exception("当前医院无等级信息，请设置");
             if (string.IsNullOrWhiteSpace(hospitalData.MedicalInsuranceAccount)) throw new Exception("当前医院未设置，医保账户，请设置！！！");
@@ -61,8 +61,8 @@ namespace BenDing.Repository.Providers.Web
                 XmlHelp.DeSerializerModel(new IniXmlDto(), true);
             }
         }
-       
-        
+
+
 
         /// <summary>
         /// 获取个人基础资料
@@ -151,7 +151,7 @@ namespace BenDing.Repository.Providers.Web
         /// 住院预结算
         /// </summary>
         /// <param name="param"></param>
-        /// <param name="infoParam"></param>
+
         /// <returns></returns>
         public HospitalizationPresettlementDto HospitalizationPreSettlement(HospitalizationPresettlementParam param)
         {
@@ -291,7 +291,7 @@ namespace BenDing.Repository.Providers.Web
             if (param.CancelLimit == "1")
             {
                 cancelData = Cancel(param);
-              
+
             }
             else
             {

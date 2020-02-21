@@ -92,6 +92,10 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
         public DateTime? UploadTime { get; set; }
         /// <summary>
+        /// 医保批次号
+        /// </summary>
+        public string BatchNumber { get; set; }
+        /// <summary>
         /// 处方号
         /// </summary>
         public  string RecipeCode { get; set; }

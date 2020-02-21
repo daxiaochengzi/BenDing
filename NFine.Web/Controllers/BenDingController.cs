@@ -332,13 +332,12 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new InpatientInfoDetailDto()).RunWithTry(y =>
            {
-
                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                if (userBase != null)
                {
                    var data = _webServiceBasicService.GetInpatientInfoDetail(userBase, param.BusinessId);
                    //y.Data = data;
-                   y.Data = "成功更新数据:"+data.Count()+"条!!!";
+                   y.Data = "成功更新数据:" + data.Count() + "条!!!";
                }
 
            });
@@ -870,39 +869,13 @@ namespace NFine.Web.Controllers
         /// 医保删除处方数据
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        public ApiJsonResultData DeletePrescriptionUpload([FromUri]BaseUiBusinessIdDataParam param)
+        [HttpPost]
+        public ApiJsonResultData DeletePrescriptionUpload([FromBody]BaseUiBusinessIdDataParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
-            {
-                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                //获取医保病人信息
-                var residentDataParam = new QueryMedicalInsuranceResidentInfoParam()
-                {
-                    BusinessId = param.BusinessId,
-                    OrganizationCode = userBase.OrganizationCode,
-                };
-                //获取病人明细
-                var queryData = _hisSqlRepository.InpatientInfoDetailQuery
-                             (new InpatientInfoDetailQueryParam() { BusinessId = param.BusinessId });
-                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(residentDataParam);
-                if (queryData.Any())
-                {
-                    //获取已上传数据、
-                    var uploadDataId = queryData.Where(c => c.UploadMark == 1).Select(d => d.Id).ToList();
-                    var batchNumberList = queryData.Where(c => c.UploadMark == 1).GroupBy(d => d.BatchNumber).Select(b => b.Key).ToList();
-                    if (batchNumberList.Any())
-                    {
-                        var deleteParam = new DeletePrescriptionUploadParam()
-                        {
-                            BatchNumber = string.Join(",", batchNumberList.ToArray()),
-                            MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo
-                        };
-                        //医保登录
-                        _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                        _residentMedicalInsuranceRepository.DeletePrescriptionUpload(deleteParam, uploadDataId, userBase);
-                    }
-                }
+            { //医保登录
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                _residentMedicalInsuranceService.DeletePrescriptionUpload(param);
             });
 
         }
@@ -948,7 +921,7 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData HospitalizationPreSettlement([FromUri]UiBaseDataParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
-            {  //
+            {
                 var resultData = new SettlementDto();
                 //医保登录
                 _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
@@ -1068,7 +1041,6 @@ namespace NFine.Web.Controllers
                     //职工
                     if (residentData.InsuranceType == "310")
                     {
-
                         //获取医院等级
                         var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
                         var workerSettlementData = _workerMedicalInsuranceService.QueryWorkerHospitalizationSettlement(
@@ -1346,13 +1318,10 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
-                {
                     _workerMedicalInsuranceService.WorkerHospitalizationRegister(param);
-                }
-                else
-                {
-                    throw new Exception("诊断不能为空!!!");
-                }
+                throw new Exception("诊断不能为空!!!");
+
+
             });
 
         }
@@ -1385,14 +1354,8 @@ namespace NFine.Web.Controllers
                 //医保登陆
                 _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
-                {
                     _workerMedicalInsuranceService.ModifyWorkerHospitalization(param);
-                }
-                else
-                {
-                    throw new Exception("诊断不能为空!!!");
-                }
-
+                throw new Exception("诊断不能为空!!!");
             });
 
         }

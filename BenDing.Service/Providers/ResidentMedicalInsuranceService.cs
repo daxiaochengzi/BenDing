@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
@@ -25,7 +26,7 @@ namespace BenDing.Service.Providers
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private readonly ISystemManageRepository _systemManageRepository;
         private readonly IWebServiceBasicService _webserviceBasicService;
-      
+
 
         public ResidentMedicalInsuranceService(
             IResidentMedicalInsuranceRepository residentMedicalInsuranceRepository,
@@ -34,7 +35,7 @@ namespace BenDing.Service.Providers
             IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
             ISystemManageRepository systemManageRepository,
             IWebServiceBasicService serviceBasicService
-           
+
             )
         {
             _residentMedicalInsuranceRepository = residentMedicalInsuranceRepository;
@@ -43,7 +44,7 @@ namespace BenDing.Service.Providers
             _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
             _systemManageRepository = systemManageRepository;
             _webserviceBasicService = serviceBasicService;
-           
+
         }
         public ResidentUserInfoDto GetUserInfo(ResidentUserInfoParam param)
         {
@@ -74,7 +75,7 @@ namespace BenDing.Service.Providers
                 AdmissionInfoJson = JsonConvert.SerializeObject(registerParam),
                 BusinessId = param.BusinessId,
                 Id = Guid.NewGuid(),
-                InsuranceType =342,
+                InsuranceType = 342,
                 MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceInpatientNo,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized
             };
@@ -127,22 +128,6 @@ namespace BenDing.Service.Providers
             userBase.TransKey = param.TransKey;
             var modifyParam = GetResidentHospitalizationModify(param);
             _residentMedicalInsuranceRepository.HospitalizationModify(modifyParam, userBase);
-            //// 回参构建
-            //var xmlData = new HospitalizationRegisterXml()
-            //{
-            //    MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
-            //};
-            //var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-            //var saveXml = new SaveXmlDataParam()
-            //{
-            //    User = userBase,
-            //    MedicalInsuranceBackNum = "CXJB003",
-            //    MedicalInsuranceCode = "23",
-            //    BusinessId = param.BusinessId,
-            //    BackParam = strXmlBackParam
-            //};
-            ////存基层
-            //_webBasicRepository.SaveXmlData(saveXml);
             var paramStr = "";
             var queryData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(
                 new QueryMedicalInsuranceResidentInfoParam
@@ -165,12 +150,14 @@ namespace BenDing.Service.Providers
                     data.DiagnosisIcd10Three = modifyParam.DiagnosisIcd10Three;
                 if (!string.IsNullOrWhiteSpace(modifyParam.DiagnosisIcd10Two))
                     data.DiagnosisIcd10Two = modifyParam.DiagnosisIcd10Two;
-                if (!string.IsNullOrWhiteSpace(param.FetusNumber)) data.FetusNumber = param.FetusNumber;
+                if (!string.IsNullOrWhiteSpace(param.FetusNumber))
+                    data.FetusNumber = param.FetusNumber;
                 if (!string.IsNullOrWhiteSpace(param.HouseholdNature))
                     data.HouseholdNature = param.HouseholdNature;
                 if (!string.IsNullOrWhiteSpace(param.InpatientDepartmentCode))
                     data.InpatientDepartmentCode = param.InpatientDepartmentCode;
-                if (!string.IsNullOrWhiteSpace(param.BedNumber)) data.BedNumber = param.BedNumber;
+                if (!string.IsNullOrWhiteSpace(param.BedNumber))
+                    data.BedNumber = param.BedNumber;
                 data.Id = queryData.Id;
                 paramStr = JsonConvert.SerializeObject(data);
             }
@@ -222,6 +209,76 @@ namespace BenDing.Service.Providers
                 }
             }
         }
+
+        public void DeletePrescriptionUpload(BaseUiBusinessIdDataParam param)
+        {
+            var userBase = _webserviceBasicService.GetUserBaseInfo(param.UserId);
+            //获取医保病人信息
+            var residentDataParam = new QueryMedicalInsuranceResidentInfoParam()
+            {
+                BusinessId = param.BusinessId,
+                OrganizationCode = userBase.OrganizationCode,
+            };
+            List<QueryInpatientInfoDetailDto> queryData;
+            //获取病人明细
+            var queryDataDetail = _hisSqlRepository.InpatientInfoDetailQuery
+                (new InpatientInfoDetailQueryParam() { BusinessId = param.BusinessId });
+            //获取选择
+            queryData = param.DataIdList != null ? queryDataDetail.Where(c => param.DataIdList.Contains(c.Id.ToString())).ToList() : queryDataDetail;
+            //获取病人医保信息
+            var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(residentDataParam);
+            if (queryData.Any())
+            {
+                //获取已上传数据、
+                var uploadDataId = queryData.Where(c => c.UploadMark == 1).Select(d => d.Id).ToList();
+                var batchNumberList = queryData.Where(c => c.UploadMark == 1).GroupBy(d => d.BatchNumber).Select(b => b.Key).ToList();
+                if (batchNumberList.Any())
+                {
+                    var deleteParam = new DeletePrescriptionUploadParam()
+                    {
+                        BatchNumber = string.Join(",", batchNumberList.ToArray()),
+                        MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo
+                    };
+                    _residentMedicalInsuranceRepository.DeletePrescriptionUpload(deleteParam, uploadDataId, userBase);
+                    //日志
+                    var joinJson = JsonConvert.SerializeObject(queryData.Select(c => c.DetailId).ToList());
+                    var logParam = new AddHospitalLogParam
+                    {
+                        User = userBase,
+                        RelationId = Guid.Parse(param.BusinessId),
+                        JoinOrOldJson = joinJson,
+                        ReturnOrNewJson = "",
+                        Remark = "医保取消处方明细id执行成功"
+                    };
+                    _systemManageRepository.AddHospitalLog(logParam);
+                    // 回参构建
+                    var xmlData = new HospitalizationFeeUploadCancelXml()
+                    {
+                        MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                        RowDataList = queryData.Select(c => new HospitalizationFeeUploadRowXml() { SerialNumber = c.DetailId }).ToList()
+                    };
+                    var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                    var saveXml = new SaveXmlDataParam()
+                    {
+                        User = userBase,
+                        MedicalInsuranceBackNum = "CXJB005",
+                        MedicalInsuranceCode = "32",
+                        BusinessId = param.BusinessId,
+                        BackParam = strXmlBackParam
+                    };
+                    //存基层
+                    _webBasicRepository.SaveXmlData(saveXml);
+                    //日志
+                    logParam.Remark = "基层取消处方明细id执行成功";
+                    _systemManageRepository.AddHospitalLog(logParam);
+                }
+            }
+            else
+            {
+                throw new Exception("未获取到医保退处方数据,请核实数据的正确性!!!");
+            }
+        }
+
         /// <summary>
         /// 居民住院预结算
         /// </summary>
@@ -248,11 +305,11 @@ namespace BenDing.Service.Providers
             var preSettlementData = hisPreSettlementData.PreSettlementData.FirstOrDefault();
             //获取医保病人信息
             var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-            if (string.IsNullOrWhiteSpace(preSettlementData.EndDate)) throw  new  Exception("当前病人在基层中未办理出院,不能办理医保预结算!!!");
+            if (string.IsNullOrWhiteSpace(preSettlementData.EndDate)) throw new Exception("当前病人在基层中未办理出院,不能办理医保预结算!!!");
             //医保执行
             var data = _residentMedicalInsuranceRepository.HospitalizationPreSettlement(new HospitalizationPresettlementParam()
             {
-                LeaveHospitalDate =Convert.ToDateTime(preSettlementData.EndDate).ToString("yyyyMMdd"),
+                LeaveHospitalDate = Convert.ToDateTime(preSettlementData.EndDate).ToString("yyyyMMdd"),
                 MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
             });
             resultData = data ?? throw new Exception("居民预结算返回结果有误!!!");
@@ -315,7 +372,7 @@ namespace BenDing.Service.Providers
             var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
             if (residentData.MedicalInsuranceState != MedicalInsuranceState.MedicalInsurancePreSettlement) throw new Exception("当前病人未办理预结算,不能办理结算!!!");
             if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已办理医保结算,不能办理再次结算!!!");
-           
+
             var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
             //获取住院病人
             var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
@@ -386,7 +443,6 @@ namespace BenDing.Service.Providers
             var resultData = "下载成功共" + allNum + "条记录";
             return resultData;
         }
-
         /// <summary>
         /// 医保登陆
         /// </summary>
@@ -396,7 +452,6 @@ namespace BenDing.Service.Providers
             var userBase = _webserviceBasicService.GetUserBaseInfo(param.UserId);
             _residentMedicalInsuranceRepository.Login(userBase.OrganizationCode);
         }
-
         /// <summary>
         /// 居民入院登记修改
         /// </summary>
@@ -454,7 +509,5 @@ namespace BenDing.Service.Providers
             //iniParam.BusinessId = param.BusinessId;
             return iniParam;
         }
-
-
     }
 }

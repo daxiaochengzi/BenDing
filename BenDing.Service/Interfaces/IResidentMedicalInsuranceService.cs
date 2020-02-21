@@ -51,6 +51,11 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
          HospitalizationPresettlementDto HospitalizationPreSettlement(UiBaseDataParam param);
+        /// <summary>
+        /// 处方删除
+        /// </summary>
+        /// <param name="param"></param>
+         void DeletePrescriptionUpload(BaseUiBusinessIdDataParam param);
         //医保登陆
         void Login(QueryHospitalOperatorParam param);
 

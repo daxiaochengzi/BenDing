@@ -21,5 +21,17 @@ namespace BenDing.Domain.Models.Params.UI
         /// </summary>
 
         public int UploadMark { get; set; }
+        /// <summary>
+        /// 日期
+        /// </summary>
+        public  string BillTime { get; set; }
+        /// <summary>
+        /// 药品名称
+        /// </summary>
+        public  string DirectoryName { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public  string TransKey { get; set; }
     }
 }

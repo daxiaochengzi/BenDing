@@ -57,7 +57,6 @@ namespace BenDing.Domain.Xml
         {
             return BitConverter.ToInt64(Guid.Parse(param).ToByteArray(), 0).ToString();
         }
-
         /// <summary>
         /// 日志字符串格式化
         /// </summary>
@@ -75,8 +74,6 @@ namespace BenDing.Domain.Xml
         public static decimal ValueToDouble(decimal param)
         {
             return Math.Round(param, 1, MidpointRounding.AwayFromZero);
-
-
         }
         /// <summary>
         ///  字符串转换数值型
@@ -86,7 +83,6 @@ namespace BenDing.Domain.Xml
         public static decimal ValueToDecimal(string param)
         {
             decimal resultData = 0;
-
             if (!string.IsNullOrWhiteSpace(param))
             {
                 resultData = Convert.ToDecimal(param);
@@ -108,7 +104,6 @@ namespace BenDing.Domain.Xml
                 {
                     result += "'" + item + "'" + ",";
                 }
-
             }
             return result?.Substring(0, result.Length - 1);
         }
@@ -160,7 +155,6 @@ namespace BenDing.Domain.Xml
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
             Type t = obj.GetType();
-
             PropertyInfo[] pi = t.GetProperties();
             foreach (PropertyInfo info in pi)
             {
@@ -169,7 +163,6 @@ namespace BenDing.Domain.Xml
                     dict.Add(info.Name, string.Format("{0}.{1}", t.FullName, info.Name));
                 }
             }
-
             return dict;
         }
         /// <summary>
@@ -319,6 +312,22 @@ namespace BenDing.Domain.Xml
 
             return msg;
         }
+        /// <summary>
+        /// 获取查询日期
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static QueryDateBaseDto GetBillTime(string param)
+        {
+            var resultData = new QueryDateBaseDto();
+            if (!string.IsNullOrWhiteSpace(param))
+            {
+                resultData.StartTime= param.Substring(0, 10)+ " 00:00:00.000";
+                resultData.EndTime= param.Substring(param.Length - 10, 10)+ " 23:59:59.000";
+            }
+            return resultData;
+        }
+
     }
     
 

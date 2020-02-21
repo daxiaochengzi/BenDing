@@ -116,7 +116,7 @@ namespace BenDing.Repository.Providers.Web
                         string insterCount = null;
                         foreach (var itmes in param)
                         {
-                                    insterSql = $@"
+                            insterSql = $@"
                                     insert into [dbo].[HospitalThreeCatalogue]([id],[DirectoryCode],[DirectoryName],[MnemonicCode],[DirectoryCategoryCode],[DirectoryCategoryName],[Unit],[Specification],[formulation],
                                     [ManufacturerName],[remark],DirectoryCreateTime,CreateTime,IsDelete,CreateUserId,FixedEncoding)
                                     values('{Guid.NewGuid()}','{itmes.DirectoryCode}','{itmes.DirectoryName}','{itmes.MnemonicCode}',{Convert.ToInt16(type)},'{itmes.DirectoryCategoryName}','{itmes.Unit}','{itmes.Specification}','{itmes.Formulation}',
@@ -126,7 +126,7 @@ namespace BenDing.Repository.Providers.Web
                         sqlConnection.Execute(insterCount);
                         sqlConnection.Close();
                     }
-                    
+
                 }
                 catch (Exception e)
                 {
@@ -153,7 +153,7 @@ namespace BenDing.Repository.Providers.Web
                 try
                 {
                     sqlConnection.Open();
-                             querySql = @"
+                    querySql = @"
                              select Id, DirectoryCode ,DirectoryName,MnemonicCode,DirectoryCategoryName,Unit,Specification
                              ,Formulation,ManufacturerName,Remark,DirectoryCreateTime from [dbo].[HospitalThreeCatalogue] where IsDelete=0";
                     string countSql = @"select count(*) from [dbo].[HospitalThreeCatalogue] where IsDelete=0";
@@ -182,7 +182,7 @@ namespace BenDing.Repository.Providers.Web
                     int totalPageCount = result.Read<int>().FirstOrDefault();
                     dataList = (from t in result.Read<QueryCatalogDto>()
 
-                        select t).ToList();
+                                select t).ToList();
 
                     resultData.Add(totalPageCount, dataList);
                     sqlConnection.Close();
@@ -194,12 +194,12 @@ namespace BenDing.Repository.Providers.Web
                     _log.Debug(querySql);
                     throw new Exception(e.Message);
                 }
-                
+
 
             }
 
 
-           
+
         }
         /// <summary>
         /// 删除三大目录
@@ -306,7 +306,7 @@ namespace BenDing.Repository.Providers.Web
                     _log.Debug(insterCount);
                     throw new Exception(e.Message);
                 }
-         
+
 
 
             }
@@ -316,7 +316,7 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public Dictionary<int, List<QueryICD10InfoDto>>QueryICD10(QueryICD10UiParam param)
+        public Dictionary<int, List<QueryICD10InfoDto>> QueryICD10(QueryICD10UiParam param)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
@@ -330,7 +330,7 @@ namespace BenDing.Repository.Providers.Web
                     string querySql = $@"
                              select  [id],[DiseaseCoding],[DiseaseName] ,[MnemonicCode],[Remark] ,DiseaseId from [dbo].[ICD10]  where IsDelete=0";
                     string countSql = $@"select  count(*) from [dbo].[ICD10]  where IsDelete=0";
-                  
+
                     string regexstr = @"[\u4e00-\u9fa5]";
                     string whereSql = "";
                     if (!string.IsNullOrWhiteSpace(param.DiseaseCoding))
@@ -351,20 +351,20 @@ namespace BenDing.Repository.Providers.Web
                             }
                         }
 
-                        
+
                     }
-                   
-                  
+
+
                     if (param.Limit != 0 && param.Page > 0)
                     {
                         var skipCount = param.Limit * (param.Page - 1);
                         querySql += whereSql + " order by CreateTime desc OFFSET " + skipCount + " ROWS FETCH NEXT " + param.Limit + " ROWS ONLY;";
                     }
-                     executeSql = countSql + whereSql + ";" + querySql;
+                    executeSql = countSql + whereSql + ";" + querySql;
                     var result = sqlConnection.QueryMultiple(executeSql);
                     int totalPageCount = result.Read<int>().FirstOrDefault();
                     dataList = (from t in result.Read<QueryICD10InfoDto>()
-                        select t).ToList();
+                                select t).ToList();
                     resultData.Add(totalPageCount, dataList);
                     sqlConnection.Close();
                     return resultData;
@@ -390,9 +390,9 @@ namespace BenDing.Repository.Providers.Web
                 try
                 {
                     sqlConnection.Open();
-                   
-                    
-                        strSql = $@"update [dbo].[outpatient] set  [IsDelete] =1 ,DeleteTime=getDate(),DeleteUserId='{user.UserId}' where [IsDelete]=0 and [BusinessId]='{param.BusinessId}';
+
+
+                    strSql = $@"update [dbo].[outpatient] set  [IsDelete] =1 ,DeleteTime=getDate(),DeleteUserId='{user.UserId}' where [IsDelete]=0 and [BusinessId]='{param.BusinessId}';
                    INSERT INTO [dbo].[outpatient](
                    Id,[PatientName],[IdCardNo],[PatientSex],[BusinessId],[OutpatientNumber],[VisitDate]
                    ,[DepartmentId],[DepartmentName],[DiagnosticDoctor]
@@ -411,7 +411,7 @@ namespace BenDing.Repository.Providers.Web
                     _log.Debug(strSql);
                     throw new Exception(e.Message);
                 }
-                
+
             }
 
 
@@ -455,7 +455,7 @@ namespace BenDing.Repository.Providers.Web
         /// <summary>
         /// 保存住院结算
         /// </summary>
-      
+
         /// <param name="param"></param>
         public void SaveInpatientSettlement(SaveInpatientSettlementParam param)
         {
@@ -465,8 +465,8 @@ namespace BenDing.Repository.Providers.Web
                 try
                 {
                     sqlConnection.Open();
-                   
-                        strSql = $@"update [dbo].[Inpatient] set [UpdateUserId]='{param.User.UserId}',[UpdateTime]=getDate(),LeaveHospitalDate='{param.LeaveHospitalDate}',
+
+                    strSql = $@"update [dbo].[Inpatient] set [UpdateUserId]='{param.User.UserId}',[UpdateTime]=getDate(),LeaveHospitalDate='{param.LeaveHospitalDate}',
                                    LeaveHospitalDiagnosisJson='{param.LeaveHospitalDiagnosisJson}',LeaveHospitalDepartmentId='{param.LeaveHospitalDepartmentId}',
                                    LeaveHospitalDepartmentName='{param.LeaveHospitalDepartmentName}',LeaveHospitalBedNumber='{param.LeaveHospitalBedNumber}',
                                    LeaveHospitalDiagnosticDoctor='{param.LeaveHospitalDiagnosticDoctor}',LeaveHospitalOperator='{param.LeaveHospitalOperator}'
@@ -497,7 +497,7 @@ namespace BenDing.Repository.Providers.Web
                 try
                 {
                     sqlConnection.Open();
-                     strSql = $"select top 1 * from [dbo].[Outpatient] where IsDelete=0 and BusinessId='{param.BusinessId}'";
+                    strSql = $"select top 1 * from [dbo].[Outpatient] where IsDelete=0 and BusinessId='{param.BusinessId}'";
                     var data = sqlConnection.QueryFirstOrDefault<QueryOutpatientDto>(strSql);
                     sqlConnection.Close();
                     return data;
@@ -507,7 +507,7 @@ namespace BenDing.Repository.Providers.Web
                     _log.Debug(strSql);
                     throw new Exception(e.Message);
                 }
-               
+
             }
 
 
@@ -552,7 +552,7 @@ namespace BenDing.Repository.Providers.Web
                                 paramNew = param.OrderBy(d => d.BillTime).ToList();
                             }
 
-                        
+
 
                             foreach (var item in paramNew)
                             {
@@ -592,7 +592,7 @@ namespace BenDing.Repository.Providers.Web
                     _log.Debug(insertSql);
                     throw new Exception(e.Message);
                 }
-               
+
 
             }
         }
@@ -664,8 +664,8 @@ namespace BenDing.Repository.Providers.Web
                     }
                     catch (Exception exception)
                     {
-                       
-                      
+
+
                         _log.Debug(insertSql);
                         throw new Exception(exception.Message);
                     }
@@ -686,8 +686,8 @@ namespace BenDing.Repository.Providers.Web
                 string strSql = null;
                 try
                 {
-                     sqlConnection.Open();
-                     strSql = @"select   HospitalizationId as BusinessId, * from [dbo].[HospitalizationFee]  where  IsDelete=0 ";
+                    sqlConnection.Open();
+                    strSql = @"select   HospitalizationId as BusinessId, * from [dbo].[HospitalizationFee]  where  IsDelete=0 ";
                     if (param.IdList != null && param.IdList.Any())
                     {
                         var idlist = CommonHelp.ListToStr(param.IdList);
@@ -726,7 +726,6 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                List<QueryHospitalizationFeeDto> dataList;
                 var dataListNew = new List<QueryHospitalizationFeeDto>();
                 var resultData = new Dictionary<int, List<QueryHospitalizationFeeDto>>();
 
@@ -737,8 +736,20 @@ namespace BenDing.Repository.Providers.Web
                              where HospitalizationId='{param.BusinessId}' and IsDelete=0 ";
                 string countSql = $@"select COUNT(*) from [dbo].[HospitalizationFee] 
                               where HospitalizationId='{param.BusinessId}' and IsDelete=0 ";
+
                 string whereSql = "";
-                if (param.UploadMark == 1) whereSql += "  and UploadMark=1";
+
+                //是否上传标志
+                if (param.UploadMark == 1)
+                    whereSql += "  and UploadMark=1";
+                //药品名称模糊查询
+                if (!string.IsNullOrWhiteSpace(param.DirectoryName))
+                    whereSql += " and DirectoryName like '" + param.DirectoryName + "%'";
+                //时间查询
+                var billTime = CommonHelp.GetBillTime(param.BillTime);
+                if (!string.IsNullOrWhiteSpace(param.BillTime))
+                    whereSql += $" and BillTime between '{billTime.StartTime}' and '{billTime.EndTime}'";
+
                 if (param.Limit != 0 && param.Page > 0)
                 {
                     var skipCount = param.Limit * (param.Page - 1);
@@ -747,28 +758,30 @@ namespace BenDing.Repository.Providers.Web
                 string executeSql = countSql + whereSql + ";" + querySql;
                 var result = sqlConnection.QueryMultiple(executeSql);
                 int totalPageCount = result.Read<int>().FirstOrDefault();
-                dataList = (from t in result.Read<QueryHospitalizationFeeDto>()
-                            select new QueryHospitalizationFeeDto
-                            {
-                                Id = t.Id,
-                                Amount = t.Amount,
-                                BillTime = t.BillTime,
-                                BillDepartment = t.BillDepartment,
-                                DirectoryCode = t.DirectoryCode,
-                                DirectoryName = t.DirectoryName,
-                                UnitPrice = t.UnitPrice,
-                                UploadUserName = t.UploadUserName,
-                                Quantity = t.Quantity,
-                                RecipeCode = t.RecipeCode,
-                                Specification = t.Specification,
-                                OperateDoctorName = t.OperateDoctorName,
-                                UploadMark = t.UploadMark,
-                                AdjustmentDifferenceValue = t.AdjustmentDifferenceValue,
-                                UploadAmount = t.UploadAmount,
-                                UploadTime = t.UploadTime,
-                                OrganizationCode = t.OrganizationCode
-                            }
-                             ).ToList();
+                var dataList = (from t in result.Read<QueryHospitalizationFeeDto>()
+                                select new QueryHospitalizationFeeDto
+                                {
+                                    Id = t.Id,
+                                    Amount = t.Amount,
+                                    BillTime = t.BillTime,
+                                    BillDepartment = t.BillDepartment,
+                                    DirectoryCode = t.DirectoryCode,
+                                    DirectoryName = t.DirectoryName,
+                                    UnitPrice = t.UnitPrice,
+                                    UploadUserName = t.UploadUserName,
+                                    Quantity = t.Quantity,
+                                    RecipeCode = t.RecipeCode,
+                                    Specification = t.Specification,
+                                    OperateDoctorName = t.OperateDoctorName,
+                                    UploadMark = t.UploadMark,
+                                    AdjustmentDifferenceValue = t.AdjustmentDifferenceValue,
+                                    UploadAmount = t.UploadAmount,
+                                    UploadTime = t.UploadTime,
+                                    OrganizationCode = t.OrganizationCode,
+                                    BatchNumber = t.BatchNumber,
+                                    DetailId = t.DetailId
+                                }
+                    ).ToList();
                 if (dataList.Any())
                 {
                     var organizationCode = dataList.Select(d => d.OrganizationCode).FirstOrDefault();
@@ -780,7 +793,7 @@ namespace BenDing.Repository.Providers.Web
                     };
                     //获取医保对码数据
                     var pairCodeData = _baseSqlServerRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
-                    //获取医院登记
+                    //获取医院等级
                     var gradeData = _iSystemManageRepository.QueryHospitalOrganizationGrade(organizationCode);
                     //获取入院病人登记信息
                     var residentInfoData = _baseSqlServerRepository.QueryMedicalInsuranceResidentInfo(
@@ -818,6 +831,8 @@ namespace BenDing.Repository.Providers.Web
                                 UploadAmount = c.UploadAmount,
                                 OrganizationCode = c.OrganizationCode,
                                 UploadTime = c.UploadTime,
+                                BatchNumber = c.BatchNumber,
+                                DetailId = c.DetailId
                             };
                             dataListNew.Add(item);
                         }
@@ -836,10 +851,10 @@ namespace BenDing.Repository.Providers.Web
             }
         }
         /// <summary>
-            /// 住院病人查询
-            /// </summary>
-            /// <param name="param"></param>
-            /// <returns></returns>
+        /// 住院病人查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public QueryInpatientInfoDto QueryInpatientInfo(QueryInpatientInfoParam param)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -848,7 +863,7 @@ namespace BenDing.Repository.Providers.Web
                 try
                 {
                     sqlConnection.Open();
-                      strSql = $"select top 1 * from [dbo].[Inpatient] where IsDelete=0 and BusinessId='{param.BusinessId}'";
+                    strSql = $"select top 1 * from [dbo].[Inpatient] where IsDelete=0 and BusinessId='{param.BusinessId}'";
                     var data = sqlConnection.QueryFirstOrDefault<QueryInpatientInfoDto>(strSql);
                     sqlConnection.Close();
                     return data;
@@ -858,7 +873,7 @@ namespace BenDing.Repository.Providers.Web
                     _log.Debug(strSql);
                     throw new Exception(e.Message);
                 }
-               
+
             }
 
 
@@ -872,12 +887,12 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                string strSql=null;
+                string strSql = null;
                 try
                 {
-                   
+
                     sqlConnection.Open();
-                
+
                     if (param.IsTodayUpload)
                     {
                         string day = DateTime.Now.ToString("yyyy-MM-dd") + " 00:00:00.000";
@@ -903,7 +918,7 @@ namespace BenDing.Repository.Providers.Web
                 {
                     _log.Debug(strSql);
                     throw new Exception(e.Message);
-                }  
+                }
             }
         }
         /// <summary>
@@ -925,8 +940,8 @@ namespace BenDing.Repository.Providers.Web
                     if (param.Any())
                     {
                         var outpatientNum = CommonHelp.ListToStr(param.Select(c => c.DirectoryCode).ToList());
-                          strSql =
-                            $@"update [dbo].[HospitalGeneralCatalog] set  [IsDelete] =1 ,DeleteTime=getDate(),DeleteUserId='{user.UserId}' where [IsDelete]=0 
+                        strSql =
+                          $@"update [dbo].[HospitalGeneralCatalog] set  [IsDelete] =1 ,DeleteTime=getDate(),DeleteUserId='{user.UserId}' where [IsDelete]=0 
                                 and [DirectoryCode] in(" + outpatientNum + ")";
                         sqlConnection.Execute(strSql);
                         string insertSql = "";
@@ -944,9 +959,9 @@ namespace BenDing.Repository.Providers.Web
 
                         }
                         count = sqlConnection.Execute(strSql + insertSql);
-                        
+
                         sqlConnection.Close();
-                       
+
                     }
                     return count;
                 }
@@ -955,7 +970,7 @@ namespace BenDing.Repository.Providers.Web
                     _log.Debug(strSql);
                     throw new Exception(e.Message);
                 }
-              
+
             }
         }
         /// <summary>
@@ -1006,7 +1021,7 @@ namespace BenDing.Repository.Providers.Web
                     _log.Debug(strSql);
                     throw new Exception(e.Message);
                 }
-              
+
             }
         }
         public List<T> QueryDatabase<T>(T t, DatabaseParam param)
@@ -1017,7 +1032,7 @@ namespace BenDing.Repository.Providers.Web
                 try
                 {
                     sqlConnection.Open();
-                      sqlStr = $@"select * from {param.TableName} where {param.Field}='{param.Value}' and IsDelete=0";
+                    sqlStr = $@"select * from {param.TableName} where {param.Field}='{param.Value}' and IsDelete=0";
                     var data = sqlConnection.Query<T>(sqlStr).ToList();
                     sqlConnection.Close();
                     return data;
@@ -1028,7 +1043,7 @@ namespace BenDing.Repository.Providers.Web
                     _log.Debug(sqlStr);
                     throw new Exception(e.Message);
                 }
-              
+
             }
         }
         private decimal GetBlockPrice(QueryMedicalInsurancePairCodeDto param, OrganizationGrade grade)

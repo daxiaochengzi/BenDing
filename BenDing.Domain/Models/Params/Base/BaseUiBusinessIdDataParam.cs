@@ -29,5 +29,17 @@ namespace BenDing.Domain.Models.Params.Base
         [Required(ErrorMessage = "{0}不能为空!!!")]
 
         public string BusinessId { get; set; }
+        /// <summary>
+        /// 发起交易的动作ID
+        /// </summary>
+        [Display(Name = "发起交易的动作ID")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+       
+        public string TransKey { get; set; }
+
+        /// <summary>
+        /// id
+        /// </summary>
+        public List<string> DataIdList { get; set; } = null;
     }
 }
