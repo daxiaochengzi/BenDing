@@ -213,6 +213,7 @@ namespace BenDing.Service.Providers
         public void DeletePrescriptionUpload(BaseUiBusinessIdDataParam param)
         {
             var userBase = _webserviceBasicService.GetUserBaseInfo(param.UserId);
+            userBase.TransKey = param.TransKey;
             //获取医保病人信息
             var residentDataParam = new QueryMedicalInsuranceResidentInfoParam()
             {
@@ -240,6 +241,11 @@ namespace BenDing.Service.Providers
                         MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo
                     };
                     _residentMedicalInsuranceRepository.DeletePrescriptionUpload(deleteParam, uploadDataId, userBase);
+                    //取消医保上传状态
+                    var updateFeeParam =
+                        uploadDataId.Select(c => new UpdateHospitalizationFeeParam { Id = c })
+                            .ToList(); 
+                    _medicalInsuranceSqlRepository.UpdateHospitalizationFee(updateFeeParam, true, userBase);
                     //日志
                     var joinJson = JsonConvert.SerializeObject(queryData.Select(c => c.DetailId).ToList());
                     var logParam = new AddHospitalLogParam

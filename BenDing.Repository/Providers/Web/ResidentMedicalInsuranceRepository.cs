@@ -523,20 +523,6 @@ namespace BenDing.Repository.Providers.Web
                 if (result == 1)
                 {
                     XmlHelp.DeSerializerModel(new IniDto(), true);
-                    //添加批次
-                    var updateFeeParam =
-                        ids.Select(c => new UpdateHospitalizationFeeParam { Id = c })
-                            .ToList(); //new  UpdateHospitalizationFeeParam
-                    _medicalInsuranceSqlRepository.UpdateHospitalizationFee(updateFeeParam, true, user);
-                    //添加日志
-                    var logParam = new AddHospitalLogParam()
-                    {
-                        JoinOrOldJson = JsonConvert.SerializeObject(param),
-                        ReturnOrNewJson = JsonConvert.SerializeObject(ids),
-                        User = user,
-                        Remark = "[R][HospitalizationFee]删除处方数据",
-                    };
-                    _systemManageRepository.AddHospitalLog(logParam);
                 }
             }
 
