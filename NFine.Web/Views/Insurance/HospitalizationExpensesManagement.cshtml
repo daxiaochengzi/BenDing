@@ -86,12 +86,12 @@
         //laydate.render({ elem: '#date2' });
         laydate.render({ elem: '#date1', range: true });
         laydate.render({ elem: '#date2', range: true });
-        form.render(null, "LAY-bill-data-list");
-        form.render(null, "LAY-updated-data-list");
+        //form.render(null, "LAY-bill-data-list");
+        //form.render(null, "LAY-updated-data-list");
 
         //数据表格实例化
         var layTableId = "dataTableBillId"; //默认
-        var tableIns = table.render({
+        table.render({
             elem: '#' + layTableId,
             id: layTableId,
             limits: [10, 20, 50],
