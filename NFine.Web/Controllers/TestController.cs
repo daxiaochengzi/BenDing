@@ -7,6 +7,7 @@ using System.Web.Http;
 using BenDing.Domain.Models.Dto;
 using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
+using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.HisXml;
 using BenDing.Domain.Models.Params.Base;
@@ -56,34 +57,20 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData().RunWithTry(y =>
             {
-                string dd = "1";
-                //if (1 == 1)
-                //    dd = "2";
-                //if (1 == 2)
-                //    dd = "3";
-                //dd = "4";
-                //var ddd = new ResidentHospitalizationRegisterParam()
-                //{
-                //    IdentityMark = "1",
-                //    AfferentSign = "511521201704210171",
-                //    MedicalCategory="11",
-                //    AdmissionDate = "20200218",
-                //    HospitalizationNo = "052020200218001",
-                //    AdmissionMainDiagnosis = "腹泻",
-                //    InpatientDepartmentCode = "内科",
-                //    AdmissionMainDiagnosisIcd10 = "K52.916",
-                //    Operators = "李茜"
-
-
-
-                //};
-
-                //y.Data= JsonConvert.SerializeObject(ddd);
-                //y.DataDescribe = CommonHelp.GetPropertyAliasDict(new UserInfoDto());
-                //y.Data = userService.GetUserInfo();
-
-                y.Data  = CommonHelp.GetBillTime("2020-02-03 - 2020-03-10");
-
+                var workerSettlementData = new HospitalizationPresettlementDto()
+                {
+                    Remark = "123123",
+                    CashPayment = 123,
+                    CivilAssistanceSeriousIllnessPayAmount = 123,
+                        CivilServicessistancePayAmount = 123,
+                    BirthAallowance = 123123,
+                    CivilAssistancePayAmount = 44,
+                    BasicOverallPay = 23,
+                    AccurateAssistancePayAmount = 123,
+                    DocumentNo = "444",
+                };
+                 var data= CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
+                y.Data = data;
             });
 
         }

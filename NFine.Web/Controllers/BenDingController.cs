@@ -922,7 +922,7 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {
-                var resultData = new SettlementDto();
+                 var resultData = new SettlementDto();
                 //医保登录
                 _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保病人信息
@@ -962,6 +962,8 @@ namespace NFine.Web.Controllers
                 }
 
                 y.Data = resultData;
+
+
             });
 
         }

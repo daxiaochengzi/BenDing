@@ -296,12 +296,14 @@ namespace BenDing.Domain.Xml
         /// <returns></returns>
         public static List<PayMsgData> GetPayMsg(string param)
         {
-            List<string> listMsg = new List<string>(param.Split(','));
+            var paramNew = param.Replace("{", "").Replace("}", "").Replace(@"""", "");
+            List<string> listMsg = new List<string>(paramNew.Split(','));
             var msg = new List<PayMsgData>();
             foreach (var item in listMsg)
             {
                 var itemData = new List<string>(item.Split(':'));
-                var itemName = itemData[0].Replace("{", "").Replace("}", "");
+                var itemName = itemData[0];
+              
                 msg.Add(new PayMsgData()
                 {
                     Name = itemName.ToString(),
