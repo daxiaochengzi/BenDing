@@ -444,23 +444,23 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-                //var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                //userBase.TransKey = param.TransKey;
-                //var infoData = new GetInpatientInfoParam()
-                //{
-                //    User = userBase,
-                //    BusinessId = param.BusinessId,
-                //};
-                ////获取his预结算
-                //var hisPreSettlementData = _webServiceBasicService.GetHisHospitalizationPreSettlement(infoData);
-                //var preSettlementData= hisPreSettlementData.PreSettlementData.FirstOrDefault();
-                ////获取病人信息
-                //var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
-                //if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
-                //var data=AutoMapper.Mapper.Map<HisHospitalizationPreSettlementDto>(inpatientData);
-                //data.LeaveHospitalDate = preSettlementData.EndDate;
-                //data.Operator = preSettlementData.Operator;
-                y.Data = new HisHospitalizationPreSettlementDto();
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
+                var infoData = new GetInpatientInfoParam()
+                {
+                    User = userBase,
+                    BusinessId = param.BusinessId,
+                };
+                //获取his预结算
+                var hisPreSettlementData = _webServiceBasicService.GetHisHospitalizationPreSettlement(infoData);
+                var preSettlementData = hisPreSettlementData.PreSettlementData.FirstOrDefault();
+                //获取病人信息
+                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
+                if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
+                var data = AutoMapper.Mapper.Map<HisHospitalizationPreSettlementDto>(inpatientData);
+                data.LeaveHospitalDate = preSettlementData.EndDate;
+                data.Operator = preSettlementData.Operator;
+                y.Data = data;
             });
         }
 
