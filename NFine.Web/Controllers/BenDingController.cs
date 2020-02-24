@@ -488,10 +488,10 @@ namespace NFine.Web.Controllers
                  var data = AutoMapper.Mapper.Map<HisHospitalizationPreSettlementDto>(inpatientData);
                  //获取病人结算信息
                  var settlementData = _webServiceBasicService.GetHisHospitalizationSettlement(infoData);
-                 if (settlementData.DiagnosisList.Any()==false) throw new Exception(" 当前病人没有出院诊断信息，不能办理医保结算!!!");
+                 if (settlementData.DiagnosisList.Any() == false) throw new Exception(" 当前病人没有出院诊断信息，不能办理医保结算!!!");
                  data.Operator = settlementData.LeaveHospitalOperator;
                  data.DiagnosisList = settlementData.DiagnosisList;
-                
+
                  data.LeaveHospitalDate = settlementData.LeaveHospitalDate;
                  y.Data = data;
 
@@ -924,7 +924,7 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {
-                 var resultData = new SettlementDto();
+                var resultData = new SettlementDto();
                 //医保登录
                 _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保病人信息
@@ -1098,46 +1098,58 @@ namespace NFine.Web.Controllers
                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                //获取医保病人信息
                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-               if (residentData != null)
-               {  //居民
-                   if (residentData.InsuranceType == "342")
-                   {
-                       var settlementCancelParam = new LeaveHospitalSettlementCancelParam()
-                       {
-                           MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                           SettlementNo = residentData.SettlementNo,
-                           Operators = CommonHelp.GuidToStr(userBase.UserId),
-                           CancelLimit = param.CancelLimit,
-                       };
-                       var cancelParam = new LeaveHospitalSettlementCancelInfoParam()
-                       {
-                           BusinessId = param.BusinessId,
-                           Id = residentData.Id,
-                           User = userBase,
-                       };
-                       _residentMedicalInsuranceRepository.LeaveHospitalSettlementCancel(settlementCancelParam, cancelParam);
-                   }
-                   //职工
-                   if (residentData.InsuranceType == "310")
-                   {
-                       if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人未医保结算");
-                       //获取医院等级
-                       var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
-                       var cancelParam = new WorkerSettlementCancelParam()
-                       {
-                           BusinessId = param.BusinessId,
-                           Id = residentData.Id,
-                           User = userBase,
-                           SettlementNo = residentData.SettlementNo,
-                           CancelLimit = param.CancelLimit,
-                           MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                           AdministrativeArea = gradeData.AdministrativeArea,
-                           OrganizationCode = userBase.OrganizationCode,
-                       };
-                       _workerMedicalInsuranceService.WorkerSettlementCancel(cancelParam);
-                   }
+
+               if (residentData == null) throw new Exception("当前病人未办理医保入院登记!!!");
+               if (param.CancelLimit == "1")
+               {
+                   if (residentData.MedicalInsuranceState != MedicalInsuranceState.MedicalInsuranceSettlement)
+                       throw new Exception("当前病人未办理医保结算,不能取消结算!!!");
+               }
+               if (param.CancelLimit == "2")
+               {
+                   if (residentData.MedicalInsuranceState != MedicalInsuranceState.MedicalInsurancePreSettlement
+                       && residentData.SettlementTransactionId != null)
+                       throw new Exception("当前病人未办理医保取消结算,不能取消医保入院登记!!!");
                }
 
+
+               //居民
+               if (residentData.InsuranceType == "342")
+               {
+                   var settlementCancelParam = new LeaveHospitalSettlementCancelParam()
+                   {
+                       MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                       SettlementNo = residentData.SettlementNo,
+                       Operators = CommonHelp.GuidToStr(userBase.UserId),
+                       CancelLimit = param.CancelLimit,
+                   };
+                   var cancelParam = new LeaveHospitalSettlementCancelInfoParam()
+                   {
+                       BusinessId = param.BusinessId,
+                       Id = residentData.Id,
+                       User = userBase,
+                   };
+                   _residentMedicalInsuranceRepository.LeaveHospitalSettlementCancel(settlementCancelParam, cancelParam);
+               }
+               //职工
+               if (residentData.InsuranceType == "310")
+               {
+                   if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人未医保结算");
+                   //获取医院等级
+                   var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
+                   var cancelParam = new WorkerSettlementCancelParam()
+                   {
+                       BusinessId = param.BusinessId,
+                       Id = residentData.Id,
+                       User = userBase,
+                       SettlementNo = residentData.SettlementNo,
+                       CancelLimit = param.CancelLimit,
+                       MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                       AdministrativeArea = gradeData.AdministrativeArea,
+                       OrganizationCode = userBase.OrganizationCode,
+                   };
+                   _workerMedicalInsuranceService.WorkerSettlementCancel(cancelParam);
+               }
            });
 
         }
