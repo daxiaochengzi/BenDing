@@ -114,11 +114,11 @@
                 </div>
                 <div class="layui-form-item">
                     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
-                        <legend>诊断信息</legend>
+                        <legend>出院诊断信息</legend>
                     </fieldset>
                     <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
-                    <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                        <button type="button" Id="Settlement" class="layui-btn layui-btn-radius">结算</button>
+                    <div class="layui-form-item" style="text-align: center; margin-top: 20px;">
+                        <button type="button" Id="Settlement" class="layui-btn layui-btn-disabled layui-btn-radius">结算</button>
                     </div>
                 </div>
             </div>
@@ -214,11 +214,13 @@
                     //样式类名:墨绿深蓝风
                     layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                 } else {
+                    //layui-btn layui-btn-radius
                     jsonToForm(data.Data, "LAY-form-render");
                     //加载诊断默认数据
                     tableIns.reload({
                         data: data.Data.DiagnosisList
                     });
+                    $("#Settlement").attr("class", "layui-btn layui-btn-radius");
                 }
             },
             complete: function () {

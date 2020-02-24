@@ -57,5 +57,10 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         /// </summary>
         [JsonProperty(PropertyName = "出院经办人")]
         public string LeaveHospitalOperator { get; set; }
+        /// <summary>
+        /// 合计金额
+        /// </summary>
+        [JsonProperty(PropertyName = "明细费用总额")]
+        public decimal AllAmount { get; set; }
     }
 }
