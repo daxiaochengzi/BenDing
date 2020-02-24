@@ -119,7 +119,7 @@
                     </fieldset>
                     <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
                     <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                        <button type="button" Id="SettlementCancel" class="layui-btn layui-btn-radius">取消结算</button>
+                        <button type="button" Id="SettlementCancel" class="layui-btn layui-btn-disabled layui-btn-radius">取消结算</button>
                     </div>
                 </div>
             </div>
@@ -207,6 +207,7 @@
                         data: data.Data.DiagnosisList
                     });
                     queryLeaveHospitalSettlement();
+                    buttonStatus("SettlementCancel", true);
                 }
             },
             complete: function () {
@@ -303,13 +304,6 @@
             });
         //结算取消
         $('#SettlementCancel').on('click', function () {
-
-
-            //var leaveHospitalInpatientState = $("#CancelLimit").val();
-            //if (leaveHospitalInpatientState === undefined || leaveHospitalInpatientState === "") {
-            //    layer.alert("取消状态不能为空!!!", { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-            //    return;
-            //}
             var cancelParams = {
                 "TransKey": $("#transkey").val() /*医保交易码*/,
                 "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
@@ -328,14 +322,16 @@
                         var errData = data.Message;
                         //样式类名:墨绿深蓝风
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                       
                     } else {
-                       layer.msg('住院取消结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        layer.msg('住院取消结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        buttonStatus("SettlementCancel", false);
                     }
                 }
 
             });
         });
-
+       
 
     });
 

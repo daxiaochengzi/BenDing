@@ -99,7 +99,7 @@
                         </div>
                     </div>
                     <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                        <button type="button" Id="PreSettlement" class="layui-btn layui-btn-radius" >预结算</button>
+                        <button type="button" Id="PreSettlement" class="layui-btn layui-btn-disabled layui-btn-radius" >预结算</button>
                     </div>
                 </div>
             </div>
@@ -178,6 +178,7 @@
                         $('#CashPayment').val(data.Data.CashPayment);
                         $('#HospitalizationTotalCost').val(data.Data.TotalAmount);
                         layer.msg('住院预结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        buttonStatus("PreSettlement", false);
                     }
                 }
                
@@ -218,7 +219,7 @@
                     layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                 } else {
                     jsonToForm(data.Data, "LAY-form-render");
-
+                    buttonStatus("PreSettlement", true);
                 }
             },
             complete: function () {

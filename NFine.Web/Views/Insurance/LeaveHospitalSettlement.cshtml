@@ -220,7 +220,8 @@
                     tableIns.reload({
                         data: data.Data.DiagnosisList
                     });
-                    $("#Settlement").attr("class", "layui-btn layui-btn-radius");
+                    buttonStatus("Settlement", true);
+                   
                 }
             },
             complete: function () {
@@ -323,6 +324,7 @@
                         var errData = data.Message;
                         //样式类名:墨绿深蓝风
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                       
                     } else {
                         if (data.Data.PayMsg !== null) {
                            settlementData(data.Data.PayMsg);
@@ -331,6 +333,7 @@
                         $('#CashPayment').val(data.Data.CashPayment);
                         $('#HospitalizationTotalCost').val(data.Data.TotalAmount);
                         layer.msg('住院结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        buttonStatus("Settlement", false);
                     }
                 }
 
