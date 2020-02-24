@@ -489,7 +489,13 @@ namespace NFine.Web.Controllers
                  //获取病人结算信息
                  var settlementData = _webServiceBasicService.GetHisHospitalizationSettlement(infoData);
                  data.Operator = settlementData.LeaveHospitalOperator;
+                 //var queryMedicalInsurance = _webServiceBasicService.QueryMedicalInsuranceDetail(new QueryMedicalInsuranceUiParam()
+                 //{
+                 //    BusinessId = param.BusinessId,
+                 //    UserId = param.UserId
+                 //});
                  data.DiagnosisList = settlementData.DiagnosisList;
+                 //data.DiagnosisList = queryMedicalInsurance.DiagnosisList;
                  data.LeaveHospitalDate = settlementData.LeaveHospitalDate;
                  y.Data = data;
 
