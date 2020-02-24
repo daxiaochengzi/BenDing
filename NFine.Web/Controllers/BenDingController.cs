@@ -488,14 +488,10 @@ namespace NFine.Web.Controllers
                  var data = AutoMapper.Mapper.Map<HisHospitalizationPreSettlementDto>(inpatientData);
                  //获取病人结算信息
                  var settlementData = _webServiceBasicService.GetHisHospitalizationSettlement(infoData);
+                 if (settlementData.DiagnosisList.Any()==false) throw new Exception(" 当前病人没有出院诊断信息，不能办理医保结算!!!");
                  data.Operator = settlementData.LeaveHospitalOperator;
-                 //var queryMedicalInsurance = _webServiceBasicService.QueryMedicalInsuranceDetail(new QueryMedicalInsuranceUiParam()
-                 //{
-                 //    BusinessId = param.BusinessId,
-                 //    UserId = param.UserId
-                 //});
                  data.DiagnosisList = settlementData.DiagnosisList;
-                 //data.DiagnosisList = queryMedicalInsurance.DiagnosisList;
+                
                  data.LeaveHospitalDate = settlementData.LeaveHospitalDate;
                  y.Data = data;
 
