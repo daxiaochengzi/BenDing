@@ -321,7 +321,7 @@ namespace BenDing.Service.Providers
             resultData = data ?? throw new Exception("居民预结算返回结果有误!!!");
             //报销金额 =统筹支付+补充险支付+生育补助+民政救助+民政重大疾病救助+精准扶贫+民政优抚+其它支付
             decimal reimbursementExpenses =
-                data.BasicOverallPay + data.SupplementPayAmount + data.BirthAallowance +
+                data.BasicOverallPay + data.SupplementPayAmount + data.BirthAAllowance +
                 data.CivilAssistancePayAmount + data.CivilAssistanceSeriousIllnessPayAmount +
                 data.AccurateAssistancePayAmount + data.CivilServicessistancePayAmount +
                 data.OtherPaymentAmount;

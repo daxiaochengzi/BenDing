@@ -32,7 +32,7 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// </summary>
        
         [JsonProperty(PropertyName = "生育补助")]
-        public decimal BirthAallowance { get; set; }
+        public decimal BirthAAllowance { get; set; }
         /// <summary>
         /// 民政救助报销支付金额
         /// </summary>
