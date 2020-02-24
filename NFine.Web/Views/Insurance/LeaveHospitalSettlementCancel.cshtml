@@ -305,16 +305,16 @@
         $('#SettlementCancel').on('click', function () {
 
 
-            var leaveHospitalInpatientState = $("#CancelLimit").val();
-            if (leaveHospitalInpatientState === undefined || leaveHospitalInpatientState === "") {
-                layer.alert("取消状态不能为空!!!", { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                return;
-            }
+            //var leaveHospitalInpatientState = $("#CancelLimit").val();
+            //if (leaveHospitalInpatientState === undefined || leaveHospitalInpatientState === "") {
+            //    layer.alert("取消状态不能为空!!!", { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+            //    return;
+            //}
             var cancelParams = {
                 "TransKey": $("#transkey").val() /*医保交易码*/,
                 "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
                 "UserId": $("#empid").val() /*授权操作人的ID*/,
-                "CancelLimit": $("#CancelLimit").val() /*取消程度*/
+                "CancelLimit": "1" /*取消程度*/
             }
             $.ajax({
                 type: 'get',

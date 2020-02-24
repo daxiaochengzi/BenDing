@@ -18,6 +18,6 @@ namespace BenDing.Domain.Models.Params.UI
         /// </summary>
         [Display(Name = "取消度取消程度")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
-        public string CancelLimit { get; set; } = "1";
+        public string CancelLimit { get; set; } 
     }
 }
