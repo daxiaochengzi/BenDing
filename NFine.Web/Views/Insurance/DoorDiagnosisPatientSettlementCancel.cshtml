@@ -104,7 +104,7 @@
                     </div>
 
                     <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                        <button type="button" Id="SettlementCancel" class="layui-btn layui-btn-radius">取消门诊结算</button>
+                        <button type="button" Id="DoorDiagnosisSettlementCancel" class="layui-btn layui-btn-radius">门诊取消结算</button>
                     </div>
                 </div>
             </div>
@@ -163,15 +163,15 @@
                     layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                 } else {
                     jsonToForm(data.Data, "LAY-form-render");
-
+                    buttonStatus("DoorDiagnosisSettlementCancel", true);
                 }
             },
             complete: function () {
                 form.render();
             }
         });
-        //取消结算
-        $('#SettlementCancel').on('click', function () {
+        //门诊取消结算
+        $('#DoorDiagnosisSettlementCancel').on('click', function () {
             $.ajax({
                 type: 'get',
                 url: host + '/CancelOutpatientDepartmentCost',
@@ -188,14 +188,26 @@
                         $('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
                         $('#CashPayment').val(data.Data.SelfPayFeeAmount);
                         layer.msg('门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
-
+                        buttonStatus("DoorDiagnosisSettlementCancel", false);
                     }
                 }
 
             });
         });
 
-    
+        //按钮状态
+        function buttonStatus(buttonId, status) { 
+            //取消禁用
+            if (status === true) {
+                $("#" +buttonId).attr("class", "layui-btn layui-btn-radius");
+            }//禁用
+            else
+            {
+                $("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
+                
+            }
+          
+        }
 
 
     });
