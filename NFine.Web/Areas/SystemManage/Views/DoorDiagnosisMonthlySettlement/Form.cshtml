@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+
+<script>
+    function submitForm() {
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+        var submitParam =
+        {
+            SettlementStartTime: $("#startTime").val(),
+            SettlementEndTime: $("#endTime").val(),
+            PeopleType: $("#PeopleType").val()
+
+        }
+        $.submitForm({
+            url: "/SystemManage/DoorDiagnosisMonthlySettlement/SubmitForm",
+            param: submitParam,
+            success: function() {
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        });
+    };
+</script>
+    <form id="form1">
+        <div style="padding-top: 20px; margin-right: 20px;">
+            <table class="form">
+                <tr>
+                    <th class="formTitle">结算开始日期</th>
+                    <td class="formValue">
+                        <input type="text" class="Wdate" name="SettlementStartTime" id="startTime"
+                            onClick="WdatePicker({autoPickDate:true,dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endTime\')||\'new Date()\'}',readOnly:true})" style="height: 34px;width: 330px" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">结算截止日期</th>
+                    <td class="formValue">
+                        <input type="text" class="Wdate" name="SettlementEndTime" id="endTime"
+                            onClick="WdatePicker({autoPickDate:true,dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startTime\')}',maxDate:new Date(),readOnly:true})" style="height: 34px;width: 330px" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">人员类型</th>
+                    <td class="formValue">
+                        <select id="PeopleType" name="PeopleType" class="form-control required">
+                            <option value="1">居民</option>
+                            <option value="2">职工</option>
+                        </select>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    </form>
+

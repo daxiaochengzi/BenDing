@@ -7,6 +7,7 @@ using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.OutpatientDepartment;
+using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 
 namespace BenDing.Service.Interfaces
@@ -30,5 +31,9 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
         QueryOutpatientDepartmentCostjsonDto QueryOutpatientDepartmentCost(UiBaseDataParam param);
+        //门诊月结
+        void MonthlyHospitalization(MonthlyHospitalizationUiParam param);
+        //门诊月结取消
+        void CancelMonthlyHospitalization(CancelMonthlyHospitalizationUiParam param);
     }
 }

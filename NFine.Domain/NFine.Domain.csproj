@@ -82,6 +82,8 @@
     <Compile Include="BenDing\Infrastructure\IBenDingDeleteAudited.cs" />
     <Compile Include="BenDing\Infrastructure\IBenDingEntity.cs" />
     <Compile Include="BenDing\Infrastructure\IBenDingModificationAudited.cs" />
+    <Compile Include="Params\DoorDiagnosisMonthlyParam.cs" />
+    <Compile Include="Params\SaveDoorDiagnosisMonthlyParam.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

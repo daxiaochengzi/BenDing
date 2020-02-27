@@ -14,19 +14,13 @@ using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using Newtonsoft.Json;
-using NFine.Application.BenDingManage;
-using NFine.Domain._03_Entity.BenDingManage;
+
 
 namespace BenDing.Repository.Providers.Web
 {
     public class OutpatientDepartmentRepository : IOutpatientDepartmentRepository
     {
-        private readonly MonthlyHospitalizationBase _monthlyHospitalizationBase;
-        public OutpatientDepartmentRepository()
-        {
-            _monthlyHospitalizationBase = new MonthlyHospitalizationBase();
-            
-        }
+    
 
         /// <summary>
         /// 门诊费用录入
@@ -87,18 +81,7 @@ namespace BenDing.Repository.Providers.Web
             var result = MedicalInsuranceDll.CallService_cxjb("TPYP214");
             if (result != 1) throw new Exception("门诊月结汇总执行出错");
             data = XmlHelp.DeSerializerModel(new MonthlyHospitalizationDto(), true);
-            var insertParam = new MonthlyHospitalizationEntity()
-            {
-                Amount = data.ReimbursementAllAmount,
-                Id = Guid.NewGuid(),
-                DocumentNo = data.DocumentNo,
-                PeopleNum = data.ReimbursementPeopleNum,
-                PeopleType = param.Participation.PeopleType,
-                SummaryType = param.Participation.SummaryType,
-                StartTime = param.Participation.StartTime,
-                EndTime = param.Participation.EndTime,
-            };
-            _monthlyHospitalizationBase.Insert(insertParam, param.User);
+            
 
             return data;
         }
@@ -113,15 +96,7 @@ namespace BenDing.Repository.Providers.Web
             var result = MedicalInsuranceDll.CallService_cxjb("TPYP215");
             if (result != 1) throw new Exception("取消门诊月结汇总执行出错");
              XmlHelp.DeSerializerModel(new IniDto(), true);
-            var monthlyHospitalization = _monthlyHospitalizationBase.GetForm(param.Id);
-            if (monthlyHospitalization != null)
-            {
-                monthlyHospitalization.IsRevoke = true;
-                //更新月结状态
-                _monthlyHospitalizationBase.Modify(monthlyHospitalization, param.User, param.Id);
-            }
-
-
+          
         }
     }
 }

@@ -30,14 +30,14 @@ namespace NFine.Domain._03_Entity.BenDingManage
         /// 开始时间
         /// </summary>
         [DisplayName("开始时间")]
-        [StringLength(30)]
-        public string StartTime { get; set; }
+       
+        public DateTime StartTime { get; set; }
         /// <summary>
         /// 结束时间
         /// </summary>
         [DisplayName("结束时间")]
-        [StringLength(30)]
-        public string EndTime { get; set; }
+      
+        public DateTime EndTime { get; set; }
         /// <summary>
         /// 人员类别
         /// </summary>

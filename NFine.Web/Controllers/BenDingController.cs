@@ -1199,10 +1199,6 @@ namespace NFine.Web.Controllers
                     ReimbursementExpensesAmount = data.ReimbursementExpensesAmount,
                     SelfPayFeeAmount = data.SelfPayFeeAmount
                 };
-
-
-
-
             });
 
         }
@@ -1274,22 +1270,7 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                //医保登录
-                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                _outpatientDepartmentRepository.MonthlyHospitalization(
-                    new MonthlyHospitalizationParam()
-                    {
-                        User = userBase,
-                        Participation = new MonthlyHospitalizationParticipationParam()
-                        {
-                            StartTime = Convert.ToDateTime(param.StartTime).ToString("yyyyMMdd"),
-                            EndTime = Convert.ToDateTime(param.EndTime).ToString("yyyyMMdd"),
-                            SummaryType = "22",
-                            PeopleType = ((int)param.PeopleType).ToString()
-                        }
-                    });
-
+                _outpatientDepartmentService.MonthlyHospitalization(param);
             });
 
         }
@@ -1303,20 +1284,7 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                //医保登录
-                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                _outpatientDepartmentRepository.CancelMonthlyHospitalization(
-                   new CancelMonthlyHospitalizationParam()
-                   {
-                       User = userBase,
-                       Participation = new CancelMonthlyHospitalizationParticipationParam()
-                       {
-                           PeopleType = param.PeopleType,
-                           SummaryType = param.SummaryType,
-                           DocumentNo = param.DocumentNo
-                       }
-                   });
+                _outpatientDepartmentService.CancelMonthlyHospitalization(param);
 
             });
 

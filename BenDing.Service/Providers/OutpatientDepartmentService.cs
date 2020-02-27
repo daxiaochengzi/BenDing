@@ -13,12 +13,15 @@ using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.OutpatientDepartment;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.SystemManage;
+using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Repository.Providers.Web;
 using BenDing.Service.Interfaces;
 using Newtonsoft.Json;
+using NFine.Application.BenDingManage;
+using NFine.Domain._03_Entity.BenDingManage;
 
 namespace BenDing.Service.Providers
 {
@@ -31,8 +34,10 @@ namespace BenDing.Service.Providers
         private readonly IHisSqlRepository _hisSqlRepository;
         private readonly ISystemManageRepository _systemManageRepository;
         private readonly IResidentMedicalInsuranceRepository _residentMedicalInsuranceRepository;
+        private readonly IResidentMedicalInsuranceService _residentMedicalInsuranceService;
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
-
+        private readonly MonthlyHospitalizationBase _monthlyHospitalizationBase;
+      
 
         public OutpatientDepartmentService(
            IOutpatientDepartmentRepository outpatientDepartmentRepository,
@@ -41,7 +46,8 @@ namespace BenDing.Service.Providers
            IHisSqlRepository hisSqlRepository,
            ISystemManageRepository systemManageRepository,
            IResidentMedicalInsuranceRepository residentMedicalInsuranceRepository,
-           IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository
+           IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
+           IResidentMedicalInsuranceService medicalInsuranceService
            )
         {
             _serviceBasicService = webServiceBasicService;
@@ -51,6 +57,8 @@ namespace BenDing.Service.Providers
             _systemManageRepository = systemManageRepository;
             _residentMedicalInsuranceRepository = residentMedicalInsuranceRepository;
             _medicalInsuranceSqlRepository = medicalInsuranceSqlRepository;
+            _residentMedicalInsuranceService = medicalInsuranceService;
+            _monthlyHospitalizationBase = new MonthlyHospitalizationBase();
         }
 
         /// <summary>
@@ -148,7 +156,6 @@ namespace BenDing.Service.Providers
 
             return resultData;
         }
-
         public void CancelOutpatientDepartmentCost(UiBaseDataParam param)
         {
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
@@ -206,7 +213,6 @@ namespace BenDing.Service.Providers
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
 
         }
-
         public QueryOutpatientDepartmentCostjsonDto QueryOutpatientDepartmentCost(UiBaseDataParam param)
         {
 
@@ -234,6 +240,73 @@ namespace BenDing.Service.Providers
             resultData.SelfPayFeeAmount = residentData.SelfPayFeeAmount;
             resultData.AllAmount = residentData.MedicalInsuranceAllAmount;
             return resultData;
+        }
+        /// <summary>
+        /// 门诊月结
+        /// </summary>
+        /// <param name="param"></param>
+        public void MonthlyHospitalization(MonthlyHospitalizationUiParam param)
+        {
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            //医保登录
+             _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+             var data=  _outpatientDepartmentRepository.MonthlyHospitalization(
+                new MonthlyHospitalizationParam()
+                {
+                    User = userBase,
+                    Participation = new MonthlyHospitalizationParticipationParam()
+                    {
+                        StartTime = Convert.ToDateTime(param.StartTime).ToString("yyyyMMdd"),
+                        EndTime = Convert.ToDateTime(param.EndTime).ToString("yyyyMMdd"),
+                        SummaryType = "22",
+                        PeopleType = ((int)param.PeopleType).ToString()
+                    }
+                });
+            var insertParam = new MonthlyHospitalizationEntity()
+            {
+                Amount = data.ReimbursementAllAmount,
+                Id = Guid.NewGuid(),
+                DocumentNo = data.DocumentNo,
+                PeopleNum = data.ReimbursementPeopleNum,
+                PeopleType =((int)param.PeopleType).ToString(),
+                SummaryType = "22",
+                StartTime = Convert.ToDateTime(param.StartTime + "00:00:00.000"),
+                EndTime = Convert.ToDateTime(param.EndTime + "00:00:00.000"),
+            };
+            _monthlyHospitalizationBase.Insert(insertParam, userBase);
+            //添加日志
+            var logParam = new AddHospitalLogParam()
+            {
+                JoinOrOldJson = JsonConvert.SerializeObject(param),
+                User = userBase,
+                Remark = "门诊月结汇总",
+                RelationId = insertParam.Id,
+            };
+            _systemManageRepository.AddHospitalLog(logParam);
+
+        }
+        /// <summary>
+        /// 门诊月结取消
+        /// </summary>
+        /// <param name="param"></param>
+        public void CancelMonthlyHospitalization(CancelMonthlyHospitalizationUiParam param)
+        {    var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            //医保登录
+            _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+            _outpatientDepartmentRepository.CancelMonthlyHospitalization(
+               new CancelMonthlyHospitalizationParam()
+               {
+                   User = userBase,
+                   Participation = new CancelMonthlyHospitalizationParticipationParam()
+                   {
+                       PeopleType = param.PeopleType,
+                       SummaryType = param.SummaryType,
+                       DocumentNo = param.DocumentNo
+                   }
+               });
+           
+            //var monthlyHospitalization = _monthlyHospitalizationBase.GetForm(param.Id);
+           
         }
     }
 }

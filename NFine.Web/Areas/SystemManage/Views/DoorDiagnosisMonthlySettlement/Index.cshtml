@@ -1,0 +1,182 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+
+<!DOCTYPE html>
+<script>
+    $(function() {
+        gridList();
+    });
+
+    function gridList() {
+        var $gridList = $("#gridList");
+        $gridList.dataGrid({
+            url: "/SystemManage/DoorDiagnosisMonthlySettlement/GetGridJson",
+            height: $(window).height() - 96,
+            colModel: [
+                { label: "主键", name: "Id", hidden: true, key: true },
+                { label: '机构名称', name: 'OrganizationName', width: 150, align: 'left' },
+                {
+                    label: '开始时间',
+                    name: 'StartTime',
+                    width: 80,
+                    align: 'left',
+                    formatter: "date",
+                    formatoptions: { srcformat: 'Y-m-d', newformat: 'Y-m-d' }
+                },
+                {
+                    label: '结束时间',
+                    name: 'EndTime',
+                    width: 80,
+                    align: 'left',
+                    formatter: "date",
+                    formatoptions: { srcformat: 'Y-m-d', newformat: 'Y-m-d' }
+                },
+                {
+                    label: '单据号',
+                    name: 'DocumentNo',
+                    width: 100,
+                    align: 'left'
+
+                },
+                //{
+                //    label: '汇总类别', name: 'SummaryType', width: 100, align: 'left' 
+
+                //},
+                {
+                    label: "人群类别",
+                    name: "PeopleType",
+                    width: 60,
+                    align: "center",
+                    formatter: function(cellvalue, options, rowObject) {
+                        if (cellvalue === "1") {
+                            return '<span class=\"label label-success\">居民</span>';
+                        } else if (cellvalue === "0") {
+                            return '<span class=\"label label-default\">职工</span>';
+                        }
+                    }
+                },
+                {
+                    label: '人群类别',
+                    name: 'PeopleType',
+                    width: 100,
+                    align: 'left'
+
+                },
+                {
+                    label: '汇总金额',
+                    name: 'Amount',
+                    width: 100,
+                    align: 'left'
+
+                },
+                {
+                    label: '创建时间',
+                    name: 'CreateTime',
+                    width: 80,
+                    align: 'left',
+                    formatter: "date",
+                    formatoptions: { srcformat: 'Y-m-d', newformat: 'Y-m-d' }
+                },
+                {
+                    label: "有效",
+                    name: "IsRevoke",
+                    width: 60,
+                    align: "center",
+                    formatter: function(cellvalue) {
+                        return cellvalue === 1
+                            ? "<i class=\"fa fa-toggle-on\"></i>"
+                            : "<i class=\"fa fa-toggle-off\"></i>";
+                    }
+                }
+            ],
+            pager: "#gridPager",
+            sortname: 'CreateTime asc',
+            viewrecords: true
+        });
+        $("#btn_search").click(function() {
+            $gridList.jqGrid('setGridParam',
+                {
+                    postData:
+                    {
+                        SettlementStartTime: $("#startTime").val(),
+                        SettlementEndTime: $("#endTime").val()
+                    }
+                }).trigger('reloadGrid');
+        });
+    }
+
+    function btn_add() {
+        $.modalOpen({
+            id: "Form",
+            title: "门诊月结结算",
+            url: "/SystemManage/DoorDiagnosisMonthlySettlement/Form",
+            width: "450px",
+            height: "340px",
+            callBack: function(iframeId) {
+                top.frames[iframeId].submitForm();
+            }
+        });
+    }
+
+    function btn_delete() {
+        $.deleteForm({
+            url: "/SystemManage/DoorDiagnosisMonthlySettlement/DeleteForm",
+            param: { keyValue: $("#gridList").jqGridRowValue().Id },
+            success: function() {
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        });
+    }
+</script>
+<div class="topPanel">
+    <div class="toolbar">
+
+
+        <div class="btn-group">
+            <a class="btn btn-primary" onclick="$.reload()"><span class="glyphicon glyphicon-refresh"></span></a>
+        </div>
+        <div class="btn-group">
+            <a id="NF-add" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_add()"><i class="fa fa-plus"></i>门诊月结算</a>
+        </div>
+        @*<div class="btn-group">
+            <a id="NF-cancel" authorize="yes" class="btn btn-primary" onclick="btn_cancel()"><i class="fa fa-plus"></i>取消结算</a>
+        </div>*@
+        <div class="operate">
+            <ul class="nav nav-pills">
+                <li class="first">已选中<span>1</span>项</li>
+                <li><a id="NF-delete" authorize="yes" onclick="btn_delete()"><i class="fa fa-trash-o"></i>门诊月结算取消</a></li>
+            </ul>
+            <a href="javascript:;" class="close"></a>
+        </div>
+    </div>
+    <div class="search">
+        <table>
+            <tr>
+                <td>
+                    <div class="btn-group">
+                        结算开始日期：
+                        <input type="text" class="Wdate" name="SettlementStartTime" id="startTime"
+                               onClick="WdatePicker({autoPickDate:true,dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endTime\')||\'new Date()\'}',readOnly:true})" style="width: 120px;" />
+                        结算截止日期：
+                        <input type="text" class="Wdate" name="SettlementEndTime" id="endTime"
+                               onClick="WdatePicker({autoPickDate:true,dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startTime\')}',maxDate:new Date(),readOnly:true})" style="width: 120px;" />
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group" style="padding-left: 15px">
+                        @*<input id="txt_keyword" type="text" class="form-control" placeholder="岗位名称/岗位编号" style="width: 200px;">*@
+                        <span class="input-group-btn">
+                            <button id="btn_search" type="button" class="btn  btn-primary"><i class="fa fa-search"></i></button>
+                        </span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="gridPanel">
+    <table id="gridList"></table>
+</div>
