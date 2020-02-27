@@ -59,13 +59,6 @@
                     }
                 },
                 {
-                    label: '人群类别',
-                    name: 'PeopleType',
-                    width: 100,
-                    align: 'left'
-
-                },
-                {
                     label: '汇总金额',
                     name: 'Amount',
                     width: 100,
@@ -86,7 +79,7 @@
                     width: 60,
                     align: "center",
                     formatter: function(cellvalue) {
-                        return cellvalue === 1
+                        return cellvalue === false
                             ? "<i class=\"fa fa-toggle-on\"></i>"
                             : "<i class=\"fa fa-toggle-off\"></i>";
                     }
@@ -121,12 +114,18 @@
         });
     }
 
+   
     function btn_delete() {
-        $.deleteForm({
-            url: "/SystemManage/DoorDiagnosisMonthlySettlement/DeleteForm",
-            param: { keyValue: $("#gridList").jqGridRowValue().Id },
-            success: function() {
-                $.currentWindow().$("#gridList").trigger("reloadGrid");
+       
+        $.modalConfirm("温馨提示：您确定要取消本次门诊月结算吗？", function (r) {
+            if (r) {
+                $.submitForm({
+                    url: "/SystemManage/DoorDiagnosisMonthlySettlement/DeleteForm",
+                    param: { keyValue: $("#gridList").jqGridRowValue().Id },
+                    success: function() {
+                        $.currentWindow().$("#gridList").trigger("reloadGrid");
+                    }
+                });
             }
         });
     }
@@ -151,6 +150,7 @@
             </ul>
             <a href="javascript:;" class="close"></a>
         </div>
+        <script>$('.toolbar').authorizeButton()</script>
     </div>
     <div class="search">
         <table>

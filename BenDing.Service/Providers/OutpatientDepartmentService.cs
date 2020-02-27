@@ -270,8 +270,9 @@ namespace BenDing.Service.Providers
                 PeopleNum = data.ReimbursementPeopleNum,
                 PeopleType =((int)param.PeopleType).ToString(),
                 SummaryType = "22",
-                StartTime = Convert.ToDateTime(param.StartTime + "00:00:00.000"),
-                EndTime = Convert.ToDateTime(param.EndTime + "00:00:00.000"),
+                StartTime = Convert.ToDateTime(param.StartTime + " 00:00:00.000"),
+                EndTime = Convert.ToDateTime(param.EndTime + " 00:00:00.000"),
+                IsRevoke = false
             };
             _monthlyHospitalizationBase.Insert(insertParam, userBase);
             //添加日志

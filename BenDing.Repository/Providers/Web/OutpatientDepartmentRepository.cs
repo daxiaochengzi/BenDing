@@ -81,7 +81,6 @@ namespace BenDing.Repository.Providers.Web
             var result = MedicalInsuranceDll.CallService_cxjb("TPYP214");
             if (result != 1) throw new Exception("门诊月结汇总执行出错");
             data = XmlHelp.DeSerializerModel(new MonthlyHospitalizationDto(), true);
-            
 
             return data;
         }
@@ -95,8 +94,8 @@ namespace BenDing.Repository.Providers.Web
             if (!xmlStr) throw new Exception("取消门诊月结汇总保存参数出错");
             var result = MedicalInsuranceDll.CallService_cxjb("TPYP215");
             if (result != 1) throw new Exception("取消门诊月结汇总执行出错");
-             XmlHelp.DeSerializerModel(new IniDto(), true);
-          
+            XmlHelp.DeSerializerModel(new IniDto(), true);
+
         }
     }
 }

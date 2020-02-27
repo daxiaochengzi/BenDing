@@ -38,7 +38,7 @@ namespace NFine.Application.BenDingManage
         }
         public MonthlyHospitalizationEntity GetForm(string keyValue)
         {
-            return service.FindEntity(keyValue);
+            return service.FindEntity(Guid.Parse(keyValue));
         }
         public void DeleteForm(string keyValue, string userId)
         {
