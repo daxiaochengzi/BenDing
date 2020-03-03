@@ -341,29 +341,7 @@ namespace BenDing.Service.Providers
                 IdentityMark = "1",
                 InformationNumber = inpatientInfoData.IdCardNo,
             });
-            //回参构建
-            var xmlData = new HospitalSettlementXml()
-            {
-                MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                CashPayment = resultData.CashPayment,
-                SettlementNo = resultData.DocumentNo,
-                PaidAmount = resultData.PaidAmount,
-                AllAmount = resultData.TotalAmount,
-                PatientName = inpatientInfoData.PatientName,
-                AccountBalance = userInfo.WorkersInsuranceBalance,
-                AccountAmountPay = resultData.AccountPayment
-            };
-            var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-            var saveXml = new SaveXmlDataParam()
-            {
-                User = infoParam.User,
-                MedicalInsuranceBackNum = "fyjs_new",
-                MedicalInsuranceCode = "41",
-                BusinessId = infoParam.BusinessId,
-                BackParam = strXmlBackParam
-            };
-            //存基层
-            _webBasicRepository.SaveXmlData(saveXml);
+            
             //存入中间层
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
             //结算后保存信息
@@ -380,9 +358,10 @@ namespace BenDing.Service.Providers
         /// <param name="param"></param>
         public void WorkerStrokeCard(WorkerStrokeCardParam param)
         {
+
             var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
             {
-                IdentityMark = "1",
+                IdentityMark = param.IdCardNo.Length==18?"1":"2",
                 InformationNumber = param.IdCardNo,
 
             });
@@ -400,20 +379,17 @@ namespace BenDing.Service.Providers
                 AccountAmountPay = param.AccountPayAmount,
 
             };
-            var settlementTransactionId = param.User.TransKey;
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-            var saveXmlData = new SaveXmlData();
-            saveXmlData.OrganizationCode = param.User.OrganizationCode;
-            saveXmlData.AuthCode = param.User.AuthCode;
-            saveXmlData.BusinessId = param.BusinessId;
-            saveXmlData.TransactionId = settlementTransactionId;
-            saveXmlData.MedicalInsuranceBackNum = "CXJB009";
-            saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-            saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-            saveXmlData.MedicalInsuranceCode = "41";
-            saveXmlData.UserId = param.User.UserId;
+            var saveXml = new SaveXmlDataParam()
+            {
+                User = param.User,
+                MedicalInsuranceBackNum = "fyjs_new",
+                MedicalInsuranceCode = "41",
+                BusinessId = param.BusinessId,
+                BackParam = strXmlBackParam
+            };
             //存基层
-            _webBasicRepository.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+            _webBasicRepository.SaveXmlData(saveXml);
             var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
             {
                 UserId = param.User.UserId,
@@ -423,7 +399,7 @@ namespace BenDing.Service.Providers
                 Id = param.Id,
                 SettlementNo = param.DocumentNo,
                 MedicalInsuranceAllAmount = param.AllAmount,
-                SettlementTransactionId = settlementTransactionId,
+                SettlementTransactionId = param.User.TransKey,
                 MedicalInsuranceState = MedicalInsuranceState.HisSettlement
             };
 

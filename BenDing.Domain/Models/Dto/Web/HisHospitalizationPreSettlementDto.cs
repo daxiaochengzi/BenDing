@@ -11,8 +11,10 @@ namespace BenDing.Domain.Models.Dto.Web
     /// 经办人
     /// </summary>
         public string Operator { get; set; }
-        
-     
+        /// <summary>
+        /// 医保类型
+        /// </summary>
+        public string InsuranceType { get; set; }
         /// <summary>
         /// 诊断
         /// </summary>

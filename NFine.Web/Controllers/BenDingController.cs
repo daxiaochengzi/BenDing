@@ -361,7 +361,6 @@ namespace NFine.Web.Controllers
                     paramIni.IsSave = false;
                     paramIni.UiParam = param;
                     var data = _webServiceBasicService.GetOutpatientPerson(paramIni);
-
                     y.Data = data;
 
                 }
@@ -482,6 +481,12 @@ namespace NFine.Web.Controllers
                      User = userBase,
                      BusinessId = param.BusinessId,
                  };
+                 var queryData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(
+                     new QueryMedicalInsuranceResidentInfoParam()
+                     {
+                         OrganizationCode = userBase.OrganizationCode,
+                         BusinessId = param.BusinessId
+                     });
                  //获取病人信息
                  var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
                  if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
@@ -491,7 +496,7 @@ namespace NFine.Web.Controllers
                  if (settlementData.DiagnosisList.Any() == false) throw new Exception(" 当前病人没有出院诊断信息，不能办理医保结算!!!");
                  data.Operator = settlementData.LeaveHospitalOperator;
                  data.DiagnosisList = settlementData.DiagnosisList;
-
+                 data.InsuranceType = queryData.InsuranceType;
                  data.LeaveHospitalDate = settlementData.LeaveHospitalDate;
                  y.Data = data;
 
