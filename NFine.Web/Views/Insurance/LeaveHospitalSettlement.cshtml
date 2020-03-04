@@ -18,19 +18,17 @@
         vertical-align: middle
     }
 </style>
-<div class="layui-fluid">
+<div class="layui-fluid" >
     <div class="layui-card">
         <form class="layui-form" id="LAY-form" lay-filter="LAY-form-render">
             <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
             <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
-            <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id"/>
+            <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
+            <object id="CSharpActiveX" classid="clsid:d589f1ff-34fd-4995-a557-ea61bf32d809" codebase="ActiveSetup.CAB#version=1,0,0" width="0" height="0"></object>
             <div class="layui-card-header layuibd-card-header-auto">
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
                     <legend>病人信息</legend>
                 </fieldset>
-            <div class="layui-form-item">
-            <object id="CSharpActiveX" classid="clsid:d589f1ff-34fd-4995-a557-ea61bf32d809" codebase="ActiveSetup.CAB#version=1,0,0" ></object>
-            </div>
                 <!--病人信息-->
                 <div class="layui-form-item">
                     <div class="layui-inline">
@@ -242,8 +240,11 @@
                     tableIns.reload({
                         data: data.Data.DiagnosisList
                     });
+                   
                     buttonStatus("Settlement", true);
-
+                    buttonStatus("PayCard", true);
+                    $("#CardPwd").attr("disabled", false);
+                    $("#CardPwd").attr("class", "layui-input");
                 }
             },
             complete: function () {
@@ -353,7 +354,7 @@
                         $('#HospitalizationTotalCost').val(data.Data.TotalAmount);
                         layer.msg('住院结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         if (insuranceType === "310") {
-                            $("#CardPwd").attr("class", "layui-input");
+                            $("#CardPwd").attr("disabled", false);
                             //打开刷卡按钮
                             buttonStatus("PayCard", true);
                         }
@@ -367,7 +368,19 @@
         $('#PayCard').on('click', function () {
 
             var activeX = document.getElementById("CSharpActiveX");
-            alert(activeX.GetUserInfo("123123","wwwww"));
+            var param =
+            {
+                "PI_SFBZ":"",
+                "PI_CRBZ":""
+            }
+            var paramBase =
+            {
+                "PI_SFBZ": "",
+                "PI_CRBZ": ""
+            }
+            var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
+            
+            console.log("");
             var workerStrokeCard =
             {
                 "TransKey": $("#transkey").val() /*医保交易码*/,
@@ -380,33 +393,33 @@
                 "AccountPayAmount":""
             };
 
-            $.ajax({
-                type: 'post',
-                url: host + '/WorkerStrokeCard',
-                data: JSON.stringify(workerStrokeCard),
-                dataType: "json",
-                contentType: 'application/json',
-                async: false,
-                success: function (data) {
-                    console.log(data);
-                    if (data.Success === false) {
-                        var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                    } else {
+            //$.ajax({
+            //    type: 'post',
+            //    url: host + '/WorkerStrokeCard',
+            //    data: JSON.stringify(workerStrokeCard),
+            //    dataType: "json",
+            //    contentType: 'application/json',
+            //    async: false,
+            //    success: function (data) {
+            //        console.log(data);
+            //        if (data.Success === false) {
+            //            var errData = data.Message;
+            //            //样式类名:墨绿深蓝风
+            //            layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+            //        } else {
 
-                        layer.msg('住院结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
-                        if (insuranceType === "310") {
-                            $("#CardPwd").attr("class", "layui-input");
-                            //打开刷卡按钮
-                            buttonStatus("PayCard", false);
-                        }
+            //            layer.msg('住院结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+            //            if (insuranceType === "310") {
+            //                $("#CardPwd").attr("class", "layui-input");
+            //                //打开刷卡按钮
+            //                buttonStatus("PayCard", false);
+            //            }
 
-                        buttonStatus("Settlement", false);
-                    }
-                }
+            //            buttonStatus("Settlement", false);
+            //        }
+            //    }
 
-            });
+            //});
         });
         //获取结算返回值
         function settlementData(data) {
