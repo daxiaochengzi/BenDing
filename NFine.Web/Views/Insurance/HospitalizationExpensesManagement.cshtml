@@ -302,11 +302,11 @@
                     } else {
                        
                         layer.msg(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        //刷新查询
+                        tableDataLoad(layTableId);
                     }
-                },
-                complete: function () {
-                    form.render();
                 }
+                
             });
         });
         //医保费用上传
