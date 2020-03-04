@@ -285,6 +285,7 @@
             //MedicalCategoryType医疗类别 隐藏显示胎儿数输入框
             form.on('select(MedicalCategoryType)',
                 function (data) {
+
                     var val = data.value;
                     //layer.alert(val, { icon: 1 });
                     if (val === 41 || val === 71 || val === 72) {
@@ -533,17 +534,31 @@
                     }
                     if (field.IdentityMark === 2) {
                         //医保个人编码
-                       
                         field.AfferentSign = field.AfferentSign;
                     }
+                 
                     if ($("#InsuranceType").val() === "310") {
-                        if (field.IdentityMark === 1) {
-                            field.IdentityMark = 2;
+                        if (field.IdentityMark === "1") {
+                            field.IdentityMark = "2";
                         }
-                        if (field.IdentityMark === 2) {
-                            field.IdentityMark = 3;
+                        else
+                        {
+                            if (field.IdentityMark === "2") {
+                                field.IdentityMark = "3";
+                            }
                         }
-                    } 
+                       
+                    }
+                    //医疗类别
+               
+                    var medicalCategory = $("#MedicalCategory").val();
+                    //
+                    if (medicalCategory === "" || medicalCategory === undefined)
+                    {
+                        layer.msg('医疗类别不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                        return false; 
+                    }
+                  
                     //科室ID
                     //field.InpatientDepartmentCode = field.InDepartmentId
                     ////床位号
