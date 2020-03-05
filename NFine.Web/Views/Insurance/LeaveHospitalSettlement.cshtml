@@ -24,7 +24,7 @@
             <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
             <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
             <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
-            <object id="CSharpActiveX" classid="clsid:d589f1ff-34fd-4995-a557-ea61bf32d809" codebase="ActiveSetup.CAB#version=1,0,0" width="0" height="0"></object>
+            <object id="CSharpActiveX" classid="clsid:67475F7D-57A1-45AD-96F3-428A679B2E6C" codebase="ActiveSetup.CAB#version=1,0,0" width="0" height="0"></object>
             <div class="layui-card-header layuibd-card-header-auto">
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
                     <legend>病人信息</legend>
@@ -322,7 +322,7 @@
             var leaveHospitalInpatientState = $("#LeaveHospitalInpatientState").val();
             if (leaveHospitalInpatientState === undefined || leaveHospitalInpatientState === "") {
                 layer.alert("病人出院状态不能为空!!!", { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                return;
+                return false;
             }
             var settlementParam =
             {
@@ -366,21 +366,34 @@
             });
         });
         $('#PayCard').on('click', function () {
-
+            
+           
+           //初始化插件
             var activeX = document.getElementById("CSharpActiveX");
             var param =
             {
-                "PI_SFBZ":"",
-                "PI_CRBZ":""
+                "PI_SFBZ":"511521201704210171",
+                "PI_CRBZ":"1"
             }
             var paramBase =
             {
-                "PI_SFBZ": "",
-                "PI_CRBZ": ""
+                "Account": "cpq2677", 
+                "Pwd": "888888",
+                "OperatorId": $("#empid").val() /*授权操作人的ID*/,
             }
             var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
-            
-            console.log("");
+            var activeJsonData = JSON.parse(activeData);
+            if (activeJsonData.Success === false)
+            {
+                layer.alert(activeJsonData.Message, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                return false;
+            }
+
+            var getData = JSON.parse(activeJsonData.Data);
+
+            console.log(getData);
+
+
             var workerStrokeCard =
             {
                 "TransKey": $("#transkey").val() /*医保交易码*/,
