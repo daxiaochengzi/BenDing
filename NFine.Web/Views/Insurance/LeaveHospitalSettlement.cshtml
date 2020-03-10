@@ -4,6 +4,7 @@
 }
 <link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
 
+
 <style>
     .layui-card-header.layuibd-card-header-auto {
         padding-top: 15px;
@@ -379,18 +380,28 @@
 
            //初始化插件
             var activeX = document.getElementById("CSharpActiveX");
-            var param =
-            {
-                "PI_SFBZ":"511521201704210171",
-                "PI_CRBZ":"1"
-            }
+            //var param =
+            //{
+            //    "PI_SFBZ":"511521201704210171",
+            //    "PI_CRBZ":"1"
+            //}
             var paramBase =
             {
                 "Account": "cpq2677", 
                 "Pwd": "888888",
                 "OperatorId": $("#empid").val() /*授权操作人的ID*/,
             }
-            var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
+            var param =
+            {
+                "MedicalCategory":"2",
+                "AllAmount": "3.00",
+                "CardPwd": "123456",
+                "Operator":"李茜"
+            }
+            
+
+           //var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
+            var activeData = activeX.WorkersSettlement(JSON.stringify(param), JSON.stringify(paramBase));
             var activeJsonData = JSON.parse(activeData);
             if (activeJsonData.Success === false)
             {
