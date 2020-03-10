@@ -62,14 +62,6 @@ namespace BenDing.Repository.Providers.Web
                                     SettlementNo='{param.SettlementNo}',CancelTransactionId='{param.CancelTransactionId}'
                                     where Id='{param.Id}' ";
                         }
-                        else if (!string.IsNullOrWhiteSpace(param.SettlementTransactionId))
-                        {
-                            strSql = $@" update MedicalInsurance set SettlementUserId='{param.UserId}',SettlementTime=GETDATE(),MedicalInsuranceState={(int)param.MedicalInsuranceState},
-                                    OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
-                                    SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
-                                    SettlementNo='{param.SettlementNo}',SettlementTransactionId='{param.SettlementTransactionId}'
-                                    where Id='{param.Id}' ";
-                        }
                         else if (!string.IsNullOrWhiteSpace(param.PreSettlementTransactionId))
                         {
                             strSql = $@" update MedicalInsurance set PreSettlementUserId='{param.UserId}',PreSettlementTime=GETDATE(),MedicalInsuranceState={(int)param.MedicalInsuranceState},
@@ -79,6 +71,22 @@ namespace BenDing.Repository.Providers.Web
                                     where Id='{param.Id}' ";
 
                         }
+                        else if (!string.IsNullOrWhiteSpace(param.SettlementTransactionId))
+                        {
+                            strSql = $@" update MedicalInsurance set SettlementUserId='{param.UserId}',SettlementTime=GETDATE(),MedicalInsuranceState={(int)param.MedicalInsuranceState},
+                                    OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
+                                    SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
+                                    SettlementNo='{param.SettlementNo}',SettlementTransactionId='{param.SettlementTransactionId}'
+                                    where Id='{param.Id}' ";
+                        }
+                        else if (!string.IsNullOrWhiteSpace(param.WorkersStrokeCardNo))
+                        {
+                            strSql = $@" update MedicalInsurance set WorkersStrokeCardNo='{param.WorkersStrokeCardNo}',WorkersStrokeTime=GETDATE(),MedicalInsuranceState={(int)param.MedicalInsuranceState},
+                                    WorkersStrokeCardInFo='{param.WorkersStrokeCardInfo}',
+                                    SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
+                                    where Id='{param.Id}' ";
+                        }
+                       
                     }
 
                     var data = sqlConnection.Execute(strSql);
@@ -90,7 +98,6 @@ namespace BenDing.Repository.Providers.Web
                     _log.Debug(strSql);
                     throw new Exception(e.Message);
                 }
-
 
             }
         }
@@ -174,7 +181,6 @@ namespace BenDing.Repository.Providers.Web
                               ,[InsuranceType]
                               ,[SettlementNo]
                               ,[MedicalInsuranceState]
-                              ,[SettlementTransactionId]
                             FROM [dbo].[MedicalInsurance]
                             where  IsDelete=0";
                     if (!string.IsNullOrWhiteSpace(param.DataId))

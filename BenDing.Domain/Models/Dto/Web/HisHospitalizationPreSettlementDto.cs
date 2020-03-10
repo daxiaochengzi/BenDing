@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Enums;
 
 namespace BenDing.Domain.Models.Dto.Web
 {
@@ -15,6 +16,14 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 医保类型
         /// </summary>
         public string InsuranceType { get; set; }
+        /// <summary>
+        /// 医保状态
+        /// </summary>
+        public MedicalInsuranceState MedicalInsuranceState { get; set; }
+        /// <summary>
+        /// 结算单据号
+        /// </summary>
+        public  string SettlementNo { get; set; }
         /// <summary>
         /// 诊断
         /// </summary>

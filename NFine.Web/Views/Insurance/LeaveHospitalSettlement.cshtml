@@ -240,11 +240,17 @@
                     tableIns.reload({
                         data: data.Data.DiagnosisList
                     });
-                   
+                    if (insuranceType === 310)
+                    {
+                        if (data.Data.MedicalInsuranceState === 5)
+                        {
+                            buttonStatus("PayCard", true);
+                        }
+                        $("#CardPwd").attr("disabled", false);
+                        $("#CardPwd").attr("class", "layui-input");
+                    }
                     buttonStatus("Settlement", true);
-                    buttonStatus("PayCard", true);
-                    $("#CardPwd").attr("disabled", false);
-                    $("#CardPwd").attr("class", "layui-input");
+                   
                 }
             },
             complete: function () {
@@ -324,6 +330,11 @@
                 layer.alert("病人出院状态不能为空!!!", { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                 return false;
             }
+              if (insuranceType === 310) {
+                  var cardPwdData = $("#CardPwd").val();
+                  layer.alert("医保密码不能为空!!!", { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                  return false;
+              }
             var settlementParam =
             {
                 "TransKey": $("#transkey").val() /*医保交易码*/,
@@ -352,22 +363,20 @@
                         $('#ReimbursementExpenses').val(data.Data.ReimbursementExpenses);
                         $('#CashPayment').val(data.Data.CashPayment);
                         $('#HospitalizationTotalCost').val(data.Data.TotalAmount);
-                        layer.msg('住院结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
-                        if (insuranceType === "310") {
-                            $("#CardPwd").attr("disabled", false);
-                            //打开刷卡按钮
-                            buttonStatus("PayCard", true);
-                        }
-
+                        //if (insuranceType === "310") {
+                        //    $("#CardPwd").attr("disabled", false);
+                        //    //打开刷卡按钮
+                        //    buttonStatus("PayCard", true);
+                        //}
                         buttonStatus("Settlement", false);
+                        layer.msg('住院结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                     }
                 }
 
             });
         });
         $('#PayCard').on('click', function () {
-            
-           
+
            //初始化插件
             var activeX = document.getElementById("CSharpActiveX");
             var param =

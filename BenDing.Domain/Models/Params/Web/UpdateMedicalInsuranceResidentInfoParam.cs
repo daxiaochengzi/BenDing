@@ -60,6 +60,15 @@ namespace BenDing.Domain.Models.Params.Web
         /// </summary>
          
         public bool IsHisUpdateState { get; set; }
+        /// <summary>
+        /// 刷卡流水
+        /// </summary>
+        public  string WorkersStrokeCardNo { get; set; }
+        /// <summary>
+        /// 刷卡信息
+        /// </summary>
+        public string WorkersStrokeCardInfo { get; set; }
+      
 
 
     }

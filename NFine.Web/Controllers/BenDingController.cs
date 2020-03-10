@@ -498,6 +498,7 @@ namespace NFine.Web.Controllers
                  data.DiagnosisList = settlementData.DiagnosisList;
                  data.InsuranceType = queryData.InsuranceType;
                  data.LeaveHospitalDate = settlementData.LeaveHospitalDate;
+                 data.MedicalInsuranceState = queryData.MedicalInsuranceState;
                  y.Data = data;
 
              });
@@ -1112,8 +1113,7 @@ namespace NFine.Web.Controllers
                }
                if (param.CancelLimit == "2")
                {
-                   if (residentData.MedicalInsuranceState != MedicalInsuranceState.MedicalInsurancePreSettlement
-                       && residentData.SettlementTransactionId != null)
+                   if (residentData.MedicalInsuranceState != MedicalInsuranceState.MedicalInsurancePreSettlement)
                        throw new Exception("当前病人未办理医保取消结算,不能取消医保入院登记!!!");
                }
 

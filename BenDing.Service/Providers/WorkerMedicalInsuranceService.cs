@@ -314,8 +314,6 @@ namespace BenDing.Service.Providers
             infoParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
             infoParam.LeaveHospitalMainDiagnosis = diagnosisData.DiagnosisDescribe;
             infoParam.IsHospitalizationFrequency = "1";
-
-
             // 医保
             var resultData = _workerMedicalInsuranceRepository.WorkerHospitalizationSettlement(infoParam);
             //报销金额 =统筹支付+补充医疗保险支付金额+专项基金支付金额+
@@ -335,12 +333,6 @@ namespace BenDing.Service.Providers
                 SettlementTransactionId = userBase.UserId,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceSettlement
             };
-
-            var userInfo = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
-            {
-                IdentityMark = "1",
-                InformationNumber = inpatientInfoData.IdCardNo,
-            });
             
             //存入中间层
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
@@ -378,6 +370,7 @@ namespace BenDing.Service.Providers
                 AccountBalance = userInfoData.WorkersInsuranceBalance,
                 AccountAmountPay = param.AccountPayAmount,
 
+
             };
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
             var saveXml = new SaveXmlDataParam()
@@ -397,9 +390,8 @@ namespace BenDing.Service.Providers
                 SelfPayFeeAmount = param.SelfPayFeeAmount,
                 OtherInfo = JsonConvert.SerializeObject(xmlData),
                 Id = param.Id,
-                SettlementNo = param.DocumentNo,
-                MedicalInsuranceAllAmount = param.AllAmount,
-                SettlementTransactionId = param.User.TransKey,
+                WorkersStrokeCardNo = param.DocumentNo,
+                WorkersStrokeCardInfo = JsonConvert.SerializeObject(xmlData),
                 MedicalInsuranceState = MedicalInsuranceState.HisSettlement
             };
 

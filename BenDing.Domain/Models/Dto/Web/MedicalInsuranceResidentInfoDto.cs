@@ -64,10 +64,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
       
         public  string SettlementNo { get; set; }
-        /// <summary>
-        /// 结算医保交易编号
-        /// </summary>
-        public string SettlementTransactionId { get; set; }
+       
         /// <summary>
         /// 医保状态
         /// </summary>
