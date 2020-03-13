@@ -83,7 +83,7 @@ namespace BenDing.Repository.Providers.Web
                         {
                             strSql = $@" update MedicalInsurance set WorkersStrokeCardNo='{param.WorkersStrokeCardNo}',WorkersStrokeTime=GETDATE(),MedicalInsuranceState={(int)param.MedicalInsuranceState},
                                     WorkersStrokeCardInFo='{param.WorkersStrokeCardInfo}',
-                                    SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
+                                    SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount}
                                     where Id='{param.Id}' ";
                         }
                        

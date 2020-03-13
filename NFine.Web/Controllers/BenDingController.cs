@@ -481,6 +481,7 @@ namespace NFine.Web.Controllers
                      User = userBase,
                      BusinessId = param.BusinessId,
                  };
+                 //获取医保病人
                  var queryData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(
                      new QueryMedicalInsuranceResidentInfoParam()
                      {
@@ -499,6 +500,7 @@ namespace NFine.Web.Controllers
                  data.InsuranceType = queryData.InsuranceType;
                  data.LeaveHospitalDate = settlementData.LeaveHospitalDate;
                  data.MedicalInsuranceState = queryData.MedicalInsuranceState;
+                 data.SettlementNo = queryData.SettlementNo;
                  y.Data = data;
 
              });
@@ -1437,6 +1439,10 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
+                //userBase.TransKey = "72A3764C186F488FBBBB46BB864EF252";
+                //医保登录
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保病人信息
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam() { BusinessId = param.BusinessId });
                 if (residentData.MedicalInsuranceState != MedicalInsuranceState.MedicalInsuranceSettlement) throw new Exception("当前病人未医保结算不能划卡!!!");
@@ -1455,7 +1461,7 @@ namespace NFine.Web.Controllers
                     User = userBase,
                     SelfPayFeeAmount = param.SelfPayFeeAmount
                 };
-                _workerMedicalInsuranceService.WorkerStrokeCard(cardParam); ;
+                _workerMedicalInsuranceService.WorkerStrokeCard(cardParam); 
 
             });
 

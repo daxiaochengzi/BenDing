@@ -382,7 +382,7 @@ namespace BenDing.Service.Providers
                 BackParam = strXmlBackParam
             };
             //存基层
-            //_webBasicRepository.SaveXmlData(saveXml);
+            _webBasicRepository.SaveXmlData(saveXml);
             var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
             {
                 UserId = param.User.UserId,
@@ -395,7 +395,7 @@ namespace BenDing.Service.Providers
                 MedicalInsuranceState = MedicalInsuranceState.HisSettlement
             };
 
-            //更新中间层
+          //  更新中间层
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
             //添加日志
             var logParam = new AddHospitalLogParam()
