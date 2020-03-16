@@ -56,10 +56,10 @@ namespace BenDing.Repository.Providers.Web
                     {
                         if (!string.IsNullOrWhiteSpace(param.CancelTransactionId))
                         {
-                            strSql = $@" update MedicalInsurance set SettlementUserId='{param.UserId}',SettlementTime=NULL,SettlementCancelTime=GETDATE(),[MedicalInsuranceState]={(int)param.MedicalInsuranceState}, 
-                                    SettlementCancelUserId='{param.UserId}',OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},
-                                    SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},
-                                    SettlementNo='{param.SettlementNo}',CancelTransactionId='{param.CancelTransactionId}'
+                            strSql = $@" update MedicalInsurance set SettlementUserId='{param.UserId}',SettlementTime=NULL,
+                                    SettlementCancelTime=GETDATE(),[MedicalInsuranceState]={(int)param.MedicalInsuranceState}, 
+                                    SettlementCancelUserId='{param.UserId}',CancelTransactionId='{param.CancelTransactionId}',
+                                    CancelSettlementRemarks='{param.CancelSettlementRemarks}'
                                     where Id='{param.Id}' ";
                         }
                         else if (!string.IsNullOrWhiteSpace(param.PreSettlementTransactionId))
@@ -181,6 +181,8 @@ namespace BenDing.Repository.Providers.Web
                               ,[InsuranceType]
                               ,[SettlementNo]
                               ,[MedicalInsuranceState]
+                              ,[WorkersStrokeCardNo]
+
                             FROM [dbo].[MedicalInsurance]
                             where  IsDelete=0";
                     if (!string.IsNullOrWhiteSpace(param.DataId))

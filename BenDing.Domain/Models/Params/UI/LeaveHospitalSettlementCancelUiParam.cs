@@ -19,5 +19,9 @@ namespace BenDing.Domain.Models.Params.UI
         [Display(Name = "取消度取消程度")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string CancelLimit { get; set; } 
+        /// <summary>
+        /// 取消结算备注
+        /// </summary>
+        public  string CancelSettlementRemarks { get; set; }
     }
 }

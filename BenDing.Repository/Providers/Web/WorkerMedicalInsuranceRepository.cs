@@ -300,7 +300,6 @@ namespace BenDing.Repository.Providers.Web
             if (param.CancelLimit == "1")
             {
                 cancelData = Cancel(param);
-
             }
             else
             {
@@ -336,6 +335,16 @@ namespace BenDing.Repository.Providers.Web
                 return CommonHelp.StrToTransCoding(yearSign);
             }
             return cancelData;
+        }
+        //职工取消划卡
+        public void CancelWorkerStrokeCard(CancelWorkersStrokeCardParam param)
+        {
+            var data = new HospitalizationPresettlementDto();
+            var xmlStr = XmlHelp.SaveXml(param);
+            if (!xmlStr) throw new Exception("职工取消划卡保存参数出错");
+            int result = MedicalInsuranceDll.CallService_cxjb("CXJB027");
+            if (result != 1) throw new Exception("职工取消划卡执行出错");
+            var dataIni = XmlHelp.DeSerializerModel(new IniDto(), true);
         }
 
         /// <summary>

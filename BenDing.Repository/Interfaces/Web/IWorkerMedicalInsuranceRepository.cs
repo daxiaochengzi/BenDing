@@ -40,6 +40,12 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
         string WorkerSettlementCancel(WorkerSettlementCancelParam param);
         /// <summary>
+        /// 职工划卡取消
+        /// </summary>
+        /// <param name="param"></param>
+        void CancelWorkerStrokeCard(CancelWorkersStrokeCardParam param);
+
+        /// <summary>
         /// 职工结算查询
         /// </summary>
         /// <param name="param"></param>

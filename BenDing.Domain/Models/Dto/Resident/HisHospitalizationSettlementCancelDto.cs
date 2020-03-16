@@ -67,6 +67,7 @@ namespace BenDing.Domain.Models.Dto.Resident
         ///取消经办人
         /// </summary>
         public string CancelOperator { get; set; }
+       
         /// <summary>
         /// 出院诊断
         /// </summary>

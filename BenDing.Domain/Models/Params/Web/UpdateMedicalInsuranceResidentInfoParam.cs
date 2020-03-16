@@ -68,8 +68,11 @@ namespace BenDing.Domain.Models.Params.Web
         /// 刷卡信息
         /// </summary>
         public string WorkersStrokeCardInfo { get; set; }
-      
+        /// <summary>
+        /// 职工取消结算备注
+        /// </summary>
 
+        public string CancelSettlementRemarks { get; set; }
 
     }
 }

@@ -69,6 +69,10 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 医保状态
         /// </summary>
         public MedicalInsuranceState MedicalInsuranceState { get; set; }
+        /// <summary>
+        /// 划卡流水号
+        /// </summary>
+        public string WorkersStrokeCardNo { get; set; }
 
 
     }

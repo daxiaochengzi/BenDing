@@ -522,6 +522,7 @@ namespace NFine.Web.Controllers
                 var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
                 if (inpatientInfoData == null) throw new Exception("获取当前病人失败!!!");
                 var data = AutoMapper.Mapper.Map<HisHospitalizationSettlementCancelDto>(inpatientInfoData);
+               
                 if (!string.IsNullOrWhiteSpace(inpatientInfoData.LeaveHospitalDiagnosisJson))
                 {
                     data.DiagnosisList = JsonConvert.DeserializeObject<List<InpatientDiagnosisDto>>(inpatientInfoData.LeaveHospitalDiagnosisJson);
@@ -535,6 +536,7 @@ namespace NFine.Web.Controllers
                 data.CancelOperator = settlementCancelData.CancelOperator;
                 data.SettlementNo = settlementCancelData.SettlementNo;
                 data.DiagnosisNo = settlementCancelData.DiagnosisNo;
+             
                 y.Data = data;
 
             });
@@ -1106,8 +1108,8 @@ namespace NFine.Web.Controllers
                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                //获取医保病人信息
                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-
                if (residentData == null) throw new Exception("当前病人未办理医保入院登记!!!");
+               
                if (param.CancelLimit == "1")
                {
                    if (residentData.MedicalInsuranceState != MedicalInsuranceState.MedicalInsuranceSettlement)
@@ -1129,6 +1131,7 @@ namespace NFine.Web.Controllers
                        SettlementNo = residentData.SettlementNo,
                        Operators = CommonHelp.GuidToStr(userBase.UserId),
                        CancelLimit = param.CancelLimit,
+                      
                    };
                    var cancelParam = new LeaveHospitalSettlementCancelInfoParam()
                    {
@@ -1154,6 +1157,8 @@ namespace NFine.Web.Controllers
                        MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
                        AdministrativeArea = gradeData.AdministrativeArea,
                        OrganizationCode = userBase.OrganizationCode,
+                       WorkersStrokeCardNo= residentData.WorkersStrokeCardNo,
+                       CancelSettlementRemarks=param.CancelSettlementRemarks,
                    };
                    _workerMedicalInsuranceService.WorkerSettlementCancel(cancelParam);
                }

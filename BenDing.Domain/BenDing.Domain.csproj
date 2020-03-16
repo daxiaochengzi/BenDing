@@ -288,6 +288,7 @@
     <Compile Include="Models\Params\Web\UpdateThreeCataloguePairCodeUploadParam.cs" />
     <Compile Include="Models\Params\Web\UserInfoParam.cs" />
     <Compile Include="Models\Params\Web\XmlData.cs" />
+    <Compile Include="Models\Params\Workers\CancelWorkersStrokeCardParam.cs" />
     <Compile Include="Models\Params\Workers\QueryWorkerHospitalizationSettlementParam.cs" />
     <Compile Include="Models\Params\Workers\WorkerHospitalizationPreSettlementParam.cs" />
     <Compile Include="Models\Params\Workers\ModifyWorkerHospitalizationParam.cs" />

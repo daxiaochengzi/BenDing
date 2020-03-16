@@ -22,5 +22,14 @@ namespace BenDing.Domain.Models.Params.Workers
         /// </summary>
      
         public string CancelLimit { get; set; }
+        /// <summary>
+        /// 划卡流水号
+        /// </summary>
+
+        public  string WorkersStrokeCardNo { get; set; }
+        /// <summary>
+        /// 取消结算备注
+        /// </summary>
+        public string CancelSettlementRemarks { get; set; }
     }
 }

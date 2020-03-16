@@ -325,20 +325,20 @@ namespace BenDing.Repository.Providers.Web
                 //存基层
                 _webBasicRepository.SaveXmlData(saveXml);
             }
-            else if (param.CancelLimit == "2")//取消入院登记并删除资料
-            {
-                Cancel(param);
-                var updateParamData = new UpdateMedicalInsuranceResidentSettlementParam()
-                {
-                    UserId = infoParam.User.UserId,
-                    Id = infoParam.Id,
-                    CancelTransactionId = infoParam.User.TransKey,
-                    MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceCancelSettlement,
-                    IsHisUpdateState = true
-                };
-                //更新中间层
-                _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
-            }
+            //else if (param.CancelLimit == "2")//取消入院登记并删除资料
+            //{
+            //    Cancel(param);
+            //    var updateParamData = new UpdateMedicalInsuranceResidentSettlementParam()
+            //    {
+            //        UserId = infoParam.User.UserId,
+            //        Id = infoParam.Id,
+            //        CancelTransactionId = infoParam.User.TransKey,
+            //        MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceCancelSettlement,
+            //        IsHisUpdateState = true
+            //    };
+            //    //更新中间层
+            //    _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
+            //}
             void Cancel(LeaveHospitalSettlementCancelParam paramc)
             {
               
