@@ -321,7 +321,7 @@ namespace BenDing.Service.Providers
             decimal reimbursementExpenses = resultData.BasicOverallPay + resultData.SupplementPayAmount + resultData.SpecialFundPayAmount
             + resultData.CivilServantsSubsidies + resultData.CivilServantsSubsidy + resultData.OtherPaymentAmount;
             resultData.ReimbursementExpenses = reimbursementExpenses;
-            var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
+            var updateData = new UpdateMedicalInsuranceResidentSettlementParam()
             {
                 UserId = userBase.UserId,
                 ReimbursementExpensesAmount = CommonHelp.ValueToDouble(reimbursementExpenses),
@@ -333,9 +333,61 @@ namespace BenDing.Service.Providers
                 SettlementTransactionId = userBase.UserId,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceSettlement
             };
-            
             //存入中间层
-            _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
+            _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateData);
+            //添加日志
+            var logParam = new AddHospitalLogParam()
+            {
+                JoinOrOldJson = JsonConvert.SerializeObject(param),
+                ReturnOrNewJson = JsonConvert.SerializeObject(resultData),
+                User = userBase,
+                Remark = "职工住院结算",
+                RelationId = residentData.Id,
+            };
+            //存入基层
+            var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
+            {
+                IdentityMark = inpatientInfoData.IdCardNo.Length == 18 ? "1" : "2",
+                InformationNumber = inpatientInfoData.IdCardNo,
+
+            });
+
+            //回参构建
+            var xmlData = new HospitalSettlementXml()
+            {
+
+                MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                CashPayment = resultData.CashPayment,
+                SettlementNo = resultData.DocumentNo,
+                PaidAmount = 0,
+                AllAmount = resultData.TotalAmount,
+                PatientName = userInfoData.PatientName,
+                AccountBalance = userInfoData.WorkersInsuranceBalance,
+                AccountAmountPay = resultData.AccountPayment,
+            };
+            var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+            var saveXml = new SaveXmlDataParam()
+            {
+                User = userBase,
+                MedicalInsuranceBackNum = resultData.DocumentNo,
+                MedicalInsuranceCode = "41",
+                BusinessId = param.BusinessId,
+                BackParam = strXmlBackParam
+            };
+            //结算存基层
+            _webBasicRepository.SaveXmlData(saveXml);
+
+            var updateParamData = new UpdateMedicalInsuranceResidentSettlementParam()
+            {
+                UserId = param.UserId,
+                Id = residentData.Id,
+                MedicalInsuranceState = MedicalInsuranceState.HisSettlement,
+                IsHisUpdateState = true
+            };
+            //  更新中间层
+            _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
+           
+
             //结算后保存信息
             var saveParam = AutoMapper.Mapper.Map<SaveInpatientSettlementParam>(hisSettlement);
             saveParam.Id = (Guid)inpatientInfoData.Id;
@@ -357,6 +409,7 @@ namespace BenDing.Service.Providers
                 InformationNumber = param.IdCardNo,
 
             });
+
             //回参构建
             var xmlData = new HospitalSettlementXml()
             {
@@ -376,12 +429,12 @@ namespace BenDing.Service.Providers
             var saveXml = new SaveXmlDataParam()
             {
                 User = param.User,
-                MedicalInsuranceBackNum = "fyjs_new",
+                MedicalInsuranceBackNum = param.DocumentNo,
                 MedicalInsuranceCode = "41",
                 BusinessId = param.BusinessId,
                 BackParam = strXmlBackParam
             };
-            //存基层
+            //结算存基层
             _webBasicRepository.SaveXmlData(saveXml);
             var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
             {
@@ -403,7 +456,7 @@ namespace BenDing.Service.Providers
                 JoinOrOldJson = JsonConvert.SerializeObject(param),
                 ReturnOrNewJson = JsonConvert.SerializeObject(xmlData),
                 User = param.User,
-                Remark = "职工病人结算",
+                Remark = "职工病人划卡结算",
                 RelationId = param.Id,
             };
             _systemManageRepository.AddHospitalLog(logParam); //回参构建
@@ -416,12 +469,16 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public string WorkerSettlementCancel(WorkerSettlementCancelParam param)
         {  //划卡取消
-            _workerMedicalInsuranceRepository.CancelWorkerStrokeCard(new CancelWorkersStrokeCardParam()
-            {   WorkersStrokeCardNo = param.WorkersStrokeCardNo,
-                Operate = param.User.UserName,
-                Remarks = param.CancelSettlementRemarks
-
-            });
+            if (param.WorkersStrokeCardNo != null)
+            {
+                _workerMedicalInsuranceRepository.CancelWorkerStrokeCard(new CancelWorkersStrokeCardParam()
+                {
+                    WorkersStrokeCardNo = param.WorkersStrokeCardNo,
+                    Operate = param.User.UserName,
+                    Remarks = param.CancelSettlementRemarks
+                });
+            }
+            //结算取消
             var resultData = _workerMedicalInsuranceRepository.WorkerSettlementCancel(param);
             //取消交易id
             var cancelTransactionId = param.User.TransKey;
@@ -448,6 +505,7 @@ namespace BenDing.Service.Providers
                 CancelTransactionId = cancelTransactionId,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsurancePreSettlement,
                 CancelSettlementRemarks= param.CancelSettlementRemarks
+                
             };
             //存入中间层
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);

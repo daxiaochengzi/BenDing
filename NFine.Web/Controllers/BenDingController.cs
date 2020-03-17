@@ -1120,8 +1120,6 @@ namespace NFine.Web.Controllers
                    if (residentData.MedicalInsuranceState != MedicalInsuranceState.MedicalInsurancePreSettlement)
                        throw new Exception("当前病人未办理医保取消结算,不能取消医保入院登记!!!");
                }
-
-
                //居民
                if (residentData.InsuranceType == "342")
                {
