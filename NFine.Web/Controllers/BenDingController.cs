@@ -1110,16 +1110,8 @@ namespace NFine.Web.Controllers
                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
                if (residentData == null) throw new Exception("当前病人未办理医保入院登记!!!");
                
-               if (param.CancelLimit == "1")
-               {
-                   if (residentData.MedicalInsuranceState != MedicalInsuranceState.MedicalInsuranceSettlement)
-                       throw new Exception("当前病人未办理医保结算,不能取消结算!!!");
-               }
-               if (param.CancelLimit == "2")
-               {
-                   if (residentData.MedicalInsuranceState != MedicalInsuranceState.MedicalInsurancePreSettlement)
-                       throw new Exception("当前病人未办理医保取消结算,不能取消医保入院登记!!!");
-               }
+        
+
                //居民
                if (residentData.InsuranceType == "342")
                {

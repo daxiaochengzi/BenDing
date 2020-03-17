@@ -138,6 +138,7 @@
     <Compile Include="Models\HisXml\HospitalizationModifyXml.cs" />
     <Compile Include="Models\HisXml\HospitalizationRegisterCancelXml.cs" />
     <Compile Include="Models\HisXml\HospitalizationRegisterXml.cs" />
+    <Compile Include="Models\HisXml\HospitalSettlementCancelXml.cs" />
     <Compile Include="Models\HisXml\HospitalSettlementXml.cs" />
     <Compile Include="Models\HisXml\OutpatientDepartmentCostCancelXml.cs" />
     <Compile Include="Models\HisXml\OutpatientDepartmentCostXml.cs" />

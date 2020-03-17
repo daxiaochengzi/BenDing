@@ -478,21 +478,22 @@ namespace BenDing.Service.Providers
                     Remarks = param.CancelSettlementRemarks
                 });
             }
-            //结算取消
+         
+           // 结算取消
             var resultData = _workerMedicalInsuranceRepository.WorkerSettlementCancel(param);
             //取消交易id
             var cancelTransactionId = param.User.TransKey;
             //回参构建
-            var xmlData = new HospitalizationRegisterXml()
+            var xmlData = new HospitalSettlementCancelXml()
             {
-                MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
+                SettlementNo = param.SettlementNo,
             };
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
             var saveXml = new SaveXmlDataParam()
             {
                 User = param.User,
-                MedicalInsuranceBackNum = "Qxjs",
-                MedicalInsuranceCode = "22",
+                MedicalInsuranceBackNum = param.MedicalInsuranceHospitalizationNo,
+                MedicalInsuranceCode = "42",
                 BusinessId = param.BusinessId,
                 BackParam = strXmlBackParam
             };
