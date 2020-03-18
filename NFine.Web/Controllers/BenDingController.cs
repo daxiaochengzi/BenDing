@@ -642,7 +642,6 @@ namespace NFine.Web.Controllers
                {
                    throw new Exception("对码数据不能为空");
                }
-
                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                if (userBase != null && string.IsNullOrWhiteSpace(userBase.OrganizationCode) == false)
                {

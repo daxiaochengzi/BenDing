@@ -408,6 +408,42 @@ namespace BenDing.Service.Providers
             //医保执行
             var data = _residentMedicalInsuranceRepository.LeaveHospitalSettlement(settlementParam, infoParam);
             if (data == null) throw new Exception("居民住院结算反馈失败");
+
+            //存入基层
+            var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
+            {
+                IdentityMark = inpatientInfoData.IdCardNo.Length == 18 ? "1" : "2",
+                InformationNumber = inpatientInfoData.IdCardNo,
+
+            });
+
+            // 回参构建
+            var xmlData = new HospitalSettlementXml()
+            {
+
+                MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                CashPayment = data.CashPayment,
+                SettlementNo = data.DocumentNo,
+                PaidAmount = data.PaidAmount,
+                AllAmount = data.TotalAmount,
+                PatientName = userInfoData.PatientName,
+                AccountBalance = userInfoData.WorkersInsuranceBalance,
+                AccountAmountPay =0,
+            };
+
+
+            var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+            var saveXml = new SaveXmlDataParam()
+            {
+                User = userBase,
+                MedicalInsuranceBackNum = data.DocumentNo,
+                MedicalInsuranceCode = "41",
+                BusinessId = param.BusinessId,
+                BackParam = strXmlBackParam
+            };
+            //结算存基层
+            _webBasicRepository.SaveXmlData(saveXml);
+
             //结算后保存信息
             var saveParam = AutoMapper.Mapper.Map<SaveInpatientSettlementParam>(hisSettlement);
             saveParam.Id = (Guid)inpatientInfoData.Id;

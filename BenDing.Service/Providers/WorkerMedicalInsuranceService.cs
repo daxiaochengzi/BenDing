@@ -359,7 +359,7 @@ namespace BenDing.Service.Providers
                 MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
                 CashPayment = resultData.CashPayment,
                 SettlementNo = resultData.DocumentNo,
-                PaidAmount = 0,
+                PaidAmount = resultData.PaidAmount,
                 AllAmount = resultData.TotalAmount,
                 PatientName = userInfoData.PatientName,
                 AccountBalance = userInfoData.WorkersInsuranceBalance,
