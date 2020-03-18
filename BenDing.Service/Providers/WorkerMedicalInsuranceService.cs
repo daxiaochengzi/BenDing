@@ -327,7 +327,7 @@ namespace BenDing.Service.Providers
                 ReimbursementExpensesAmount = CommonHelp.ValueToDouble(reimbursementExpenses),
                 SelfPayFeeAmount = resultData.CashPayment,
                 OtherInfo = JsonConvert.SerializeObject(resultData),
-                Id = residentData.Id,
+                Id = residentData.Id,  
                 SettlementNo = resultData.DocumentNo,
                 MedicalInsuranceAllAmount = resultData.TotalAmount,
                 SettlementTransactionId = userBase.UserId,
