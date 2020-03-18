@@ -78,6 +78,7 @@
     <Compile Include="Models\Dto\JsonEntity\QueryOutpatientDepartmentCostjsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\ResidentUserInfoJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\UserInfoJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntity\WorkerBirthPreSettlementJsonDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\GetOutpatientSettlementCancelDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\MonthlyHospitalizationDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\OutpatientCostReturnDataDto.cs" />
@@ -123,6 +124,8 @@
     <Compile Include="Models\Dto\Web\UiIniParam.cs" />
     <Compile Include="Models\Dto\Workers\QueryWorkerHospitalizationSettlementDto.cs" />
     <Compile Include="Models\Dto\Workers\QueryWorkerMedicalInsuranceDto.cs" />
+    <Compile Include="Models\Dto\Workers\WorkerBirthHospitalizationRegisterDto.cs" />
+    <Compile Include="Models\Dto\Workers\WorkerBirthPreSettlementDto.cs" />
     <Compile Include="Models\Dto\Workers\WorkerHospitalizationPreSettlementDto.cs" />
     <Compile Include="Models\Dto\Workers\WorkerStrokeCardDto.cs" />
     <Compile Include="Models\Dto\Workers\WorkerHospitalizationRegisterDto.cs" />
@@ -291,6 +294,8 @@
     <Compile Include="Models\Params\Web\XmlData.cs" />
     <Compile Include="Models\Params\Workers\CancelWorkersStrokeCardParam.cs" />
     <Compile Include="Models\Params\Workers\QueryWorkerHospitalizationSettlementParam.cs" />
+    <Compile Include="Models\Params\Workers\WorkerBirthHospitalizationRegisterParam.cs" />
+    <Compile Include="Models\Params\Workers\WorkerBirthPreSettlementParam.cs" />
     <Compile Include="Models\Params\Workers\WorkerHospitalizationPreSettlementParam.cs" />
     <Compile Include="Models\Params\Workers\ModifyWorkerHospitalizationParam.cs" />
     <Compile Include="Models\Dto\Base\WorkerBaseParam.cs" />

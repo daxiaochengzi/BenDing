@@ -108,15 +108,29 @@ namespace BenDing.Repository.Providers.Web
         /// 职工生育入院登记
         /// </summary>
         /// <returns></returns>
-        public ResidentHospitalizationRegisterDto WorkerBirthHospitalizationRegister(ResidentHospitalizationRegisterParam param)
+        public WorkerBirthHospitalizationRegisterDto WorkerBirthHospitalizationRegister(WorkerBirthHospitalizationRegisterParam param)
         {
-            ResidentHospitalizationRegisterDto data = null;
-
+            WorkerBirthHospitalizationRegisterDto data = null;
             var xmlStr = XmlHelp.SaveXml(param);
-            if (!xmlStr) throw new Exception("入院登记保存参数出错");
-            int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
-            if (result != 1) throw new Exception("居民医保执行出错!!!");
-            data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto(), true);
+            if (!xmlStr) throw new Exception("职工生育入院登记保存参数出错");
+            int result = MedicalInsuranceDll.CallService_cxjb("SYBX001");
+            if (result != 1) throw new Exception("职工生育入院执行出错!!!");
+            data = XmlHelp.DeSerializerModel(new WorkerBirthHospitalizationRegisterDto(), true);
+            return data;
+        }
+        /// <summary>
+        /// 职工生育预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public HospitalizationPresettlementDto WorkerBirthPreSettlement(WorkerBirthPreSettlementParam param)
+        {
+            HospitalizationPresettlementDto data = null;
+            var xmlStr = XmlHelp.SaveXml(param);
+            if (!xmlStr) throw new Exception("职工生育入院登记保存参数出错");
+            int result = MedicalInsuranceDll.CallService_cxjb("SYBX001");
+            if (result != 1) throw new Exception("职工生育入院执行出错!!!");
+            data = XmlHelp.DeSerializerModel(new HospitalizationPresettlementDto(), true);
             return data;
         }
         /// <summary>

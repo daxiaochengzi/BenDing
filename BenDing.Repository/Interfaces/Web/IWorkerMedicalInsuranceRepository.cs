@@ -52,5 +52,8 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
         QueryWorkerHospitalizationSettlementDto QueryWorkerHospitalizationSettlement(
             QueryWorkerHospitalizationSettlementParam param);
+
+        WorkerBirthHospitalizationRegisterDto WorkerBirthHospitalizationRegister(
+            WorkerBirthHospitalizationRegisterParam param);
     }
 }
