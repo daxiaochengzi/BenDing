@@ -408,6 +408,29 @@ namespace BenDing.Service.Providers
             //医保执行
             var data = _residentMedicalInsuranceRepository.LeaveHospitalSettlement(settlementParam, infoParam);
             if (data == null) throw new Exception("居民住院结算反馈失败");
+            var updateData = new UpdateMedicalInsuranceResidentSettlementParam()
+            {
+                UserId = userBase.UserId,
+                ReimbursementExpensesAmount = CommonHelp.ValueToDouble(data.ReimbursementExpenses),
+                SelfPayFeeAmount = data.CashPayment,
+                OtherInfo = JsonConvert.SerializeObject(data),
+                Id = residentData.Id,
+                SettlementNo = data.DocumentNo,
+                MedicalInsuranceAllAmount = data.TotalAmount,
+                SettlementTransactionId = userBase.UserId,
+                MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceSettlement
+            };
+            //存入中间层
+            _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateData);
+            //添加日志
+            var logParam = new AddHospitalLogParam()
+            {
+                JoinOrOldJson = JsonConvert.SerializeObject(param),
+                ReturnOrNewJson = JsonConvert.SerializeObject(data),
+                User = userBase,
+                Remark = "居民住院结算",
+                RelationId = residentData.Id,
+            };
 
             //存入基层
             var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
@@ -428,7 +451,7 @@ namespace BenDing.Service.Providers
                 AllAmount = data.TotalAmount,
                 PatientName = userInfoData.PatientName,
                 AccountBalance = userInfoData.WorkersInsuranceBalance,
-                AccountAmountPay =0,
+                AccountAmountPay = 0,
             };
 
 
@@ -444,6 +467,16 @@ namespace BenDing.Service.Providers
             //结算存基层
             _webBasicRepository.SaveXmlData(saveXml);
 
+
+            var updateParamData = new UpdateMedicalInsuranceResidentSettlementParam()
+            {
+                UserId = param.UserId,
+                Id = residentData.Id,
+                MedicalInsuranceState = MedicalInsuranceState.HisSettlement,
+                IsHisUpdateState = true
+            };
+            //  更新中间层
+            _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
             //结算后保存信息
             var saveParam = AutoMapper.Mapper.Map<SaveInpatientSettlementParam>(hisSettlement);
             saveParam.Id = (Guid)inpatientInfoData.Id;
