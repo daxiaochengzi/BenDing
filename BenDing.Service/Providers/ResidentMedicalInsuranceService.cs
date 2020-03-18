@@ -432,7 +432,7 @@ namespace BenDing.Service.Providers
                 RelationId = residentData.Id,
             };
 
-            //存入基层
+       
             var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
             {
                 IdentityMark = inpatientInfoData.IdCardNo.Length == 18 ? "1" : "2",
