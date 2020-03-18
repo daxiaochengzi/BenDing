@@ -274,7 +274,7 @@ namespace BenDing.Repository.Providers.Web
             if (CommonHelp.StrToTransCoding(resultState) != "1") throw new Exception(CommonHelp.StrToTransCoding(msg));
             var resultData = new WorkerHospitalizationPreSettlementDto()
             {
-                DocumentNo = documentNo.ToString(),
+                DocumentNo = CommonHelp.StrToTransCoding(documentNo),
                 TotalAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(totalAmount)),
                 BasicOverallPay = Convert.ToDecimal(CommonHelp.StrToTransCoding(basicOverallPay)),
                 SupplementPayAmount = Convert.ToDecimal(CommonHelp.StrToTransCoding(supplementPayAmount)),

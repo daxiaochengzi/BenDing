@@ -103,12 +103,12 @@
                             <input type="text" id="CashPayment" name="CashPayment" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
-                    <div class="layui-inline">
+                    @*<div class="layui-inline">
                         <label class="layui-form-label">报销金额</label>
                         <div class="layui-input-inline">
                             <input type="text" id="ReimbursementExpenses" name="ReimbursementExpenses" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
-                    </div>
+                    </div>*@
 
                     <div class="layui-inline">
                         <label class="layui-form-label">诊断医生</label>
@@ -367,7 +367,7 @@
                         if (data.Data.PayMsg !== null) {
                             settlementData(data.Data.PayMsg);
                         }
-                        $('#ReimbursementExpenses').val(data.Data.ReimbursementExpenses);
+                        //$('#ReimbursementExpenses').val(data.Data.ReimbursementExpenses);
                         $('#CashPayment').val(data.Data.CashPayment);
                         $('#HospitalizationTotalCost').val(data.Data.TotalAmount);
                         //debugger;

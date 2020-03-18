@@ -352,7 +352,7 @@ namespace BenDing.Service.Providers
 
             });
 
-            //回参构建
+           // 回参构建
             var xmlData = new HospitalSettlementXml()
             {
 
@@ -365,6 +365,8 @@ namespace BenDing.Service.Providers
                 AccountBalance = userInfoData.WorkersInsuranceBalance,
                 AccountAmountPay = resultData.AccountPayment,
             };
+
+
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
             var saveXml = new SaveXmlDataParam()
             {
@@ -386,7 +388,7 @@ namespace BenDing.Service.Providers
             };
             //  更新中间层
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
-           
+
 
             //结算后保存信息
             var saveParam = AutoMapper.Mapper.Map<SaveInpatientSettlementParam>(hisSettlement);
