@@ -124,7 +124,7 @@ namespace BenDing.Service.Providers
                 SettlementNo = resultData.DocumentNo,
                 AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
                 PatientName = outpatientPerson.PatientName,
-                AccountAmountPay = resultData.ReimbursementExpensesAmount,
+                AccountAmountPay = 0,
                 MedicalInsuranceType = userInfoData.InsuranceType == "342" ? "10" : userInfoData.InsuranceType,
             };
 
