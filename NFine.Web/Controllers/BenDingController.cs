@@ -488,6 +488,9 @@ namespace NFine.Web.Controllers
                          OrganizationCode = userBase.OrganizationCode,
                          BusinessId = param.BusinessId
                      });
+                 if (queryData == null) throw new Exception("当前病人未办理医保入院登记!!!");
+                 if (queryData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已经办理结算!!!");
+                 if (queryData.MedicalInsuranceState != MedicalInsuranceState.MedicalInsurancePreSettlement) throw new Exception("当前病人未办理预结算,不能进行结算!!!");
                  //获取病人信息
                  var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
                  if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
