@@ -57,7 +57,7 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData().RunWithTry(y =>
             {
-                var data = new HospitalizationPresettlementDto();
+                HospitalizationPresettlementDto data = null;
                 var dataIni = XmlHelp.DeSerializerModel(new HospitalizationPresettlementJsonDto(), true);
                 data = AutoMapper.Mapper.Map<HospitalizationPresettlementDto>(dataIni);
                 //报销金额 =统筹支付+补充险支付+生育补助+民政救助+民政重大疾病救助+精准扶贫+民政优抚+其它支付
@@ -67,7 +67,7 @@ namespace NFine.Web.Controllers
                     data.AccurateAssistancePayAmount + data.CivilServicessistancePayAmount +
                     data.OtherPaymentAmount;
                 data.ReimbursementExpenses = reimbursementExpenses;
-                
+
                 var datacc= CommonHelp.GetPayMsg(JsonConvert.SerializeObject(data));
                 y.Data = datacc;
             });

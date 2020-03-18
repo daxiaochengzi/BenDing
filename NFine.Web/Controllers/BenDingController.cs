@@ -1016,6 +1016,7 @@ namespace NFine.Web.Controllers
                 if (residentData.InsuranceType == "342")
                 {
                     var residentSettlementData = _residentMedicalInsuranceService.LeaveHospitalSettlement(param);
+                   
                     resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(residentSettlementData));
                     resultData.CashPayment = residentSettlementData.CashPayment;
                     resultData.ReimbursementExpenses = residentSettlementData.ReimbursementExpenses;

@@ -65,7 +65,7 @@ namespace BenDing.Domain.Models.Dto.Resident
         /// <summary>
         ///  备注
         /// </summary>
-        
+        [JsonIgnore]
         [JsonProperty(PropertyName = "备注")]
         public string Remark { get; set; }
         /// <summary>
