@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "医保入院登记";
+    ViewBag.Title = "生育入院登记";
     Layout = "~/Views/Shared/_Base.cshtml";
 }
 <link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
@@ -129,7 +129,7 @@
                             <select id="MedicalCategory" name="MedicalCategory" lay-filter="MedicalCategoryType"></select>
                         </div>
                     </div>
-                    <div class="layui-inline" id="HouseholdNatureId" style="display: none;">
+                    <div class="layui-inline" >
                         <label class="layui-form-label">户口性质</label>
                         <div class="layui-input-inline">
                             <select name="HouseholdNature" disabled>
@@ -139,10 +139,10 @@
                             </select>
                         </div>
                     </div>
-                    <div class="layui-inline" id="FetusNumberId" style="display: none;">
+                    <div class="layui-inline" >
                         <label class="layui-form-label">胎儿数</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="FetusNumber" autocomplete="off" disabled class="layui-input layui-disabled">
+                            <input type="text" name="FetusNumber" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                 </div>
