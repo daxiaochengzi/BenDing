@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
 using Newtonsoft.Json;
@@ -101,6 +102,22 @@ namespace BenDing.Repository.Providers.Web
             };
 
             return resultData;
+        }
+
+        /// <summary>
+        /// 职工生育入院登记
+        /// </summary>
+        /// <returns></returns>
+        public ResidentHospitalizationRegisterDto WorkerBirthHospitalizationRegister(ResidentHospitalizationRegisterParam param)
+        {
+            ResidentHospitalizationRegisterDto data = null;
+
+            var xmlStr = XmlHelp.SaveXml(param);
+            if (!xmlStr) throw new Exception("入院登记保存参数出错");
+            int result = MedicalInsuranceDll.CallService_cxjb("CXJB002");
+            if (result != 1) throw new Exception("居民医保执行出错!!!");
+            data = XmlHelp.DeSerializerModel(new ResidentHospitalizationRegisterDto(), true);
+            return data;
         }
         /// <summary>
         /// 入院登记修改

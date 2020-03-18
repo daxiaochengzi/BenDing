@@ -764,8 +764,6 @@ namespace NFine.Web.Controllers
                 if (param.InsuranceType == "310") _workerMedicalInsuranceService.WorkerHospitalizationRegister(workerParam);
                 //居民
                 if (param.InsuranceType == "342") _residentMedicalInsuranceService.HospitalizationRegister(param);
-
-
             });
 
         }
