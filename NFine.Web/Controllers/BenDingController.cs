@@ -472,7 +472,7 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData GetHisHospitalizationSettlement([FromUri]UiBaseDataParam param)
         {
             return new ApiJsonResultData(ModelState, new PatientLeaveHospitalInfoDto()).RunWithTry(y =>
-             {
+             { 
                  //获取操作人员信息
                  var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                  userBase.TransKey = param.TransKey;
