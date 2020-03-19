@@ -558,27 +558,26 @@
                         layer.msg('医疗类别不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
                         return false; 
                     }
-                  
-                    //科室ID
-                    //field.InpatientDepartmentCode = field.InDepartmentId
-                    ////床位号
-                    //field.BedNumber = field.AdmissionBed
-                    ////经办人
-                    //field.Operators = field.UserId
-                    //业务ID
 
                     field.BusinessId = field.BusinessId;
                     //医保交易码
                     field.TransKey = $("#transkey").val();
                     //授权操作人的ID
                     field.UserId = $("#empid").val();
-                    ////获取入院病人查询开始时间
-                    //field.StartTime = field.AdmissionDate
+                  
                     //诊断列表
                     var dataTable1 = table.cache[layTableId];
-
+                    var diagnosisList = []
+                    //排除空值
+                    $.each(dataTable1, function (k, v) {
+                        if (v.DiagnosisCode !== undefined) {
+                            diagnosisList.push(v);
+                        }
+                    });
+                    debugger;
                     //诊断列表 add
-                    field.DiagnosisList = dataTable1;
+                    field.DiagnosisList = diagnosisList;
+
                     $.ajax({
                         type: 'POST',
                         url: host + '/HospitalizationRegister',

@@ -292,9 +292,7 @@ namespace NFine.Web.Controllers
                };
                //获取病人信息
                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
-               if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
-
-               y.Data = inpatientData;
+               y.Data = inpatientData ?? throw new Exception("基层获取住院病人失败!!!");
 
 
            });
@@ -487,6 +485,7 @@ namespace NFine.Web.Controllers
                      });
                  if (queryData == null) throw new Exception("当前病人未办理医保入院登记!!!");
                  if (queryData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已经办理结算!!!");
+
                  if (queryData.MedicalInsuranceState != MedicalInsuranceState.MedicalInsurancePreSettlement) throw new Exception("当前病人未办理预结算,不能进行结算!!!");
                  //获取病人信息
                  var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
@@ -548,7 +547,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet]
-        public ApiJsonResultData HospitalizationRegisterCancel([FromUri]UiBaseDataParam param)
+        public ApiJsonResultData HospitalizationRegisterCancel([FromUri]HospitalizationRegisterCancelParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
@@ -566,14 +565,14 @@ namespace NFine.Web.Controllers
                 //回参构建
                 var xmlData = new HospitalizationRegisterCancelXml()
                 {
-                    MedicalInsuranceHospitalizationNo = "44116683"
+                    MedicalInsuranceHospitalizationNo = param.HospitalizationNo
                 };
                 var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
                 var saveXml = new SaveXmlDataParam()
                 {
                     User = userBase,
                     MedicalInsuranceBackNum = "CXJB004",
-                    MedicalInsuranceCode = "42",
+                    MedicalInsuranceCode = "22",
                     BusinessId = param.BusinessId,
                     BackParam = strXmlBackParam
                 };
@@ -1069,20 +1068,24 @@ namespace NFine.Web.Controllers
                                 AdministrativeArea = gradeData.AdministrativeArea,
                                 OrganizationCode = gradeData.MedicalInsuranceAccount,
                             });
-                        resultData.CashPayment = workerSettlementData.CashPayment;
+                        workerSettlementData.TotalAmount= residentData.MedicalInsuranceAllAmount;
+                    
                         resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
-                        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
+                        resultData.ReimbursementExpenses = residentData.ReimbursementExpensesAmount;
+                      
 
                     }
                     //居民
                     if (residentData.InsuranceType == "342")
                     {
                         var residentSettlementData = _residentMedicalInsuranceRepository.QueryLeaveHospitalSettlement(new QueryLeaveHospitalSettlementParam() { MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo });
+                        residentSettlementData.TotalAmount = residentData.MedicalInsuranceAllAmount;
                         resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(residentSettlementData));
-                        resultData.CashPayment = residentSettlementData.CashPayment;
                         resultData.ReimbursementExpenses = residentSettlementData.ReimbursementExpenses;
 
+
                     }
+                    resultData.CashPayment = residentData.SelfPayFeeAmount;
                     resultData.TotalAmount = residentData.MedicalInsuranceAllAmount;
                 }
                 y.Data = resultData;
