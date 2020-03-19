@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
+using BenDing.Domain.Models.Dto.Workers;
 using BenDing.Domain.Models.Params.OutpatientDepartment;
 
 namespace BenDing.Repository.Interfaces.Web
@@ -38,5 +39,27 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         void CancelMonthlyHospitalization(CancelMonthlyHospitalizationParam param);
+        /// <summary>
+        /// 门诊计划生育预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+          WorkerHospitalizationPreSettlementDto OutpatientPlanBirthPreSettlement(
+              OutpatientPlanBirthPreSettlementParam param);
+        /// <summary>
+        /// 门诊计划生育结算
+        ///  </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        WorkerHospitalizationPreSettlementDto OutpatientPlanBirthSettlement(
+              OutpatientPlanBirthSettlementParam param);
+
+        /// <summary>
+        /// 门诊计划生育结算查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        WorkerHospitalizationPreSettlementDto OutpatientPlanBirthSettlementQuery(
+              OutpatientPlanBirthSettlementQueryParam param);
       }
 }

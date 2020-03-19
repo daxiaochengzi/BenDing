@@ -336,7 +336,6 @@ namespace NFine.Web.Controllers
                if (userBase != null)
                {
                    var data = _webServiceBasicService.GetInpatientInfoDetail(userBase, param.BusinessId);
-                   //y.Data = data;
                    y.Data = "成功更新数据:" + data.Count() + "条!!!";
                }
 
@@ -432,7 +431,6 @@ namespace NFine.Web.Controllers
 
             });
         }
-
         /// <summary>
         ///获取his预结算数据
         /// </summary>
@@ -462,7 +460,6 @@ namespace NFine.Web.Controllers
                 y.Data = data;
             });
         }
-
         /// <summary>
         ///获取his结算数据
         /// </summary>
@@ -822,7 +819,12 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData QueryHospitalizationFee([FromUri]QueryHospitalizationFeeUiParam param)
         {
             return new ApiJsonResultData(ModelState, new QueryHospitalizationFeeDto()).RunWithTry(y =>
-           {
+           {   
+               if (param.IsLoad)
+               {//获取病人明细
+                   var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                   _webServiceBasicService.GetInpatientInfoDetail(userBase, param.BusinessId);
+               }
                var queryData = _hisSqlRepository.QueryHospitalizationFee(param);
                var data = new
                {
@@ -1326,7 +1328,6 @@ namespace NFine.Web.Controllers
                 y.Data = data;
 
             });
-
         }
         /// <summary>
         /// 职工入院登记修改

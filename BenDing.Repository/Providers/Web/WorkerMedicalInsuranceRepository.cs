@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Resident;
@@ -123,16 +124,37 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public HospitalizationPresettlementDto WorkerBirthPreSettlement(WorkerBirthPreSettlementParam param)
+        public WorkerHospitalizationPreSettlementDto WorkerBirthPreSettlement(WorkerBirthPreSettlementParam param)
         {
-            HospitalizationPresettlementDto data = null;
+            WorkerHospitalizationPreSettlementDto data = null;
             var xmlStr = XmlHelp.SaveXml(param);
-            if (!xmlStr) throw new Exception("职工生育入院登记保存参数出错");
-            int result = MedicalInsuranceDll.CallService_cxjb("SYBX001");
-            if (result != 1) throw new Exception("职工生育入院执行出错!!!");
-            data = XmlHelp.DeSerializerModel(new HospitalizationPresettlementDto(), true);
+            if (!xmlStr) throw new Exception("职工生育预结算保存参数出错");
+            int result = MedicalInsuranceDll.CallService_cxjb("SYBX002");
+            if (result != 1) throw new Exception("职工生育预结算执行出错!!!");
+            var dataIni = XmlHelp.DeSerializerModel(new WorkerBirthPreSettlementJsonDto(), true);
+            if (dataIni != null) data = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni);
             return data;
         }
+        /// <summary>
+        /// 职工生育结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public WorkerHospitalizationPreSettlementDto WorkerBirthSettlement(WorkerBirthSettlementParam param)
+        {
+            WorkerHospitalizationPreSettlementDto data = null;
+            var xmlStr = XmlHelp.SaveXml(param);
+            if (!xmlStr) throw new Exception("职工生育结算保存参数出错");
+            int result = MedicalInsuranceDll.CallService_cxjb("SYBX003");
+            if (result != 1) throw new Exception("职工生育结算执行出错!!!");
+            var dataIni = XmlHelp.DeSerializerModel(new WorkerBirthPreSettlementJsonDto(), true);
+            if (dataIni!= null) data = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni);
+            return data;
+        }
+
+     
+
+
         /// <summary>
         /// 入院登记修改
         /// </summary>

@@ -33,5 +33,13 @@ namespace BenDing.Domain.Models.Params.UI
         /// 
         /// </summary>
         public  string TransKey { get; set; }
+        /// <summary>
+        /// 是否加载
+        /// </summary>
+        public  bool IsLoad { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public  string UserId { get; set; }
     }
 }

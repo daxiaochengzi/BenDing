@@ -327,7 +327,7 @@ namespace BenDing.Service.Providers
                 ReimbursementExpensesAmount = CommonHelp.ValueToDouble(reimbursementExpenses),
                 SelfPayFeeAmount = resultData.CashPayment,
                 OtherInfo = JsonConvert.SerializeObject(resultData),
-                Id = residentData.Id,  
+                Id = residentData.Id,
                 SettlementNo = resultData.DocumentNo,
                 MedicalInsuranceAllAmount = resultData.TotalAmount,
                 SettlementTransactionId = userBase.UserId,
@@ -352,7 +352,7 @@ namespace BenDing.Service.Providers
 
             });
 
-           // 回参构建
+            // 回参构建
             var xmlData = new HospitalSettlementXml()
             {
 
@@ -407,7 +407,7 @@ namespace BenDing.Service.Providers
 
             var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
             {
-                IdentityMark = param.IdCardNo.Length==18?"1":"2",
+                IdentityMark = param.IdCardNo.Length == 18 ? "1" : "2",
                 InformationNumber = param.IdCardNo,
 
             });
@@ -450,7 +450,7 @@ namespace BenDing.Service.Providers
                 MedicalInsuranceState = MedicalInsuranceState.HisSettlement
             };
 
-          //  更新中间层
+            //  更新中间层
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
             //添加日志
             var logParam = new AddHospitalLogParam()
@@ -480,8 +480,8 @@ namespace BenDing.Service.Providers
                     Remarks = param.CancelSettlementRemarks
                 });
             }
-         
-           // 结算取消
+
+            // 结算取消
             var resultData = _workerMedicalInsuranceRepository.WorkerSettlementCancel(param);
             //取消交易id
             var cancelTransactionId = param.User.TransKey;
@@ -507,8 +507,8 @@ namespace BenDing.Service.Providers
                 Id = param.Id,
                 CancelTransactionId = cancelTransactionId,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsurancePreSettlement,
-                CancelSettlementRemarks= param.CancelSettlementRemarks
-                
+                CancelSettlementRemarks = param.CancelSettlementRemarks
+
             };
             //存入中间层
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
@@ -569,6 +569,60 @@ namespace BenDing.Service.Providers
             return resultData;
         }
         /// <summary>
+        /// 职工生育入院登记
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public WorkerBirthHospitalizationRegisterDto WorkerBirthHospitalizationRegister(WorkerBirthHospitalizationRegisterUiParam param)
+        {
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            userBase.TransKey = param.TransKey;
+            var infoData = new GetInpatientInfoParam()
+            {
+                User = userBase,
+                BusinessId = param.BusinessId,
+            };
+            //获取病人
+            var inpatientData = _serviceBasicService.GetInpatientInfo(infoData);
+            if (inpatientData == null) throw new Exception("获取基层病人失败!!!");
+            var paramIni = GetWorkerHospitalizationWorkerBirth(inpatientData, param);
+            var data = _workerMedicalInsuranceRepository.WorkerBirthHospitalizationRegister(paramIni);
+            return data;
+        }
+
+        public WorkerHospitalizationPreSettlementDto WorkerBirthPreSettlement(WorkerBirthPreSettlementParam param)
+        {
+            WorkerHospitalizationPreSettlementDto data = null;
+
+            return data;
+        }
+        /// <summary>
+        /// 职工生育结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public WorkerHospitalizationPreSettlementDto WorkerBirthSettlement(WorkerBirthSettlementParam param)
+        {
+            WorkerHospitalizationPreSettlementDto data = null;
+
+            return data;
+        }
+
+        private WorkerBirthHospitalizationRegisterParam GetWorkerHospitalizationWorkerBirth
+            (InpatientInfoDto inpatientInfo, WorkerBirthHospitalizationRegisterUiParam param)
+        {
+            var iniParam = new WorkerBirthHospitalizationRegisterParam()
+            {
+                IdentityMark = param.IdentityMark,
+                AfferentSign = param.AfferentSign,
+                MedicalCategory = param.MedicalCategory,
+                
+            };
+
+            return iniParam;
+        }
+
+        /// <summary>
         /// 获取职工入院登记修改
         /// </summary>
         /// <param name="param"></param>
@@ -588,7 +642,7 @@ namespace BenDing.Service.Providers
                 HospitalizationNo = CommonHelp.GuidToStr(param.BusinessId),
                 AdministrativeArea = gradeData.AdministrativeArea,
                 Operators = user.UserName,
-                OrganizationCode= gradeData.MedicalInsuranceAccount
+                OrganizationCode = gradeData.MedicalInsuranceAccount
             };
             var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
             modifyParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
@@ -636,6 +690,9 @@ namespace BenDing.Service.Providers
             iniParam.OrganizationCode = gradeData.MedicalInsuranceAccount;
             return iniParam;
         }
+
+
+
 
     }
 }
