@@ -170,6 +170,7 @@
     <Compile Include="Models\Params\Resident\HospitalizationModifyParam.cs" />
     <Compile Include="Models\Params\Resident\HospitalizationPreSettlementInfoParam.cs" />
     <Compile Include="Models\Params\Resident\HospitalizationPresettlementParam.cs" />
+    <Compile Include="Models\Params\Resident\HospitalizationRegisterCancelParam.cs" />
     <Compile Include="Models\Params\Resident\LeaveHospitalSettlementCancelInfoParam.cs" />
     <Compile Include="Models\Params\Resident\LeaveHospitalSettlementCancelParam.cs" />
     <Compile Include="Models\Params\Resident\LeaveHospitalSettlementInfoParam.cs" />

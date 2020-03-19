@@ -132,7 +132,7 @@
                     <div class="layui-inline" >
                         <label class="layui-form-label">户口性质</label>
                         <div class="layui-input-inline">
-                            <select name="HouseholdNature" disabled>
+                            <select name="HouseholdNature"  id="HouseholdNature">
                                 <option value="">请选择户口性质</option>
                                 <option value="10">城镇户口</option>
                                 <option value="20">农业户口</option>
@@ -512,23 +512,23 @@
             form.on('submit(reg)',
                 function (data) {
                     var field = data.field;
-
-                    if (field.IdentityMark === 1) {
-                        //身份证号
-                        field.AfferentSign = field.AfferentSign;
+                    //医疗类别
+                    var medicalCategory = $("#MedicalCategory").val();
+                    if (medicalCategory === "" || medicalCategory === undefined) {
+                        layer.msg('医疗类别不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                        return false;
                     }
-                    if (field.IdentityMark === 2) {
-                        //医保个人编码
-
-                        field.AfferentSign = field.AfferentSign;
+                    //户口性质
+                    var householdNature = $("#HouseholdNature").val();
+                    if (householdNature === "" || householdNature === undefined) {
+                        layer.msg('户口性质不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                        return false;
                     }
-                    if ($("#InsuranceType").val() === "310") {
-                        if (field.IdentityMark === 1) {
-                            field.IdentityMark = 2;
-                        }
-                        if (field.IdentityMark === 2) {
-                            field.IdentityMark = 3;
-                        }
+
+                    var householdNature = $("#HouseholdNature").val();
+                    if (householdNature === "" || householdNature === undefined) {
+                        layer.msg('户口性质不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                        return false;
                     }
                     //科室ID
                     //field.InpatientDepartmentCode = field.InDepartmentId
