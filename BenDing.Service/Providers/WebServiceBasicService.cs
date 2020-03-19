@@ -384,6 +384,7 @@ namespace BenDing.Service.Providers
                     var inpatientEntity = new InpatientEntity();
                     var insertEntity = AutoMapper.Mapper.Map<InpatientEntity>(resultData);
                     insertEntity.Id = Guid.NewGuid();
+                   
                     inpatientBaseService.Insert(insertEntity, param.User);
 
                 }

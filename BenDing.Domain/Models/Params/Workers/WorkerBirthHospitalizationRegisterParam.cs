@@ -35,12 +35,8 @@ namespace BenDing.Domain.Models.Params.Workers
         /// 胎儿数
         /// </summary>
         [XmlElementAttribute("PI_TES", IsNullable = false)]
-        public string FetusNumber { get; set; }
-        /// <summary>
-        /// 户口性质
-        /// </summary>
-        [XmlElementAttribute("PI_HKXZ", IsNullable = false)]
-        public string HouseholdNature { get; set; }
+        public int FetusNumber { get; set; }
+        
         /// <summary>
         /// 入院日期(格式为YYYYMMDD)
         /// </summary>

@@ -587,9 +587,51 @@ namespace BenDing.Service.Providers
             if (inpatientData == null) throw new Exception("获取基层病人失败!!!");
             var paramIni = GetWorkerHospitalizationWorkerBirth(inpatientData, param);
             var data = _workerMedicalInsuranceRepository.WorkerBirthHospitalizationRegister(paramIni);
+            if (data == null) throw new Exception("职工生育入院登记未反馈数据!!!");
+            var saveData = new MedicalInsuranceDto
+            {
+                AdmissionInfoJson = JsonConvert.SerializeObject(data),
+                BusinessId = param.BusinessId,
+                Id = Guid.NewGuid(),
+                IsModify = false,
+                InsuranceType = 310,
+                MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized,
+                MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo
+            };
+            //存中间库
+            _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
+            //回参构建
+            var xmlData = new HospitalizationRegisterXml()
+            {
+                MedicalInsuranceType = "310",
+                MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo,
+                InsuranceNo = null,
+            };
+            var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+            var saveXml = new SaveXmlDataParam()
+            {
+                User = userBase,
+                MedicalInsuranceBackNum = "zydj",
+                MedicalInsuranceCode = "21",
+                BusinessId = param.BusinessId,
+                BackParam = strXmlBackParam
+            };
+            //存基层
+            _webBasicRepository.SaveXmlData(saveXml);
+            saveData.MedicalInsuranceState = MedicalInsuranceState.HisHospitalized;
+            //更新中间库
+            _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
+            //保存入院数据
+            infoData.IsSave = true;
+            inpatientData.IsBirthHospital = true;
+            _serviceBasicService.GetInpatientInfo(infoData);
             return data;
         }
-
+        /// <summary>
+        /// 职工生育预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public WorkerHospitalizationPreSettlementDto WorkerBirthPreSettlement(WorkerBirthPreSettlementParam param)
         {
             WorkerHospitalizationPreSettlementDto data = null;
@@ -607,7 +649,12 @@ namespace BenDing.Service.Providers
 
             return data;
         }
-
+        /// <summary>
+        /// 获取生育入院登记入参
+        /// </summary>
+        /// <param name="inpatientInfo"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
         private WorkerBirthHospitalizationRegisterParam GetWorkerHospitalizationWorkerBirth
             (InpatientInfoDto inpatientInfo, WorkerBirthHospitalizationRegisterUiParam param)
         {
@@ -616,9 +663,19 @@ namespace BenDing.Service.Providers
                 IdentityMark = param.IdentityMark,
                 AfferentSign = param.AfferentSign,
                 MedicalCategory = param.MedicalCategory,
-                
+                FetusNumber = param.FetusNumber,
+                SpouseIdCardNo = param.SpouseIdCardNo,
+                SpouseName = param.SpouseName,
+                AdmissionDate =  Convert.ToDateTime(inpatientInfo.AdmissionDate).ToString("yyyyMMdd"),
+                HospitalizationNo = inpatientInfo.HospitalizationNo,
+                Operators = inpatientInfo.AdmissionOperator,
+                InpatientDepartmentCode = inpatientInfo.InDepartmentName,
             };
-
+            var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
+            iniParam.AdmissionMainDiagnosisIcd10 = diagnosisData.AdmissionMainDiagnosisIcd10;
+            iniParam.DiagnosisIcd10Two = diagnosisData.DiagnosisIcd10Two;
+            iniParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
+            iniParam.AdmissionMainDiagnosis = diagnosisData.DiagnosisDescribe;
             return iniParam;
         }
 
