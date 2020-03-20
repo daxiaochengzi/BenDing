@@ -802,7 +802,7 @@ namespace BenDing.Service.Providers
         {
             var resultData = new List<InpatientDiagnosisDto>();
             var queryIcd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam()
-            { Page = 1, Limit = 10000 });
+            { Page = 1, Limit = 10000000 });
             var icd10Data = queryIcd10Data.Values.FirstOrDefault();
             if (icd10Data == null) throw new Exception("icd10为空请更新icd10!!!");
             if (!string.IsNullOrWhiteSpace(one))

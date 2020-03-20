@@ -327,8 +327,8 @@
                         //样式类名:墨绿深蓝风
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
+                       
                         var data = res.Data;
-                      
                         //判断是否生育入院登记
                         if (data.HouseholdNature === null || data.FetusNumber == null && data.InsuranceType !== "342")
                         {
@@ -387,12 +387,11 @@
                 async: false,
                 data: { "DirectoryType": "0", "UserId": $("#empid").val() },
                 success: function (res) {
-                   
                     var list = res.Data; //返回的数据
                     var deptSel = document.getElementById("InpatientDepartmentCode"); //add_role_name给select定义的id
                     for (var i = 0; i < list.length; i++) {
                         var option = document.createElement("option"); // 创建添加option属性
-                        var lay_value = list[i].DirectoryName;
+                        var lay_value = list[i].DirectoryCode;
                         option.setAttribute("value", lay_value); // 给option的value添加值
                         option.innerText = list[i].DirectoryName; // 打印option对应的纯文本
                         deptSel.appendChild(option); // 给select 添加option子标签

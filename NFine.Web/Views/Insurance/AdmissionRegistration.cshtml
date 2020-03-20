@@ -164,7 +164,8 @@
                 <!--诊断列表-->
                 <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
                 <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                    <button type="submit" class="layui-btn layui-btn-radius" lay-submit lay-filter="reg">登记</button>
+                    <button type="button" Id="register" class="layui-btn layui-btn-disabled layui-btn-radius">登记</button>
+                   
                 </div>
             </div>
 
@@ -522,7 +523,7 @@
                             break;
                     }
                 });
-
+          
             //登记
             form.on('submit(reg)',
                 function (data) {
@@ -574,7 +575,7 @@
                             diagnosisList.push(v);
                         }
                     });
-                    debugger;
+                 
                     //诊断列表 add
                     field.DiagnosisList = diagnosisList;
 
@@ -593,11 +594,13 @@
                             } else {
                                 
                                 layer.msg('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                               
                             }
                         }
                     });
                     return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
                 });
+          
         });
 
 </script>
