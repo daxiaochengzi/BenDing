@@ -88,9 +88,9 @@ using System.Xml.Serialization;
         /// </summary>
         [XmlElementAttribute("AKE002", IsNullable = false)]
         public string ProjectName { get; set; }
-        
+
         /// <summary>
-        /// 单价   (12,6)
+        /// 单价   (12,4)
         /// </summary>
         [XmlElementAttribute("CKE521", IsNullable = false)]
         public decimal UnitPrice { get; set; }
@@ -101,7 +101,7 @@ using System.Xml.Serialization;
         public decimal Quantity { get; set; }
 
         /// <summary>
-        /// 总金额 (12,6)每条费用明细的数据校验为传入的金额（四舍五入到两位小数）和传入的单价*传入的数量（四舍五入到两位小数）必须相等，检查不等的会提示报错
+        /// 总金额 ((12,4)每条费用明细的数据校验为传入的金额（四舍五入到两位小数）和传入的单价*传入的数量（四舍五入到两位小数）必须相等，检查不等的会提示报错
         /// </summary>
         [XmlElementAttribute("CKC526", IsNullable = false)]
         public decimal TotalAmount { get; set; }

@@ -623,6 +623,7 @@ namespace BenDing.Service.Providers
             _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
             //保存入院数据
             infoData.IsSave = true;
+            //生育入院
             inpatientData.IsBirthHospital = true;
             _serviceBasicService.GetInpatientInfo(infoData);
             return data;

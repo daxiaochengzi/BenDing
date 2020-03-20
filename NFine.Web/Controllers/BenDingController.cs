@@ -1179,7 +1179,7 @@ namespace NFine.Web.Controllers
 
         }
         #endregion
-        #region 居民门诊医保
+        #region 门诊医保
         /// <summary>
         /// 门诊费用结算
         /// </summary>

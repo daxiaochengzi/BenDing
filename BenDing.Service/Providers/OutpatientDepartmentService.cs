@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Dto.Workers;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.HisXml;
 using BenDing.Domain.Models.Params.Base;
@@ -112,7 +113,7 @@ namespace BenDing.Service.Providers
             //获取病人的基础信息
             var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
             {
-                IdentityMark = "1",
+                IdentityMark = outpatientPerson.IdCardNo.Length >= 18 ? "1" : "2",
                 InformationNumber = outpatientPerson.IdCardNo,
             });
             //回参构建
@@ -156,6 +157,7 @@ namespace BenDing.Service.Providers
 
             return resultData;
         }
+        //门诊取消结算
         public void CancelOutpatientDepartmentCost(UiBaseDataParam param)
         {
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
@@ -213,6 +215,11 @@ namespace BenDing.Service.Providers
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
 
         }
+        /// <summary>
+        /// 门诊结算查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public QueryOutpatientDepartmentCostjsonDto QueryOutpatientDepartmentCost(UiBaseDataParam param)
         {
 
@@ -308,6 +315,62 @@ namespace BenDing.Service.Providers
            
             //var monthlyHospitalization = _monthlyHospitalizationBase.GetForm(param.Id);
            
+        }
+        /// <summary>
+        /// 门诊计划生育预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public WorkerHospitalizationPreSettlementDto OutpatientPlanBirthPreSettlement(OutpatientPlanBirthPreSettlementUiParam param)
+        {
+            WorkerHospitalizationPreSettlementDto data = null;
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            userBase.TransKey = param.TransKey;
+            //医保登录
+            _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+            var outpatientParam = new GetOutpatientPersonParam()
+            {
+                User = userBase,
+                UiParam = param,
+            };
+            var outpatientPerson = _serviceBasicService.GetOutpatientPerson(outpatientParam);
+            if (outpatientPerson == null) throw new Exception("his中未获取到当前病人!!!");
+            if (string.IsNullOrWhiteSpace(outpatientPerson.IdCardNo)) throw new Exception("当前病人的身份证号码不能为空!!!");
+            var inputParam = new OutpatientDepartmentCostInputParam()
+            {
+                AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
+                IdentityMark = outpatientPerson.IdCardNo.Length>=18?"1":"2",
+                InformationNumber = outpatientPerson.IdCardNo,
+                Operators = userBase.UserName
+            };
+            var iniParam = new OutpatientPlanBirthPreSettlementParam()
+            {
+
+            };
+            data= _outpatientDepartmentRepository.OutpatientPlanBirthPreSettlement(iniParam);
+        
+            
+            return data;
+        }
+        /// <summary>
+        /// 门诊计划生育结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public WorkerHospitalizationPreSettlementDto OutpatientPlanBirthSettlement(OutpatientPlanBirthSettlementUiParam param)
+        {
+            WorkerHospitalizationPreSettlementDto data = null;
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            //医保登录
+            _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+            var iniParam = new OutpatientPlanBirthSettlementParam()
+            {
+
+            };
+            data = _outpatientDepartmentRepository.OutpatientPlanBirthSettlement(iniParam);
+
+
+            return data;
         }
     }
 }
