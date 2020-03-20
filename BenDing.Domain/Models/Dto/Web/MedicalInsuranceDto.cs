@@ -44,6 +44,11 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 医保状态
         /// </summary>
         public MedicalInsuranceState MedicalInsuranceState { get; set; }
-       
+        /// <summary>
+        /// 是否生育入院登记
+        /// </summary>
+        public bool IsBirthHospital { get; set; }
+
+
     }
 }

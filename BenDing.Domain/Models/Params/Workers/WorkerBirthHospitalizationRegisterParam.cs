@@ -25,7 +25,7 @@ namespace BenDing.Domain.Models.Params.Workers
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string AfferentSign { get; set; }
         /// <summary>
-        /// 医疗类别11：普通入院23: 市内转院住院14: 大病门诊15: 大病住院22: 急诊入院71：顺产72：剖宫产41：病理剖宫产
+        /// 医疗类别 71：顺产72：剖宫产
         /// </summary>
         [XmlElementAttribute("PI_YLLB", IsNullable = false)]
         [Display(Name = " 医疗类别")]
@@ -35,12 +35,8 @@ namespace BenDing.Domain.Models.Params.Workers
         /// 胎儿数
         /// </summary>
         [XmlElementAttribute("PI_TES", IsNullable = false)]
-        public string FetusNumber { get; set; }
-        /// <summary>
-        /// 户口性质
-        /// </summary>
-        [XmlElementAttribute("PI_HKXZ", IsNullable = false)]
-        public string HouseholdNature { get; set; }
+        public int FetusNumber { get; set; }
+        
         /// <summary>
         /// 入院日期(格式为YYYYMMDD)
         /// </summary>
@@ -109,12 +105,6 @@ namespace BenDing.Domain.Models.Params.Workers
         /// </summary>
         [XmlElementAttribute("PI_AAC003", IsNullable = false)]
         public string SpouseName { get; set; }
-        /// <summary>
-        /// 医保类型编码(310 职工,342 居民)
-        /// </summary>
-        [Display(Name = "医保类型编码")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
-        [XmlIgnoreAttribute]
-        public string InsuranceType { get; set; }
+     
     }
 }

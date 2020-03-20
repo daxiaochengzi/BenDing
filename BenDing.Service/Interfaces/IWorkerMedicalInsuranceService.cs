@@ -54,5 +54,24 @@ namespace BenDing.Service.Interfaces
         /// <returns></returns>
        QueryWorkerHospitalizationSettlementDto QueryWorkerHospitalizationSettlement(
            QueryWorkerHospitalizationSettlementParam param);
+        /// <summary>
+        /// 职工生育入院登记
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        WorkerBirthHospitalizationRegisterDto WorkerBirthHospitalizationRegister(
+           WorkerBirthHospitalizationRegisterUiParam param);
+        /// <summary>
+        /// 职工预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        WorkerHospitalizationPreSettlementDto WorkerBirthPreSettlement(WorkerBirthPreSettlementUiParam param);
+        /// <summary>
+        /// 职工生育结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        WorkerHospitalizationPreSettlementDto WorkerBirthSettlement(WorkerBirthSettlementUiParam param);
    }
 }

@@ -161,6 +161,10 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 交易码
         /// </summary>
         public  string TransactionId { get; set; }
+        /// <summary>
+        ///是否生育住院
+        /// </summary>
+        public  bool IsBirthHospital { get; set; }
         ///// <summary>
         ///// 
         ///// </summary>

@@ -9,6 +9,7 @@ using BenDing.Domain.Models.Dto.JsonEntity.DifferentPlaces;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Dto.Workers;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
@@ -46,6 +47,8 @@ namespace NFine.Web.App_Start
                cfg.CreateMap<BaseOutpatientInfoDto, QueryOutpatientDepartmentCostDataDto>();
                cfg.CreateMap<QueryInpatientInfoDto, HisHospitalizationSettlementCancelDto>();
                cfg.CreateMap<ResidentHospitalizationRegisterUiParam, WorKerHospitalizationRegisterUiParam>();
+               cfg.CreateMap<WorkerBirthPreSettlementJsonDto, WorkerHospitalizationPreSettlementDto>();
+                
                 //异地
                cfg.CreateMap<DifferentPlacesUserInfoJsonDto, DifferentPlacesUserInfoDto>();
                cfg.CreateMap<DifferentPlacesHospitalizationRegisterJsonDto, DifferentPlacesHospitalizationRegisterDto>();

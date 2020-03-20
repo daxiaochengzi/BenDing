@@ -113,6 +113,12 @@
                         </div>
                     </div>
                     <div class="layui-inline">
+                        <label class="layui-form-label">胎儿数</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="FetusNumber" name="FetusNumber" autocomplete="off"  class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
                         <label class="layui-form-label">险种类型</label>
                         <div class="layui-input-inline">
                             <select id="InsuranceType" name="InsuranceType" disabled>
@@ -139,10 +145,16 @@
                             </select>
                         </div>
                     </div>
-                    <div class="layui-inline" >
-                        <label class="layui-form-label">胎儿数</label>
+                    <div class="layui-inline"  id="SpouseIdCardNoDiv">
+                        <label class="layui-form-label">配偶身份证</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="FetusNumber" autocomplete="off" class="layui-input">
+                            <input type="text" name="SpouseIdCardNoDiv" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline" id="SpouseNameDiv">
+                        <label class="layui-form-label">配偶姓名</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="SpouseName" autocomplete="off"  class="layui-input">
                         </div>
                     </div>
                 </div>
@@ -158,13 +170,11 @@
                             <input type="text" name="DiagnosisSearchData" id="DiagnosisSearchData" class="layui-input layui-disabled">
                         </div>
                     </div>
-
-
                 </div>
                 <!--诊断列表-->
                 <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
                 <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                    <button type="submit" class="layui-btn layui-btn-radius" lay-submit lay-filter="reg">登记</button>
+                    <button type="submit" id="BirthRegister" class="layui-btn layui-btn-radius" lay-submit lay-filter="reg">登记</button>
                 </div>
             </div>
 
@@ -203,7 +213,6 @@
                 });
             //病人信息
             var inpatientInfoData = null;
-
             //获取病人信息
             function getInpatientInfo() {
                 var params = {
@@ -233,10 +242,8 @@
                     }
                 });
             }
-
             //获取病人信息
             getInpatientInfo();
-
             //获取医疗类别
             function getMedicalCategory(num) {
                 var medicalCategory = $("#MedicalCategory");
@@ -246,17 +253,17 @@
                     optionHtml += "<option value='71'>71-顺产</option>";
                     optionHtml += "<option value='72'>72-剖宫产</option>";
                     optionHtml += "<option value='41'>41-病理剖宫产</option>";
-
+                  
                 }
                 //职工
                 if (num === "310") {
-                    optionHtml += "<option value='21'>11-普通入院</option>";
-                    optionHtml += "<option value='41'>41-工伤住院</option>";
+                    optionHtml += "<option value='71'>71-顺产</option>";
+                    optionHtml += "<option value='72'>72-剖宫产</option>";
+                   
                 }
                 medicalCategory.append(optionHtml);
 
             }
-
             //form数据回显:数据回显到Form表单主体部分
             var jsonToForm = function (jsonData, formFilter) {
                 //给表单赋值
@@ -279,10 +286,9 @@
                     });
                 //初始化医保类型
                 getMedicalCategory(jsonData.InsuranceType);
+                $("#SpouseIdCardNoDiv").hide();
+                $("#SpouseNameDiv").hide();
             }
-
-           
-         
 
             form.on('select(IdentityMark)',
                 function (data) {
@@ -371,8 +377,6 @@
                     });
                     return false; //阻止表单跳转
                 });
-
-
             var tableSelect = layui.tableSelect;
             tableSelect.render({
                 elem: '#DiagnosisSearchData',
@@ -518,41 +522,57 @@
                         layer.msg('医疗类别不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
                         return false;
                     }
-                    //户口性质
-                    var householdNature = $("#HouseholdNature").val();
-                    if (householdNature === "" || householdNature === undefined) {
-                        layer.msg('户口性质不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
-                        return false;
+                    var insuranceType = $("#InsuranceType").val();
+                    //默认为居民
+                    var urlMethodName = "/HospitalizationRegister";
+                    //居民
+                    if (insuranceType === "310") {
+                        urlMethodName = "/WorkerBirthHospitalizationRegister";
                     }
+                    //职工
+                    if (insuranceType === "342")
+                    {
+                        //户口性质
+                        var householdNature = $("#HouseholdNature").val();
+                        if (householdNature === "" || householdNature === undefined) {
+                            layer.msg('户口性质不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                            return false;
+                        }
 
-                    var householdNature = $("#HouseholdNature").val();
-                    if (householdNature === "" || householdNature === undefined) {
-                        layer.msg('户口性质不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                    }
+                    //胎儿数
+                    var fetusNumber = $("#FetusNumber").val();
+                    if (fetusNumber === "" || fetusNumber === undefined) {
+                        layer.msg('胎儿数不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
                         return false;
                     }
-                    //科室ID
-                    //field.InpatientDepartmentCode = field.InDepartmentId
-                    ////床位号
-                    //field.BedNumber = field.AdmissionBed
-                    ////经办人
-                    //field.Operators = field.UserId
-                    //业务ID
+                    if (fetusNumber<=0) {
+                        layer.msg('胎儿数必须大于0!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                        return false;
+                    }
+                   
+                    
 
                     field.BusinessId = field.BusinessId;
                     //医保交易码
                     field.TransKey = $("#transkey").val();
                     //授权操作人的ID
                     field.UserId = $("#empid").val();
-                    ////获取入院病人查询开始时间
-                    //field.StartTime = field.AdmissionDate
+                   
                     //诊断列表
                     var dataTable1 = table.cache[layTableId];
-
+                    var diagnosisList = [];
+                    //排除空值
+                    $.each(dataTable1, function (k, v) {
+                        if (v.DiagnosisCode !== undefined) {
+                            diagnosisList.push(v);
+                        }
+                    });
                     //诊断列表 add
-                    field.DiagnosisList = dataTable1;
+                    field.DiagnosisList = diagnosisList;
                     $.ajax({
                         type: 'POST',
-                        url: host + '/HospitalizationRegister',
+                        url: host + urlMethodName,
                         async: false,
                         data: JSON.stringify(field),
                         dataType: "json",
@@ -561,10 +581,12 @@
                             if (data.Success === false) {
                                 var errData = data.Message;
                                 //样式类名:墨绿深蓝风
-                                layer.msg('登记失败\n' + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                                layer.msg('登记失败\n' + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
                             } else {
-
                                 layer.msg('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                                $("#BirthRegister").attr("class", "layui-btn layui-btn-radius layui-disabled");
+                                $("#BirthRegister").attr("style", "display:block;");
+
                             }
                         }
                     });

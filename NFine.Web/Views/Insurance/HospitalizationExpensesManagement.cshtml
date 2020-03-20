@@ -87,7 +87,8 @@
         //laydate.render({ elem: '#date2' });
         laydate.render({ elem: '#date1', range: true });
         laydate.render({ elem: '#date2', range: true });
-       
+        //是否初始化加载数据
+        var isLoad = true;
 
         //数据表格实例化
         var layTableId = "dataTableBillId"; //默认
@@ -175,6 +176,7 @@
                 , "UserId": $("#empid").val() /*授权操作人的ID*/
                 , "TransKey": $("#transkey").val()
                 , "UploadMark": 0 /*上传状态*/
+                , "IsLoad": isLoad
             };
             //执行重载
             table.reload(tableId,
@@ -182,6 +184,7 @@
                     url: host + '/QueryHospitalizationFee',
                     where: params
                     , parseData: function (res) { //res 即为原始返回的数据
+                        isLoad = false;
                         if (res.Success === false) layer.alert(res.Message, { skin: 'layui-layer-molv', icon: 3, title: '提示' });;
                         return {
                             "code": res.Code,

@@ -161,6 +161,9 @@
     <Compile Include="Models\Params\OutpatientDepartment\CancelOutpatientDepartmentCostParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\MonthlyHospitalizationParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\OutpatientDepartmentCostInputParam.cs" />
+    <Compile Include="Models\Params\OutpatientDepartment\OutpatientPlanBirthSettlementCancelParam.cs" />
+    <Compile Include="Models\Params\OutpatientDepartment\OutpatientPlanBirthSettlementParam.cs" />
+    <Compile Include="Models\Params\OutpatientDepartment\OutpatientPlanBirthSettlementQueryParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\QueryOutpatientDepartmentCostParam.cs" />
     <Compile Include="Models\Params\Resident\AddProjectBatchParam.cs" />
     <Compile Include="Models\Params\Resident\BatchConfirmParam.cs" />
@@ -252,6 +255,9 @@
     <Compile Include="Models\Params\UI\UiICD10Param.cs" />
     <Compile Include="Models\Params\Base\UiInIDataParam.cs" />
     <Compile Include="Models\Params\Base\UiInIParam.cs" />
+    <Compile Include="Models\Params\UI\WorkerBirthHospitalizationRegisterUiParam.cs" />
+    <Compile Include="Models\Params\UI\WorkerBirthPreSettlementUiParam.cs" />
+    <Compile Include="Models\Params\UI\WorkerBirthSettlementUiParam.cs" />
     <Compile Include="Models\Params\UI\WorKerHospitalizationRegisterUiParam.cs" />
     <Compile Include="Models\Params\UI\WorkerHospitalizationSettlementUiParam.cs" />
     <Compile Include="Models\Params\UI\WorkerStrokeCardUiParam.cs" />
@@ -294,9 +300,11 @@
     <Compile Include="Models\Params\Web\UserInfoParam.cs" />
     <Compile Include="Models\Params\Web\XmlData.cs" />
     <Compile Include="Models\Params\Workers\CancelWorkersStrokeCardParam.cs" />
+    <Compile Include="Models\Params\OutpatientDepartment\OutpatientPlanBirthPreSettlementParam.cs" />
     <Compile Include="Models\Params\Workers\QueryWorkerHospitalizationSettlementParam.cs" />
     <Compile Include="Models\Params\Workers\WorkerBirthHospitalizationRegisterParam.cs" />
     <Compile Include="Models\Params\Workers\WorkerBirthPreSettlementParam.cs" />
+    <Compile Include="Models\Params\Workers\WorkerBirthSettlementParam.cs" />
     <Compile Include="Models\Params\Workers\WorkerHospitalizationPreSettlementParam.cs" />
     <Compile Include="Models\Params\Workers\ModifyWorkerHospitalizationParam.cs" />
     <Compile Include="Models\Dto\Base\WorkerBaseParam.cs" />
