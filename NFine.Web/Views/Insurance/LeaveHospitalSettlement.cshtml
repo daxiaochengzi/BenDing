@@ -244,18 +244,7 @@
                         data: data.Data.DiagnosisList
                     });
                
-                    //if (insuranceType === "310") {
-                    //    if (data.Data.MedicalInsuranceState === 5) {
-                    //        //结算赋值
-                    //        settlementNo = data.Data.SettlementNo;
-                    //        buttonStatus("PayCard", true);
-                    //    }
-                    //    //$("#CardPwd").attr("disabled", false);
-                    //    //$("#CardPwd").attr("class", "layui-input");
-                    //} 
-                    //if (data.Data.MedicalInsuranceState !== 5) {
-                    //    buttonStatus("Settlement", true);
-                    //}
+                  
                  
                     buttonStatus("Settlement", true);
                 }
@@ -330,25 +319,30 @@
                 }
             });
         $('#Settlement').on('click', function () {
+         
             //诊断列表
             var dataTable1 = table.cache[layTableId];
+            var diagnosisList = [];
+            //排除空值
+            $.each(dataTable1, function (k, v) {
+                if (v.DiagnosisCode !== undefined) {
+                    diagnosisList.push(v);
+                }
+            });
+         
             var leaveHospitalInpatientState = $("#LeaveHospitalInpatientState").val();
             if (leaveHospitalInpatientState === undefined || leaveHospitalInpatientState === "") {
                 layer.alert("病人出院状态不能为空!!!", { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                 return false;
             }
-              //if (insuranceType === 310) {
-              //    var cardPwdData = $("#CardPwd").val();
-              //    layer.alert("医保密码不能为空!!!", { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-              //    return false;
-              //}
+         
             var settlementParam =
             {
                 "TransKey": $("#transkey").val() /*医保交易码*/,
                 "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
                 "UserId": $("#empid").val() /*授权操作人的ID*/,
                 "LeaveHospitalInpatientState": leaveHospitalInpatientState, /*授权操作人的ID*/
-                "DiagnosisList": dataTable1
+                "DiagnosisList": diagnosisList
             };
             $.ajax({
                 type: 'post',

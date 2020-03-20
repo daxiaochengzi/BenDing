@@ -511,7 +511,6 @@
                             break;
                     }
                 });
-
             //登记
             form.on('submit(reg)',
                 function (data) {
@@ -550,9 +549,6 @@
                         layer.msg('胎儿数必须大于0!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
                         return false;
                     }
-                   
-                    
-
                     field.BusinessId = field.BusinessId;
                     //医保交易码
                     field.TransKey = $("#transkey").val();
@@ -568,7 +564,7 @@
                             diagnosisList.push(v);
                         }
                     });
-                    //诊断列表 add
+                    //诊断列表 
                     field.DiagnosisList = diagnosisList;
                     $.ajax({
                         type: 'POST',
