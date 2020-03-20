@@ -10,42 +10,32 @@ using BenDing.Domain.Models.Params.Base;
 
 namespace BenDing.Domain.Models.Params.UI
 {
-   public class WorkerBirthHospitalizationRegisterUiParam: UiBaseDataParam
-    {///<summary>
-     /// 身份标识
-     /// </summary>
-
-        [Display(Name = "身份标识")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
-        public string IdentityMark { get; set; }
+   public class WorkerBirthSettlementUiParam: UiBaseDataParam
+    {
         /// <summary>
-        ///身份证号或者个人编号
-        /// </summary>
-        [Display(Name = "身份证号或者个人编号")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
-        public string AfferentSign { get; set; }
-        /// <summary>
-        /// 医疗类别71：顺产72：剖宫产
+        /// 71：顺产: 72: 剖宫产
         /// </summary>
         [Display(Name = " 医疗类别")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string MedicalCategory { get; set; }
+
         /// <summary>
         /// 胎儿数
         /// </summary>
-       
-        public int FetusNumber { get; set; }
-       
+     
+        public string FetusNumber { get; set; }
         /// <summary>
-        /// 配偶身份证号码
+        /// 出院病人状态(1康复，2转院，3死亡，4其他)
         /// </summary>
-        
-        public string SpouseIdCardNo { get; set; }
+        [Display(Name = "出院病人状态")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+
+        public string LeaveHospitalInpatientState { get; set; }
         /// <summary>
-        /// 配偶姓名
+        /// 账户支付
         /// </summary>
-      
-        public string SpouseName { get; set; }
+        public decimal AccountPayment { get; set; }
+  
         /// <summary>
         /// 诊断
         /// </summary>

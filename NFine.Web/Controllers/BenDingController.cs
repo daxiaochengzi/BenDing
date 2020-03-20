@@ -1428,6 +1428,24 @@ namespace NFine.Web.Controllers
 
             });
         }
+
+        /// <summary>
+        /// 职工生育入院登记
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData WorkerBirthHospitalizationRegister([FromBody]WorkerBirthHospitalizationRegisterUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {//医保登录
+                    _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                if (param.DiagnosisList != null && param.DiagnosisList.Any())
+                    _workerMedicalInsuranceService.WorkerBirthHospitalizationRegister(param);
+                throw new Exception("诊断不能为空!!!");
+            });
+
+        }
         /// <summary>
         /// 职工划卡
         /// </summary>

@@ -270,7 +270,7 @@
             switch (event) {
                 case "diagnosis":
                     var stateVal = tr.find("input[name='IsMainDiagnosis']").prop('checked') ? true : false;
-                    $.extend(obj.data, { 'IsMainDiagnosis': stateVal })
+                    $.extend(obj.data, { 'IsMainDiagnosis': stateVal });
                     activeByType('updateRow', obj.data);	//更新行记录对象
                     break;
                 case "del":
