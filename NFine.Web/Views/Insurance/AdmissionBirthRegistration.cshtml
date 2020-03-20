@@ -561,9 +561,15 @@
                    
                     //诊断列表
                     var dataTable1 = table.cache[layTableId];
-
+                    var diagnosisList = [];
+                    //排除空值
+                    $.each(dataTable1, function (k, v) {
+                        if (v.DiagnosisCode !== undefined) {
+                            diagnosisList.push(v);
+                        }
+                    });
                     //诊断列表 add
-                    field.DiagnosisList = dataTable1;
+                    field.DiagnosisList = diagnosisList;
                     $.ajax({
                         type: 'POST',
                         url: host + urlMethodName,
