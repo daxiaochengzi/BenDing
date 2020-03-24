@@ -73,6 +73,10 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 划卡流水号
         /// </summary>
         public string WorkersStrokeCardNo { get; set; }
+        /// <summary>
+        /// 是否生育入院
+        /// </summary>
+        public  int IsBirthHospital { get; set; }
 
 
     }

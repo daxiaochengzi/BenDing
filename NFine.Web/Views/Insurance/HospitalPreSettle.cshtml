@@ -67,6 +67,22 @@
                             <input type="text" name="DepartmentName" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
+                    <div class="layui-inline" id="MedicalCategoryDiv">
+                        <label class="layui-form-label">医疗类别</label>
+                        <div class="layui-input-inline">
+                            <select name="MedicalCategory" id="MedicalCategory">
+                                <option value="">请选择医疗类别</option>
+                                <option value="71">71-顺产</option>
+                                <option value="72">72-剖宫产</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline"  id="FetusNumberDiv">
+                        <label class="layui-form-label">胎儿数</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="FetusNumber" name="FetusNumber" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">费用合计</label>
                         <div class="layui-input-inline">
@@ -79,12 +95,12 @@
                             <input type="text" id="CashPayment" name="CashPayment" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
-                    <div class="layui-inline">
+                    @*<div class="layui-inline">
                         <label class="layui-form-label">报销金额</label>
                         <div class="layui-input-inline">
                             <input type="text" id="ReimbursementExpenses"  name="ReimbursementExpenses" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
-                    </div>
+                    </div>*@
 
                     <div class="layui-inline">
                         <label class="layui-form-label">诊断医生</label>
@@ -103,7 +119,13 @@
                     </div>
                 </div>
             </div>
+            <div class="layui-form-item"  id="DiagnosisDiv">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
+                    <legend>出院诊断信息</legend>
+                </fieldset>
+                <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
 
+            </div>
             <div class="layui-card-body" lay-size="sm">
                 <fieldset id="PreSettleData" class="layui-elem-field layui-field-title" style="margin-top: 10px;">
                     <legend>医保预结算信息</legend>
@@ -131,6 +153,46 @@
             form = layui.form,
             layer = layui.layer,
             table = layui.table;
+        //是否生育入院登记
+        var isBirthHospital = 0;
+        //诊断数据表格实例化
+        var layTableId = "dataTableId";
+        $("#DiagnosisDiv").hide();
+        $("#FetusNumberDiv").hide();
+        $("#MedicalCategoryDiv").hide(); 
+        var tableIns = table.render({
+            elem: '#dataTable',
+            id: layTableId,
+            page: false,
+            cols: [
+                [
+                    { title: '序号', type: 'numbers', width: 80 }, ,
+                    { field: 'DiagnosisName', title: '诊断名称', width: 280 },
+                    { field: 'DiagnosisCode', title: '诊断代码', width: 280 }, {
+                        field: 'IsMainDiagnosis',
+                        title: '主诊',
+                        width: 120,
+                        event: 'diagnosis',
+                        templet: function (d) {
+                            var html = [
+                                '<input type="checkbox" name="IsMainDiagnosis" lay-skin="switch" lay-text="是|否"'
+                            ];
+                            html.push(d.IsMainDiagnosis === true ? 'checked' : '');
+                            html.push('/>');
+                            return html.join('');
+                        }
+                    }, {
+                        title: '操作',
+                        fixed: 'right',
+                        templet: function (d) {
+                            return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="' +
+                                d.DiagnosisCode +
+                                '"><i class="layui-icon layui-icon-delete"></i>移除</a>';
+                        }
+                    }
+                ]
+            ]
+        });
         //form数据回显:数据回显到Form表单主体部分
         var jsonToForm = function (jsonData, formFilter) {
             //给表单赋值
@@ -152,9 +214,46 @@
         var params = {
             "TransKey": $("#transkey").val() /*医保交易码*/,
             "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
-            "UserId": $("#empid").val() /*授权操作人的ID*/
+            "UserId": $("#empid").val() /*授权操作人的ID*/,
+            
         }
         $('#PreSettlement').on('click', function () {
+
+            if (isBirthHospital === 1) {
+                //医疗类别
+                var medicalCategory = $("#MedicalCategory").val();
+                if (medicalCategory === "" || medicalCategory === undefined) {
+                    layer.msg('医疗类别不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                    return false;
+                }
+                //胎儿数
+                var fetusNumber = $("#FetusNumber").val();
+                if (fetusNumber === "" || fetusNumber === undefined) {
+                    layer.msg('胎儿数不能为空!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                    return false;
+                }
+                if (fetusNumber<=0) {
+                    layer.msg('胎儿数必须大于0!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                    return false;
+                }
+                //诊断列表
+                var dataTable1 = table.cache[layTableId];
+                var diagnosisList = [];
+                //排除空值
+                $.each(dataTable1, function (k, v) {
+                    if (v.DiagnosisCode !== undefined) {
+                        diagnosisList.push(v);
+                    }
+                });
+               
+                if (diagnosisList.length === 0) {
+                    layer.msg('诊断不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                    return false;
+                }
+                params["DiagnosisList"] = diagnosisList;
+                params["MedicalCategory"] = $("#MedicalCategory").val();
+                params["FetusNumber"] = fetusNumber;
+            }
             $.ajax({
                 type: 'get',
                 url: host + '/HospitalizationPreSettlement',
@@ -164,12 +263,10 @@
                 success: function (data) {
                  
                     if (data.Success === false) {
-                        
                         var errData = data.Message;
                         //样式类名:墨绿深蓝风
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
-                    
                        // $('#PreSettlementData').val(data.Data.PayMsg);
                         if (data.Data.PayMsg !== null) {
                             preSettlement(data.Data.PayMsg);
@@ -203,8 +300,6 @@
             }
            
          }
-      
-
         $.ajax({
             type: 'get',
             url: host + '/GetHisHospitalizationPreSettlement',
@@ -219,7 +314,16 @@
                     layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                 } else {
                     jsonToForm(data.Data, "LAY-form-render");
+                    isBirthHospital = data.Data.IsBirthHospital;
                     buttonStatus("PreSettlement", true);
+                    if (data.Data.IsBirthHospital === 1) {
+                        //加载诊断默认数据
+                        tableIns.reload({
+                            data: data.Data.DiagnosisList
+                        });
+                        $("#DiagnosisDiv").show();
+                    }
+                 
                 }
             },
             complete: function () {
@@ -227,6 +331,70 @@
             }
         });
 
+        //定义事件集合
+        var active = {
+            updateRow: function (obj) {
+                var oldData = table.cache[layTableId];
+
+                for (var i = 0, row; i < oldData.length; i++) {
+                    row = oldData[i];
+                    if (row.DiagnosisCode === obj.DiagnosisCode) {
+                        $.extend(oldData[i], obj);
+                        return;
+                    }
+                }
+                tableIns.reload({
+                    data: oldData
+                });
+            },
+            removeEmptyTableCache: function () {
+                var oldData = table.cache[layTableId];
+                for (var i = 0, row; i < oldData.length; i++) {
+                    row = oldData[i];
+                    if (!row || !row.Id) {
+                        oldData.splice(i, 1); //删除一项
+                    }
+                    continue;
+                }
+                tableIns.reload({
+                    data: oldData
+                });
+            }
+        };
+        //注册按钮事件
+        $('.layui-btn[data-type]').on('click',
+            function () {
+                var type = $(this).data('type');
+                activeByType(type);
+            });
+        //激活事件
+        var activeByType = function (type, arg) {
+            if (arguments.length === 2) {
+                active[type] ? active[type].call(this, arg) : '';
+            } else {
+                active[type] ? active[type].call(this) : '';
+            }
+        }
+        //监听工具条
+        table.on('tool(dataTable)',
+            function (obj) {
+                var data = obj.data, event = obj.event, tr = obj.tr; //获得当前行 tr 的DOM对象;
+                switch (event) {
+                    case "diagnosis":
+                        var stateVal = tr.find("input[name='IsMainDiagnosis']").prop('checked') ? true : false;
+                        $.extend(obj.data, { 'IsMainDiagnosis': stateVal });
+                        activeByType('updateRow', obj.data); //更新行记录对象
+                        break;
+                    case "del":
+                        layer.confirm('真的删除行么？',
+                            function (index) {
+                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                                layer.close(index);
+                                activeByType('removeEmptyTableCache');
+                            });
+                        break;
+                }
+            });
         //按钮状态
         function buttonStatus(buttonId, status) { 
             //取消禁用

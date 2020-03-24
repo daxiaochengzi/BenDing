@@ -446,15 +446,30 @@ namespace NFine.Web.Controllers
                     User = userBase,
                     BusinessId = param.BusinessId,
                 };
+                //获取医保病人
+                var queryData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(
+                    new QueryMedicalInsuranceResidentInfoParam()
+                    {
+                        OrganizationCode = userBase.OrganizationCode,
+                        BusinessId = param.BusinessId
+                    });
                 //获取his预结算
-                var hisPreSettlementData = _webServiceBasicService.GetHisHospitalizationPreSettlement(infoData);
-                var preSettlementData = hisPreSettlementData.PreSettlementData.FirstOrDefault();
+                //var hisPreSettlementData = _webServiceBasicService.GetHisHospitalizationPreSettlement(infoData);
+                //var preSettlementData = hisPreSettlementData.PreSettlementData.FirstOrDefault();
+                //获取病人结算信息
+                var settlementData = _webServiceBasicService.GetHisHospitalizationSettlement(infoData);
+                if (settlementData.DiagnosisList.Any() == false) throw new Exception("当前病人没有出院诊断信息，不能办理医保预结算!!!");
                 //获取病人信息
                 var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
                 if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
                 var data = AutoMapper.Mapper.Map<HisHospitalizationPreSettlementDto>(inpatientData);
-                data.LeaveHospitalDate = preSettlementData.EndDate;
-                data.Operator = preSettlementData.Operator;
+                data.LeaveHospitalDate = settlementData.LeaveHospitalDate;
+                data.Operator = settlementData.LeaveHospitalOperator;
+                data.IsBirthHospital = queryData.IsBirthHospital;
+                data.Operator = settlementData.LeaveHospitalOperator;
+                data.DiagnosisList = settlementData.DiagnosisList;
+                data.InsuranceType = queryData.InsuranceType;
+                data.LeaveHospitalDate = settlementData.LeaveHospitalDate;
                 y.Data = data;
             });
         }
@@ -493,7 +508,7 @@ namespace NFine.Web.Controllers
                  var data = AutoMapper.Mapper.Map<HisHospitalizationPreSettlementDto>(inpatientData);
                  //获取病人结算信息
                  var settlementData = _webServiceBasicService.GetHisHospitalizationSettlement(infoData);
-                 if (settlementData.DiagnosisList.Any() == false) throw new Exception(" 当前病人没有出院诊断信息，不能办理医保结算!!!");
+                 if (settlementData.DiagnosisList.Any() == false) throw new Exception("当前病人没有出院诊断信息，不能办理医保结算!!!");
                  data.Operator = settlementData.LeaveHospitalOperator;
                  data.DiagnosisList = settlementData.DiagnosisList;
                  data.InsuranceType = queryData.InsuranceType;
@@ -931,7 +946,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet]
-        public ApiJsonResultData HospitalizationPreSettlement([FromUri]UiBaseDataParam param)
+        public ApiJsonResultData HospitalizationPreSettlement([FromUri]HospitalizationPreSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {
@@ -958,11 +973,32 @@ namespace NFine.Web.Controllers
                 //职工
                 if (residentData.InsuranceType == "310")
                 {
-                    var workerSettlementData = _workerMedicalInsuranceService.WorkerHospitalizationPreSettlement(param);
-                    resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
-                    resultData.CashPayment = workerSettlementData.CashPayment;
-                    resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
-                    resultData.TotalAmount = workerSettlementData.TotalAmount;
+                    //WorkerBirthPreSettlement
+                    if (residentData.IsBirthHospital == 0)
+                    {
+                        var workerSettlementData = _workerMedicalInsuranceService.WorkerHospitalizationPreSettlement(param);
+                        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
+                        resultData.CashPayment = workerSettlementData.CashPayment;
+                        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
+                        resultData.TotalAmount = workerSettlementData.TotalAmount;
+                    }//职工生育预结算
+                    else if(residentData.IsBirthHospital == 1)
+                    {
+                        var workerSettlementData = _workerMedicalInsuranceService.WorkerBirthPreSettlement(new WorkerBirthPreSettlementUiParam()
+                        {
+                            TransKey = param.TransKey,
+                            BusinessId = param.BusinessId,
+                            DiagnosisList = param.DiagnosisList,
+                            UserId = param.UserId,
+                            MedicalCategory = param.MedicalCategory
+                        });
+                        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
+                        resultData.CashPayment = workerSettlementData.CashPayment;
+                        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
+                        resultData.TotalAmount = workerSettlementData.TotalAmount;
+                    }
+
+                   
                 }
                 //居民
                 if (residentData.InsuranceType == "342")
@@ -1199,7 +1235,6 @@ namespace NFine.Web.Controllers
                     User = userBase,
                     UiParam = param
                 });
-
                 if (data == null) throw new Exception("获取门诊结算反馈数据失败!!!");
 
                 y.Data = new OutpatientCostReturnDataDto()

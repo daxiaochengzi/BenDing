@@ -25,6 +25,10 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
         public  string SettlementNo { get; set; }
         /// <summary>
+        /// 是否生育入院登记
+        /// </summary>
+        public int IsBirthHospital { get; set; }
+        /// <summary>
         /// 诊断
         /// </summary>
         public List<InpatientDiagnosisDto> DiagnosisList { get; set; }

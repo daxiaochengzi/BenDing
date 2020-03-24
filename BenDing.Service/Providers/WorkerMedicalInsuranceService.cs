@@ -696,7 +696,7 @@ namespace BenDing.Service.Providers
                 JoinOrOldJson = JsonConvert.SerializeObject(param),
                 ReturnOrNewJson = JsonConvert.SerializeObject(resultData),
                 User = userBase,
-                Remark = "职工住院病人预结算"
+                Remark = "职工生育住院病人预结算"
             };
             _systemManageRepository.AddHospitalLog(logParam);
 

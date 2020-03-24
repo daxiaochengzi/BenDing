@@ -312,7 +312,6 @@ namespace BenDing.Service.Providers
                        DocumentNo = param.DocumentNo
                    }
                });
-           
             //var monthlyHospitalization = _monthlyHospitalizationBase.GetForm(param.Id);
            
         }

@@ -182,6 +182,7 @@ namespace BenDing.Repository.Providers.Web
                               ,[SettlementNo]
                               ,[MedicalInsuranceState]
                               ,[WorkersStrokeCardNo]
+                              ,[IsBirthHospital]
                             FROM [dbo].[MedicalInsurance]
                             where  IsDelete=0";
                     if (!string.IsNullOrWhiteSpace(param.DataId))
