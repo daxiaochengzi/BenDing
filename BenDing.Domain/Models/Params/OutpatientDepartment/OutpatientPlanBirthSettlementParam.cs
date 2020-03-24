@@ -40,6 +40,11 @@ namespace BenDing.Domain.Models.Params.OutpatientDepartment
         //[Required(ErrorMessage = "{0}不能为空!!!")]
         public string AdmissionMainDiagnosisIcd10 { get; set; }
         /// <summary>
+        /// 账户支付
+        /// </summary>
+        [XmlElementAttribute("PI_ZHZF", IsNullable = false)]
+        public decimal AccountPayment { get; set; }
+        /// <summary>
         /// 诊断日期(格式为YYYYMMDD)
         /// </summary>
 
@@ -48,7 +53,7 @@ namespace BenDing.Domain.Models.Params.OutpatientDepartment
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string DiagnosisDate { get; set; }
         /// <summary>
-        /// 项目数量
+        /// 项目数量(8,2)
         /// </summary>
 
         [XmlElementAttribute("PI_NUM", IsNullable = false)]
@@ -56,7 +61,7 @@ namespace BenDing.Domain.Models.Params.OutpatientDepartment
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public int ProjectNum { get; set; }
         /// <summary>
-        /// 金额合计
+        /// 金额合计(8,2)
         /// </summary>
 
         [XmlElementAttribute("PI_CKC501", IsNullable = false)]

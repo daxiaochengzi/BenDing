@@ -239,6 +239,8 @@
     <Compile Include="Models\Params\UI\MedicalInsuranceXmlUiParam.cs" />
     <Compile Include="Models\Params\UI\ModifyWorkerHospitalizationUiParam.cs" />
     <Compile Include="Models\Params\UI\MonthlyHospitalizationUiParam.cs" />
+    <Compile Include="Models\Params\UI\OutpatientPlanBirthPreSettlementUiParam.cs" />
+    <Compile Include="Models\Params\UI\OutpatientPlanBirthSettlementUiParam.cs" />
     <Compile Include="Models\Params\UI\PrescriptionUploadAutomaticUiParam.cs" />
     <Compile Include="Models\Params\UI\PrescriptionUploadUiParam.cs" />
     <Compile Include="Models\Params\UI\QueryCatalogUiParam.cs" />
