@@ -657,7 +657,7 @@ namespace BenDing.Service.Providers
             
             var preSettlement = new WorkerBirthPreSettlementParam()
             {
-                 MedicalCategory = param.MedicalCategory,
+                MedicalCategory = param.MedicalCategory,
                 FetusNumber = param.FetusNumber,
                 MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
                 LeaveHospitalDate = Convert.ToDateTime(settlementData.LeaveHospitalDate).ToString("yyyyMMdd"),
@@ -731,11 +731,7 @@ namespace BenDing.Service.Providers
             //获取住院病人
             var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
             if (inpatientInfoData == null) throw new Exception("该病人未在中心库中,请检查是否办理医保入院!!!");
-            //获取医保账号
-            var userData = _systemManageRepository.QueryHospitalOperator(
-                     new QueryHospitalOperatorParam() { UserId = param.UserId });
-            //获取医院等级
-            var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
+            
             var infoParam = new WorkerBirthSettlementParam()
             {   LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
                 FetusNumber = param.FetusNumber,

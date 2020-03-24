@@ -16,7 +16,7 @@ namespace BenDing.Domain.Models.Params.UI
         /// 71：顺产: 72: 剖宫产
         /// </summary>
        
-        [Required(ErrorMessage = "{0}不能为空!!!")]
+        
         public string MedicalCategory { get; set; }
 
         /// <summary>

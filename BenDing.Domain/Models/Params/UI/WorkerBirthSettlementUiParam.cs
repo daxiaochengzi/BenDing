@@ -23,7 +23,7 @@ namespace BenDing.Domain.Models.Params.UI
         /// 胎儿数
         /// </summary>
      
-        public string FetusNumber { get; set; }
+        public int FetusNumber { get; set; }
         /// <summary>
         /// 出院病人状态(1康复，2转院，3死亡，4其他)
         /// </summary>
