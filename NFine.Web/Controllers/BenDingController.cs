@@ -973,7 +973,7 @@ namespace NFine.Web.Controllers
                 //职工
                 if (residentData.InsuranceType == "310")
                 {
-                    //WorkerBirthPreSettlement
+
                     if (residentData.IsBirthHospital == 0)
                     {
                         var workerSettlementData = _workerMedicalInsuranceService.WorkerHospitalizationPreSettlement(param);
@@ -982,7 +982,7 @@ namespace NFine.Web.Controllers
                         resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
                         resultData.TotalAmount = workerSettlementData.TotalAmount;
                     }//职工生育预结算
-                    else if(residentData.IsBirthHospital == 1)
+                    else if (residentData.IsBirthHospital == 1)
                     {
                         var workerSettlementData = _workerMedicalInsuranceService.WorkerBirthPreSettlement(new WorkerBirthPreSettlementUiParam()
                         {
@@ -990,7 +990,9 @@ namespace NFine.Web.Controllers
                             BusinessId = param.BusinessId,
                             DiagnosisList = param.DiagnosisList,
                             UserId = param.UserId,
-                            MedicalCategory = param.MedicalCategory
+                            MedicalCategory = param.MedicalCategory,
+                            FetusNumber=param.FetusNumber
+
                         });
                         resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
                         resultData.CashPayment = workerSettlementData.CashPayment;
@@ -998,7 +1000,7 @@ namespace NFine.Web.Controllers
                         resultData.TotalAmount = workerSettlementData.TotalAmount;
                     }
 
-                   
+
                 }
                 //居民
                 if (residentData.InsuranceType == "342")

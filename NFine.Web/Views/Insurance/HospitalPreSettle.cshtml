@@ -317,6 +317,10 @@
                     isBirthHospital = data.Data.IsBirthHospital;
                     buttonStatus("PreSettlement", true);
                     if (data.Data.IsBirthHospital === 1) {
+
+                        $("#DiagnosisDiv").show();
+                        $("#FetusNumberDiv").show();
+                        $("#MedicalCategoryDiv").show(); 
                         //加载诊断默认数据
                         tableIns.reload({
                             data: data.Data.DiagnosisList

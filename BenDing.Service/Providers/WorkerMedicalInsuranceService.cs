@@ -663,6 +663,7 @@ namespace BenDing.Service.Providers
             {
                 MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
                 LeaveHospitalDate = Convert.ToDateTime(preSettlementData.EndDate).ToString("yyyyMMdd"),
+
             };
             //获取诊断
             var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
