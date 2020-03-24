@@ -1069,7 +1069,7 @@ namespace NFine.Web.Controllers
                               MedicalCategory = param.MedicalCategory,
                               FetusNumber = param.FetusNumber,
                               LeaveHospitalInpatientState = param.LeaveHospitalInpatientState
-                          });
+                          });  
                         resultData.CashPayment = workerSettlementData.CashPayment;
                         resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
                         resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
