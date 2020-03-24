@@ -648,21 +648,19 @@ namespace BenDing.Service.Providers
                 User = userBase,
                 BusinessId = param.BusinessId,
             };
-            //获取his预结算
-            var hisPreSettlementData = _serviceBasicService.GetHisHospitalizationPreSettlement(infoData);
-            var preSettlementData = hisPreSettlementData.PreSettlementData.FirstOrDefault();
+            //获取his结算
+            var settlementData = _serviceBasicService.GetHisHospitalizationSettlement(infoData);
+           
             //获取医保病人信息
             var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-            //获取医院等级
-            var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
-            if (string.IsNullOrWhiteSpace(preSettlementData.EndDate)) throw new Exception("当前病人在基层中未办理出院,不能办理医保预结算!!!");
-            //获取医保账号
-            var userData = _systemManageRepository.QueryHospitalOperator(
-                     new QueryHospitalOperatorParam() { UserId = param.UserId });
+            if (string.IsNullOrWhiteSpace(settlementData.LeaveHospitalDate)) throw new Exception("当前病人在基层中未办理出院,不能办理医保预结算!!!");
+            
             var preSettlement = new WorkerBirthPreSettlementParam()
             {
+                 MedicalCategory = param.MedicalCategory,
+                FetusNumber = param.FetusNumber,
                 MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                LeaveHospitalDate = Convert.ToDateTime(preSettlementData.EndDate).ToString("yyyyMMdd"),
+                LeaveHospitalDate = Convert.ToDateTime(settlementData.LeaveHospitalDate).ToString("yyyyMMdd"),
             };
             //获取诊断
             var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
