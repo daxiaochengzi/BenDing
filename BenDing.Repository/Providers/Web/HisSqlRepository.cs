@@ -551,9 +551,6 @@ namespace BenDing.Repository.Providers.Web
                             {
                                 paramNew = param.OrderBy(d => d.BillTime).ToList();
                             }
-
-
-
                             foreach (var item in paramNew)
                             {
                                 sort++;
@@ -596,6 +593,34 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
+        /// <summary>
+        /// 更新门诊费用上传明细
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="outpatientNo"></param>
+        public void UpdateOutpatientDetail(UserInfoDto user,string outpatientNo )
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string insertSql = null;
+                try
+                {
+                    sqlConnection.Open();
+
+                    insertSql =$@"update [dbo].[OutpatientFee] set [UploadMark]=1 ,[UploadTime]=getdate(),
+                        [UploadUserId] = '{user.UserId}',[UploadUserName]='{user.UserName}' where [Isdelete] = 0 and [OutpatientNo]='{outpatientNo}'";
+                    sqlConnection.Close();
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(insertSql);
+                    throw new Exception(e.Message);
+                }
+
+
+            }
+        }
+
         /// <summary>
         /// 保存住院病人明细
         /// </summary>

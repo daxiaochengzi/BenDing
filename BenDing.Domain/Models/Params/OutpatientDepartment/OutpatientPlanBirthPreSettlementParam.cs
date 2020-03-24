@@ -115,7 +115,7 @@ using System.Xml.Serialization;
         /// 用量
         /// </summary>
         [XmlElementAttribute("AKA071", IsNullable = false)]
-        public decimal Dosage { get; set; }
+        public string Dosage { get; set; }
         /// <summary>
         /// 用法
         /// </summary>
