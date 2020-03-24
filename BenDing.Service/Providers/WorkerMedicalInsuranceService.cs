@@ -588,6 +588,7 @@ namespace BenDing.Service.Providers
             var paramIni = GetWorkerHospitalizationWorkerBirth(inpatientData, param);
             var data = _workerMedicalInsuranceRepository.WorkerBirthHospitalizationRegister(paramIni);
             if (data == null) throw new Exception("职工生育入院登记未反馈数据!!!");
+
             var saveData = new MedicalInsuranceDto
             {
                 AdmissionInfoJson = JsonConvert.SerializeObject(data),
@@ -596,9 +597,10 @@ namespace BenDing.Service.Providers
                 IsModify = false,
                 InsuranceType = 310,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized,
-                MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo
+                MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo,
+                IsBirthHospital = 1,
             };
-            //存中间库
+            ////存中间库
             _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
             //回参构建
             var xmlData = new HospitalizationRegisterXml()
@@ -623,7 +625,6 @@ namespace BenDing.Service.Providers
             _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
             //保存入院数据
             infoData.IsSave = true;
-            inpatientData.IsBirthHospital = true;
             _serviceBasicService.GetInpatientInfo(infoData);
             return data;
         }

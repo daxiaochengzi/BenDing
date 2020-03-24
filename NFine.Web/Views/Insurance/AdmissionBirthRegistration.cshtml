@@ -112,12 +112,7 @@
                             <input type="text" name="AdmissionBed" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">胎儿数</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="FetusNumber" name="FetusNumber" autocomplete="off"  class="layui-input">
-                        </div>
-                    </div>
+
                     <div class="layui-inline">
                         <label class="layui-form-label">险种类型</label>
                         <div class="layui-input-inline">
@@ -135,17 +130,23 @@
                             <select id="MedicalCategory" name="MedicalCategory" lay-filter="MedicalCategoryType"></select>
                         </div>
                     </div>
-                    <div class="layui-inline" >
+                    <div class="layui-inline">
+                        <label class="layui-form-label">胎儿数</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="FetusNumber" name="FetusNumber" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline" id="HouseholdNatureDiv">
                         <label class="layui-form-label">户口性质</label>
                         <div class="layui-input-inline">
-                            <select name="HouseholdNature"  id="HouseholdNature">
+                            <select name="HouseholdNature" id="HouseholdNature">
                                 <option value="">请选择户口性质</option>
                                 <option value="10">城镇户口</option>
                                 <option value="20">农业户口</option>
                             </select>
                         </div>
                     </div>
-                    <div class="layui-inline"  id="SpouseIdCardNoDiv">
+                    <div class="layui-inline" id="SpouseIdCardNoDiv">
                         <label class="layui-form-label">配偶身份证</label>
                         <div class="layui-input-inline">
                             <input type="text" name="SpouseIdCardNoDiv" autocomplete="off" class="layui-input">
@@ -154,7 +155,7 @@
                     <div class="layui-inline" id="SpouseNameDiv">
                         <label class="layui-form-label">配偶姓名</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="SpouseName" autocomplete="off"  class="layui-input">
+                            <input type="text" name="SpouseName" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                 </div>
@@ -211,6 +212,10 @@
                         closeStop: '#date2'
                     });
                 });
+
+      
+          
+
             //病人信息
             var inpatientInfoData = null;
             //获取病人信息
@@ -244,8 +249,8 @@
             }
             //获取病人信息
             getInpatientInfo();
-            //获取医疗类别
-            function getMedicalCategory(num) {
+            //根据医疗类别进行初始化
+            function setMedicalCategoryIni(num) {
                 var medicalCategory = $("#MedicalCategory");
                 var optionHtml = " <option value=''>请选择医疗类别</option>";
                 //居民
@@ -253,13 +258,16 @@
                     optionHtml += "<option value='71'>71-顺产</option>";
                     optionHtml += "<option value='72'>72-剖宫产</option>";
                     optionHtml += "<option value='41'>41-病理剖宫产</option>";
+                    $("#SpouseIdCardNoDiv").hide();
+                    $("#SpouseNameDiv").hide();
                   
                 }
                 //职工
                 if (num === "310") {
                     optionHtml += "<option value='71'>71-顺产</option>";
                     optionHtml += "<option value='72'>72-剖宫产</option>";
-                   
+                 
+                    $("#HouseholdNatureDiv").hide();
                 }
                 medicalCategory.append(optionHtml);
 
@@ -284,10 +292,9 @@
                         "InsuranceType": jsonData.InsuranceType,
                         "PersonnelClassification": jsonData.PersonnelClassification
                     });
-                //初始化医保类型
-                getMedicalCategory(jsonData.InsuranceType);
-                $("#SpouseIdCardNoDiv").hide();
-                $("#SpouseNameDiv").hide();
+                //初始化
+                setMedicalCategoryIni(jsonData.InsuranceType);
+              
             }
 
             form.on('select(IdentityMark)',
@@ -538,16 +545,17 @@
                             layer.msg('户口性质不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
                             return false;
                         }
-
+                      
+                        
                     }
                     //胎儿数
                     var fetusNumber = $("#FetusNumber").val();
                     if (fetusNumber === "" || fetusNumber === undefined) {
-                        layer.msg('胎儿数不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                        layer.msg('胎儿数不能为空!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
                         return false;
                     }
                     if (fetusNumber<=0) {
-                        layer.msg('胎儿数必须大于0!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                        layer.msg('胎儿数必须大于0!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
                         return false;
                     }
                    
@@ -570,6 +578,7 @@
                     });
                     //诊断列表 add
                     field.DiagnosisList = diagnosisList;
+                 
                     $.ajax({
                         type: 'POST',
                         url: host + urlMethodName,
@@ -585,7 +594,7 @@
                             } else {
                                 layer.msg('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                                 $("#BirthRegister").attr("class", "layui-btn layui-btn-radius layui-disabled");
-                                $("#BirthRegister").attr("style", "display:block;");
+                               
 
                             }
                         }

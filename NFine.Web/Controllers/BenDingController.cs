@@ -760,7 +760,7 @@ namespace NFine.Web.Controllers
                 //医保登录
                 _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //职工
-                if (param.InsuranceType == "310") _workerMedicalInsuranceService.WorkerHospitalizationRegister(workerParam);
+               if (param.InsuranceType == "310") _workerMedicalInsuranceService.WorkerHospitalizationRegister(workerParam);
                 //居民
                 if (param.InsuranceType == "342") _residentMedicalInsuranceService.HospitalizationRegister(param);
             });
@@ -1310,8 +1310,15 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
+                {
                     _workerMedicalInsuranceService.WorkerHospitalizationRegister(param);
-                throw new Exception("诊断不能为空!!!");
+                }
+                else
+                {
+                    throw new Exception("诊断不能为空!!!");
+                }
+                    
+              
 
 
             });
@@ -1441,8 +1448,14 @@ namespace NFine.Web.Controllers
             {//医保登录
                     _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 if (param.DiagnosisList != null && param.DiagnosisList.Any())
+                {
                     _workerMedicalInsuranceService.WorkerBirthHospitalizationRegister(param);
-                throw new Exception("诊断不能为空!!!");
+                }
+                else
+                {
+                    throw new Exception("诊断不能为空!!!");
+                }
+
             });
 
         }

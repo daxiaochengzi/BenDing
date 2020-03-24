@@ -47,7 +47,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// <summary>
         /// 是否生育入院登记
         /// </summary>
-        public bool IsBirthHospital { get; set; }
+        public int IsBirthHospital { get; set; }
 
 
     }
