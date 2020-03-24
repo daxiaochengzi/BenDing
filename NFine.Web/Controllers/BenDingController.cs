@@ -985,6 +985,7 @@ namespace NFine.Web.Controllers
                     }//职工生育预结算
                     else if (residentData.IsBirthHospital == 1)
                     {
+                        if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
                         var workerSettlementData = _workerMedicalInsuranceService.WorkerBirthPreSettlement(new WorkerBirthPreSettlementUiParam()
                         {
                             TransKey = param.TransKey,
@@ -1030,8 +1031,9 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {
                 var resultData = new SettlementDto();
-                //医保登录
-                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                if (param.DiagnosisList == null ) throw new Exception("诊断不能为空!!!");
+                    //医保登录
+                    _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保病人信息
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
                 {
@@ -1144,8 +1146,6 @@ namespace NFine.Web.Controllers
                         residentSettlementData.TotalAmount = residentData.MedicalInsuranceAllAmount;
                         resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(residentSettlementData));
                         resultData.ReimbursementExpenses = residentSettlementData.ReimbursementExpenses;
-
-
                     }
                     resultData.CashPayment = residentData.SelfPayFeeAmount;
                     resultData.TotalAmount = residentData.MedicalInsuranceAllAmount;
