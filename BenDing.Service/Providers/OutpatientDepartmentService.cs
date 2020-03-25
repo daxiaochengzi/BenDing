@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
+using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Dto.Workers;
 using BenDing.Domain.Models.Enums;
@@ -335,6 +336,20 @@ namespace BenDing.Service.Providers
             var outpatientPerson = _serviceBasicService.GetOutpatientPerson(outpatientParam);
             if (outpatientPerson == null) throw new Exception("his中未获取到当前病人!!!");
             if (string.IsNullOrWhiteSpace(outpatientPerson.IdCardNo)) throw new Exception("当前病人的身份证号码不能为空!!!");
+            //获取门诊病人明细
+            var outpatientDetailPerson = _serviceBasicService.GetOutpatientDetailPerson(userBase,new OutpatientDetailParam()
+            {   BusinessId = param.BusinessId,
+                AuthCode = userBase.AuthCode,
+                OutpatientNo = outpatientPerson.OutpatientNumber
+            });
+            var queryPairCodeParam = new QueryMedicalInsurancePairCodeParam()
+            {
+                DirectoryCodeList = outpatientDetailPerson.Select(d => d.DirectoryCode).Distinct().ToList(),
+                OrganizationCode = userBase.OrganizationCode,
+            };
+            //获取医保对码数据
+            var queryPairCode =
+                _medicalInsuranceSqlRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
             var inputParam = new OutpatientDepartmentCostInputParam()
             {
                 AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
@@ -346,6 +361,7 @@ namespace BenDing.Service.Providers
             {
 
             };
+
             data= _outpatientDepartmentRepository.OutpatientPlanBirthPreSettlement(iniParam);
         
             
@@ -370,6 +386,56 @@ namespace BenDing.Service.Providers
 
 
             return data;
+        }
+        /// <summary>
+        /// 获取门诊预结算参数
+        /// </summary>
+        /// <param name="pairCodeList">对码数据</param>
+        /// <param name="outpatientInfo">病人信息</param>
+        /// <param name="detail">病人明细</param>
+        /// <returns></returns>
+        private OutpatientPlanBirthPreSettlementParam GetOutpatientPlanBirthPreSettlementParam(
+            List<QueryMedicalInsurancePairCodeDto> pairCodeList,
+            BaseOutpatientInfoDto outpatientInfo, List<BaseOutpatientDetailDto> detail
+        )
+        {
+            var resultData = new OutpatientPlanBirthPreSettlementParam()
+            {
+                OutpatientNo = outpatientInfo.OutpatientNumber,
+                DiagnosisDate= outpatientInfo.VisitDate,
+                ProjectNum  = pairCodeList.Count(),
+                TotalAmount = outpatientInfo.MedicalTreatmentTotalCost
+            };
+            var rowDataList = new List<PlanBirthSettlementRow>();
+            //升序
+            var dataSort = detail.OrderBy(c=>c.BillTime).ToArray();
+            int num = 0;
+            foreach (var item in dataSort)
+            {
+                num++;
+                var projectCodeData = pairCodeList
+                    .FirstOrDefault(c => c.DirectoryCode == item.DirectoryCode);
+                if (projectCodeData ==null) throw  new Exception("["+ item +"]名称:"+ item.DirectoryName+"未对码!!!");
+                var row = new PlanBirthSettlementRow()
+                {   ColNum = num,
+                    ProjectCode = projectCodeData.ProjectCode,
+                    ProjectName = item.DirectoryName,
+                    UnitPrice = item.UnitPrice,
+                    Quantity = item.Quantity,
+                    TotalAmount = item.Amount,
+                    Formulation = item.Formulation,
+                    ManufacturerName = projectCodeData.Manufacturer,
+                    Dosage = item.Dosage,
+                    Specification = item.Specification,
+                    Usage = item.Usage
+                };
+
+                rowDataList.Add(row);
+            }
+
+            resultData.RowDataList = rowDataList;
+            return resultData;
+
         }
     }
 }

@@ -155,6 +155,8 @@
             table = layui.table;
         //是否生育入院登记
         var isBirthHospital = 0;
+        //险种类型
+        var insuranceType = 0;
         //诊断数据表格实例化
         var layTableId = "dataTableId";
         $("#DiagnosisDiv").hide();
@@ -316,16 +318,19 @@
                     jsonToForm(data.Data, "LAY-form-render");
                     isBirthHospital = data.Data.IsBirthHospital;
                     buttonStatus("PreSettlement", true);
+                    insuranceType = data.Data.InsuranceType;
                     if (data.Data.IsBirthHospital === 1) {
-
-                        $("#DiagnosisDiv").show();
-                        $("#FetusNumberDiv").show();
-                        $("#MedicalCategoryDiv").show(); 
-                        //加载诊断默认数据
-                        tableIns.reload({
-                            data: data.Data.DiagnosisList
-                        });
-                        $("#DiagnosisDiv").show();
+                        if (insuranceType === 310) {
+                            $("#DiagnosisDiv").show();
+                            $("#FetusNumberDiv").show();
+                            $("#MedicalCategoryDiv").show(); 
+                            //加载诊断默认数据
+                            tableIns.reload({
+                                data: data.Data.DiagnosisList
+                            });
+                            $("#DiagnosisDiv").show();
+                        }
+                        
                     }
                  
                 }

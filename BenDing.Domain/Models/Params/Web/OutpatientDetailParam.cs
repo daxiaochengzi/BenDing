@@ -26,5 +26,10 @@ namespace BenDing.Domain.Models.Params.Web
         /// </summary>
         [JsonProperty(PropertyName = "门诊号")]
         public string OutpatientNo { get; set; }
+        /// <summary>
+        /// 是否保存
+        /// </summary>
+        [JsonIgnore]
+        public bool IsSave { get; set; }
     }
 }

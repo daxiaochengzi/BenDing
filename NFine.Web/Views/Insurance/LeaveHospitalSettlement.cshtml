@@ -104,12 +104,34 @@
                         </div>
                     </div>
                     @*<div class="layui-inline">
-                        <label class="layui-form-label">报销金额</label>
+            <label class="layui-form-label">报销金额</label>
+            <div class="layui-input-inline">
+                <input type="text" id="ReimbursementExpenses" name="ReimbursementExpenses" autocomplete="off" disabled class="layui-input layui-disabled">
+            </div>
+        </div>*@
+                    <div class="layui-inline" id="MedicalCategoryDiv">
+                        <label class="layui-form-label">医疗类别</label>
                         <div class="layui-input-inline">
-                            <input type="text" id="ReimbursementExpenses" name="ReimbursementExpenses" autocomplete="off" disabled class="layui-input layui-disabled">
+                            <select name="MedicalCategory" id="MedicalCategory">
+                                <option value="">请选择医疗类别</option>
+                                <option value="71">71-顺产</option>
+                                <option value="72">72-剖宫产</option>
+                            </select>
                         </div>
-                    </div>*@
-
+                    </div>
+                    <div class="layui-inline" id="FetusNumberDiv">
+                        <label class="layui-form-label">胎儿数</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="FetusNumber" name="FetusNumber" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline" id="AccountPaymentDiv">
+                        <label class="layui-form-label">胎儿数</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="AccountPayment" name="AccountPayment" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    
                     <div class="layui-inline">
                         <label class="layui-form-label">诊断医生</label>
                         <div class="layui-input-inline">
@@ -123,11 +145,11 @@
                         </div>
                     </div>
                     @*<div class="layui-inline">
-                        <label class="layui-form-label">社保卡密码</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="CardPwd" name="CardPwd" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>*@
+            <label class="layui-form-label">社保卡密码</label>
+            <div class="layui-input-inline">
+                <input type="text" id="CardPwd" name="CardPwd" autocomplete="off" disabled class="layui-input layui-disabled">
+            </div>
+        </div>*@
                 </div>
                 <div class="layui-form-item">
                     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
@@ -163,9 +185,14 @@
             layer = layui.layer,
             table = layui.table;
         //险种类型
-        var insuranceType = "";
+        var insuranceType = 0;
         //结算单据号
         var settlementNo = null;
+        //是否生育入院登记
+        var isBirthHospital = 0;
+        $("#FetusNumberDiv").hide();
+        $("#MedicalCategoryDiv").hide();
+        $("#AccountPaymentDiv").hide();
         //form数据回显:数据回显到Form表单主体部分
         var jsonToForm = function (jsonData, formFilter) {
             //给表单赋值
@@ -239,13 +266,20 @@
                 } else {
                     insuranceType = data.Data.InsuranceType;
                     jsonToForm(data.Data, "LAY-form-render");
+
+                    if (data.Data.IsBirthHospital === 1) {
+                        if (insuranceType === 310) {
+                            $("#FetusNumberDiv").show();
+                            $("#MedicalCategoryDiv").show(); 
+                            $("#AccountPaymentDiv").show();
+                        }
+                       
+                    }
                     //加载诊断默认数据
                     tableIns.reload({
                         data: data.Data.DiagnosisList
                     });
                
-                  
-                 
                     buttonStatus("Settlement", true);
                 }
             },
@@ -319,7 +353,27 @@
                 }
             });
         $('#Settlement').on('click', function () {
-         
+            if (isBirthHospital === 1) {
+                //医疗类别
+                var medicalCategory = $("#MedicalCategory").val();
+                if (medicalCategory === "" || medicalCategory === undefined) {
+                    layer.msg('医疗类别不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                    return false;
+                }
+                //胎儿数
+                var fetusNumber = $("#FetusNumber").val();
+                if (fetusNumber === "" || fetusNumber === undefined) {
+                    layer.msg('胎儿数不能为空!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                    return false;
+                }
+                if (fetusNumber<=0) {
+                    layer.msg('胎儿数必须大于0!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                    return false;
+                }
+                params["MedicalCategory"] = $("#MedicalCategory").val();
+                params["FetusNumber"] = fetusNumber;
+                params["AccountPayment"] = $("#AccountPayment").val() ;
+            }
             //诊断列表
             var dataTable1 = table.cache[layTableId];
             var diagnosisList = [];

@@ -513,6 +513,7 @@ namespace NFine.Web.Controllers
                  data.DiagnosisList = settlementData.DiagnosisList;
                  data.InsuranceType = queryData.InsuranceType;
                  data.LeaveHospitalDate = settlementData.LeaveHospitalDate;
+                 data.IsBirthHospital = queryData.IsBirthHospital;
                  data.MedicalInsuranceState = queryData.MedicalInsuranceState;
                  data.SettlementNo = queryData.SettlementNo;
                  y.Data = data;
@@ -984,6 +985,7 @@ namespace NFine.Web.Controllers
                     }//职工生育预结算
                     else if (residentData.IsBirthHospital == 1)
                     {
+                        if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
                         var workerSettlementData = _workerMedicalInsuranceService.WorkerBirthPreSettlement(new WorkerBirthPreSettlementUiParam()
                         {
                             TransKey = param.TransKey,
@@ -1029,8 +1031,9 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {
                 var resultData = new SettlementDto();
-                //医保登录
-                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                if (param.DiagnosisList == null ) throw new Exception("诊断不能为空!!!");
+                    //医保登录
+                    _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
                 //获取医保病人信息
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
                 {
@@ -1039,18 +1042,41 @@ namespace NFine.Web.Controllers
                 //职工
                 if (residentData.InsuranceType == "310")
                 {
-                    var workerSettlementData = _workerMedicalInsuranceService.WorkerHospitalizationSettlement(new WorkerHospitalizationSettlementUiParam()
+                    if (residentData.IsBirthHospital == 0)
                     {
-                        DiagnosisList = param.DiagnosisList,
-                        TransKey = param.TransKey,
-                        BusinessId = param.BusinessId,
-                        LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
-                        UserId = param.UserId,
-                    });
-                    resultData.CashPayment = workerSettlementData.CashPayment;
-                    resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
-                    resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
-                    resultData.TotalAmount = workerSettlementData.TotalAmount;
+                        var workerSettlementData = _workerMedicalInsuranceService.WorkerHospitalizationSettlement(new WorkerHospitalizationSettlementUiParam()
+                        {
+                            DiagnosisList = param.DiagnosisList,
+                            TransKey = param.TransKey,
+                            BusinessId = param.BusinessId,
+                            LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
+                            UserId = param.UserId,
+                        });
+                        resultData.CashPayment = workerSettlementData.CashPayment;
+                        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
+                        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
+                        resultData.TotalAmount = workerSettlementData.TotalAmount;
+                    }//职工生育结算
+                    else if (residentData.IsBirthHospital == 1)
+                    {
+                        var workerSettlementData = _workerMedicalInsuranceService.WorkerBirthSettlement(
+                          new WorkerBirthSettlementUiParam()
+                          {TransKey = param.TransKey,
+                              UserId = param.UserId,
+                              BusinessId = param.BusinessId,
+                              AccountPayment = param.AccountPayment,
+                              DiagnosisList = param.DiagnosisList,
+                              MedicalCategory = param.MedicalCategory,
+                              FetusNumber = param.FetusNumber,
+                              LeaveHospitalInpatientState = param.LeaveHospitalInpatientState
+                          });  
+                        resultData.CashPayment = workerSettlementData.CashPayment;
+                        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
+                        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
+                        resultData.TotalAmount = workerSettlementData.TotalAmount;
+                    }
+
+
                 }
                 //居民
                 if (residentData.InsuranceType == "342")
@@ -1120,8 +1146,6 @@ namespace NFine.Web.Controllers
                         residentSettlementData.TotalAmount = residentData.MedicalInsuranceAllAmount;
                         resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(residentSettlementData));
                         resultData.ReimbursementExpenses = residentSettlementData.ReimbursementExpenses;
-
-
                     }
                     resultData.CashPayment = residentData.SelfPayFeeAmount;
                     resultData.TotalAmount = residentData.MedicalInsuranceAllAmount;
@@ -1154,8 +1178,6 @@ namespace NFine.Web.Controllers
                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
                if (residentData == null) throw new Exception("当前病人未办理医保入院登记!!!");
                
-        
-
                //居民
                if (residentData.InsuranceType == "342")
                {
@@ -1178,23 +1200,47 @@ namespace NFine.Web.Controllers
                //职工
                if (residentData.InsuranceType == "310")
                {
-                   if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人未医保结算");
-                   //获取医院等级
-                   var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
-                   var cancelParam = new WorkerSettlementCancelParam()
+                   if (residentData.IsBirthHospital == 0)
                    {
-                       BusinessId = param.BusinessId,
-                       Id = residentData.Id,
-                       User = userBase,
-                       SettlementNo = residentData.SettlementNo,
-                       CancelLimit = param.CancelLimit,
-                       MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                       AdministrativeArea = gradeData.AdministrativeArea,
-                       OrganizationCode = userBase.OrganizationCode,
-                       WorkersStrokeCardNo= residentData.WorkersStrokeCardNo,
-                       CancelSettlementRemarks=param.CancelSettlementRemarks,
-                   };
-                   _workerMedicalInsuranceService.WorkerSettlementCancel(cancelParam);
+                       if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人未医保结算");
+                       //获取医院等级
+                       var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
+                       var cancelParam = new WorkerSettlementCancelParam()
+                       {
+                           BusinessId = param.BusinessId,
+                           Id = residentData.Id,
+                           User = userBase,
+                           SettlementNo = residentData.SettlementNo,
+                           CancelLimit = param.CancelLimit,
+                           MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                           AdministrativeArea = gradeData.AdministrativeArea,
+                           OrganizationCode = userBase.OrganizationCode,
+                           WorkersStrokeCardNo = residentData.WorkersStrokeCardNo,
+                           CancelSettlementRemarks = param.CancelSettlementRemarks,
+                       };
+                       _workerMedicalInsuranceService.WorkerSettlementCancel(cancelParam);
+                   }
+                   //职工生育住院取消采用居民取消结算
+                   if (residentData.IsBirthHospital == 1)
+                   {
+                       var settlementCancelParam = new LeaveHospitalSettlementCancelParam()
+                       {
+                           MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                           SettlementNo = residentData.SettlementNo,
+                           Operators = CommonHelp.GuidToStr(userBase.UserId),
+                           CancelLimit = param.CancelLimit,
+
+                       };
+                       var cancelParam = new LeaveHospitalSettlementCancelInfoParam()
+                       {
+                           BusinessId = param.BusinessId,
+                           Id = residentData.Id,
+                           User = userBase,
+                       };
+                       _residentMedicalInsuranceRepository.LeaveHospitalSettlementCancel(settlementCancelParam, cancelParam);
+                   }
+
+
                }
            });
 

@@ -309,7 +309,12 @@ namespace BenDing.Service.Providers
             if (result.Any())
             {
                 resultData = AutoMapper.Mapper.Map<List<BaseOutpatientDetailDto>>(result);
-                _hisSqlRepository.SaveOutpatientDetail(user, resultData);
+                if (param.IsSave == true)
+                {
+                    _hisSqlRepository.SaveOutpatientDetail(user, resultData);
+                }
+
+               
             }
 
             return resultData;
