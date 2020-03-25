@@ -486,6 +486,7 @@ namespace BenDing.Service.Providers
         )
         {
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            userBase.TransKey = param.TransKey;
             var outpatientParam = new GetOutpatientPersonParam()
             {
                 User = userBase,
@@ -499,7 +500,7 @@ namespace BenDing.Service.Providers
                 BusinessId = param.BusinessId,
             });
             //获取主诊断
-            var diagnosisData = outpatientPerson.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == "true");
+            var diagnosisData = outpatientPerson.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == "是");
             var resultData = new OutpatientPlanBirthSettlementParam()
             {
                 OutpatientNo = outpatientPerson.OutpatientNumber,
@@ -507,6 +508,7 @@ namespace BenDing.Service.Providers
                 ProjectNum = outpatientDetailPerson.Count(),
                 TotalAmount = outpatientPerson.MedicalTreatmentTotalCost,
                 AfferentSign = param.AfferentSign,
+                AccountPayment=param.AccountPayment,
                 IdentityMark = param.IdentityMark,
                 AdmissionMainDiagnosisIcd10 = diagnosisData.DiagnosisCode
 

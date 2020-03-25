@@ -1386,7 +1386,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData GetOutpatientPlanBirthSettlementParam([FromUri]OutpatientPlanBirthSettlementUiParam param)
+        public ApiJsonResultData GetOutpatientPlanBirthSettlementParam([FromBody]OutpatientPlanBirthSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
