@@ -43,5 +43,13 @@ namespace BenDing.Service.Interfaces
         /// <returns></returns>
          WorkerHospitalizationPreSettlementDto OutpatientPlanBirthPreSettlement(
             OutpatientPlanBirthPreSettlementUiParam param);
+        /// <summary>
+        /// 获取计划生育结算参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        OutpatientPlanBirthSettlementParam GetOutpatientPlanBirthSettlementParam(
+            OutpatientPlanBirthSettlementUiParam param
+        );
     }
 }

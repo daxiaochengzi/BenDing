@@ -377,14 +377,14 @@ namespace NFine.Web.Controllers
               if (queryData != null)
               {
                   var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-
+                  baseUser.TransKey = param.TransKey;
                   var outpatientDetailParam = new OutpatientDetailParam()
                   {
-                      AuthCode = baseUser.AuthCode,
-                      OutpatientNo = queryData.OutpatientNumber,
-                      BusinessId = param.BusinessId
+                      User = baseUser,
+                      BusinessId = param.BusinessId,
+
                   };
-                  var data = _webServiceBasicService.GetOutpatientDetailPerson(baseUser, outpatientDetailParam);
+                  var data = _webServiceBasicService.GetOutpatientDetailPerson(outpatientDetailParam);
                   y.Data = data;
 
               }
@@ -1380,6 +1380,22 @@ namespace NFine.Web.Controllers
             });
 
         }
+        /// <summary>
+        /// 获取门诊生育结算参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetOutpatientPlanBirthSettlementParam([FromUri]OutpatientPlanBirthSettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+               var data= _outpatientDepartmentService.GetOutpatientPlanBirthSettlementParam(param);
+                y.Data = data;
+            });
+
+        }
+
         #endregion
         #region 职工医保
         /// <summary>

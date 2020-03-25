@@ -72,6 +72,7 @@
     <Compile Include="Models\Dto\JsonEntity\LeaveHospitalDiagnosisDataJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\HisHospitalizationSettlementJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\MonthlyHospitalizationJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntity\OutpatientDetailJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\OutpatientInfoJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\OutpatientPersonJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\QueryInpatientInfoJsonDto.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="Models\Params\OutpatientDepartment\OutpatientPlanBirthSettlementParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\OutpatientPlanBirthSettlementQueryParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\QueryOutpatientDepartmentCostParam.cs" />
+    <Compile Include="Models\Params\OutpatientDepartment\SaveOutpatientDetailParam.cs" />
     <Compile Include="Models\Params\Resident\AddProjectBatchParam.cs" />
     <Compile Include="Models\Params\Resident\BatchConfirmParam.cs" />
     <Compile Include="Models\Params\Resident\DeletePrescriptionUploadParam.cs" />

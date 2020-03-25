@@ -39,7 +39,7 @@ namespace BenDing.Service.Providers
         private readonly IResidentMedicalInsuranceService _residentMedicalInsuranceService;
         private readonly IMedicalInsuranceSqlRepository _medicalInsuranceSqlRepository;
         private readonly MonthlyHospitalizationBase _monthlyHospitalizationBase;
-      
+
 
         public OutpatientDepartmentService(
            IOutpatientDepartmentRepository outpatientDepartmentRepository,
@@ -226,7 +226,7 @@ namespace BenDing.Service.Providers
 
             var resultData = new QueryOutpatientDepartmentCostjsonDto();
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
-            
+
             //获取医保病人信息
             var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
             {
@@ -257,26 +257,26 @@ namespace BenDing.Service.Providers
         {
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             //医保登录
-             _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-             var data=  _outpatientDepartmentRepository.MonthlyHospitalization(
-                new MonthlyHospitalizationParam()
-                {
-                    User = userBase,
-                    Participation = new MonthlyHospitalizationParticipationParam()
-                    {
-                        StartTime = Convert.ToDateTime(param.StartTime).ToString("yyyyMMdd"),
-                        EndTime = Convert.ToDateTime(param.EndTime).ToString("yyyyMMdd"),
-                        SummaryType = "22",
-                        PeopleType = ((int)param.PeopleType).ToString()
-                    }
-                });
+            _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+            var data = _outpatientDepartmentRepository.MonthlyHospitalization(
+               new MonthlyHospitalizationParam()
+               {
+                   User = userBase,
+                   Participation = new MonthlyHospitalizationParticipationParam()
+                   {
+                       StartTime = Convert.ToDateTime(param.StartTime).ToString("yyyyMMdd"),
+                       EndTime = Convert.ToDateTime(param.EndTime).ToString("yyyyMMdd"),
+                       SummaryType = "22",
+                       PeopleType = ((int)param.PeopleType).ToString()
+                   }
+               });
             var insertParam = new MonthlyHospitalizationEntity()
             {
                 Amount = data.ReimbursementAllAmount,
                 Id = Guid.NewGuid(),
                 DocumentNo = data.DocumentNo,
                 PeopleNum = data.ReimbursementPeopleNum,
-                PeopleType =((int)param.PeopleType).ToString(),
+                PeopleType = ((int)param.PeopleType).ToString(),
                 SummaryType = "22",
                 StartTime = Convert.ToDateTime(param.StartTime + " 00:00:00.000"),
                 EndTime = Convert.ToDateTime(param.EndTime + " 00:00:00.000"),
@@ -299,7 +299,8 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         public void CancelMonthlyHospitalization(CancelMonthlyHospitalizationUiParam param)
-        {    var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+        {
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             //医保登录
             _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
             _outpatientDepartmentRepository.CancelMonthlyHospitalization(
@@ -314,7 +315,7 @@ namespace BenDing.Service.Providers
                    }
                });
             //var monthlyHospitalization = _monthlyHospitalizationBase.GetForm(param.Id);
-           
+
         }
         /// <summary>
         /// 门诊计划生育预结算
@@ -326,8 +327,7 @@ namespace BenDing.Service.Providers
             WorkerHospitalizationPreSettlementDto data = null;
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
-            //医保登录
-            _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+           
             var outpatientParam = new GetOutpatientPersonParam()
             {
                 User = userBase,
@@ -335,36 +335,42 @@ namespace BenDing.Service.Providers
             };
             var outpatientPerson = _serviceBasicService.GetOutpatientPerson(outpatientParam);
             if (outpatientPerson == null) throw new Exception("his中未获取到当前病人!!!");
-            if (string.IsNullOrWhiteSpace(outpatientPerson.IdCardNo)) throw new Exception("当前病人的身份证号码不能为空!!!");
-            //获取门诊病人明细
-            var outpatientDetailPerson = _serviceBasicService.GetOutpatientDetailPerson(userBase,new OutpatientDetailParam()
-            {   BusinessId = param.BusinessId,
-                AuthCode = userBase.AuthCode,
-                OutpatientNo = outpatientPerson.OutpatientNumber
+            var outpatientDetailPerson = _serviceBasicService.GetOutpatientDetailPerson(new OutpatientDetailParam()
+            {
+                User = userBase,
+                BusinessId = param.BusinessId,
             });
-            var queryPairCodeParam = new QueryMedicalInsurancePairCodeParam()
+            var iniParam = GetOutpatientPlanBirthPreSettlementParam
+             (outpatientPerson,outpatientDetailPerson);
+            iniParam.AfferentSign = param.AfferentSign;
+            iniParam.IdentityMark = param.IdentityMark;
+            //获取诊断
+            data = _outpatientDepartmentRepository.OutpatientPlanBirthPreSettlement(iniParam);
+            //保存门诊病人
+            outpatientParam.IsSave = true;
+            outpatientParam.Id = Guid.NewGuid();
+            _serviceBasicService.GetOutpatientPerson(outpatientParam);
+            var saveData = new MedicalInsuranceDto
             {
-                DirectoryCodeList = outpatientDetailPerson.Select(d => d.DirectoryCode).Distinct().ToList(),
-                OrganizationCode = userBase.OrganizationCode,
+                AdmissionInfoJson = JsonConvert.SerializeObject(param),
+                BusinessId = param.BusinessId,
+                Id = Guid.NewGuid(),
+                IsModify = false,
+                InsuranceType = 999,
+                MedicalInsuranceState = MedicalInsuranceState.MedicalInsurancePreSettlement,
+                MedicalInsuranceHospitalizationNo = outpatientPerson.OutpatientNumber
             };
-            //获取医保对码数据
-            var queryPairCode =
-                _medicalInsuranceSqlRepository.QueryMedicalInsurancePairCode(queryPairCodeParam);
-            var inputParam = new OutpatientDepartmentCostInputParam()
+            //存中间库
+            _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
+            //日志写入
+            _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
             {
-                AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
-                IdentityMark = outpatientPerson.IdCardNo.Length>=18?"1":"2",
-                InformationNumber = outpatientPerson.IdCardNo,
-                Operators = userBase.UserName
-            };
-            var iniParam = new OutpatientPlanBirthPreSettlementParam()
-            {
-
-            };
-
-            data= _outpatientDepartmentRepository.OutpatientPlanBirthPreSettlement(iniParam);
-        
-            
+                User = userBase,
+                JoinOrOldJson = JsonConvert.SerializeObject(iniParam),
+                ReturnOrNewJson = JsonConvert.SerializeObject(data),
+                RelationId = outpatientParam.Id,
+                Remark = "[R][OutpatientDepartment]门诊预结算"
+            });
             return data;
         }
         /// <summary>
@@ -372,59 +378,93 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public WorkerHospitalizationPreSettlementDto OutpatientPlanBirthSettlement(OutpatientPlanBirthSettlementUiParam param)
+        public void OutpatientPlanBirthSettlement(OutpatientPlanBirthSettlementUiParam param)
         {
-            WorkerHospitalizationPreSettlementDto data = null;
-            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
-            //医保登录
-            _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-            var iniParam = new OutpatientPlanBirthSettlementParam()
-            {
+            //WorkerHospitalizationPreSettlementDto data = null;
+            //var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            //var outpatientParam = new GetOutpatientPersonParam()
+            //{
+            //    User = userBase,
+            //    UiParam = param,
+            //};
+            //var outpatientPerson = _serviceBasicService.GetOutpatientPerson(outpatientParam);
+            //if (outpatientPerson == null) throw new Exception("his中未获取到当前病人!!!");
+            //var outpatientDetailPerson = _serviceBasicService.GetOutpatientDetailPerson(new OutpatientDetailParam()
+            //{
+            //    User = userBase,
+            //    BusinessId = param.BusinessId,
+            //});
+           // //获取诊断
+           // var iniParam = GetOutpatientPlanBirthSettlementParam
+           //  (outpatientPerson, outpatientDetailPerson);
+           // iniParam.AfferentSign = param.AfferentSign;
+           // iniParam.IdentityMark = param.IdentityMark;
+           ////医保执行
+           // data = _outpatientDepartmentRepository.OutpatientPlanBirthSettlement(iniParam);
+           
+           // var saveData = new MedicalInsuranceDto
+           // {
+           //     AdmissionInfoJson = JsonConvert.SerializeObject(param),
+           //     BusinessId = param.BusinessId,
+           //     Id = Guid.NewGuid(),
+           //     IsBirthHospital = 1,
+           //     IsModify = false,
+           //     InsuranceType = 999,
+           //     MedicalInsuranceState = MedicalInsuranceState.HisSettlement,
+           //     MedicalInsuranceHospitalizationNo = outpatientPerson.OutpatientNumber,
+                
+           // };
+           // //存中间库
+           // _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
+           // //日志写入
+           // _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
+           // {
+           //     User = userBase,
+           //     JoinOrOldJson = JsonConvert.SerializeObject(iniParam),
+           //     ReturnOrNewJson = JsonConvert.SerializeObject(data),
+           //     RelationId = outpatientParam.Id,
+           //     Remark = "[R][OutpatientDepartment]门诊预结算"
+           // });
 
-            };
-            data = _outpatientDepartmentRepository.OutpatientPlanBirthSettlement(iniParam);
-
-
-            return data;
+           
         }
         /// <summary>
         /// 获取门诊预结算参数
         /// </summary>
-        /// <param name="pairCodeList">对码数据</param>
+       
         /// <param name="outpatientInfo">病人信息</param>
         /// <param name="detail">病人明细</param>
         /// <returns></returns>
         private OutpatientPlanBirthPreSettlementParam GetOutpatientPlanBirthPreSettlementParam(
-            List<QueryMedicalInsurancePairCodeDto> pairCodeList,
             BaseOutpatientInfoDto outpatientInfo, List<BaseOutpatientDetailDto> detail
         )
         {
             var resultData = new OutpatientPlanBirthPreSettlementParam()
             {
                 OutpatientNo = outpatientInfo.OutpatientNumber,
-                DiagnosisDate= outpatientInfo.VisitDate,
-                ProjectNum  = pairCodeList.Count(),
+                DiagnosisDate = outpatientInfo.VisitDate,
+                ProjectNum = detail.Count(),
                 TotalAmount = outpatientInfo.MedicalTreatmentTotalCost
             };
             var rowDataList = new List<PlanBirthSettlementRow>();
             //升序
-            var dataSort = detail.OrderBy(c=>c.BillTime).ToArray();
+            var dataSort = detail.OrderBy(c => c.BillTime).ToArray();
             int num = 0;
             foreach (var item in dataSort)
             {
                 num++;
-                var projectCodeData = pairCodeList
-                    .FirstOrDefault(c => c.DirectoryCode == item.DirectoryCode);
-                if (projectCodeData ==null) throw  new Exception("["+ item +"]名称:"+ item.DirectoryName+"未对码!!!");
+               
+                if (string.IsNullOrWhiteSpace(item.MedicalInsuranceProjectCode)) throw new Exception("[" + item + "]名称:" + item.DirectoryName + "未对码!!!");
                 var row = new PlanBirthSettlementRow()
-                {   ColNum = num,
-                    ProjectCode = projectCodeData.ProjectCode,
+                {
+                    ColNum = num,
+                    ProjectCode = item.MedicalInsuranceProjectCode,
                     ProjectName = item.DirectoryName,
                     UnitPrice = item.UnitPrice,
                     Quantity = item.Quantity,
                     TotalAmount = item.Amount,
                     Formulation = item.Formulation,
-                    ManufacturerName = projectCodeData.Manufacturer,
+                    ManufacturerName = item.DrugProducingArea,
                     Dosage = item.Dosage,
                     Specification = item.Specification,
                     Usage = item.Usage
@@ -435,6 +475,80 @@ namespace BenDing.Service.Providers
 
             resultData.RowDataList = rowDataList;
             return resultData;
+
+        }
+        /// <summary>
+        /// 获取门诊计划生育结算参数
+        /// </summary>
+        /// <returns></returns>
+        public OutpatientPlanBirthSettlementParam GetOutpatientPlanBirthSettlementParam(
+            OutpatientPlanBirthSettlementUiParam param
+        )
+        {
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            var outpatientParam = new GetOutpatientPersonParam()
+            {
+                User = userBase,
+                UiParam = param,
+            };
+            var outpatientPerson = _serviceBasicService.GetOutpatientPerson(outpatientParam);
+            if (outpatientPerson == null) throw new Exception("his中未获取到当前病人!!!");
+            var outpatientDetailPerson = _serviceBasicService.GetOutpatientDetailPerson(new OutpatientDetailParam()
+            {
+                User = userBase,
+                BusinessId = param.BusinessId,
+            });
+            //获取主诊断
+            var diagnosisData = outpatientPerson.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == "true");
+            var resultData = new OutpatientPlanBirthSettlementParam()
+            {
+                OutpatientNo = outpatientPerson.OutpatientNumber,
+                DiagnosisDate = outpatientPerson.VisitDate,
+                ProjectNum = outpatientDetailPerson.Count(),
+                TotalAmount = outpatientPerson.MedicalTreatmentTotalCost,
+                AfferentSign = param.AfferentSign,
+                IdentityMark = param.IdentityMark,
+                AdmissionMainDiagnosisIcd10 = diagnosisData.DiagnosisCode
+
+            };
+            var rowDataList = new List<PlanBirthSettlementRow>();
+            //升序
+            var dataSort = outpatientDetailPerson.OrderBy(c => c.BillTime).ToArray();
+            int num = 0;
+            foreach (var item in dataSort)
+            {
+                num++;
+
+                if (string.IsNullOrWhiteSpace(item.MedicalInsuranceProjectCode)) throw new Exception("[" + item + "]名称:" + item.DirectoryName + "未对码!!!");
+                var row = new PlanBirthSettlementRow()
+                {
+                    ColNum = num,
+                    ProjectCode = item.MedicalInsuranceProjectCode,
+                    ProjectName = item.DirectoryName,
+                    UnitPrice = item.UnitPrice,
+                    Quantity = item.Quantity,
+                    TotalAmount = item.Amount,
+                    Formulation = item.Formulation,
+                    ManufacturerName = item.DrugProducingArea,
+                    Dosage = item.Dosage,
+                    Specification = item.Specification,
+                    Usage = item.Usage
+                };
+
+                rowDataList.Add(row);
+            }
+
+            resultData.RowDataList = rowDataList;
+          
+          
+            return resultData;
+
+        }
+        /// <summary>
+        /// 门诊病人信息查询
+        /// </summary>
+        public void GetOutpatientInfoQuery()
+        {
 
         }
     }

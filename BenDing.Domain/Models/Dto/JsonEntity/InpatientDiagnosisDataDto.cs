@@ -30,5 +30,10 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         /// </summary>
         [JsonProperty(PropertyName = "诊断医保编码")]
         public string DiagnosisMedicalInsuranceCode { get; set; }
+        /// <summary>
+        /// 诊断医保编码
+        /// </summary>
+        [JsonProperty(PropertyName = "诊断医保名称")]
+        public string DiagnosisMedicalInsuranceName { get; set; }
     }
 }

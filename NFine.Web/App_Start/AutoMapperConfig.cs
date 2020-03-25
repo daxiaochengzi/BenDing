@@ -39,7 +39,7 @@ namespace NFine.Web.App_Start
                cfg.CreateMap<InpatientInfoDto, InpatientEntity>();
                cfg.CreateMap<InpatientDetailJsonDto, InpatientInfoDetailDto>();
                cfg.CreateMap<QueryOutpatientDepartmentCostDto, QueryOutpatientDepartmentCostjsonDto>();
-               cfg.CreateMap<BaseOutpatientDetailJsonDto, BaseOutpatientDetailDto>();
+               //cfg.CreateMap<BaseOutpatientDetailJsonDto, BaseOutpatientDetailDto>();
                cfg.CreateMap<OutpatientPersonBaseJsonDto, BaseOutpatientInfoDto>();
                cfg.CreateMap<PatientLeaveHospitalInfoDto, LeaveHospitalSettlementInfoParam>();
                cfg.CreateMap<PatientLeaveHospitalInfoDto, SaveInpatientSettlementParam>();
@@ -48,7 +48,8 @@ namespace NFine.Web.App_Start
                cfg.CreateMap<QueryInpatientInfoDto, HisHospitalizationSettlementCancelDto>();
                cfg.CreateMap<ResidentHospitalizationRegisterUiParam, WorKerHospitalizationRegisterUiParam>();
                cfg.CreateMap<WorkerBirthPreSettlementJsonDto, WorkerHospitalizationPreSettlementDto>();
-                
+               cfg.CreateMap<OutpatientDetailJsonDto, BaseOutpatientDetailDto>();
+              
                 //异地
                cfg.CreateMap<DifferentPlacesUserInfoJsonDto, DifferentPlacesUserInfoDto>();
                cfg.CreateMap<DifferentPlacesHospitalizationRegisterJsonDto, DifferentPlacesHospitalizationRegisterDto>();

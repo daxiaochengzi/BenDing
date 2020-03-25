@@ -10,6 +10,7 @@ using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.HisXml;
 using BenDing.Domain.Models.Params;
 using BenDing.Domain.Models.Params.Base;
+using BenDing.Domain.Models.Params.OutpatientDepartment;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
@@ -237,42 +238,18 @@ namespace BenDing.Service.Providers
                 resultData = AutoMapper.Mapper.Map<BaseOutpatientInfoDto>(dataValueFirst);
                 resultData.Id = param.Id;
                 resultData.BusinessId = param.UiParam.BusinessId;
+                resultData.DiagnosticJson = JsonConvert.SerializeObject(dataValue.DiagnosisList);
+                resultData.DiagnosisList = dataValue.DiagnosisList;
                 if (param.IsSave)
                 {
                     _hisSqlRepository.SaveOutpatient(param.User, resultData);
+                    
                 }
 
             }
             return resultData;
 
-            //result = GetResultData(init, data);
-            //if (result.Any())
-            //{
-            //    var resultDataIni = result.FirstOrDefault(c => c.BusinessId == param.UiParam.BusinessId);
-            //    if (resultDataIni != null)
-            //    {
-            //        resultData = AutoMapper.Mapper.Map<BaseOutpatientInfoDto>(resultDataIni);
-            //    }
-
-            //    //if (resultData.ReceptionStatus < 2) throw  new  Exception("门诊病人需要已接诊才能结算!!!");
-
-            //    if (param.IsSave)
-            //    {
-            //        resultData.ReturnJson = param.ReturnJson;
-            //        resultData.Id = param.Id;
-
-            //        _hisSqlRepository.SaveOutpatient(param.User, resultData);
-            //        //门诊病人明细下载
-            //        GetOutpatientDetailPerson(param.User, new OutpatientDetailParam()
-            //        {
-            //            AuthCode = param.User.AuthCode,
-            //            OutpatientNo = resultData.OutpatientNumber,
-            //            BusinessId = resultData.BusinessId
-            //        });
-            //    }
-
-
-            //}
+            
 
 
         }
@@ -294,29 +271,37 @@ namespace BenDing.Service.Providers
         /// <summary>
         /// 获取门诊病人费用明细
         /// </summary>
-        /// <param name="user"></param>
+     
         /// <param name="param"></param>
         /// <returns></returns>
-        public List<BaseOutpatientDetailDto> GetOutpatientDetailPerson(UserInfoDto user, OutpatientDetailParam param)
+        public List<BaseOutpatientDetailDto> GetOutpatientDetailPerson(OutpatientDetailParam param)
         {
-            List<BaseOutpatientDetailJsonDto> result;
-            var resultData = new List<BaseOutpatientDetailDto>();
-            var init = new BaseOutpatientDetailJsonDto();
-            var data = _webServiceBasic.HIS_InterfaceList("16", JsonConvert.SerializeObject(param));
+           var resultData =new List<BaseOutpatientDetailDto>(); 
+            var xmlData = new MedicalInsuranceXmlDto();
+            xmlData.BusinessId = param.BusinessId;
+            xmlData.HealthInsuranceNo = "48";//42MZ
+            xmlData.TransactionId = param.User.TransKey;
+            xmlData.AuthCode = param.User.AuthCode;
+            xmlData.UserId = param.User.UserId;
+            xmlData.OrganizationCode = param.User.OrganizationCode;
+            var jsonParam = JsonConvert.SerializeObject(xmlData);
+            var data = _webServiceBasic.HIS_Interface("39", jsonParam);
+            OutpatientPersonJsonDto dataValue = JsonConvert.DeserializeObject<OutpatientPersonJsonDto>(data.Msg);
 
-            result = GetResultData(init, data);
-
-            if (result.Any())
+            var detailInfo = dataValue.DetailInfo;
+            foreach (var item in detailInfo)
             {
-                resultData = AutoMapper.Mapper.Map<List<BaseOutpatientDetailDto>>(result);
-                if (param.IsSave == true)
-                {
-                    _hisSqlRepository.SaveOutpatientDetail(user, resultData);
-                }
+                var detail = AutoMapper.Mapper.Map<BaseOutpatientDetailDto>(item);
+                detail.OrganizationCode = param.User.OrganizationCode;
+                detail.OrganizationName = param.User.OrganizationName;
+                detail.OutpatientNo = dataValue.OutpatientPersonBase.OutpatientNumber;
+                resultData.Add(detail);
 
-               
             }
-
+            if (param.IsSave)
+            {
+                  _hisSqlRepository.SaveOutpatientDetail(param.User, resultData);
+            }
             return resultData;
         }
 

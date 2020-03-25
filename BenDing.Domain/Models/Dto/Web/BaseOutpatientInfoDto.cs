@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using BenDing.Domain.Models.Dto.JsonEntity;
 using Newtonsoft.Json;
 
 namespace BenDing.Domain.Models.Dto.Web
@@ -83,7 +84,17 @@ namespace BenDing.Domain.Models.Dto.Web
         /// </summary>
 
         public int ReceptionStatus { get; set; }
-     
+        /// <summary>
+        /// 诊断json
+        /// </summary>
+        public  string DiagnosticJson { get; set; }
+       
+
+        /// <summary>
+        /// 诊断列表
+        /// </summary>
+
+        public List<InpatientDiagnosisDataDto> DiagnosisList { get; set; } = null;
 
     }
 }
