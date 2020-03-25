@@ -26,7 +26,7 @@
             <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
             <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
             <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
-
+            <object id="CSharpActiveX" classid="clsid:67475F7D-57A1-45AD-96F3-428A679B2E6C" codebase="ActiveSetup.CAB#version=1,0,0" width="0" height="0"></object>
             <div class="layui-card-header layuibd-card-header-auto">
 
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
@@ -250,7 +250,7 @@
                     "IdentityMark": $("#IdentityMark").val(),
                     "AfferentSign": $("#identityMarkText").val()
                 };
-               
+               //获取门诊计划生育结算参数
                 $.ajax({
                     type: 'POST',
                     url: host + '/GetOutpatientPlanBirthSettlementParam',
@@ -258,13 +258,13 @@
                     dataType: "json",
                     async: false,
                     success: function (data) {
-                        console.log(data)
+                        console.log(data);
                         if (data.Success === false) {
                             var errData = data.Message;
                             //样式类名:墨绿深蓝风
                             layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                         } else {
-                         
+                            PayCard(data);
 
                         }
                     }
@@ -274,7 +274,40 @@
             }
             return false; //阻止表单跳转
         });
+
+        function PayCard(paramData) {
+            //初始化插件
+            var activeX = document.getElementById("CSharpActiveX");
+            //var param =
+            //{
+            //    "PI_SFBZ":"511521201704210171",
+            //    "PI_CRBZ":"1"
+            //}
+            var paramBase =
+            {
+                "Account": "cpq2677", 
+                "Pwd": "888888",
+                "OperatorId": $("#empid").val() /*授权操作人的ID*/,
+            }
+            var param =
+            {
+                "MedicalCategory":"2",
+                "AllAmount": "3.00",
+                "CardPwd": "123456",
+                "Operator":"李茜"
+            }
+
       
+            //var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
+            var activeData = activeX.OutpatientPlanBirthSettlement(JSON.stringify(param), JSON.stringify(paramBase));
+            var activeJsonData = JSON.parse(activeData);
+            if (activeJsonData.Success === false)
+            {
+                layer.alert(activeJsonData.Message, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                return false;
+            }
+            var getData = JSON.parse(activeJsonData.Data);
+        }
         $.ajax({
             type: 'get',
             url: host + '/GetOutpatient',
