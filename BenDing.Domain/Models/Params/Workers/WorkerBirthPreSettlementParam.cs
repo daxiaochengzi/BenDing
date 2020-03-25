@@ -27,7 +27,7 @@ namespace BenDing.Domain.Models.Params.Workers
         /// 胎儿数
         /// </summary>
         [XmlElement("PI_TES", IsNullable = false)]
-        public string FetusNumber { get; set; }
+        public int FetusNumber { get; set; }
         /// <summary>
         /// 出院日期yyyymmdd
         /// </summary>
