@@ -455,7 +455,7 @@ namespace BenDing.Service.Providers
                 BackParam = strXmlBackParam
             };
             ////存基层
-            //_webBasicRepository.SaveXmlData(saveXml);
+            _webBasicRepository.SaveXmlData(saveXml);
             var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
             {
                 UserId = userBase.UserId,

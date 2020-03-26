@@ -1282,12 +1282,12 @@ namespace NFine.Web.Controllers
                 userBase.TransKey = param.TransKey;
                 //医保登录
                 _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                var settlementData = new WorkerHospitalizationPreSettlementDto();
+                
 
                 if (param.ResultData != null)
                 {
                     var dataIni = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.ResultData);
-                    settlementData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni);
+                   var settlementData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni);
                     _outpatientDepartmentService.OutpatientPlanBirthSettlement(param);
                     y.Data = new OutpatientCostReturnDataDto()
                     {
