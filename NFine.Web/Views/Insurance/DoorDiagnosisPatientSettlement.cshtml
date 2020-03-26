@@ -235,14 +235,25 @@
             "UserId": $("#empid").val(), /*授权操作人的ID*/
         }
         //获取门诊计划生育结算参数
-        function GetOutpatientPlanBirthSettlementParam(params) {
+        function GetOutpatientPlanBirthSettlementParam() {
+            var settlementParam = {
+                "TransKey": $("#transkey").val() /*医保交易码*/,
+                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
+                "UserId": $("#empid").val(), /*授权操作人的ID*/
+                "IdentityMark":$("#IdentityMark").val(),
+                "AfferentSign": $("#identityMarkText").val(),
+                "AccountPayment": $("#AccountPayment").val(),
+                "ResultData":""
+           
+            }
             $.ajax({
                 type: 'POST',
                 url: host + '/GetOutpatientPlanBirthSettlementParam',
-                data: params,
+                data: settlementParam,
                 dataType: "json",
                 async: false,
                 success: function (data) {
+
                     console.log(data);
                     if (data.Success === false) {
                         var errData = data.Message;
@@ -259,6 +270,7 @@
 
         }
         $('#DoorDiagnosisSettlement').on('click', function () {
+          
             params["IdentityMark"] = $("#IdentityMark").val();
             params["AfferentSign"] = $("#identityMarkText").val();
             params["AccountPayment"] = $("#AccountPayment").val();
@@ -267,7 +279,7 @@
             //计划生育结算
             if (settlementVal === "1") {
                 //计划生育结算调用插件
-                GetOutpatientPlanBirthSettlementParam(params);
+                GetOutpatientPlanBirthSettlementParam();
             }
             params["ResultData"] = activeJsonInfo;
         
