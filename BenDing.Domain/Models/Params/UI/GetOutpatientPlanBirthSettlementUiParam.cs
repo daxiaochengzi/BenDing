@@ -9,7 +9,7 @@ using BenDing.Domain.Models.Params.Base;
 
 namespace BenDing.Domain.Models.Params.UI
 {
-  public  class OutpatientPlanBirthSettlementUiParam: UiBaseDataParam
+  public  class GetOutpatientPlanBirthSettlementUiParam: UiBaseDataParam
     {
         ///<summary>
         /// 身份标识
@@ -27,13 +27,9 @@ namespace BenDing.Domain.Models.Params.UI
         /// 账户支付
         /// </summary>
         public decimal AccountPayment { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public string ResultData { get; set; }
-        /// <summary>
-        /// 诊断
-        /// </summary>
-        public List<InpatientDiagnosisDto> DiagnosisList { get; set; } = null;
+        ///// <summary>
+        ///// 诊断
+        ///// </summary>
+        //public List<InpatientDiagnosisDto> DiagnosisList { get; set; } = null;
     }
 }

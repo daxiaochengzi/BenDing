@@ -264,8 +264,7 @@
                             //样式类名:墨绿深蓝风
                             layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                         } else {
-                            PayCard(data);
-
+                            settlementPay(data.Data);
                         }
                     }
                    
@@ -274,33 +273,19 @@
             }
             return false; //阻止表单跳转
         });
-
-        function PayCard(paramData) {
+        //结算支付
+        function settlementPay(paramData) {
             console.log(paramData);
             //初始化插件
             var activeX = document.getElementById("CSharpActiveX");
-            //var param =
-            //{
-            //    "PI_SFBZ":"511521201704210171",
-            //    "PI_CRBZ":"1"
-            //}
             var paramBase =
             {
-                "Account": "cpq2677", 
+                "Account": "cpq2677",
                 "Pwd": "888888",
-                "OperatorId": $("#empid").val() /*授权操作人的ID*/,
-            }
-            var param =
-            {
-                "MedicalCategory":"2",
-                "AllAmount": "3.00",
-                "CardPwd": "123456",
-                "Operator":"李茜"
-            }
-
-      
+                "OperatorId": $("#empid").val() /*授权操作人的ID*/
+            };
             //var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
-            var activeData = activeX.OutpatientPlanBirthSettlement(JSON.stringify(paramData.Data), JSON.stringify(paramBase));
+            var activeData = activeX.OutpatientPlanBirthSettlement(JSON.stringify(paramData), JSON.stringify(paramBase));
             var activeJsonData = JSON.parse(activeData);
             if (activeJsonData.Success === false)
             {
@@ -308,7 +293,11 @@
                 return false;
             }
             var getData = JSON.parse(activeJsonData.Data);
+
+
+
         }
+
         $.ajax({
             type: 'get',
             url: host + '/GetOutpatient',

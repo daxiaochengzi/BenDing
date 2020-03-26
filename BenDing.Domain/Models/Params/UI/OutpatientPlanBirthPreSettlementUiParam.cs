@@ -21,9 +21,10 @@ namespace BenDing.Domain.Models.Params.UI
         /// <summary>
         ///身份证号或者个人编号
         /// </summary>
-        [Display(Name = "身份证号或者个人编号")]
+        [Display(Name = "身份证号或者个人编号")]  
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string AfferentSign { get; set; }
+        
         /// <summary>
         /// 诊断
         /// </summary>
