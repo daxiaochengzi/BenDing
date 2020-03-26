@@ -210,35 +210,35 @@
                 "IdentityMark": $("#IdentityMark").val() /*身份标志，1:身份证,2:医保个人编码*/,
                 "UserId": $("#empid").val() /*授权操作人的ID*/
             }
-            $.ajax({
-                type: 'POST',
-                url: host + '/GetUserInfo',
-                data: paramsUserInfo,
-                dataType: "json",
-                async: false,
-                success: function (data) {
-                    console.log(data);
-                    if (data.Success === false) {
-                        var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                    } else {
-                        // 居民
-                        if (data.Data.InsuranceType === "342") {
-                            $("#InsuranceBalance").val(data.Data.ResidentInsuranceBalance);
-                          //职工
-                        } else if (data.Data.InsuranceType === "310") {
-                            $("#InsuranceBalance").val(data.Data.WorkersInsuranceBalance); 
+            //$.ajax({
+            //    type: 'POST',
+            //    url: host + '/GetUserInfo',
+            //    data: paramsUserInfo,
+            //    dataType: "json",
+            //    async: false,
+            //    success: function (data) {
+            //        console.log(data);
+            //        if (data.Success === false) {
+            //            var errData = data.Message;
+            //            //样式类名:墨绿深蓝风
+            //            layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+            //        } else {
+            //            // 居民
+            //            if (data.Data.InsuranceType === "342") {
+            //                $("#InsuranceBalance").val(data.Data.ResidentInsuranceBalance);
+            //              //职工
+            //            } else if (data.Data.InsuranceType === "310") {
+            //                $("#InsuranceBalance").val(data.Data.WorkersInsuranceBalance); 
 
-                        }
-                        $("#InsuranceBalanceDiv").show();
-                        buttonStatus("DoorDiagnosisSettlement", true);
+            //            }
+            //            $("#InsuranceBalanceDiv").show();
+            //            buttonStatus("DoorDiagnosisSettlement", true);
                      
 
-                    }
-                }
+            //        }
+            //    }
                
-            });
+            //});
          
             var settlementVal = $('input[name="Settlement"]:checked').val(); 
             if (settlementVal === "1") {
@@ -276,6 +276,7 @@
         });
 
         function PayCard(paramData) {
+            console.log(paramData);
             //初始化插件
             var activeX = document.getElementById("CSharpActiveX");
             //var param =
@@ -299,7 +300,7 @@
 
       
             //var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
-            var activeData = activeX.OutpatientPlanBirthSettlement(JSON.stringify(param), JSON.stringify(paramBase));
+            var activeData = activeX.OutpatientPlanBirthSettlement(JSON.stringify(paramData.Data), JSON.stringify(paramBase));
             var activeJsonData = JSON.parse(activeData);
             if (activeJsonData.Success === false)
             {
