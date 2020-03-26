@@ -114,8 +114,8 @@ namespace BenDing.Service.Providers
             //获取病人的基础信息
             var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
             {
-                IdentityMark = outpatientPerson.IdCardNo.Length >= 18 ? "1" : "2",
-                InformationNumber = outpatientPerson.IdCardNo,
+                IdentityMark = param.IdentityMark,
+                InformationNumber = param.AfferentSign,
             });
             //回参构建
             var xmlData = new OutpatientDepartmentCostXml()
@@ -397,7 +397,8 @@ namespace BenDing.Service.Providers
                 BusinessId = param.BusinessId,
             });
             var iniParam = GetOutpatientPlanBirthSettlementParam(param);
-            var resultData = JsonConvert.DeserializeObject<WorkerHospitalizationPreSettlementDto>(param.ResultData) ;
+            var dataIni = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.ResultData);
+            var resultData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni); 
             var saveData = new MedicalInsuranceDto
             {
                 AdmissionInfoJson = JsonConvert.SerializeObject(param),
@@ -419,7 +420,7 @@ namespace BenDing.Service.Providers
                 JoinOrOldJson = JsonConvert.SerializeObject(iniParam),
                 ReturnOrNewJson = param.ResultData,
                 RelationId = outpatientParam.Id,
-                Remark = "[R][OutpatientDepartment]门诊预结算"
+                Remark = "[R][OutpatientDepartment]门诊计划生育结算"
             });
 
             //获取病人的基础信息

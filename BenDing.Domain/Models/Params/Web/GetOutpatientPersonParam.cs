@@ -28,7 +28,17 @@ namespace BenDing.Domain.Models.Params.Web
         /// id
         /// </summary>
         public Guid Id { get; set; }
+        ///<summary>
+        /// 身份标识
+        /// </summary>
+      
+        public string IdentityMark { get; set; }
+        /// <summary>
+        ///身份证号或者个人编号
+        /// </summary>
        
+        public string AfferentSign { get; set; }
+
 
     }
 }

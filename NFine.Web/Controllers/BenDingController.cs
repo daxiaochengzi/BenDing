@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Dto.Workers;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.HisXml;
 using BenDing.Domain.Models.Params.Base;
@@ -1270,7 +1272,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet]
-        public ApiJsonResultData OutpatientDepartmentCostInput([FromUri]UiBaseDataParam param)
+        public ApiJsonResultData OutpatientDepartmentCostInput([FromUri]OutpatientPlanBirthSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
@@ -1278,18 +1280,29 @@ namespace NFine.Web.Controllers
                 userBase.TransKey = param.TransKey;
                 //医保登录
                 _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                var data = _outpatientDepartmentService.OutpatientDepartmentCostInput(new GetOutpatientPersonParam()
+                //计划生育结算
+                if (param.ResultData != null)
                 {
-                    User = userBase,
-                    UiParam = param
-                });
-                if (data == null) throw new Exception("获取门诊结算反馈数据失败!!!");
+                    var dataIni = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.ResultData);
+                    var resultData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni);
+                   // _outpatientDepartmentService.OutpatientPlanBirthSettlement(param);
+                }
+                else
+                {
+                    var data = _outpatientDepartmentService.OutpatientDepartmentCostInput(new GetOutpatientPersonParam()
+                    {
+                        User = userBase,
+                        UiParam = param
+                    });
+                    if (data == null) throw new Exception("获取门诊结算反馈数据失败!!!");
 
-                y.Data = new OutpatientCostReturnDataDto()
-                {
-                    ReimbursementExpensesAmount = data.ReimbursementExpensesAmount,
-                    SelfPayFeeAmount = data.SelfPayFeeAmount
-                };
+                    y.Data = new OutpatientCostReturnDataDto()
+                    {
+                        ReimbursementExpensesAmount = data.ReimbursementExpensesAmount,
+                        SelfPayFeeAmount = data.SelfPayFeeAmount
+                    };
+                }
+               
             });
 
         }
@@ -1395,6 +1408,23 @@ namespace NFine.Web.Controllers
             });
 
         }
+        /// <summary>
+        /// 门诊生育结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData OutpatientPlanBirthSettlement([FromBody]OutpatientPlanBirthSettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var resultData = JsonConvert.DeserializeObject<WorkerHospitalizationPreSettlementDto>(param.ResultData);
+                //_outpatientDepartmentService.OutpatientPlanBirthSettlement(param);
+              
+            });
+
+        }
+      
 
         #endregion
         #region 职工医保

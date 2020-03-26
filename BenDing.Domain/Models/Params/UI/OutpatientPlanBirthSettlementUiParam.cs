@@ -31,9 +31,6 @@ namespace BenDing.Domain.Models.Params.UI
         /// 
         /// </summary>
         public string ResultData { get; set; }
-        /// <summary>
-        /// 诊断
-        /// </summary>
-        public List<InpatientDiagnosisDto> DiagnosisList { get; set; } = null;
+   
     }
 }
