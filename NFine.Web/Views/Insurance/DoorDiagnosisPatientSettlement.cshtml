@@ -250,7 +250,7 @@
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
                         //计划生育结算调用插件
-                        settlementPay(data.Data);
+                       // settlementPay(data.Data);
 
                     }
                 }
@@ -307,7 +307,7 @@
                 data: paramsUserInfo,
                 dataType: "json",
                 async: false,
-                success: function (data) {
+                success: function(data) {
                     console.log(data);
                     if (data.Success === false) {
                         var errData = data.Message;
@@ -319,9 +319,9 @@
                         // 居民
                         if (data.Data.InsuranceType === "342") {
                             $("#InsuranceBalance").val(data.Data.ResidentInsuranceBalance);
-                          //职工
+                            //职工
                         } else if (data.Data.InsuranceType === "310") {
-                            $("#InsuranceBalance").val(data.Data.WorkersInsuranceBalance); 
+                            $("#InsuranceBalance").val(data.Data.WorkersInsuranceBalance);
 
                         }
                         var settlementVal = $('input[name="Settlement"]:checked').val();
@@ -331,12 +331,12 @@
                         }
                         $("#InsuranceBalanceDiv").show();
                         buttonStatus("DoorDiagnosisSettlement", true);
-                     
+
 
                     }
                 }
-               
-            });
+
+        });
          
           
            
