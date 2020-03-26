@@ -1470,7 +1470,7 @@ namespace NFine.Web.Controllers
         public ApiJsonResultData QueryWorKerMedicalInsurance([FromUri]QueryMedicalInsuranceUiParam param)
         {
             return new ApiJsonResultData(ModelState, new QueryMedicalInsuranceDetailInfoDto()).RunWithTry(y =>
-            {
+            { 
                 var data = _webServiceBasicService.QueryMedicalInsuranceDetail(param);
                 y.Data = data;
 
