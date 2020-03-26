@@ -72,7 +72,7 @@ namespace BenDing.Domain.Models.Params.OutpatientDepartment
         ///  
         /// </summary>
         [XmlArrayAttribute("PI_FYMX")]
-        [XmlArrayItem("row")]
+        [XmlArrayItem("ROW")]
         public List<PlanBirthSettlementRow> RowDataList { get; set; }
     }
 }
