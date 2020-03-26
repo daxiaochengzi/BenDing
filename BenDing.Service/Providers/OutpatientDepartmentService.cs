@@ -383,11 +383,14 @@ namespace BenDing.Service.Providers
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
             //门诊病人信息存储
+            var id = Guid.NewGuid();
             var outpatientParam = new GetOutpatientPersonParam()
             {
                 User = userBase,
                 UiParam = param,
-                IsSave = true
+                IsSave = true,
+                Id = id,
+
             };
             var outpatientPerson = _serviceBasicService.GetOutpatientPerson(outpatientParam);
             if (outpatientPerson == null) throw new Exception("his中未获取到当前病人!!!");
@@ -424,35 +427,35 @@ namespace BenDing.Service.Providers
             });
 
             //获取病人的基础信息
-            var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
-            {
-                IdentityMark = param.IdentityMark,
-                InformationNumber = param.AfferentSign,
-            });
+            //var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
+            //{
+            //    IdentityMark = param.IdentityMark,
+            //    InformationNumber = param.AfferentSign,
+            //});
             //回参构建
-            var xmlData = new OutpatientDepartmentCostXml()
-            {
-                AccountBalance = userInfoData.InsuranceType == "342" ? userInfoData.ResidentInsuranceBalance : userInfoData.WorkersInsuranceBalance,
-                MedicalInsuranceOutpatientNo = resultData.DocumentNo,
-                CashPayment = resultData.CashPayment,
-                SettlementNo = resultData.DocumentNo,
-                AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
-                PatientName = outpatientPerson.PatientName,
-                AccountAmountPay = resultData.AccountPayment,
-                MedicalInsuranceType = userInfoData.InsuranceType == "342" ? "10" : userInfoData.InsuranceType,
-            };
+            //var xmlData = new OutpatientDepartmentCostXml()
+            //{
+            //    AccountBalance = userInfoData.InsuranceType == "342" ? userInfoData.ResidentInsuranceBalance : userInfoData.WorkersInsuranceBalance,
+            //    MedicalInsuranceOutpatientNo = resultData.DocumentNo,
+            //    CashPayment = resultData.CashPayment,
+            //    SettlementNo = resultData.DocumentNo,
+            //    AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
+            //    PatientName = outpatientPerson.PatientName,
+            //    AccountAmountPay = resultData.AccountPayment,
+            //    MedicalInsuranceType = userInfoData.InsuranceType == "342" ? "10" : userInfoData.InsuranceType,
+            //};
 
-            var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-            var saveXml = new SaveXmlDataParam()
-            {
-                User = userBase,
-                MedicalInsuranceBackNum = "zydj",
-                MedicalInsuranceCode = "48",
-                BusinessId = param.BusinessId,
-                BackParam = strXmlBackParam
-            };
-            //存基层
-            _webBasicRepository.SaveXmlData(saveXml);
+            //var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+            //var saveXml = new SaveXmlDataParam()
+            //{
+            //    User = userBase,
+            //    MedicalInsuranceBackNum = "zydj",
+            //    MedicalInsuranceCode = "48",
+            //    BusinessId = param.BusinessId,
+            //    BackParam = strXmlBackParam
+            //};
+            ////存基层
+            //_webBasicRepository.SaveXmlData(saveXml);
             var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
             {
                 UserId = userBase.UserId,

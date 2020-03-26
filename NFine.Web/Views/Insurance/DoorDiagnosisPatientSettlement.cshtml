@@ -279,7 +279,7 @@
         });
         // 结算方法
         function DoorDiagnosisSettlement() {
-            debugger;
+            
             params["ResultData"] = activeJsonInfo;
             $.ajax({
                 type: 'get',
@@ -311,44 +311,44 @@
                 "UserId": $("#empid").val() /*授权操作人的ID*/
             }
            
-                //获取居民信息
-                $.ajax({
-                    type: 'POST',
-                    url: host + '/GetUserInfo',
-                    data: paramsUserInfo,
-                    dataType: "json",
-                    async: false,
-                    success: function(data) {
-                        console.log(data);
-                        if (data.Success === false) {
-                            var errData = data.Message;
-                            //样式类名:墨绿深蓝风
-                            layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                            return false;
+            //    //获取居民信息
+            //    $.ajax({
+            //        type: 'POST',
+            //        url: host + '/GetUserInfo',
+            //        data: paramsUserInfo,
+            //        dataType: "json",
+            //        async: false,
+            //        success: function(data) {
+            //            console.log(data);
+            //            if (data.Success === false) {
+            //                var errData = data.Message;
+            //                //样式类名:墨绿深蓝风
+            //                layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+            //                return false;
 
-                        } else {
-                            // 居民
-                            if (data.Data.InsuranceType === "342") {
-                                $("#InsuranceBalance").val(data.Data.ResidentInsuranceBalance);
-                                //职工
-                            } else if (data.Data.InsuranceType === "310") {
-                                $("#InsuranceBalance").val(data.Data.WorkersInsuranceBalance);
+            //            } else {
+            //                // 居民
+            //                if (data.Data.InsuranceType === "342") {
+            //                    $("#InsuranceBalance").val(data.Data.ResidentInsuranceBalance);
+            //                    //职工
+            //                } else if (data.Data.InsuranceType === "310") {
+            //                    $("#InsuranceBalance").val(data.Data.WorkersInsuranceBalance);
 
-                            }
-                            var settlementVal = $('input[name="Settlement"]:checked').val();
-                            //计划生育结算
-                            if (settlementVal === "1") {
-                                $("#AccountPaymentDiv").show();
-                            }
-                            $("#InsuranceBalanceDiv").show();
-                            buttonStatus("DoorDiagnosisSettlement", true);
+            //                }
+            //                var settlementVal = $('input[name="Settlement"]:checked').val();
+            //                //计划生育结算
+            //                if (settlementVal === "1") {
+            //                    $("#AccountPaymentDiv").show();
+            //                }
+            //                $("#InsuranceBalanceDiv").show();
+            //                buttonStatus("DoorDiagnosisSettlement", true);
 
 
-                        }
-                    }
+            //            }
+            //        }
 
-            });
-
+            //});
+            buttonStatus("DoorDiagnosisSettlement", true);
 
         });
         //结算支付

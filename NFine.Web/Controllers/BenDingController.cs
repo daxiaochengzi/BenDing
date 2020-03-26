@@ -1280,33 +1280,41 @@ namespace NFine.Web.Controllers
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 userBase.TransKey = param.TransKey;
                 //医保登录
-                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                //_residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                var dddd = new WorkerBirthPreSettlementJsonDto()
+                {  AccountPayment = 12,
+                    DocumentNo = "55555",
+                    TotalAmount = 200
+
+                };
+                param.ResultData = JsonConvert.SerializeObject(dddd);
                 //计划生育结算
-                if (param.ResultData != null)
-                {
-                    var dataIni = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.ResultData);
-                    var resultData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni);
-                   // _outpatientDepartmentService.OutpatientPlanBirthSettlement(param);
-                }
-                else
-                {
-                    var data = _outpatientDepartmentService.OutpatientDepartmentCostInput(new GetOutpatientPersonParam()
-                    {
-                        User = userBase,
-                        UiParam = param,
-                        IdentityMark=param.IdentityMark,
-                        AfferentSign=param.AfferentSign,
+                _outpatientDepartmentService.OutpatientPlanBirthSettlement(param);
+                //if (param.ResultData != null)
+                //{
+                //    var dataIni = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.ResultData);
+                //    var resultData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni);
 
-                    });
-                    if (data == null) throw new Exception("获取门诊结算反馈数据失败!!!");
+                //}
+                //else
+                //{
+                //    var data = _outpatientDepartmentService.OutpatientDepartmentCostInput(new GetOutpatientPersonParam()
+                //    {
+                //        User = userBase,
+                //        UiParam = param,
+                //        IdentityMark=param.IdentityMark,
+                //        AfferentSign=param.AfferentSign,
 
-                    y.Data = new OutpatientCostReturnDataDto()
-                    {
-                        ReimbursementExpensesAmount = data.ReimbursementExpensesAmount,
-                        SelfPayFeeAmount = data.SelfPayFeeAmount
-                    };
-                }
-               
+                //    });
+                //    if (data == null) throw new Exception("获取门诊结算反馈数据失败!!!");
+
+                //    y.Data = new OutpatientCostReturnDataDto()
+                //    {
+                //        ReimbursementExpensesAmount = data.ReimbursementExpensesAmount,
+                //        SelfPayFeeAmount = data.SelfPayFeeAmount
+                //    };
+                //}
+
             });
 
         }
@@ -1408,14 +1416,7 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 var data = _outpatientDepartmentService.GetOutpatientPlanBirthSettlementParam(param);
-                ////医保登录
-                //_residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                //var xmlStr = XmlHelp.SaveXml(data);
-                //int result = WorkerMedicalInsurance.CallService_cxjb("SYBX005");
-                //if (result == 1)
-                //{
-                //    var ccc = XmlHelp.DeSerializerModel(new WorkerBirthPreSettlementJsonDto(), true);
-                //}
+           
 
                 y.Data = data;
             });
