@@ -235,7 +235,7 @@
             "UserId": $("#empid").val(), /*授权操作人的ID*/
         }
         //获取门诊计划生育结算参数
-        function getOutpatientPlanBirthSettlementParam() {
+        function  getOutpatientPlanBirthSettlementParam() {
           
             $.ajax({
                 type: 'POST',
@@ -244,15 +244,13 @@
                 dataType: "json",
                 async: false,
                 success: function (data) {
-
-                    console.log(data);
                     if (data.Success === false) {
                         var errData = data.Message;
                         //样式类名:墨绿深蓝风
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
                         //计划生育结算调用插件
-                       // settlementPay(data.Data);
+                        settlementPay(data.Data);
 
                     }
                 }
@@ -270,10 +268,19 @@
             //计划生育结算
             if (settlementVal === "1") {
                 //计划生育结算调用插件
-                getOutpatientPlanBirthSettlementParam();
+                var resultData = getOutpatientPlanBirthSettlementParam();
+            } else
+            {
+                DoorDiagnosisSettlement();
             }
+         
+            
+          
+        });
+        // 结算方法
+        function DoorDiagnosisSettlement() {
+            debugger;
             params["ResultData"] = activeJsonInfo;
-        
             $.ajax({
                 type: 'get',
                 url: host + '/OutpatientDepartmentCostInput',
@@ -285,18 +292,18 @@
                     if (data.Success === false) {
                         var errData = data.Message;
                         //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                        layer.msg(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
-                     
+
                         $('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
                         $('#CashPayment').val(data.Data.SelfPayFeeAmount);
-                        layer.msg('门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        layer.alert('门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         buttonStatus("DoorDiagnosisSettlement", false);
                     }
                 }
 
             });
-        });
+        }
         $('#queryData').on('click', function() {
             var paramsUserInfo = {
                 "InformationNumber": $("#identityMarkText").val() /*身份证号*/,
@@ -310,7 +317,6 @@
                     url: host + '/GetUserInfo',
                     data: paramsUserInfo,
                     dataType: "json",
-         
                     async: false,
                     success: function(data) {
                         console.log(data);
@@ -358,15 +364,16 @@
             };
             //var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
             var activeData = activeX.OutpatientPlanBirthSettlement(JSON.stringify(paramData), JSON.stringify(paramBase));
-           
+          
             var activeJsonData = JSON.parse(activeData);
          
             if (activeJsonData.Success === false) {
-                layer.alert(activeJsonData.Message, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                layer.msg(activeJsonData.Message, { icon: 5, skin: 'layui-layer-molv' });
                 return false;
             } else {
                 //结算信息赋值
                 activeJsonInfo = activeJsonData.Data;
+                DoorDiagnosisSettlement();
             }
 
         }

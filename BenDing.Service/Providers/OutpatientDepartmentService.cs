@@ -76,8 +76,8 @@ namespace BenDing.Service.Providers
             var inputParam = new OutpatientDepartmentCostInputParam()
             {
                 AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
-                IdentityMark = "1",
-                InformationNumber = outpatientPerson.IdCardNo,
+                IdentityMark = param.IdentityMark,
+                InformationNumber = param.AfferentSign,
                 Operators = param.User.UserName
             };
             //医保数据写入
@@ -549,7 +549,7 @@ namespace BenDing.Service.Providers
             var resultData = new OutpatientPlanBirthSettlementParam()
             {
                 OutpatientNo = outpatientPerson.OutpatientNumber,
-                DiagnosisDate = outpatientPerson.VisitDate,
+                DiagnosisDate =  Convert.ToDateTime(outpatientPerson.VisitDate).ToString("yyyyMMddHHmmss") ,
                 ProjectNum = outpatientDetailPerson.Count(),
                 TotalAmount = outpatientPerson.MedicalTreatmentTotalCost,
                 AfferentSign = param.AfferentSign,
