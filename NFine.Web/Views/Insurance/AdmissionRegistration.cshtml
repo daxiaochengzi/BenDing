@@ -164,7 +164,7 @@
                 <!--诊断列表-->
                 <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
                 <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                    <button type="button" Id="register" class="layui-btn">登记</button>
+                    <button type="submit" Id="register"  lay-submit lay-filter="register" disabled  class="layui-btn layui-btn-disabled layui-btn-radius">登记</button>
                 </div>  
             </div>
 
@@ -225,6 +225,7 @@
                         } else {
                             inpatientInfoData = data;
                             $("#identityMarkText").val(data.Data.IdCardNo);
+                         
                             //layer.msg('费用上传成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         }
                     },
@@ -373,6 +374,7 @@
                                 tableIns.reload({
                                     data: inpatientInfoData.Data.DiagnosisList
                                 });
+                                buttonStatus("register", true);
                                 //////诊断查询可编辑
                                 //$('#DiagnosisSearchData').attr("class", "layui-input");
 
@@ -522,12 +524,11 @@
                             break;
                     }
                 });
-          
-            //登记
-            form.on('submit(reg)',
+            form.on('submit(register)',
                 function (data) {
+                   
                     var field = data.field;
-                    
+
                     if (field.IdentityMark === 1) {
                         //身份证号
                         field.AfferentSign = field.AfferentSign;
@@ -536,27 +537,25 @@
                         //医保个人编码
                         field.AfferentSign = field.AfferentSign;
                     }
-                 
+
                     if ($("#InsuranceType").val() === "310") {
                         if (field.IdentityMark === "1") {
                             field.IdentityMark = "2";
                         }
-                        else
-                        {
+                        else {
                             if (field.IdentityMark === "2") {
                                 field.IdentityMark = "3";
                             }
                         }
-                       
+
                     }
                     //医疗类别
-               
+
                     var medicalCategory = $("#MedicalCategory").val();
                     //
-                    if (medicalCategory === "" || medicalCategory === undefined)
-                    {
+                    if (medicalCategory === "" || medicalCategory === undefined) {
                         layer.msg('医疗类别不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
-                        return false; 
+                        return false;
                     }
 
                     field.BusinessId = field.BusinessId;
@@ -564,7 +563,7 @@
                     field.TransKey = $("#transkey").val();
                     //授权操作人的ID
                     field.UserId = $("#empid").val();
-                  
+
                     //诊断列表
                     var dataTable1 = table.cache[layTableId];
                     var diagnosisList = []
@@ -574,10 +573,9 @@
                             diagnosisList.push(v);
                         }
                     });
-                 
+
                     //诊断列表 add
                     field.DiagnosisList = diagnosisList;
-
                     $.ajax({
                         type: 'POST',
                         url: host + '/HospitalizationRegister',
@@ -591,14 +589,31 @@
                                 //样式类名:墨绿深蓝风
                                 layer.msg('登记失败\n' + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' })
                             } else {
-                                
+
                                 layer.msg('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
-                               
+                            
+
                             }
                         }
                     });
                     return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+
                 });
+
+         
+
+            function buttonStatus(buttonId, status) {
+                //取消禁用
+                if (status === true) {
+                    $("#" + buttonId).attr("class", "layui-btn layui-btn-radius");
+                    $("#" + buttonId).removeAttr("disabled");
+                }//禁用
+                else {
+                    $("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
+                    $("#" + buttonId).attr("disabled", 'disabled');
+                }
+
+            }
           
         });
 
