@@ -1280,40 +1280,39 @@ namespace NFine.Web.Controllers
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 userBase.TransKey = param.TransKey;
                 //医保登录
-                //_residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
-                var dddd = new WorkerBirthPreSettlementJsonDto()
-                {  AccountPayment = 12,
-                    DocumentNo = "55555",
-                    TotalAmount = 200
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                var settlementData = new WorkerHospitalizationPreSettlementDto();
 
-                };
-                param.ResultData = JsonConvert.SerializeObject(dddd);
-                //计划生育结算
-                _outpatientDepartmentService.OutpatientPlanBirthSettlement(param);
-                //if (param.ResultData != null)
-                //{
-                //    var dataIni = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.ResultData);
-                //    var resultData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni);
+                if (param.ResultData != null)
+                {
+                    var dataIni = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.ResultData);
+                    settlementData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni);
+                    _outpatientDepartmentService.OutpatientPlanBirthSettlement(param);
+                    y.Data = new OutpatientCostReturnDataDto()
+                    {
+                        
+                        SelfPayFeeAmount = settlementData.CashPayment
+                    };
 
-                //}
-                //else
-                //{
-                //    var data = _outpatientDepartmentService.OutpatientDepartmentCostInput(new GetOutpatientPersonParam()
-                //    {
-                //        User = userBase,
-                //        UiParam = param,
-                //        IdentityMark=param.IdentityMark,
-                //        AfferentSign=param.AfferentSign,
+                }
+                else
+                {
+                    var data = _outpatientDepartmentService.OutpatientDepartmentCostInput(new GetOutpatientPersonParam()
+                    {
+                        User = userBase,
+                        UiParam = param,
+                        IdentityMark = param.IdentityMark,
+                        AfferentSign = param.AfferentSign,
 
-                //    });
-                //    if (data == null) throw new Exception("获取门诊结算反馈数据失败!!!");
+                    });
+                    if (data == null) throw new Exception("获取门诊结算反馈数据失败!!!");
 
-                //    y.Data = new OutpatientCostReturnDataDto()
-                //    {
-                //        ReimbursementExpensesAmount = data.ReimbursementExpensesAmount,
-                //        SelfPayFeeAmount = data.SelfPayFeeAmount
-                //    };
-                //}
+                    y.Data = new OutpatientCostReturnDataDto()
+                    {
+                        ReimbursementExpensesAmount = data.ReimbursementExpensesAmount,
+                        SelfPayFeeAmount = data.SelfPayFeeAmount
+                    };
+                }
 
             });
 

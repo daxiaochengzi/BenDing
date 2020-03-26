@@ -295,7 +295,7 @@
                         layer.msg(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
 
-                        $('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
+                        //$('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
                         $('#CashPayment').val(data.Data.SelfPayFeeAmount);
                         layer.alert('门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         buttonStatus("DoorDiagnosisSettlement", false);

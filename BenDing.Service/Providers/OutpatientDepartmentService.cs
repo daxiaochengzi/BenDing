@@ -427,33 +427,33 @@ namespace BenDing.Service.Providers
             });
 
             //获取病人的基础信息
-            //var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
-            //{
-            //    IdentityMark = param.IdentityMark,
-            //    InformationNumber = param.AfferentSign,
-            //});
-            //回参构建
-            //var xmlData = new OutpatientDepartmentCostXml()
-            //{
-            //    AccountBalance = userInfoData.InsuranceType == "342" ? userInfoData.ResidentInsuranceBalance : userInfoData.WorkersInsuranceBalance,
-            //    MedicalInsuranceOutpatientNo = resultData.DocumentNo,
-            //    CashPayment = resultData.CashPayment,
-            //    SettlementNo = resultData.DocumentNo,
-            //    AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
-            //    PatientName = outpatientPerson.PatientName,
-            //    AccountAmountPay = resultData.AccountPayment,
-            //    MedicalInsuranceType = userInfoData.InsuranceType == "342" ? "10" : userInfoData.InsuranceType,
-            //};
+            var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
+            {
+                IdentityMark = param.IdentityMark,
+                InformationNumber = param.AfferentSign,
+            });
+           // 回参构建
+            var xmlData = new OutpatientDepartmentCostXml()
+            {
+                AccountBalance = userInfoData.InsuranceType == "342" ? userInfoData.ResidentInsuranceBalance : userInfoData.WorkersInsuranceBalance,
+                MedicalInsuranceOutpatientNo = resultData.DocumentNo,
+                CashPayment = resultData.CashPayment,
+                SettlementNo = resultData.DocumentNo,
+                AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
+                PatientName = outpatientPerson.PatientName,
+                AccountAmountPay = resultData.AccountPayment,
+                MedicalInsuranceType = userInfoData.InsuranceType == "342" ? "10" : userInfoData.InsuranceType,
+            };
 
-            //var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-            //var saveXml = new SaveXmlDataParam()
-            //{
-            //    User = userBase,
-            //    MedicalInsuranceBackNum = "zydj",
-            //    MedicalInsuranceCode = "48",
-            //    BusinessId = param.BusinessId,
-            //    BackParam = strXmlBackParam
-            //};
+            var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+            var saveXml = new SaveXmlDataParam()
+            {
+                User = userBase,
+                MedicalInsuranceBackNum = "zydj",
+                MedicalInsuranceCode = "48",
+                BusinessId = param.BusinessId,
+                BackParam = strXmlBackParam
+            };
             ////存基层
             //_webBasicRepository.SaveXmlData(saveXml);
             var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
