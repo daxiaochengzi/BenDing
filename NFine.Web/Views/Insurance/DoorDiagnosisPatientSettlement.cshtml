@@ -235,21 +235,12 @@
             "UserId": $("#empid").val(), /*授权操作人的ID*/
         }
         //获取门诊计划生育结算参数
-        function GetOutpatientPlanBirthSettlementParam() {
-            var settlementParam = {
-                "TransKey": $("#transkey").val() /*医保交易码*/,
-                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
-                "UserId": $("#empid").val(), /*授权操作人的ID*/
-                "IdentityMark":$("#IdentityMark").val(),
-                "AfferentSign": $("#identityMarkText").val(),
-                "AccountPayment": $("#AccountPayment").val(),
-                "ResultData":""
-           
-            }
+        function getOutpatientPlanBirthSettlementParam() {
+          
             $.ajax({
                 type: 'POST',
                 url: host + '/GetOutpatientPlanBirthSettlementParam',
-                data: settlementParam,
+                data: params,
                 dataType: "json",
                 async: false,
                 success: function (data) {
@@ -279,7 +270,7 @@
             //计划生育结算
             if (settlementVal === "1") {
                 //计划生育结算调用插件
-                GetOutpatientPlanBirthSettlementParam();
+                getOutpatientPlanBirthSettlementParam();
             }
             params["ResultData"] = activeJsonInfo;
         
@@ -312,46 +303,47 @@
                 "IdentityMark": $("#IdentityMark").val() /*身份标志，1:身份证,2:医保个人编码*/,
                 "UserId": $("#empid").val() /*授权操作人的ID*/
             }
-            //获取居民信息
-            $.ajax({
-                type: 'POST',
-                url: host + '/GetUserInfo',
-                data: paramsUserInfo,
-                dataType: "json",
-                async: false,
-                success: function(data) {
-                    console.log(data);
-                    if (data.Success === false) {
-                        var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                        return false;
-
-                    } else {
-                        // 居民
-                        if (data.Data.InsuranceType === "342") {
-                            $("#InsuranceBalance").val(data.Data.ResidentInsuranceBalance);
-                            //职工
-                        } else if (data.Data.InsuranceType === "310") {
-                            $("#InsuranceBalance").val(data.Data.WorkersInsuranceBalance);
-
-                        }
-                        var settlementVal = $('input[name="Settlement"]:checked').val();
-                        //计划生育结算
-                        if (settlementVal === "1") {
-                            $("#AccountPaymentDiv").show();
-                        }
-                        $("#InsuranceBalanceDiv").show();
-                        buttonStatus("DoorDiagnosisSettlement", true);
-
-
-                    }
-                }
-
-        });
-         
-          
            
+                //获取居民信息
+                $.ajax({
+                    type: 'POST',
+                    url: host + '/GetUserInfo',
+                    data: paramsUserInfo,
+                    dataType: "json",
+         
+                    async: false,
+                    success: function(data) {
+                        console.log(data);
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            //样式类名:墨绿深蓝风
+                            layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                            return false;
+
+                        } else {
+                            // 居民
+                            if (data.Data.InsuranceType === "342") {
+                                $("#InsuranceBalance").val(data.Data.ResidentInsuranceBalance);
+                                //职工
+                            } else if (data.Data.InsuranceType === "310") {
+                                $("#InsuranceBalance").val(data.Data.WorkersInsuranceBalance);
+
+                            }
+                            var settlementVal = $('input[name="Settlement"]:checked').val();
+                            //计划生育结算
+                            if (settlementVal === "1") {
+                                $("#AccountPaymentDiv").show();
+                            }
+                            $("#InsuranceBalanceDiv").show();
+                            buttonStatus("DoorDiagnosisSettlement", true);
+
+
+                        }
+                    }
+
+            });
+
+
         });
         //结算支付
         function settlementPay(paramData) {

@@ -26,7 +26,7 @@ namespace BenDing.Domain.Models.Params.UI
         /// <summary>
         /// 账户支付
         /// </summary>
-        public decimal AccountPayment { get; set; }
+        public string AccountPayment { get; set; }
         /// <summary>
         /// 
         /// </summary>

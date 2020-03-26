@@ -1405,7 +1405,7 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 var data = _outpatientDepartmentService.GetOutpatientPlanBirthSettlementParam(param);
-                var xmlStr = XmlHelp.SaveXml(data); 
+                var xmlStr = XmlHelp.SaveXml(data);
                 int result = WorkerMedicalInsurance.CallService_cxjb("SYBX005");
                 if (result == 1)
                 {

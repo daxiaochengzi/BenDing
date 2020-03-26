@@ -553,7 +553,7 @@ namespace BenDing.Service.Providers
                 ProjectNum = outpatientDetailPerson.Count(),
                 TotalAmount = outpatientPerson.MedicalTreatmentTotalCost,
                 AfferentSign = param.AfferentSign,
-                AccountPayment=param.AccountPayment,
+                AccountPayment=string.IsNullOrWhiteSpace(param.AccountPayment)==true?0: Convert.ToDecimal(param.AccountPayment) ,
                 IdentityMark = param.IdentityMark,
                 AdmissionMainDiagnosisIcd10 = diagnosisData.DiagnosisCode
 
