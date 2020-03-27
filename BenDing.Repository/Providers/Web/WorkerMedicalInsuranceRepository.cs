@@ -70,8 +70,8 @@ namespace BenDing.Repository.Providers.Web
             var msg = new byte[1024];
             //  param.AdministrativeArea,
             WorkerMedicalInsurance.HospitalizationRegister
-                (param.AfferentSign,
-                param.IdentityMark,
+                (param.IdentityMark,
+                param.AfferentSign,
                 param.AdministrativeArea,
                 param.OrganizationCode,
                 param.MedicalCategory,

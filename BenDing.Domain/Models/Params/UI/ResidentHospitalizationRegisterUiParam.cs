@@ -15,19 +15,19 @@ namespace BenDing.Domain.Models.Params.UI
    public class ResidentHospitalizationRegisterUiParam:UiBaseDataParam
     {
         ///<summary>
-        /// 身份标识
+        /// 传入标志 (1为公民身份号码 2为个人编号)
         /// </summary>
         [XmlElement("PI_CRBZ", IsNullable = false)]
         [Display(Name = "身份标识")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
-        public string IdentityMark { get; set; }
+        public string   AfferentSign { get; set; }
         /// <summary>
-        ///身份证号或者个人编号
+        ///身份标识 (身份证号或者个人编号)
         /// </summary>
         [XmlElement("PI_SFBZ", IsNullable = false)]
-        //[Display(Name = "身份证号或者个人编号")]
-        //[Required(ErrorMessage = "{0}不能为空!!!")]
-        public string AfferentSign { get; set; }
+        [Display(Name = "身份标识")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        public string IdentityMark { get; set; }
         /// <summary>
         /// 医疗类别11：普通入院23: 市内转院住院14: 大病门诊15: 大病住院22: 急诊入院71：顺产72：剖宫产41：病理剖宫产
         /// </summary>

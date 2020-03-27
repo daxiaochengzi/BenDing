@@ -30,17 +30,17 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">身份标识</label>
                         <div class="layui-input-inline">
-                            <select id="IdentityMark" name="IdentityMark" lay-filter="IdentityMark" lay-verify="required">
+                            <select id="AfferentSign" name="AfferentSign" lay-filter="AfferentSign" lay-verify="required">
                                 <option value="">请选择条件</option>
-                                <option value="1" selected>身份证号</option>
-                                <option value="2">个人编号</option>
+                                <option  id="AfferentSignIcCard" value="1" selected>身份证号</option>
+                                <option id="AfferentSignNum" value="2">个人编号</option>
                             </select>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label" id="markTextLable">身份证号</label>
                         <div class="layui-input-inline">
-                            <input type="text" id="identityMarkText" name="AfferentSign" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
+                            <input type="text" id="IdentityMark" name="IdentityMark" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -224,7 +224,17 @@
                             layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
                         } else {
                             inpatientInfoData = data;
-                            $("#identityMarkText").val(data.Data.IdCardNo);
+
+                            var idCardNo = data.Data.IdCardNo;
+                            if (idCardNo !== undefined && idCardNo !== null) {
+                                $("#IdentityMark").val(idCardNo);
+                            } else {
+                                $("#AfferentSignIcCard").attr("selected", false);
+                                $("#AfferentSignNum").attr("selected", true);
+                                $("#markTextLable").text("个人编码");
+                                $("#IdentityMark").val("");
+                                $("#IdentityMark").attr("placeholder", "请输入个人编码");
+                            }
                          
                             //layer.msg('费用上传成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         }
@@ -298,21 +308,18 @@
                     }
                 });
             /**处方明细查询*/
-
-            form.on('select(IdentityMark)',
+            form.on('select(AfferentSign)',
                 function (data) {
                     var val = data.value;
                     if (val === "2") {
                         $("#markTextLable").text("个人编码");
-
-                        $("#identityMarkText").val("");
-                        $("#identityMarkText").attr("placeholder", "请输入个人编码");
+                        $("#IdentityMark").val("");
+                        $("#IdentityMark").attr("placeholder", "请输入个人编码");
                     } else {
                         $("#markTextLable").text("身份证号");
-                        getInpatientInfo();
+                   
                     }
                 });
-
             //诊断数据表格实例化
             var layTableId = "dataTableId";
             var tableIns = table.render({
@@ -529,22 +536,13 @@
                    
                     var field = data.field;
 
-                    if (field.IdentityMark === 1) {
-                        //身份证号
-                        field.AfferentSign = field.AfferentSign;
-                    }
-                    if (field.IdentityMark === 2) {
-                        //医保个人编码
-                        field.AfferentSign = field.AfferentSign;
-                    }
-
                     if ($("#InsuranceType").val() === "310") {
-                        if (field.IdentityMark === "1") {
-                            field.IdentityMark = "2";
+                        if (field.AfferentSign === "1") {
+                            field.AfferentSign = "2";
                         }
                         else {
-                            if (field.IdentityMark === "2") {
-                                field.IdentityMark = "3";
+                            if (field.AfferentSign === "2") {
+                                field.AfferentSign = "3";
                             }
                         }
 

@@ -79,7 +79,9 @@ namespace BenDing.Service.Providers
                 IsModify = false,
                 InsuranceType = 310,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized,
-                MedicalInsuranceHospitalizationNo = registerData.MedicalInsuranceHospitalizationNo
+                MedicalInsuranceHospitalizationNo = registerData.MedicalInsuranceHospitalizationNo,
+                AfferentSign = param.AfferentSign,
+                IdentityMark = param.IdentityMark
             };
             //存中间库
             _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
@@ -347,8 +349,8 @@ namespace BenDing.Service.Providers
             //存入基层
             var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
             {
-                IdentityMark = inpatientInfoData.IdCardNo.Length == 18 ? "1" : "2",
-                InformationNumber = inpatientInfoData.IdCardNo,
+                IdentityMark = residentData.IdentityMark,
+                AfferentSign = residentData.AfferentSign,
 
             });
 
@@ -404,11 +406,18 @@ namespace BenDing.Service.Providers
         /// <param name="param"></param>
         public void WorkerStrokeCard(WorkerStrokeCardParam param)
         {
+            var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+            {
+                BusinessId = param.BusinessId,
+                
+            };
+            //获取医保病人信息
+            var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
 
             var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
             {
-                IdentityMark = param.IdCardNo.Length == 18 ? "1" : "2",
-                InformationNumber = param.IdCardNo,
+                IdentityMark = residentData.IdentityMark,
+                AfferentSign = residentData.AfferentSign
 
             });
 
@@ -780,8 +789,8 @@ namespace BenDing.Service.Providers
             //存入基层
             var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
             {
-                IdentityMark = inpatientInfoData.IdCardNo.Length == 18 ? "1" : "2",
-                InformationNumber = inpatientInfoData.IdCardNo,
+                IdentityMark = residentData.IdentityMark,
+                AfferentSign = residentData.AfferentSign,
 
             });
 

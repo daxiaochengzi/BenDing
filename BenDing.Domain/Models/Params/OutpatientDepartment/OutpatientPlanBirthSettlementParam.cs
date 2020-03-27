@@ -12,19 +12,19 @@ namespace BenDing.Domain.Models.Params.OutpatientDepartment
    public class OutpatientPlanBirthSettlementParam
     {
         ///<summary>
-        /// 身份标识
+        /// 传入标志
         /// </summary>
         [XmlElementAttribute("PI_CRBZ", IsNullable = false)]
-        [Display(Name = "身份标识")]
+        [Display(Name = "传入标志")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
-        public string IdentityMark { get; set; }
+        public string  AfferentSign { get; set; }
         /// <summary>
-        ///身份证号或者个人编号
+        ///身份标识  (身份证号或者个人编号)
         /// </summary>
         [XmlElementAttribute("PI_SFBZ", IsNullable = false)]
         [Display(Name = "身份证号或者个人编号")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
-        public string AfferentSign { get; set; }
+        public string IdentityMark { get; set; }
         /// <summary>
         ///门诊号
         /// </summary>

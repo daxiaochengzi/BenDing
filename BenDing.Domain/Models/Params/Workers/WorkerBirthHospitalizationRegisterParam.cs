@@ -11,19 +11,19 @@ namespace BenDing.Domain.Models.Params.Workers
     [XmlRootAttribute("ROW", IsNullable = false)]
     public class WorkerBirthHospitalizationRegisterParam
     { ///<summary>
-      /// 身份标识
+      /// 传入标志 (1为公民身份号码 2为个人编号)
       /// </summary>
         [XmlElement("PI_CRBZ", IsNullable = false)]
+        [Display(Name = "传入标志")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        public string  AfferentSign { get; set; }
+        /// <summary>
+        ///身份标识  (身份证号或者个人编号)
+        /// </summary>
+        [XmlElementAttribute("PI_SFBZ", IsNullable = false)]
         [Display(Name = "身份标识")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string IdentityMark { get; set; }
-        /// <summary>
-        ///身份证号或者个人编号
-        /// </summary>
-        [XmlElementAttribute("PI_SFBZ", IsNullable = false)]
-        [Display(Name = "身份证号或者个人编号")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
-        public string AfferentSign { get; set; }
         /// <summary>
         /// 医疗类别 71：顺产72：剖宫产
         /// </summary>

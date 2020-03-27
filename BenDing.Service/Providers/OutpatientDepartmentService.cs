@@ -97,7 +97,9 @@ namespace BenDing.Service.Providers
                 IsModify = false,
                 InsuranceType = 999,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized,
-                MedicalInsuranceHospitalizationNo = resultData.DocumentNo
+                MedicalInsuranceHospitalizationNo = resultData.DocumentNo,
+                AfferentSign = param.AfferentSign,
+                IdentityMark = param.IdentityMark
             };
             //存中间库
             _medicalInsuranceSqlRepository.SaveMedicalInsurance(param.User, saveData);
@@ -115,7 +117,7 @@ namespace BenDing.Service.Providers
             var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
             {
                 IdentityMark = param.IdentityMark,
-                InformationNumber = param.AfferentSign,
+                AfferentSign = param.AfferentSign,
             });
             //回参构建
             var xmlData = new OutpatientDepartmentCostXml()
@@ -374,7 +376,9 @@ namespace BenDing.Service.Providers
                 IsModify = false,
                 InsuranceType = 999,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsurancePreSettlement,
-                MedicalInsuranceHospitalizationNo = outpatientPerson.OutpatientNumber
+                MedicalInsuranceHospitalizationNo = outpatientPerson.OutpatientNumber,
+                AfferentSign = param.AfferentSign,
+                IdentityMark = param.IdentityMark
             };
             //存中间库
             _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
@@ -428,6 +432,8 @@ namespace BenDing.Service.Providers
                 InsuranceType = 999,
                 MedicalInsuranceState = MedicalInsuranceState.HisHospitalized,
                 MedicalInsuranceHospitalizationNo = outpatientPerson.OutpatientNumber,
+                AfferentSign = param.AfferentSign,
+                IdentityMark = param.IdentityMark
 
             };
             //存中间库
@@ -446,7 +452,7 @@ namespace BenDing.Service.Providers
             var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
             {
                 IdentityMark = param.IdentityMark,
-                InformationNumber = param.AfferentSign,
+                AfferentSign = param.AfferentSign,
             });
            // 回参构建
             var xmlData = new OutpatientDepartmentCostXml()
@@ -493,9 +499,36 @@ namespace BenDing.Service.Providers
             });
         }
         /// <summary>
+        /// 门诊计划生育结算查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public WorkerHospitalizationPreSettlementDto OutpatientPlanBirthSettlementQuery(
+            UiBaseDataParam param)
+        {//OutpatientPlanBirthSettlementQueryParam
+
+            var resultData = new WorkerHospitalizationPreSettlementDto();
+            //获取医保病人信息
+            var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
+            {
+                BusinessId = param.BusinessId
+            });
+            if (residentData==null) throw new Exception("获取当前病人医保信息失败!!!");
+            if (residentData.MedicalInsuranceState!= MedicalInsuranceState.HisSettlement) throw  new Exception("当前病人未办理结算!!!");
+            //医保登录
+            _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+            _outpatientDepartmentRepository.OutpatientPlanBirthSettlementQuery(
+                new OutpatientPlanBirthSettlementQueryParam()
+                {
+
+                });
+
+            return resultData;
+        }
+
+        /// <summary>
         /// 获取门诊预结算参数
         /// </summary>
-       
         /// <param name="outpatientInfo">病人信息</param>
         /// <param name="detail">病人明细</param>
         /// <returns></returns>
@@ -610,12 +643,6 @@ namespace BenDing.Service.Providers
             return resultData;
 
         }
-        /// <summary>
-        /// 门诊病人信息查询
-        /// </summary>
-        public void GetOutpatientInfoQuery()
-        {
-
-        }
+        
     }
 }

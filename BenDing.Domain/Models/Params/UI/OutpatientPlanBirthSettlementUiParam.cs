@@ -12,15 +12,15 @@ namespace BenDing.Domain.Models.Params.UI
   public  class OutpatientPlanBirthSettlementUiParam: UiBaseDataParam
     {
         ///<summary>
-        /// 身份标识
+        /// 身份标识 (身份证号或者个人编号)
         /// </summary>
         [Display(Name = "身份标识")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string IdentityMark { get; set; }
         /// <summary>
-        ///身份证号或者个人编号
+        ///传入标志
         /// </summary>
-        [Display(Name = "身份证号或者个人编号")]
+        [Display(Name = "传入标志")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string AfferentSign { get; set; }
         /// <summary>
