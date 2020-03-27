@@ -724,7 +724,7 @@ namespace BenDing.Service.Providers
             userBase.TransKey = param.TransKey;
             var infoData = new GetInpatientInfoParam()
             {
-                User = userBase,
+                User = userBase, 
                 BusinessId = param.BusinessId,
             };
             //获取his结算
