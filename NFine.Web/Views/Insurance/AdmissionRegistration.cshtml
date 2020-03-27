@@ -360,8 +360,8 @@
                 function (data) {
 
                     var paramsUserInfo = {
-                        "InformationNumber": $("#identityMarkText").val() /*身份证号*/,
-                        "IdentityMark": $("#IdentityMark").val() /*身份标志，1:身份证,2:医保个人编码*/,
+                        "AfferentSign": $("#AfferentSign").val() /*传入标志 1:身份证,2:医保个人编码*/,
+                        "IdentityMark": $("#IdentityMark").val() /*身份标志，*/,
                         "UserId": $("#empid").val() /*授权操作人的ID*/
                     }
                     $.ajax({
@@ -587,7 +587,7 @@
                                 //样式类名:墨绿深蓝风
                                 layer.msg('登记失败\n' + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' })
                             } else {
-
+                                buttonStatus("register", false);
                                 layer.msg('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                             
 

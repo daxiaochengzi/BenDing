@@ -604,12 +604,12 @@
             function buttonStatus(buttonId, status) { 
                 //取消禁用
                 if (status === true) {
-                    $("#" +buttonId).attr("class", "layui-btn layui-btn-radius");
+                    $("#" + buttonId).attr("class", "layui-btn layui-btn-radius");
+                    $("#" + buttonId).removeAttr("disabled");
                 }//禁用
-                else
-                {
+                else {
                     $("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
-                
+                    $("#" + buttonId).attr("disabled", 'disabled');
                 }
           
             }

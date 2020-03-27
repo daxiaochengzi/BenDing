@@ -313,21 +313,21 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
 
-                var dd = new ResidentUserInfoParam {IdentityMark = "1", InformationNumber = "111"};
-                var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(dd);
-                var strXmlBackParam = XmlSerializeHelper.XmlSerialize(dd);
-                var saveXmlData = new SaveXmlData();
-                saveXmlData.OrganizationCode = userBase.OrganizationCode;
-                saveXmlData.AuthCode = userBase.AuthCode;
-                saveXmlData.BusinessId = param.BusinessId;
-                saveXmlData.TransactionId = param.BusinessId;
-                saveXmlData.MedicalInsuranceBackNum = "CXJB009";
-                saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
-                saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-                saveXmlData.MedicalInsuranceCode = "43";
-                saveXmlData.UserId = param.UserId;
-                webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                //var dd = new ResidentUserInfoParam {IdentityMark = "1", InformationNumber = "111"};
+                //var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(dd);
+                //var strXmlBackParam = XmlSerializeHelper.XmlSerialize(dd);
+                //var saveXmlData = new SaveXmlData();
+                //saveXmlData.OrganizationCode = userBase.OrganizationCode;
+                //saveXmlData.AuthCode = userBase.AuthCode;
+                //saveXmlData.BusinessId = param.BusinessId;
+                //saveXmlData.TransactionId = param.BusinessId;
+                //saveXmlData.MedicalInsuranceBackNum = "CXJB009";
+                //saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
+                //saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                //saveXmlData.MedicalInsuranceCode = "43";
+                //saveXmlData.UserId = param.UserId;
+                //webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
 
             });
         }
@@ -343,21 +343,21 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
 
-                var dd = new ResidentUserInfoParam { IdentityMark = "1", InformationNumber = "111" };
-                var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
-                var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(dd);
-                var strXmlBackParam = XmlSerializeHelper.XmlSerialize(dd);
-                var saveXmlData = new SaveXmlData();
-                saveXmlData.OrganizationCode = userBase.OrganizationCode;
-                saveXmlData.AuthCode = userBase.AuthCode;
-                saveXmlData.BusinessId = param.BusinessId;
-                saveXmlData.TransactionId = param.BusinessId;
-                saveXmlData.MedicalInsuranceBackNum = "CXJB009";
-                saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
-                saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
-                saveXmlData.MedicalInsuranceCode = "41";
-                saveXmlData.UserId = param.UserId;
-                webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+                //var dd = new ResidentUserInfoParam { IdentityMark = "1", InformationNumber = "111" };
+                //var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //var strXmlIntoParam = XmlSerializeHelper.XmlSerialize(dd);
+                //var strXmlBackParam = XmlSerializeHelper.XmlSerialize(dd);
+                //var saveXmlData = new SaveXmlData();
+                //saveXmlData.OrganizationCode = userBase.OrganizationCode;
+                //saveXmlData.AuthCode = userBase.AuthCode;
+                //saveXmlData.BusinessId = param.BusinessId;
+                //saveXmlData.TransactionId = param.BusinessId;
+                //saveXmlData.MedicalInsuranceBackNum = "CXJB009";
+                //saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
+                //saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                //saveXmlData.MedicalInsuranceCode = "41";
+                //saveXmlData.UserId = param.UserId;
+               // webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
                 
                
 
