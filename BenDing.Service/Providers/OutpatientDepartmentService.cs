@@ -159,7 +159,7 @@ namespace BenDing.Service.Providers
             return resultData;
         }
         //门诊取消结算
-        public void CancelOutpatientDepartmentCost(UiBaseDataParam param)
+        public void CancelOutpatientDepartmentCost(CancelOutpatientDepartmentCostUiParam param)
         {
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
@@ -172,10 +172,25 @@ namespace BenDing.Service.Providers
             var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
             if (residentData == null) throw new Exception("当前病人未结算,不能取消结算!!!");
             if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人未结算,不能取消结算!!!");
-            _outpatientDepartmentRepository.CancelOutpatientDepartmentCost(new CancelOutpatientDepartmentCostParam()
+            //计划生育
+            if (residentData.IsBirthHospital == 1)
             {
-                DocumentNo = residentData.SettlementNo
-            });
+                _outpatientDepartmentRepository.OutpatientPlanBirthSettlementCancel(new OutpatientPlanBirthSettlementCancelParam()
+                {
+                     SettlementNo= residentData.SettlementNo,
+                    CancelRemarks = param.CancelSettlementRemarks
+
+                });
+            }
+            else  //普通门诊
+            {
+                _outpatientDepartmentRepository.CancelOutpatientDepartmentCost(new CancelOutpatientDepartmentCostParam()
+                {
+                    DocumentNo = residentData.SettlementNo
+                });
+            }
+
+           
 
             //添加日志
             var logParam = new AddHospitalLogParam()
@@ -210,7 +225,8 @@ namespace BenDing.Service.Providers
                 Id = residentData.Id,
                 CancelTransactionId = param.TransKey,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceCancelSettlement,
-                IsHisUpdateState = true
+                IsHisUpdateState = true,
+                CancelSettlementRemarks = param.CancelSettlementRemarks
             };
             //更新中间层
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);

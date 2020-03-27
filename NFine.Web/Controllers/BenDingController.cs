@@ -1286,14 +1286,15 @@ namespace NFine.Web.Controllers
 
                 if (param.ResultData != null)
                 {
+                  
                     var dataIni = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.ResultData);
                    var settlementData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni);
                     _outpatientDepartmentService.OutpatientPlanBirthSettlement(param);
                     y.Data = new OutpatientCostReturnDataDto()
                     {
-                        
-                        SelfPayFeeAmount = settlementData.CashPayment
-                    };
+                         SelfPayFeeAmount = settlementData.CashPayment,
+                         PayMsg= CommonHelp.GetPayMsg(JsonConvert.SerializeObject(settlementData))
+                };
 
                 }
                 else
@@ -1324,7 +1325,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet]
-        public ApiJsonResultData CancelOutpatientDepartmentCost([FromUri]UiBaseDataParam param)
+        public ApiJsonResultData CancelOutpatientDepartmentCost([FromUri]CancelOutpatientDepartmentCostUiParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {

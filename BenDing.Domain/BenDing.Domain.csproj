@@ -160,6 +160,7 @@
     <Compile Include="Models\Params\DifferentPlaces\ModifyDifferentPlacesHospitalizationParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\CancelMonthlyHospitalizationParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\CancelOutpatientDepartmentCostParam.cs" />
+    <Compile Include="Models\Params\OutpatientDepartment\CancelOutpatientDepartmentCostUiParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\MonthlyHospitalizationParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\OutpatientDepartmentCostInputParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\OutpatientPlanBirthSettlementCancelParam.cs" />
@@ -191,7 +192,6 @@
     <Compile Include="Models\Params\SystemManage\AddHospitalLogParam.cs" />
     <Compile Include="Models\Params\UI\AddHospitalOrganizationGradeUiParam.cs" />
     <Compile Include="Models\Params\UI\CancelMonthlyHospitalizationUiParam.cs" />
-    <Compile Include="Models\Params\UI\CancelOutpatientDepartmentCostUiParam.cs" />
     <Compile Include="Models\Params\UI\DirectoryComparisonManagementUiParam.cs" />
     <Compile Include="Models\Params\UI\GetInformationUiParam.cs" />
     <Compile Include="Models\Params\UI\GetOutpatientUiParam.cs" />

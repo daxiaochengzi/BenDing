@@ -77,10 +77,19 @@
                             <input type="text" id="CashPayment" name="CashPayment" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
-                    <div class="layui-inline">
+                    @*<div class="layui-inline">
                         <label class="layui-form-label">报销金额</label>
                         <div class="layui-input-inline">
                             <input type="text" id="ReimbursementExpenses" name="ReimbursementExpenses" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>*@
+                     
+                    <div class="layui-inline"> 
+                        <label class="layui-form-label">
+                           取消原因
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="CancelSettlementRemarks" name="ReimbursementExpenses" autocomplete="off"  class="layui-input">
                         </div>
                     </div>
 
@@ -172,6 +181,7 @@
         });
         //门诊取消结算
         $('#DoorDiagnosisSettlementCancel').on('click', function () {
+            params["CancelSettlementRemarks"] = $("#CancelSettlementRemarks").val();
             $.ajax({
                 type: 'get',
                 url: host + '/CancelOutpatientDepartmentCost',
