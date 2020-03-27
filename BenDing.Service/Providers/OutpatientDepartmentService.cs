@@ -393,13 +393,12 @@ namespace BenDing.Service.Providers
             });
             return data;
         }
-        /// <summary>
-        /// 门诊计划生育结算
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public void OutpatientPlanBirthSettlement(OutpatientPlanBirthSettlementUiParam param)
+
+        public WorkerHospitalizationPreSettlementDto OutpatientPlanBirthSettlement(
+            OutpatientPlanBirthSettlementUiParam param)
         {
+            WorkerHospitalizationPreSettlementDto resultData = null;
+
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
             //门诊病人信息存储
@@ -419,22 +418,28 @@ namespace BenDing.Service.Providers
                 User = userBase,
                 BusinessId = param.BusinessId,
             });
-            var iniParam = GetOutpatientPlanBirthSettlementParam(param);
-            var dataIni = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.ResultData);
-            var resultData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni); 
+
+            var iniParam = GetOutpatientPlanBirthSettlementParam
+                (param );
+            iniParam.AfferentSign = param.AfferentSign;
+            iniParam.IdentityMark = param.IdentityMark;
+            //获取诊断
+            resultData = _outpatientDepartmentRepository.OutpatientPlanBirthSettlement(iniParam);
+            //保存门诊病人
+            outpatientParam.IsSave = true;
+            outpatientParam.Id = Guid.NewGuid();
+            _serviceBasicService.GetOutpatientPerson(outpatientParam);
             var saveData = new MedicalInsuranceDto
             {
                 AdmissionInfoJson = JsonConvert.SerializeObject(param),
                 BusinessId = param.BusinessId,
                 Id = Guid.NewGuid(),
-                IsBirthHospital = 1,
                 IsModify = false,
                 InsuranceType = 999,
-                MedicalInsuranceState = MedicalInsuranceState.HisHospitalized,
+                MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized,
                 MedicalInsuranceHospitalizationNo = outpatientPerson.OutpatientNumber,
                 AfferentSign = param.AfferentSign,
                 IdentityMark = param.IdentityMark
-
             };
             //存中间库
             _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
@@ -443,9 +448,9 @@ namespace BenDing.Service.Providers
             {
                 User = userBase,
                 JoinOrOldJson = JsonConvert.SerializeObject(iniParam),
-                ReturnOrNewJson = param.ResultData,
+                ReturnOrNewJson = JsonConvert.SerializeObject(resultData),
                 RelationId = outpatientParam.Id,
-                Remark = "[R][OutpatientDepartment]门诊计划生育结算"
+                Remark = "[R][OutpatientDepartment]门诊生育结算"
             });
 
             //获取病人的基础信息
@@ -454,7 +459,7 @@ namespace BenDing.Service.Providers
                 IdentityMark = param.IdentityMark,
                 AfferentSign = param.AfferentSign,
             });
-           // 回参构建
+            // 回参构建
             var xmlData = new OutpatientDepartmentCostXml()
             {
                 AccountBalance = userInfoData.InsuranceType == "342" ? userInfoData.ResidentInsuranceBalance : userInfoData.WorkersInsuranceBalance,
@@ -493,11 +498,119 @@ namespace BenDing.Service.Providers
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
             //明细存入
             _serviceBasicService.GetOutpatientDetailPerson(new OutpatientDetailParam()
-            {   IsSave = true,
+            {
+                IsSave = true,
                 BusinessId = param.BusinessId,
                 User = userBase
             });
+
+            return resultData;
         }
+        ///// <summary>
+        ///// 门诊计划生育结算
+        ///// </summary>
+        ///// <param name="param"></param>
+        ///// <returns></returns>
+        //public void OutpatientPlanBirthSettlement(OutpatientPlanBirthSettlementUiParam param)
+        //{
+        //    var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+        //    userBase.TransKey = param.TransKey;
+        //    //门诊病人信息存储
+        //    var id = Guid.NewGuid();
+        //    var outpatientParam = new GetOutpatientPersonParam()
+        //    {
+        //        User = userBase,
+        //        UiParam = param,
+        //        IsSave = true,
+        //        Id = id,
+
+        //    };
+        //    var outpatientPerson = _serviceBasicService.GetOutpatientPerson(outpatientParam);
+        //    if (outpatientPerson == null) throw new Exception("his中未获取到当前病人!!!");
+        //    var outpatientDetailPerson = _serviceBasicService.GetOutpatientDetailPerson(new OutpatientDetailParam()
+        //    {
+        //        User = userBase,
+        //        BusinessId = param.BusinessId,
+        //    });
+        //    var iniParam = GetOutpatientPlanBirthSettlementParam(param);
+        //    var dataIni = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.ResultData);
+        //    var resultData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni); 
+        //    var saveData = new MedicalInsuranceDto
+        //    {
+        //        AdmissionInfoJson = JsonConvert.SerializeObject(param),
+        //        BusinessId = param.BusinessId,
+        //        Id = Guid.NewGuid(),
+        //        IsBirthHospital = 1,
+        //        IsModify = false,
+        //        InsuranceType = 999,
+        //        MedicalInsuranceState = MedicalInsuranceState.HisHospitalized,
+        //        MedicalInsuranceHospitalizationNo = outpatientPerson.OutpatientNumber,
+        //        AfferentSign = param.AfferentSign,
+        //        IdentityMark = param.IdentityMark
+
+        //    };
+        //    //存中间库
+        //    _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
+        //    //日志写入
+        //    _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
+        //    {
+        //        User = userBase,
+        //        JoinOrOldJson = JsonConvert.SerializeObject(iniParam),
+        //        ReturnOrNewJson = param.ResultData,
+        //        RelationId = outpatientParam.Id,
+        //        Remark = "[R][OutpatientDepartment]门诊计划生育结算"
+        //    });
+
+        //    //获取病人的基础信息
+        //    var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
+        //    {
+        //        IdentityMark = param.IdentityMark,
+        //        AfferentSign = param.AfferentSign,
+        //    });
+        //   // 回参构建
+        //    var xmlData = new OutpatientDepartmentCostXml()
+        //    {
+        //        AccountBalance = userInfoData.InsuranceType == "342" ? userInfoData.ResidentInsuranceBalance : userInfoData.WorkersInsuranceBalance,
+        //        MedicalInsuranceOutpatientNo = resultData.DocumentNo,
+        //        CashPayment = resultData.CashPayment,
+        //        SettlementNo = resultData.DocumentNo,
+        //        AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
+        //        PatientName = outpatientPerson.PatientName,
+        //        AccountAmountPay = resultData.AccountPayment,
+        //        MedicalInsuranceType = userInfoData.InsuranceType == "342" ? "10" : userInfoData.InsuranceType,
+        //    };
+
+        //    var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+        //    var saveXml = new SaveXmlDataParam()
+        //    {
+        //        User = userBase,
+        //        MedicalInsuranceBackNum = "zydj",
+        //        MedicalInsuranceCode = "48",
+        //        BusinessId = param.BusinessId,
+        //        BackParam = strXmlBackParam
+        //    };
+        //    ////存基层
+        //    _webBasicRepository.SaveXmlData(saveXml);
+        //    var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
+        //    {
+        //        UserId = userBase.UserId,
+        //        SelfPayFeeAmount = resultData.CashPayment,
+        //        OtherInfo = JsonConvert.SerializeObject(resultData),
+        //        Id = saveData.Id,
+        //        SettlementNo = resultData.DocumentNo,
+        //        MedicalInsuranceAllAmount = outpatientPerson.MedicalTreatmentTotalCost,
+        //        SettlementTransactionId = userBase.TransKey,
+        //        MedicalInsuranceState = MedicalInsuranceState.HisSettlement
+        //    };
+        //    //更新中间层
+        //    _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
+        //    //明细存入
+        //    _serviceBasicService.GetOutpatientDetailPerson(new OutpatientDetailParam()
+        //    {   IsSave = true,
+        //        BusinessId = param.BusinessId,
+        //        User = userBase
+        //    });
+        //}
         /// <summary>
         /// 门诊计划生育结算查询
         /// </summary>

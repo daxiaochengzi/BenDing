@@ -269,15 +269,15 @@
             params["AccountPayment"] = $("#AccountPayment").val();
          
             var settlementVal = $('input[name="Settlement"]:checked').val();
-            //计划生育结算
-            if (settlementVal === "1") {
-                //计划生育结算调用插件
-                var resultData = getOutpatientPlanBirthSettlementParam();
-            } else
-            {
-                doorDiagnosisSettlement();
-            }
-         
+            ////计划生育结算
+            //if (settlementVal === "1") {
+            //    //计划生育结算调用插件
+            //    var resultData = getOutpatientPlanBirthSettlementParam();
+            //} else
+            //{
+            //    
+            //}
+            doorDiagnosisSettlement();
             
           
         });
@@ -358,32 +358,32 @@
         
 
         });
-        //结算支付
-        function settlementPay(paramData) {
-            console.log(paramData);
-            //初始化插件
-            var activeX = document.getElementById("CSharpActiveX");
-            var paramBase =
-            {
-                "Account": "cpq2677",
-                "Pwd": "888888",
-                "OperatorId": $("#empid").val() /*授权操作人的ID*/
-            };
-            //var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
-            var activeData = activeX.OutpatientPlanBirthSettlement(JSON.stringify(paramData), JSON.stringify(paramBase));
+        ////结算支付
+        //function settlementPay(paramData) {
+        //    console.log(paramData);
+        //    //初始化插件
+        //    var activeX = document.getElementById("CSharpActiveX");
+        //    var paramBase =
+        //    {
+        //        "Account": "cpq2677",
+        //        "Pwd": "888888",
+        //        "OperatorId": $("#empid").val() /*授权操作人的ID*/
+        //    };
+        //    //var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
+        //    var activeData = activeX.OutpatientPlanBirthSettlement(JSON.stringify(paramData), JSON.stringify(paramBase));
           
-            var activeJsonData = JSON.parse(activeData);
+        //    var activeJsonData = JSON.parse(activeData);
          
-            if (activeJsonData.Success === false) {
-                layer.msg(activeJsonData.Message, { icon: 5, skin: 'layui-layer-molv' });
-                return false;
-            } else {
-                //结算信息赋值
-                activeJsonInfo = activeJsonData.Data;
-                doorDiagnosisSettlement();
-            }
+        //    if (activeJsonData.Success === false) {
+        //        layer.msg(activeJsonData.Message, { icon: 5, skin: 'layui-layer-molv' });
+        //        return false;
+        //    } else {
+        //        //结算信息赋值
+        //        activeJsonInfo = activeJsonData.Data;
+        //        doorDiagnosisSettlement();
+        //    }
 
-        }
+        //}
         //初始化参数
         $.ajax({
             type: 'get',

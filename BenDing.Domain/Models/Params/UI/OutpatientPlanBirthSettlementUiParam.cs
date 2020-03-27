@@ -30,7 +30,7 @@ namespace BenDing.Domain.Models.Params.UI
         /// <summary>
         /// 
         /// </summary>
-        public string ResultData { get; set; } = null;
+        public int IsBirthHospital { get; set; }
    
     }
 }

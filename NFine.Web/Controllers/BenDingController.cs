@@ -1290,12 +1290,9 @@ namespace NFine.Web.Controllers
                 _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
 
 
-                if (param.ResultData != null)
+                if (param.IsBirthHospital==1)
                 {
-
-                    var dataIni = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.ResultData);
-                    var settlementData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni);
-                    _outpatientDepartmentService.OutpatientPlanBirthSettlement(param);
+                   var settlementData= _outpatientDepartmentService.OutpatientPlanBirthSettlement(param);
                     y.Data = new OutpatientCostReturnDataDto()
                     {
                         SelfPayFeeAmount = settlementData.CashPayment,
@@ -1439,7 +1436,7 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-                var resultData = JsonConvert.DeserializeObject<WorkerHospitalizationPreSettlementDto>(param.ResultData);
+                //var resultData = JsonConvert.DeserializeObject<WorkerHospitalizationPreSettlementDto>(param.ResultData);
                 //_outpatientDepartmentService.OutpatientPlanBirthSettlement(param);
 
             });
