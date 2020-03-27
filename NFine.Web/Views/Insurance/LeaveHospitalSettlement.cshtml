@@ -25,6 +25,7 @@
             <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
             <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
             <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
+            <input type="hidden" id="IsBirthHospital" placeholder="医保交易id" />
             <object id="CSharpActiveX" classid="clsid:67475F7D-57A1-45AD-96F3-428A679B2E6C" codebase="ActiveSetup.CAB#version=1,0,0" width="0" height="0"></object>
             <div class="layui-card-header layuibd-card-header-auto">
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
@@ -104,11 +105,11 @@
                         </div>
                     </div>
                     @*<div class="layui-inline">
-            <label class="layui-form-label">报销金额</label>
-            <div class="layui-input-inline">
-                <input type="text" id="ReimbursementExpenses" name="ReimbursementExpenses" autocomplete="off" disabled class="layui-input layui-disabled">
-            </div>
-        </div>*@
+                    <label class="layui-form-label">报销金额</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="ReimbursementExpenses" name="ReimbursementExpenses" autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
+                </div>*@
                     <div class="layui-inline" id="MedicalCategoryDiv">
                         <label class="layui-form-label">医疗类别</label>
                         <div class="layui-input-inline">
@@ -126,12 +127,12 @@
                         </div>
                     </div>
                     <div class="layui-inline" id="AccountPaymentDiv">
-                        <label class="layui-form-label">胎儿数</label>
+                        <label class="layui-form-label">下账金额</label>
                         <div class="layui-input-inline">
                             <input type="text" id="AccountPayment" name="AccountPayment" autocomplete="off" class="layui-input">
                         </div>
                     </div>
-                    
+
                     <div class="layui-inline">
                         <label class="layui-form-label">诊断医生</label>
                         <div class="layui-input-inline">
@@ -145,11 +146,11 @@
                         </div>
                     </div>
                     @*<div class="layui-inline">
-            <label class="layui-form-label">社保卡密码</label>
-            <div class="layui-input-inline">
-                <input type="text" id="CardPwd" name="CardPwd" autocomplete="off" disabled class="layui-input layui-disabled">
-            </div>
-        </div>*@
+                    <label class="layui-form-label">社保卡密码</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="CardPwd" name="CardPwd" autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
+                </div>*@
                 </div>
                 <div class="layui-form-item">
                     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
@@ -189,7 +190,7 @@
         //结算单据号
         var settlementNo = null;
         //是否生育入院登记
-        var isBirthHospital = 0;
+      
         $("#FetusNumberDiv").hide();
         $("#MedicalCategoryDiv").hide();
         $("#AccountPaymentDiv").hide();
@@ -266,15 +267,17 @@
                 } else {
                     insuranceType = data.Data.InsuranceType;
                     jsonToForm(data.Data, "LAY-form-render");
-
+                   
                     if (data.Data.IsBirthHospital === 1) {
-                        if (insuranceType === 310) {
+                        if (insuranceType === "310") {
                             $("#FetusNumberDiv").show();
                             $("#MedicalCategoryDiv").show(); 
                             $("#AccountPaymentDiv").show();
                         }
                        
                     }
+                    $("#IsBirthHospital").val(data.Data.IsBirthHospital);
+                 
                     //加载诊断默认数据
                     tableIns.reload({
                         data: data.Data.DiagnosisList
@@ -283,9 +286,7 @@
                     buttonStatus("Settlement", true);
                 }
             },
-            complete: function () {
-                form.render();
-            }
+           
         });
 
         //定义事件集合
@@ -353,7 +354,33 @@
                 }
             });
         $('#Settlement').on('click', function () {
-            if (isBirthHospital === 1) {
+            var leaveHospitalInpatientState = $("#LeaveHospitalInpatientState").val();
+            if (leaveHospitalInpatientState === undefined || leaveHospitalInpatientState === "") {
+                layer.alert("病人出院状态不能为空!!!", { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                return false;
+            }
+
+            //诊断列表
+            var dataTable1 = table.cache[layTableId];
+            var diagnosisList = [];
+            //排除空值
+            $.each(dataTable1, function (k, v) {
+                if (v.DiagnosisCode !== undefined) {
+                    diagnosisList.push(v);
+                }
+            });
+
+            var settlementParam =
+            {
+                "TransKey": $("#transkey").val() /*医保交易码*/,
+                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
+                "UserId": $("#empid").val() /*授权操作人的ID*/,
+                "LeaveHospitalInpatientState": leaveHospitalInpatientState, /*授权操作人的ID*/
+                "DiagnosisList": diagnosisList
+            };
+             var   isBirthHospital = $("#IsBirthHospital").val();
+         
+            if (isBirthHospital=== "1") {
                 //医疗类别
                 var medicalCategory = $("#MedicalCategory").val();
                 if (medicalCategory === "" || medicalCategory === undefined) {
@@ -370,34 +397,13 @@
                     layer.msg('胎儿数必须大于0!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
                     return false;
                 }
-                params["MedicalCategory"] = $("#MedicalCategory").val();
-                params["FetusNumber"] = fetusNumber;
-                params["AccountPayment"] = $("#AccountPayment").val() ;
+                debugger;
+                settlementParam["MedicalCategory"] = $("#MedicalCategory").val();
+                settlementParam["FetusNumber"] = fetusNumber;
+                settlementParam["AccountPayment"] = $("#AccountPayment").val() ;
             }
-            //诊断列表
-            var dataTable1 = table.cache[layTableId];
-            var diagnosisList = [];
-            //排除空值
-            $.each(dataTable1, function (k, v) {
-                if (v.DiagnosisCode !== undefined) {
-                    diagnosisList.push(v);
-                }
-            });
-         
-            var leaveHospitalInpatientState = $("#LeaveHospitalInpatientState").val();
-            if (leaveHospitalInpatientState === undefined || leaveHospitalInpatientState === "") {
-                layer.alert("病人出院状态不能为空!!!", { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                return false;
-            }
-         
-            var settlementParam =
-            {
-                "TransKey": $("#transkey").val() /*医保交易码*/,
-                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
-                "UserId": $("#empid").val() /*授权操作人的ID*/,
-                "LeaveHospitalInpatientState": leaveHospitalInpatientState, /*授权操作人的ID*/
-                "DiagnosisList": diagnosisList
-            };
+        
+          
             $.ajax({
                 type: 'post',
                 url: host + '/LeaveHospitalSettlement',

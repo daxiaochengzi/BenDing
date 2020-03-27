@@ -462,6 +462,8 @@ namespace NFine.Web.Controllers
                 //获取病人结算信息
                 var settlementData = _webServiceBasicService.GetHisHospitalizationSettlement(infoData);
                 if (settlementData.DiagnosisList.Any() == false) throw new Exception("当前病人没有出院诊断信息，不能办理医保预结算!!!");
+                if (settlementData.LeaveHospitalDate == null) throw new Exception("当前病人没有办理出院，不能办理医保结算!!!");
+
                 //获取病人信息
                 var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
                 if (inpatientData == null) throw new Exception("基层获取住院病人失败!!!");
@@ -473,6 +475,7 @@ namespace NFine.Web.Controllers
                 data.DiagnosisList = settlementData.DiagnosisList;
                 data.InsuranceType = queryData.InsuranceType;
                 data.LeaveHospitalDate = settlementData.LeaveHospitalDate;
+               
                 y.Data = data;
             });
         }
@@ -503,7 +506,6 @@ namespace NFine.Web.Controllers
                      });
                  if (queryData == null) throw new Exception("当前病人未办理医保入院登记!!!");
                  if (queryData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已经办理结算!!!");
-
                  if (queryData.MedicalInsuranceState != MedicalInsuranceState.MedicalInsurancePreSettlement) throw new Exception("当前病人未办理预结算,不能进行结算!!!");
                  //获取病人信息
                  var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
@@ -512,6 +514,8 @@ namespace NFine.Web.Controllers
                  //获取病人结算信息
                  var settlementData = _webServiceBasicService.GetHisHospitalizationSettlement(infoData);
                  if (settlementData.DiagnosisList.Any() == false) throw new Exception("当前病人没有出院诊断信息，不能办理医保结算!!!");
+                 if (settlementData.LeaveHospitalDate == null) throw new Exception("当前病人没有办理出院，不能办理医保结算!!!");
+
                  data.Operator = settlementData.LeaveHospitalOperator;
                  data.DiagnosisList = settlementData.DiagnosisList;
                  data.InsuranceType = queryData.InsuranceType;
@@ -519,6 +523,7 @@ namespace NFine.Web.Controllers
                  data.IsBirthHospital = queryData.IsBirthHospital;
                  data.MedicalInsuranceState = queryData.MedicalInsuranceState;
                  data.SettlementNo = queryData.SettlementNo;
+               
                  y.Data = data;
 
              });
@@ -1073,7 +1078,8 @@ namespace NFine.Web.Controllers
                               DiagnosisList = param.DiagnosisList,
                               MedicalCategory = param.MedicalCategory,
                               FetusNumber = param.FetusNumber,
-                              LeaveHospitalInpatientState = param.LeaveHospitalInpatientState
+                              LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
+
                           });
                         resultData.CashPayment = workerSettlementData.CashPayment;
                         resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));

@@ -410,6 +410,7 @@ namespace BenDing.Service.Providers
                 resultData.LeaveHospitalDepartmentName = dataValueFirst.LeaveHospitalDepartmentName;
                 resultData.LeaveHospitalDiagnosticDoctor = dataValueFirst.LeaveHospitalDiagnosticDoctor;
                 resultData.LeaveHospitalOperator = dataValueFirst.LeaveHospitalOperator;
+             
             }
             var diagnosisList = dataValue.DiagnosisJson.Select(c => new InpatientDiagnosisDto()
             {

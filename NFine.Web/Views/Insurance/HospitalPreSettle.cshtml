@@ -319,8 +319,9 @@
                     isBirthHospital = data.Data.IsBirthHospital;
                     buttonStatus("PreSettlement", true);
                     insuranceType = data.Data.InsuranceType;
+                 
                     if (data.Data.IsBirthHospital === 1) {
-                        if (insuranceType === 310) {
+                        if (insuranceType === "310") {
                             $("#DiagnosisDiv").show();
                             $("#FetusNumberDiv").show();
                             $("#MedicalCategoryDiv").show(); 

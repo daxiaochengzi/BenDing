@@ -45,6 +45,7 @@ namespace BenDing.Domain.Models.Params.Workers
         /// </summary>
         [Display(Name = "出院病人状态")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
+        [XmlElement("PI_CYQK", IsNullable = false)]
 
         public string LeaveHospitalInpatientState { get; set; }
         /// <summary>

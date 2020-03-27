@@ -40,7 +40,12 @@ namespace BenDing.Domain.Models.Params.Resident
         /// </summary>
      
         public string LeaveHospitalOperator { get; set; }
-       
+
+        /// <summary>
+        /// 合计金额
+        /// </summary>
+        public decimal AllAmount { get; set; }
+
         /// <summary>
         /// 诊断列表
         /// </summary>

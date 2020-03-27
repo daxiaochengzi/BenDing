@@ -608,6 +608,8 @@ namespace BenDing.Service.Providers
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized,
                 MedicalInsuranceHospitalizationNo = data.MedicalInsuranceInpatientNo,
                 IsBirthHospital = 1,
+                IdentityMark=param.IdentityMark,
+                AfferentSign=param.AfferentSign
             };
             ////存中间库
             _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
@@ -716,7 +718,7 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public WorkerHospitalizationPreSettlementDto WorkerBirthSettlement(WorkerBirthSettlementUiParam param)
         {
-            WorkerHospitalizationPreSettlementDto data = null;
+          
             //获取操作人员信息
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
@@ -748,6 +750,7 @@ namespace BenDing.Service.Providers
                 Operator = userBase.UserName,
                 MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
                 LeaveHospitalDate = Convert.ToDateTime(hisSettlement.LeaveHospitalDate).ToString("yyyyMMdd"),
+
             };
             //获取诊断
             var diagnosisData = CommonHelp.GetDiagnosis(param.DiagnosisList);
@@ -838,7 +841,7 @@ namespace BenDing.Service.Providers
             saveParam.User = userBase;
             saveParam.LeaveHospitalDiagnosisJson = JsonConvert.SerializeObject(param.DiagnosisList);
             _hisSqlRepository.SaveInpatientSettlement(saveParam);
-            return data;
+            return resultData;
         }
         /// <summary>
         /// 获取生育入院登记入参
