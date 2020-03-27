@@ -12,16 +12,16 @@ namespace BenDing.Domain.Models.Params.UI
 {
    public class WorkerBirthHospitalizationRegisterUiParam: UiBaseDataParam
     {///<summary>
-     /// 身份标识
+     /// 身份标识 （身份证号或者个人编号）
      /// </summary>
 
         [Display(Name = "身份标识")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string IdentityMark { get; set; }
         /// <summary>
-        ///身份证号或者个人编号
+        ///传入标志  (1为公民身份号码 2为个人编号)
         /// </summary>
-        [Display(Name = "身份证号或者个人编号")]
+        [Display(Name = "传入标志")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string AfferentSign { get; set; }
         /// <summary>

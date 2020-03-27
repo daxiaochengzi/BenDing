@@ -15,15 +15,15 @@ namespace BenDing.Domain.Models.Params.Workers
         public Guid Id { get; set; }
 
         ///<summary>
-        /// 身份标识(为’1’表示卡号,’2’身份证号,3为个人编号)
+        /// 传入标志(为’1’表示卡号,’2’身份证号,3为个人编号)
+        /// </summary>
+
+        public string  AfferentSign{ get; set; }
+        /// <summary>
+        ///  身份标识 (个人编号 IC卡号 身份证号)
         /// </summary>
 
         public string IdentityMark { get; set; }
-        /// <summary>
-        ///个人编号 IC卡号 身份证号
-        /// </summary>
-
-        public string AfferentSign { get; set; }
         /// <summary>
         /// 医疗类别(普通住院 21，工伤住院41)
         /// </summary>

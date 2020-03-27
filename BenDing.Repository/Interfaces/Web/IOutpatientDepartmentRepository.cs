@@ -61,5 +61,14 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
         WorkerHospitalizationPreSettlementDto OutpatientPlanBirthSettlementQuery(
               OutpatientPlanBirthSettlementQueryParam param);
+        /// <summary>
+        /// 计划生育取消结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+          WorkerHospitalizationPreSettlementDto OutpatientPlanBirthSettlementCancel(
+              OutpatientPlanBirthSettlementCancelParam param);
+
+        
       }
 }

@@ -14,14 +14,14 @@ namespace BenDing.Domain.Models.Params.Resident
         [Display(Name = "身份证号或个人编号")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
 
-        public string InformationNumber { get; set; }
+        public string IdentityMark { get; set; }
         /// <summary>
-        /// 身份标志 1为公民身份号码 2为个人编号
+        /// 传入标志 1为公民身份号码 2为个人编号
         /// </summary>
-        [Display(Name = "身份标志")]
+        [Display(Name = "传入标志")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
        
-        public string IdentityMark { get; set; }
+        public string AfferentSign { get; set; }
         /// <summary>
         /// 用户id
         /// </summary>

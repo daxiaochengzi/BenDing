@@ -25,7 +25,7 @@ namespace BenDing.Service.Interfaces
         /// 取消门诊结算
         /// </summary>
         /// <param name="param"></param>
-        void CancelOutpatientDepartmentCost(UiBaseDataParam param);
+        void CancelOutpatientDepartmentCost(CancelOutpatientDepartmentCostUiParam param);
         /// <summary>
         /// 门诊病人结算查询
         /// </summary>

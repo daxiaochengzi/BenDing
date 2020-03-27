@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Dto.Resident;
 
 namespace BenDing.Domain.Models.Dto.OutpatientDepartment
 {
@@ -30,8 +31,11 @@ namespace BenDing.Domain.Models.Dto.OutpatientDepartment
         /// <summary>
         /// 报销说明备注
         /// </summary>
-       
 
         public string Remark { get; set; }
+        /// <summary>
+        /// 信息
+        /// </summary>
+        public List<PayMsgData> PayMsg { get; set; }
     }
 }

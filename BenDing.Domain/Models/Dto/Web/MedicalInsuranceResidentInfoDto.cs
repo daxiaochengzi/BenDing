@@ -77,7 +77,13 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 是否生育入院
         /// </summary>
         public  int IsBirthHospital { get; set; }
-
-
+        /// <summary>
+        /// 身份标志 (个人编号或身份证号)
+        /// </summary>
+        public string IdentityMark { get; set; }
+        /// <summary>
+        /// 传入标志
+        /// </summary>
+        public string AfferentSign { get; set; }
     }
 }

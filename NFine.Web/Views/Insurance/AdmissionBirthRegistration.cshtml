@@ -28,19 +28,18 @@
                 <!--搜索部分-->
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">身份标识</label>
                         <div class="layui-input-inline">
-                            <select id="IdentityMark" name="IdentityMark" lay-filter="IdentityMark" lay-verify="required">
+                            <select id="AfferentSign" name="AfferentSign" lay-filter="AfferentSign" lay-verify="required">
                                 <option value="">请选择条件</option>
-                                <option value="1" selected>身份证号</option>
-                                <option value="2">个人编号</option>
+                                <option id="AfferentSignIcCard" value="1" selected>身份证号</option>
+                                <option  id="AfferentSignNum" value="2">个人编号</option>
                             </select>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label" id="markTextLable">身份证号</label>
                         <div class="layui-input-inline">
-                            <input type="text" id="identityMarkText" name="AfferentSign" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
+                            <input type="text" id="IdentityMark" name="IdentityMark" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -175,7 +174,7 @@
                 <!--诊断列表-->
                 <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
                 <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                    <button type="submit" id="BirthRegister" class="layui-btn layui-btn-radius" lay-submit lay-filter="reg">登记</button>
+                    <button type="submit" id="BirthRegister" disabled class="layui-btn layui-btn-radius" lay-submit lay-filter="BirthRegister">登记</button>
                 </div>
             </div>
 
@@ -212,10 +211,6 @@
                         closeStop: '#date2'
                     });
                 });
-
-      
-          
-
             //病人信息
             var inpatientInfoData = null;
             //获取病人信息
@@ -238,7 +233,16 @@
                             layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
                         } else {
                             inpatientInfoData = data;
-                            $("#identityMarkText").val(data.Data.IdCardNo);
+                            var idCardNo = data.Data.IdCardNo;
+                            if (idCardNo !== undefined && idCardNo !== null) {
+                                $("#IdentityMark").val(idCardNo);
+                            } else {
+                                $("#AfferentSignIcCard").attr("selected", false);
+                                $("#AfferentSignNum").attr("selected", true);
+                                $("#markTextLable").text("个人编码");
+                                $("#IdentityMark").val("");
+                                $("#IdentityMark").attr("placeholder", "请输入个人编码");
+                            }
                             //layer.msg('费用上传成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         }
                     },
@@ -297,20 +301,18 @@
               
             }
 
-            form.on('select(IdentityMark)',
+            form.on('select(AfferentSign)',
                 function (data) {
                     var val = data.value;
                     if (val === "2") {
                         $("#markTextLable").text("个人编码");
-
-                        $("#identityMarkText").val("");
-                        $("#identityMarkText").attr("placeholder", "请输入个人编码");
+                        $("#IdentityMark").val("");
+                        $("#IdentityMark").attr("placeholder", "请输入个人编码");
                     } else {
                         $("#markTextLable").text("身份证号");
-                        getInpatientInfo();
+                   
                     }
                 });
-
             //诊断数据表格实例化
             var layTableId = "dataTableId";
             var tableIns = table.render({
@@ -351,8 +353,8 @@
                 function (data) {
 
                     var paramsUserInfo = {
-                        "InformationNumber": $("#identityMarkText").val() /*身份证号*/,
-                        "IdentityMark": $("#IdentityMark").val() /*身份标志，1:身份证,2:医保个人编码*/,
+                        "AfferentSign": $("#AfferentSign").val() /*身份标志，1:身份证,2:医保个人编码身份证号*/,
+                        "IdentityMark": $("#IdentityMark").val(),
                         "UserId": $("#empid").val() /*授权操作人的ID*/
                     }
                     $.ajax({
@@ -372,6 +374,7 @@
                                 tableIns.reload({
                                     data: inpatientInfoData.Data.DiagnosisList
                                 });
+                                buttonStatus("BirthRegister",true);
                                 //////诊断查询可编辑
                                 //$('#DiagnosisSearchData').attr("class", "layui-input");
 
@@ -519,13 +522,13 @@
                     }
                 });
             //登记
-            form.on('submit(reg)',
+            form.on('submit(BirthRegister)',
                 function (data) {
                     var field = data.field;
                     //医疗类别
                     var medicalCategory = $("#MedicalCategory").val();
                     if (medicalCategory === "" || medicalCategory === undefined) {
-                        layer.msg('医疗类别不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                        layer.msg('医疗类别不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
                         return false;
                     }
                     var insuranceType = $("#InsuranceType").val();
@@ -541,7 +544,7 @@
                         //户口性质
                         var householdNature = $("#HouseholdNature").val();
                         if (householdNature === "" || householdNature === undefined) {
-                            layer.msg('户口性质不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                            layer.msg('户口性质不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
                             return false;
                         }
                       
@@ -550,11 +553,11 @@
                     //胎儿数
                     var fetusNumber = $("#FetusNumber").val();
                     if (fetusNumber === "" || fetusNumber === undefined) {
-                        layer.msg('胎儿数不能为空!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                        layer.msg('胎儿数不能为空!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
                         return false;
                     }
                     if (fetusNumber<=0) {
-                        layer.msg('胎儿数必须大于0!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                        layer.msg('胎儿数必须大于0!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
                         return false;
                     }
                     field.BusinessId = field.BusinessId;
@@ -589,14 +592,27 @@
                                 layer.msg('登记失败\n' + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
                             } else {
                                 layer.msg('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
-                                $("#BirthRegister").attr("class", "layui-btn layui-btn-radius layui-disabled");
                                
+                                buttonStatus("BirthRegister", false);
 
                             }
                         }
                     });
                     return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
                 });
+            //按钮状态
+            function buttonStatus(buttonId, status) { 
+                //取消禁用
+                if (status === true) {
+                    $("#" +buttonId).attr("class", "layui-btn layui-btn-radius");
+                }//禁用
+                else
+                {
+                    $("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
+                
+                }
+          
+            }
         });
 
 </script>

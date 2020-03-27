@@ -77,7 +77,9 @@ namespace BenDing.Service.Providers
                 Id = Guid.NewGuid(),
                 InsuranceType = 342,
                 MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceInpatientNo,
-                MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized
+                MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized,
+                AfferentSign = param.AfferentSign,
+                IdentityMark = param.IdentityMark
             };
             //保存中间库
             _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
@@ -435,8 +437,8 @@ namespace BenDing.Service.Providers
        
             var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
             {
-                IdentityMark = inpatientInfoData.IdCardNo.Length == 18 ? "1" : "2",
-                InformationNumber = inpatientInfoData.IdCardNo,
+                IdentityMark = residentData.IdentityMark,
+                AfferentSign = residentData.AfferentSign,
 
             });
 
@@ -571,7 +573,7 @@ namespace BenDing.Service.Providers
             iniParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
             iniParam.AdmissionMainDiagnosis = diagnosisData.DiagnosisDescribe;
             iniParam.IdentityMark = param.IdentityMark;
-            iniParam.AfferentSign = param.IdentityMark == "1" ? paramDto.IdCardNo : param.AfferentSign;
+            iniParam.AfferentSign = param.AfferentSign;
             iniParam.MedicalCategory = param.MedicalCategory;
             iniParam.FetusNumber = param.FetusNumber;
             iniParam.HouseholdNature = param.HouseholdNature;
