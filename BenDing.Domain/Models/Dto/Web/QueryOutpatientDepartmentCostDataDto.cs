@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BenDing.Domain.Models.Dto.Resident;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -77,5 +78,9 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 结算单据号
         /// </summary>
          public string SettlementNo { get; set; }
+        /// <summary>
+        /// 结算信息
+        /// </summary>
+        public List<PayMsgData> PayMsg { get; set; } = null;
     }
 }

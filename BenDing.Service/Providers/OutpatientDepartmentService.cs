@@ -444,6 +444,14 @@ namespace BenDing.Service.Providers
             };
             //存中间库
             _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
+            //明细存入
+            _serviceBasicService.GetOutpatientDetailPerson(new OutpatientDetailParam()
+            {
+                IsSave = true,
+                BusinessId = param.BusinessId,
+                User = userBase
+            });
+
             //日志写入
             _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
             {
@@ -496,14 +504,7 @@ namespace BenDing.Service.Providers
             };
             //更新中间层
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
-            //明细存入
-            _serviceBasicService.GetOutpatientDetailPerson(new OutpatientDetailParam()
-            {
-                IsSave = true,
-                BusinessId = param.BusinessId,
-                User = userBase
-            });
-
+         
             return resultData;
         }
         ///// <summary>

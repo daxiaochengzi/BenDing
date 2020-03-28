@@ -1290,7 +1290,7 @@ namespace NFine.Web.Controllers
                 //医保登录
                 _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
 
-
+                //门诊计划生育
                 if (param.IsBirthHospital==1)
                 {
                    var settlementData= _outpatientDepartmentService.OutpatientPlanBirthSettlement(param);
@@ -1302,7 +1302,7 @@ namespace NFine.Web.Controllers
 
                 }
                 else
-                {
+                {   //普通门诊
                     var data = _outpatientDepartmentService.OutpatientDepartmentCostInput(new GetOutpatientPersonParam()
                     {
                         User = userBase,
@@ -1362,6 +1362,11 @@ namespace NFine.Web.Controllers
                 var cancelSettlementData = _webServiceBasicService.GetOutpatientSettlementCancel(paramIni);
                 var queryData = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam() { BusinessId = param.BusinessId });
                 if (queryData == null) throw new Exception("获取门诊结算病人失败!!!");
+                //获取医保病人信息
+                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    BusinessId = param.BusinessId
+                });
                 //获取门诊病人信息
                 resultData.DepartmentName = queryData.DepartmentName;
                 resultData.DiagnosticDoctor = queryData.DiagnosticDoctor;
