@@ -37,7 +37,7 @@
                     <label class="layui-form-label">结算方式</label>
                     <div class="layui-input-block">
                         <input type="radio" name="Settlement" value="0" title="门诊结算" checked="">
-                        <input type="radio" name="Settlement"  value="1" title="计划生育结算">
+                        <input type="radio" name="Settlement" value="1" title="计划生育结算">
 
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                         <select id="AfferentSign" name="AfferentSign" lay-filter="AfferentSign" lay-verify="required">
                             <option value="">请选择条件</option>
                             <option id="AfferentSignIcCard" value="1" selected>身份证号</option>
-                            <option  id="AfferentSignNum" value="2">个人编号</option>
+                            <option id="AfferentSignNum" value="2">个人编号</option>
                         </select>
                     </div>
                     <div class="layui-inline">
@@ -57,11 +57,11 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button type="button" Id="queryData" class="layui-btn" >查询</button>
+                        <button type="button" Id="queryData" class="layui-btn layui-btn-disabled layui-btn-radius">查询</button>
                     </div>
                     @*<div class="layui-inline">
-                        <button type="button" Id="ReadCard" class="layui-btn">读卡</button>
-                    </div>*@
+                            <button type="button" Id="ReadCard" class="layui-btn">读卡</button>
+                        </div>*@
                 </div>
                 <div class="layui-inline">
 
@@ -184,8 +184,8 @@
         base: '/Content/js/layui/plugin/'
     }).extend({
         autocomplete: 'layAutoComplete'
-        });
-    layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'], function() {
+    });
+    layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'], function () {
         var $ = layui.$,
             element = layui.element,
             form = layui.form,
@@ -204,7 +204,7 @@
             var diagnosisMedicalInsuranceCode = null
             var diagnosisMedicalInsuranceName = null;
             if (diagnosisList !== null) {
-             
+
                 for (var i = 0; i < diagnosisList.length; i++) {
                     if (diagnosisList[i].是否主诊断 === "是") {
                         diagnosisName = diagnosisList[i].诊断名称;
@@ -239,8 +239,8 @@
             "UserId": $("#empid").val(), /*授权操作人的ID*/
         }
         //获取门诊计划生育结算参数
-        function  getOutpatientPlanBirthSettlementParam() {
-          
+        function getOutpatientPlanBirthSettlementParam() {
+
             $.ajax({
                 type: 'POST',
                 url: host + '/GetOutpatientPlanBirthSettlementParam',
@@ -263,14 +263,14 @@
 
         }
         $('#DoorDiagnosisSettlement').on('click', function () {
-          
+
             params["IdentityMark"] = $("#IdentityMark").val();
             params["AfferentSign"] = $("#AfferentSign").val();
             params["AccountPayment"] = $("#AccountPayment").val();
-         
+
             var settlementVal = $('input[name="Settlement"]:checked').val();
             if (settlementVal === "1") {
-                params["IsBirthHospital"] =1;
+                params["IsBirthHospital"] = 1;
             }
             ////计划生育结算
             //if (settlementVal === "1") {
@@ -278,16 +278,15 @@
             //    var resultData = getOutpatientPlanBirthSettlementParam();
             //} else
             //{
-            //    
+            //
             //}
             doorDiagnosisSettlement();
-            
-          
+
+
         });
         // 结算方法
         function doorDiagnosisSettlement() {
-            
-          
+
             $.ajax({
                 type: 'post',
                 url: host + '/OutpatientDepartmentCostInput',
@@ -314,51 +313,51 @@
 
             });
         }
-        $('#queryData').on('click', function() {
+        $('#queryData').on('click', function () {
             var paramsUserInfo = {
                 "AfferentSign": $("#AfferentSign").val() /*传入标志，1:身份证,2:医保个人编码*/,
                 "IdentityMark": $("#IdentityMark").val() /*身份标识*/,
                 "UserId": $("#empid").val() /*授权操作人的ID*/
             }
-           
-                //获取居民信息
-                $.ajax({
-                    type: 'POST',
-                    url: host + '/GetUserInfo',
-                    data: paramsUserInfo,
-                    dataType: "json",
-                    async: false,
-                    success: function(data) {
-                        console.log(data);
-                        if (data.Success === false) {
-                            var errData = data.Message;
-                            //样式类名:墨绿深蓝风
-                            layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                            return false;
 
-                        } else {
-                            // 居民
-                            if (data.Data.InsuranceType === "342") {
-                                $("#InsuranceBalance").val(data.Data.ResidentInsuranceBalance);
-                                //职工
-                            } else if (data.Data.InsuranceType === "310") {
-                                $("#InsuranceBalance").val(data.Data.WorkersInsuranceBalance);
+            //获取居民信息
+            $.ajax({
+                type: 'POST',
+                url: host + '/GetUserInfo',
+                data: paramsUserInfo,
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    console.log(data);
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        //样式类名:墨绿深蓝风
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                        return false;
 
-                            }
-                            var settlementVal = $('input[name="Settlement"]:checked').val();
-                            //计划生育结算
-                            if (settlementVal === "1") {
-                                $("#AccountPaymentDiv").show();
-                            }
-                            $("#InsuranceBalanceDiv").show();
-                            buttonStatus("DoorDiagnosisSettlement", true);
-
+                    } else {
+                        // 居民
+                        if (data.Data.InsuranceType === "342") {
+                            $("#InsuranceBalance").val(data.Data.ResidentInsuranceBalance);
+                            //职工
+                        } else if (data.Data.InsuranceType === "310") {
+                            $("#InsuranceBalance").val(data.Data.WorkersInsuranceBalance);
 
                         }
+                        var settlementVal = $('input[name="Settlement"]:checked').val();
+                        //计划生育结算
+                        if (settlementVal === "1") {
+                            $("#AccountPaymentDiv").show();
+                        }
+                        $("#InsuranceBalanceDiv").show();
+                        buttonStatus("DoorDiagnosisSettlement", true);
+
+
                     }
+                }
 
             });
-        
+
 
         });
         ////结算支付
@@ -374,9 +373,9 @@
         //    };
         //    //var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
         //    var activeData = activeX.OutpatientPlanBirthSettlement(JSON.stringify(paramData), JSON.stringify(paramBase));
-          
+
         //    var activeJsonData = JSON.parse(activeData);
-         
+
         //    if (activeJsonData.Success === false) {
         //        layer.msg(activeJsonData.Message, { icon: 5, skin: 'layui-layer-molv' });
         //        return false;
@@ -403,6 +402,8 @@
                 } else {
                     jsonToForm(data.Data, "LAY-form-render");
                     var idCardNo = data.Data.IdCardNo;
+                    buttonStatus("queryData", true);
+
                     if (idCardNo !== undefined && idCardNo !== null) {
                         $("#IdentityMark").val(idCardNo);
                     } else {
@@ -412,7 +413,7 @@
                         $("#IdentityMark").val("");
                         $("#IdentityMark").attr("placeholder", "请输入个人编码");
                     }
-                 
+
                 }
             },
             complete: function () {
@@ -428,7 +429,7 @@
                     $("#IdentityMark").attr("placeholder", "请输入个人编码");
                 } else {
                     $("#markTextLable").text("身份证号");
-                   
+
                 }
             });
 
@@ -452,17 +453,16 @@
 
         }
         //按钮状态
-        function buttonStatus(buttonId, status) { 
+        function buttonStatus(buttonId, status) {
             //取消禁用
             if (status === true) {
-                $("#" +buttonId).attr("class", "layui-btn layui-btn-radius");
+                $("#" + buttonId).attr("class", "layui-btn layui-btn-radius");
             }//禁用
-            else
-            {
+            else {
                 $("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
-                
+
             }
-          
+
         }
 
     });

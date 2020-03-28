@@ -43,8 +43,8 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button class="layui-btn" lay-submit="" lay-filter="LAY-form-search">
-                            <i class="layui-icon layui-icon-search layuibd-button-btn"></i>
+                        <button  disabled class="layui-btn layui-btn-disabled layui-btn-radius" lay-submit="" id="queryData"   lay-filter="LAY-form-search">
+                            查询
                         </button>
                     </div>
                 </div>
@@ -234,6 +234,7 @@
                         } else {
                             inpatientInfoData = data;
                             var idCardNo = data.Data.IdCardNo;
+                            buttonStatus("queryData", true);
                             if (idCardNo !== undefined && idCardNo !== null) {
                                 $("#IdentityMark").val(idCardNo);
                             } else {
