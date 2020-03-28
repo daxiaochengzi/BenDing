@@ -84,6 +84,7 @@
                 </div>
             </div>*@
 
+
                     <div class="layui-inline">
                         <label class="layui-form-label">诊断医生</label>
                         <div class="layui-input-inline">
@@ -96,25 +97,36 @@
                             <input type="text" name="Operator" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">发票号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="InvoiceNo" autocomplete="off" disabled class="layui-input layui-disabled">
+                    @*<div class="layui-inline">
+                <label class="layui-form-label">发票号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="InvoiceNo" autocomplete="off" disabled class="layui-input layui-disabled">
+                </div>
+            </div>*@
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            取消原因
+                        </label>
+                        <div class="layui-input-inline" style="width:50%">
+                            <input type="text" id="CancelSettlementRemarks" name="CancelSettlementRemarks" autocomplete="off" class="layui-input">
                         </div>
                     </div>
 
                     <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                        <button type="button" Id="DoorDiagnosisSettlementCancel" class="layui-btn layui-btn-disabled layui-btn-radius">门诊取消结算</button>
+                        <button type="button" Id="DoorDiagnosisSettlementCancel"  class="layui-btn layui-btn-disabled layui-btn-radius">门诊取消结算</button>
                     </div>
                 </div>
-                <div class="layui-card-body" lay-size="sm">
-                    <fieldset id="SettleData" class="layui-elem-field layui-field-title" style="margin-top: 10px;">
-                        <legend>医保结算信息</legend>
-                    </fieldset>
-                </div>
-            </div>
+                <div class="layui-form-item">
 
-        </form>
+                </div>
+                    <div class="layui-card-body" lay-size="sm">
+                        <fieldset id="SettleData" class="layui-elem-field layui-field-title" style="margin-top: 10px;">
+                            <legend>医保结算信息</legend>
+                        </fieldset>
+                    </div>
+                </div>
+
+</form>
     </div>
 </div>
 <script>
@@ -180,6 +192,7 @@
         });
         //门诊取消结算
         $('#DoorDiagnosisSettlementCancel').on('click', function () {
+            params["CancelSettlementRemarks"] = $("#CancelSettlementRemarks").val();
             $.ajax({
                 type: 'get',
                 url: host + '/CancelOutpatientDepartmentCost',
@@ -187,15 +200,13 @@
                 dataType: "json",
                 async: false,
                 success: function (data) {
+                
                     if (data.Success === false) {
                         var errData = data.Message;
                         //样式类名:墨绿深蓝风
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
-
-                        //$('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
-                        $('#CashPayment').val(data.Data.SelfPayFeeAmount);
-                        layer.msg('门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        layer.msg('门诊取消结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         buttonStatus("DoorDiagnosisSettlementCancel", false);
                     }
                 }
@@ -226,7 +237,7 @@
             //取消禁用
             if (status === true) {
                 $("#" + buttonId).attr("class", "layui-btn layui-btn-radius");
-              
+
             }//禁用
             else {
                 $("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
