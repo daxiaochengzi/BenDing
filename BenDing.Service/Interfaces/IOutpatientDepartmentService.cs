@@ -19,7 +19,7 @@ namespace BenDing.Service.Interfaces
      /// </summary>
      /// <param name="param"></param>
      /// <returns></returns>
-        OutpatientDepartmentCostInputJsonDto OutpatientDepartmentCostInput(GetOutpatientPersonParam param);
+        OutpatientDepartmentCostInputDto OutpatientDepartmentCostInput(GetOutpatientPersonParam param);
 
         /// <summary>
         /// 取消门诊结算

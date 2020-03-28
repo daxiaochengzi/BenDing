@@ -66,9 +66,9 @@ namespace BenDing.Service.Providers
         /// <summary>
         /// 门诊费用录入
         /// </summary>
-        public OutpatientDepartmentCostInputJsonDto OutpatientDepartmentCostInput(GetOutpatientPersonParam param)
+        public OutpatientDepartmentCostInputDto OutpatientDepartmentCostInput(GetOutpatientPersonParam param)
         {
-            OutpatientDepartmentCostInputJsonDto resultData = null;
+            OutpatientDepartmentCostInputDto resultData = null;
             //获取门诊病人数据
             var outpatientPerson = _serviceBasicService.GetOutpatientPerson(param);
             if (outpatientPerson == null) throw new Exception("his中未获取到当前病人!!!");

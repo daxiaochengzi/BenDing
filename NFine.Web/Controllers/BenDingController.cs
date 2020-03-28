@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Web.Http;
 using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
@@ -1316,7 +1317,8 @@ namespace NFine.Web.Controllers
                     y.Data = new OutpatientCostReturnDataDto()
                     {
                         ReimbursementExpensesAmount = data.ReimbursementExpensesAmount,
-                        SelfPayFeeAmount = data.SelfPayFeeAmount
+                        SelfPayFeeAmount = data.SelfPayFeeAmount,
+                        PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(data))
                     };
                 }
 
@@ -1381,6 +1383,10 @@ namespace NFine.Web.Controllers
                 resultData.SelfPayFeeAmount = queryOutpatientData.SelfPayFeeAmount;
                 resultData.MedicalTreatmentTotalCost = queryOutpatientData.AllAmount;
                 resultData.SettlementNo = cancelSettlementData.SettlementNo;
+                if (!string.IsNullOrWhiteSpace(residentData.OtherInfo))
+                {
+                    resultData.PayMsg = CommonHelp.GetPayMsg(residentData.OtherInfo);
+                }
                 y.Data = resultData;
 
             });

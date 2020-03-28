@@ -16,7 +16,7 @@ namespace BenDing.Repository.Interfaces.Web
        /// </summary>
        /// <param name="param"></param>
        /// <returns></returns>
-          OutpatientDepartmentCostInputJsonDto OutpatientDepartmentCostInput(OutpatientDepartmentCostInputParam param);
+          OutpatientDepartmentCostInputDto OutpatientDepartmentCostInput(OutpatientDepartmentCostInputParam param);
         /// <summary>
         /// 门诊费取消
         /// </summary>
