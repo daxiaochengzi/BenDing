@@ -224,8 +224,8 @@ namespace BenDing.Repository.Providers.Web
                     string querySql = @"
                              select [Id],[ProjectCode],[ProjectName],[ProjectCodeType],Unit,MnemonicCode,Formulation,ProjectLevel,
                              Manufacturer,QuasiFontSize,Specification,Remark,NewCodeMark,NewUpdateTime from [dbo].[MedicalInsuranceProject] 
-                             where  IsDelete=0 and RestrictionSign=1";
-                    string countSql = @"select count(*) from [dbo].[MedicalInsuranceProject] where  IsDelete=0";
+                             where  IsDelete=0 and EffectiveSign=1";
+                    string countSql = @"select count(*) from [dbo].[MedicalInsuranceProject] where  IsDelete=0  and EffectiveSign=1";
                     string whereSql = "";
                     if (!string.IsNullOrWhiteSpace(param.ProjectCodeType))
                     {   //西药
@@ -523,7 +523,7 @@ namespace BenDing.Repository.Providers.Web
 
                     if (!string.IsNullOrWhiteSpace(param.DirectoryName))
                     {
-                        whereSql += "  and a.DirectoryName like '" + param.DirectoryName + "%'";
+                        whereSql += $"  and a.DirectoryName like '%{ param.DirectoryName}%'";
                     }
 
                     if (param.Limit != 0 && param.Page > 0)
