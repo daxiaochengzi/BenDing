@@ -169,7 +169,7 @@ namespace BenDing.Repository.Providers.Web
                     }
                     if (!string.IsNullOrWhiteSpace(param.DirectoryName))
                     {
-                        whereSql += "  and DirectoryName like '" + param.DirectoryName + "%'";
+                        whereSql += $"  and DirectoryName like '%{param.DirectoryName}%'";
                     }
                     if (param.Limit != 0 && param.Page > 0)
                     {

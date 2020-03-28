@@ -269,6 +269,9 @@
             params["AccountPayment"] = $("#AccountPayment").val();
          
             var settlementVal = $('input[name="Settlement"]:checked').val();
+            if (settlementVal === "1") {
+                params["IsBirthHospital"] =1;
+            }
             ////计划生育结算
             //if (settlementVal === "1") {
             //    //计划生育结算调用插件
@@ -284,9 +287,9 @@
         // 结算方法
         function doorDiagnosisSettlement() {
             
-            params["ResultData"] = activeJsonInfo;
+          
             $.ajax({
-                type: 'get',
+                type: 'post',
                 url: host + '/OutpatientDepartmentCostInput',
                 data: params,
                 dataType: "json",

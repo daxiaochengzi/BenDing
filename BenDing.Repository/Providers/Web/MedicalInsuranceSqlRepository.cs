@@ -241,7 +241,7 @@ namespace BenDing.Repository.Providers.Web
                         {
                             whereSql += $" and ProjectCodeType in('41','81','91','92')";
                         }
-
+                        //诊疗
                         if (param.ProjectCodeType == "2")
                         {
                             whereSql += $" and ProjectCodeType not in('11','12','13','41','81','91','92')";
@@ -253,7 +253,7 @@ namespace BenDing.Repository.Providers.Web
                     }
                     if (!string.IsNullOrWhiteSpace(param.ProjectName))
                     {
-                        whereSql += "  and ProjectName like '" + param.ProjectName + "%'";
+                        whereSql += $"  and ProjectName like '%{param.ProjectName}%'";
                     }
                     if (param.Limit != 0 && param.Page > 0)
                     {

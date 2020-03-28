@@ -376,21 +376,22 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new BaseOutpatientInfoDto()).RunWithTry(y =>
           {
-              var queryData = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam() { BusinessId = param.BusinessId });
-              if (queryData != null)
+              var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+              baseUser.TransKey = param.TransKey;
+              var outpatientDetailParam = new OutpatientDetailParam()
               {
-                  var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
-                  baseUser.TransKey = param.TransKey;
-                  var outpatientDetailParam = new OutpatientDetailParam()
-                  {
-                      User = baseUser,
-                      BusinessId = param.BusinessId,
+                  User = baseUser,
+                  BusinessId = param.BusinessId,
 
-                  };
-                  var data = _webServiceBasicService.GetOutpatientDetailPerson(outpatientDetailParam);
-                  y.Data = data;
+              };
+              var data = _webServiceBasicService.GetOutpatientDetailPerson(outpatientDetailParam);
+              y.Data = data;
 
-              }
+              //var queryData = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam() { BusinessId = param.BusinessId });
+              //if (queryData != null)
+              //{
+
+              //}
           });
         }
         /// <summary>
@@ -1279,8 +1280,8 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [HttpGet]
-        public ApiJsonResultData OutpatientDepartmentCostInput([FromUri]OutpatientPlanBirthSettlementUiParam param)
+        [HttpPost]
+        public ApiJsonResultData OutpatientDepartmentCostInput([FromBody]OutpatientPlanBirthSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {

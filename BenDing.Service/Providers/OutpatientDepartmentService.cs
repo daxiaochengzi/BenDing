@@ -418,13 +418,13 @@ namespace BenDing.Service.Providers
                 User = userBase,
                 BusinessId = param.BusinessId,
             });
-
+            //获取数据明细
             var iniParam = GetOutpatientPlanBirthSettlementParam
                 (param );
             iniParam.AfferentSign = param.AfferentSign;
             iniParam.IdentityMark = param.IdentityMark;
-            //获取诊断
-            resultData = _outpatientDepartmentRepository.OutpatientPlanBirthSettlement(iniParam);
+            // 医保执行
+               resultData = _outpatientDepartmentRepository.OutpatientPlanBirthSettlement(iniParam);
             //保存门诊病人
             outpatientParam.IsSave = true;
             outpatientParam.Id = Guid.NewGuid();
@@ -437,9 +437,10 @@ namespace BenDing.Service.Providers
                 IsModify = false,
                 InsuranceType = 999,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceHospitalized,
-                MedicalInsuranceHospitalizationNo = outpatientPerson.OutpatientNumber,
+             
                 AfferentSign = param.AfferentSign,
-                IdentityMark = param.IdentityMark
+                IdentityMark = param.IdentityMark,
+                IsBirthHospital=1
             };
             //存中间库
             _medicalInsuranceSqlRepository.SaveMedicalInsurance(userBase, saveData);
@@ -452,7 +453,6 @@ namespace BenDing.Service.Providers
                 RelationId = outpatientParam.Id,
                 Remark = "[R][OutpatientDepartment]门诊生育结算"
             });
-
             //获取病人的基础信息
             var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
             {
@@ -720,7 +720,7 @@ namespace BenDing.Service.Providers
                 AfferentSign = param.AfferentSign,
                 AccountPayment=string.IsNullOrWhiteSpace(param.AccountPayment)==true?0: Convert.ToDecimal(param.AccountPayment) ,
                 IdentityMark = param.IdentityMark,
-                AdmissionMainDiagnosisIcd10 = diagnosisData.DiagnosisCode
+                AdmissionMainDiagnosisIcd10 = diagnosisData!=null? diagnosisData.DiagnosisCode:null
 
             };
             var rowDataList = new List<PlanBirthSettlementRow>();
@@ -728,26 +728,29 @@ namespace BenDing.Service.Providers
             var dataSort = outpatientDetailPerson.OrderBy(c => c.BillTime).ToArray();
             int num = 0;
             foreach (var item in dataSort)
-            {
-                num++;
-
-                if (string.IsNullOrWhiteSpace(item.MedicalInsuranceProjectCode)) throw new Exception("[" + item + "]名称:" + item.DirectoryName + "未对码!!!");
-                var row = new PlanBirthSettlementRow()
+            {   if (string.IsNullOrWhiteSpace(item.MedicalInsuranceProjectCode)) throw new Exception("[" + item + "]名称:" + item.DirectoryName + "未对码!!!");
+                if (!string.IsNullOrWhiteSpace(item.MedicalInsuranceProjectCode))
                 {
-                    ColNum = num,
-                    ProjectCode = item.MedicalInsuranceProjectCode,
-                    ProjectName = item.DirectoryName,
-                    UnitPrice = item.UnitPrice,
-                    Quantity = item.Quantity,
-                    TotalAmount = item.Amount,
-                    Formulation = item.Formulation,
-                    ManufacturerName = item.DrugProducingArea,
-                    Dosage = item.Dosage,
-                    Specification = item.Specification,
-                    Usage = item.Usage
-                };
+                    var row = new PlanBirthSettlementRow()
+                    {
+                        ColNum = num,
+                        ProjectCode = item.MedicalInsuranceProjectCode,
+                        ProjectName = item.DirectoryName,
+                        UnitPrice = item.UnitPrice,
+                        Quantity = item.Quantity,
+                        TotalAmount = item.Amount,
+                        Formulation = item.Formulation,
+                        ManufacturerName = item.DrugProducingArea,
+                        Dosage = item.Dosage,
+                        Specification = item.Specification,
+                        Usage = item.Usage
+                    };
 
-                rowDataList.Add(row);
+                    rowDataList.Add(row);
+                    num++;
+                }
+             
+             
             }
 
             resultData.RowDataList = rowDataList;
