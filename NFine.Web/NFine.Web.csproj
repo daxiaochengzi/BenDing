@@ -170,6 +170,7 @@
     <Compile Include="Areas\ReportManage\Controllers\HighchartsController.cs" />
     <Compile Include="Areas\ReportManage\ReportManageAreaRegistration.cs" />
     <Compile Include="Areas\SystemManage\Controllers\AreaController.cs" />
+    <Compile Include="Areas\SystemManage\Controllers\DataImportController.cs" />
     <Compile Include="Areas\SystemManage\Controllers\DoorDiagnosisMonthlySettlementController.cs" />
     <Compile Include="Areas\SystemManage\Controllers\DutyController.cs" />
     <Compile Include="Areas\SystemManage\Controllers\ItemsDataController.cs" />
@@ -731,6 +732,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\ReportManage\Views\Echarts\" />
+    <Folder Include="FileExcel\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\ReportManage\Views\Highcharts\Sample1.cshtml" />
@@ -791,6 +793,8 @@
     <Fakes Include="Fakes\AutoMapper.fakes" />
     <Content Include="Areas\SystemManage\Views\DoorDiagnosisMonthlySettlement\Index.cshtml" />
     <Content Include="Areas\SystemManage\Views\DoorDiagnosisMonthlySettlement\Form.cshtml" />
+    <Content Include="Areas\SystemManage\Views\DataImport\Index.cshtml" />
+    <Content Include="Areas\SystemManage\Views\DataImport\ImportExcelIcd.cshtml" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Views\Insurance\Card.cshtml" />

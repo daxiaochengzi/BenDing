@@ -1,0 +1,13 @@
+﻿@{
+    ViewBag.Title = "医保ICD10导入";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+<form id="form1" method="post" enctype="multipart/form-data" action="/DataImport/ImportExcel" class="form-group">
+    <input name="file" type="file" id="file"/>
+    <input name="sheetName" type="text" id="sheetName" value="SQL Results" />
+    <button id="btn_import" type="submit" class="btn btn-info">
+        <span class="glyphicon glyphicon-pencil"></span>导入
+    </button>
+</form>
+
+

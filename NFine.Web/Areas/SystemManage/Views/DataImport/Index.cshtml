@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+
+<script>
+    
+    function btn_Base_download() {
+        //$.modalOpen({
+        //    id: "Form",
+        //    title: "门诊月结结算",
+        //    url: "/SystemManage/DoorDiagnosisMonthlySettlement/Form",
+        //    width: "450px",
+        //    height: "340px",
+        //    callBack: function (iframeId) {
+        //        top.frames[iframeId].submitForm();
+        //    }
+        //});
+    }
+</script>
+
+
+<form id="form1">
+    <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+        <div style="margin-right: 30px; width: 30%">
+            
+            <table class="form">
+                <tr>
+                    <th class="formTitle"></th>
+                    <td class="formValue">
+                        <a id="NF-adds" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_MedicalInsurance_download()"><i class="fa fa-plus"></i>医保下载更新</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">项目类型</th>
+                    <td class="formValue">
+                        <select id="PeopleType" name="PeopleType" class="form-control required">
+                            <option value="0">中药</option>
+                            <option value="1">西药</option>
+                            <option value="2">诊疗</option>
+                            <option value="3">诊疗</option>
+                        </select>
+                    </td>
+                   
+                </tr>
+                <tr>
+                    <th class="formTitle"></th>
+                    <td class="formValue">
+                        <a id="NF-add" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_Base_download()"><i class="fa fa-plus"></i>基层下载更新</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</form>
+
+
