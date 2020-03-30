@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using BenDing.Domain.Models.Enums;
+using BenDing.Domain.Models.Params.Web;
+using BenDing.Service.Interfaces;
 using NFine.Application.SystemManage;
 using NFine.Code;
 
@@ -11,65 +14,79 @@ namespace NFine.Web.Areas.SystemManage.Controllers
     public class DataImportController :  ControllerBase
     {
         private UserApp userApp = new UserApp();
-        // GET: SystemManage/DataImport
-        public ActionResult Index()
+        private readonly IWebServiceBasicService _webServiceBasicService;
+
+        public DataImportController()
         {
-            return View();
+            _webServiceBasicService = Bootstrapper.UnityIOC.Resolve<IWebServiceBasicService>();
         }
+
+        // GET: SystemManage/DataImport
         public ActionResult ImportExcelIcd()
         {
             return View();
         }
-       
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult ImportExcel()
         {
             var loginInfo = OperatorProvider.Provider.GetCurrent();
             var user = userApp.GetForm(loginInfo.UserId);
+            if (user.F_IsHisAccount == false) throw new Exception("非基层认证人员不能下载icd10");
             string name = Request.Form["sheetName"];
-            HttpPostedFileBase File = Request.Files["file"];
+            HttpPostedFileBase file = Request.Files["file"];
             string content = "";
-            if (File.ContentLength > 0)
+            if (string.IsNullOrWhiteSpace(name))
             {
-                var Isxls = System.IO.Path.GetExtension(File.FileName).ToString().ToLower();
-                if (Isxls != ".xls" && Isxls != ".xlsx")
-                {
-                    Content("请上传Excel文件");
-                }
-                var FileName = File.FileName;//获取文件夹名称
-                var path = Server.MapPath("~/FileExcel/" + FileName);
-                File.SaveAs(path);
-
-              var dataExcel= ExcelHelper.ExcelToDataTable(path, name,true);
-
-                if (dataExcel.Columns.Count>0)
-                {
-                    content = "<script>alert('导入的数据不能为空'),window.location.href='/Position/Index'</script>";
-                }
-
-                content = "<script>alert('上传成功!!!')</script>";
-                //将文件保存到服务器
-                //PositionBLL bll = new PositionBLL();
-                //var list = bll.FileUpLoad(path);
-                //if (list.Count > 0)
-                //{
-                //    int num = bll.LoadFile(list);
-                //    if (num > 0)
-                //    {
-                //        content = "<script>alert('数据导入成功'),window.location.href='/Position/Index'</script>";
-                //    }
-                //}
-                //else
-                //{
-                //    content = "<script>alert('导入的数据不能为空'),window.location.href='/Position/Index'</script>";
-                //}
+                content = "<script>alert('表单元名称不能为空!!!')</script>";
             }
-            //else
-            //{
-            //    content = "<script>alert('请选择上传的文件'),window.location.href='/Position/Index'</script>";
-            //}
+            else
+            {
+                if (file.ContentLength > 0)
+                {
+                    var isxls = System.IO.Path.GetExtension(file.FileName)?.ToString().ToLower();
+                    if (isxls != ".xls" && isxls != ".xlsx")
+                    {
+                        Content("请上传Excel文件");
+                    }
+                    var fileName = file.FileName;//获取文件夹名称
+                    var path = Server.MapPath("~/FileExcel/" + fileName);
+                    file.SaveAs(path);
+                    var dataExcel = ExcelHelper.ExcelToDataTable(path, name, true);
+                    if (dataExcel.Columns.Count == 0)
+                    {
+                        content = "<script>alert('导入的数据不能为空')</script>";
+                    }
+                    else
+                    {
+                        var count = _webServiceBasicService.MedicalInsuranceDownloadIcd10(dataExcel, user.F_HisUserId);
+                        content = "<script>alert('+" + count + "数据上传成功!!!')</script>";
+                    }
+
+
+                }
+            }
+
             return Content(content);
+
         }
+
+        [HttpPost]
+       
+        public ActionResult BaseDownload(string keyValue)
+        {
+            var loginInfo = OperatorProvider.Provider.GetCurrent();
+            var user = userApp.GetForm(loginInfo.UserId);
+            if (user.F_IsHisAccount==false) throw new Exception("非基层认证人员不能下载icd10");
+            var userBase = _webServiceBasicService.GetUserBaseInfo(user.F_HisUserId);
+            var data = _webServiceBasicService.GetIcd10(userBase, new CatalogParam()
+            {
+                OrganizationCode = userBase.OrganizationCode,
+                AuthCode = userBase.AuthCode,
+                Nums = 1000,
+                CatalogType = (CatalogTypeEnum)Convert.ToInt16(keyValue)
+            });
+            return Success("下载成功");
+        }
+       
     }
 }

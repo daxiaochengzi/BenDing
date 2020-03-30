@@ -34,5 +34,21 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 主键
         /// </summary>
         public Guid Id { get; set; }
+        /// <summary>
+        /// 医保疾病编码
+        /// </summary>
+        public string ProjectCode { get; set; }
+        /// <summary>
+        /// 医保疾病编码
+        /// </summary>
+        public string ProjectName { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string PairCodeUserName { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string PairCodeTime { get; set; }
     }
 }

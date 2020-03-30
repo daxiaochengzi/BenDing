@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using BenDing.Domain.Models.Dto.Resident;
@@ -9,6 +10,7 @@ using BenDing.Domain.Models.Params;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.OutpatientDepartment;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 
@@ -44,7 +46,12 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         int DeleteCatalog(UserInfoDto user, int param);
-        
+        /// <summary>
+        /// Icd10对码
+        /// </summary>
+        /// <param name="param"></param>
+        void Icd10PairCode(Icd10PairCodeParam param);
+
         /// <summary>
         /// 获取HIS系统中科室、医师、病区、床位的基本信息
         /// </summary>
@@ -130,6 +137,13 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         void AddICD10(List<ICD10InfoDto> param, UserInfoDto user);
+        /// <summary>
+        /// 医保下载Icd10
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Int64 MedicalInsuranceDownloadIcd10(DataTable dt, string userId);
         /// <summary>
         /// ICD10查询
         /// </summary>

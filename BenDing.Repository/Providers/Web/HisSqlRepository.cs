@@ -12,6 +12,7 @@ using BenDing.Domain.Models.Params;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.OutpatientDepartment;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
@@ -213,7 +214,7 @@ namespace BenDing.Repository.Providers.Web
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 sqlConnection.Open();
-                string strSql = $" update [dbo].[HospitalThreeCatalogue] set IsDelete=1 ,DeleteUserId='{user.UserId}',DeleteTime=getDate()  where DirectoryCategoryCode='{param.ToString()}'";
+                string strSql = $" update [dbo].[HospitalThreeCatalogue] set IsDelete=1 ,DeleteUserId='{user.UserId}',DeleteTime=getDate()  where DirectoryCategoryCode='{param.ToString()}' and IsMedicalInsurance=0";
                 var num = sqlConnection.Execute(strSql);
                 sqlConnection.Close();
                 return num;
@@ -230,7 +231,7 @@ namespace BenDing.Repository.Providers.Web
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 sqlConnection.Open();
-                string strSql = $"select MAX(DirectoryCreateTime) from [dbo].[HospitalThreeCatalogue] where IsDelete=0 and DirectoryCategoryCode={num} ";
+                string strSql = $"select MAX(DirectoryCreateTime) from [dbo].[HospitalThreeCatalogue] where IsDelete=0 and DirectoryCategoryCode={num}";
                 var timeMax = sqlConnection.QueryFirst<string>(strSql);
 
                 result = timeMax;
@@ -241,6 +242,90 @@ namespace BenDing.Repository.Providers.Web
 
         }
         /// <summary>
+        /// 下载医保数据
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public Int64 MedicalInsuranceDownloadIcd10(DataTable dt, string userId)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+                string sqlStr = $"update [dbo].[ICD10] set IsDelete=1,UpdateTime=GETDATE(),UpdateUserId='{userId}'  where [IsMedicalInsurance]=1 ";
+                sqlConnection.Execute(sqlStr);
+                sqlConnection.Close();
+            }
+
+            var addIcd10Data = new List<ICD10InfoDto>();
+            int totalNum = 0;
+            foreach (DataRow dr in dt.Rows)
+            {
+                var item = new ICD10InfoDto
+                {
+                    DiseaseCoding = dr["AAZ164"].ToString(),
+                    DiseaseName = dr["AKA121"].ToString(),
+                    MnemonicCode = dr["AKA020"].ToString(),
+                };
+                addIcd10Data.Add(item);
+                if (addIcd10Data.Count() >= 300)
+                {
+                    SaveMedicalInsuranceICD10(addIcd10Data, userId);
+                    totalNum += addIcd10Data.Count();
+                    addIcd10Data.Clear();
+                }
+            }
+            //执行剩余的数据
+            if (addIcd10Data.Any())
+            {
+                SaveMedicalInsuranceICD10(addIcd10Data, userId);
+                totalNum += addIcd10Data.Count();
+            }
+
+            return totalNum;
+        }
+
+        //300行一次保存医保ICD10
+        private void SaveMedicalInsuranceICD10(List<ICD10InfoDto> param, string userId)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string insterCount = null;
+                try
+                {
+                    sqlConnection.Open();
+                    if (param.Any())
+                    {
+
+                        if (param.Any())
+                        {
+                            foreach (var itmes in param)
+                            {
+                                string insterSql = $@"
+                                        insert into [dbo].[ICD10]([id],[DiseaseCoding],[DiseaseName],[MnemonicCode],[Remark],[DiseaseId],
+                                          Icd10CreateTime, CreateTime,CreateUserId,IsDelete,IsMedicalInsurance)
+                                        values('{Guid.NewGuid()}','{itmes.DiseaseCoding}','{itmes.DiseaseName}','{itmes.MnemonicCode}','{itmes.Remark}','{itmes.DiseaseId}','{itmes.Icd10CreateTime}',
+                                        getDate(),'{userId}',0,1);";
+
+                                insterCount += insterSql;
+                            }
+                            sqlConnection.Execute(insterCount);
+                            sqlConnection.Close();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(insterCount);
+                    throw new Exception(e.Message);
+                }
+
+
+
+            }
+        }
+
+        /// <summary>
         /// ICD10获取最新时间
         /// </summary>
         /// <returns></returns>
@@ -250,7 +335,7 @@ namespace BenDing.Repository.Providers.Web
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 sqlConnection.Open();
-                string strSql = $"select MAX(CreateTime) from [dbo].[ICD10] where IsDelete=0 ";
+                string strSql = $"select MAX(CreateTime) from [dbo].[ICD10] where IsDelete=0  and IsMedicalInsurance=0  ";
                 var timeMax = sqlConnection.QueryFirst<string>(strSql);
 
                 result = timeMax;
@@ -288,12 +373,11 @@ namespace BenDing.Repository.Providers.Web
                         {
                             foreach (var itmes in paramNew)
                             {
-
                                 string insterSql = $@"
                                         insert into [dbo].[ICD10]([id],[DiseaseCoding],[DiseaseName],[MnemonicCode],[Remark],[DiseaseId],
-                                          Icd10CreateTime, CreateTime,CreateUserId,IsDelete)
+                                          Icd10CreateTime, CreateTime,CreateUserId,IsDelete,IsMedicalInsurance)
                                         values('{Guid.NewGuid()}','{itmes.DiseaseCoding}','{itmes.DiseaseName}','{itmes.MnemonicCode}','{itmes.Remark}','{itmes.DiseaseId}','{itmes.Icd10CreateTime}',
-                                        getDate(),'{user.UserId}',0);";
+                                        getDate(),'{user.UserId}',0,0);";
 
                                 insterCount += insterSql;
                             }
@@ -329,7 +413,7 @@ namespace BenDing.Repository.Providers.Web
                 {
                     sqlConnection.Open();
                     string querySql = $@"
-                             select  [id],[DiseaseCoding],[DiseaseName] ,[MnemonicCode],[Remark] ,DiseaseId from [dbo].[ICD10]  where IsDelete=0";
+                             select  [id],[DiseaseCoding],[DiseaseName] ,[MnemonicCode],[Remark] ,DiseaseId from [dbo].[ICD10]  where IsDelete=0 and IsMedicalInsurance={param.IsMedicalInsurance}";
                     string countSql = $@"select  count(*) from [dbo].[ICD10]  where IsDelete=0";
 
                     string regexstr = @"[\u4e00-\u9fa5]";
@@ -344,11 +428,11 @@ namespace BenDing.Repository.Providers.Web
                         {
                             if (Regex.IsMatch(param.Search, regexstr))
                             {
-                                whereSql += " and DiseaseName like '" + param.Search + "%'";
+                                whereSql += " and DiseaseName like '%" + param.Search + "%'";
                             }
                             else
                             {
-                                whereSql += " and MnemonicCode like '" + param.Search + "%'";
+                                whereSql += " and MnemonicCode like '%" + param.Search + "%'";
                             }
                         }
 
@@ -366,6 +450,39 @@ namespace BenDing.Repository.Providers.Web
                     int totalPageCount = result.Read<int>().FirstOrDefault();
                     dataList = (from t in result.Read<QueryICD10InfoDto>()
                                 select t).ToList();
+                    if (param.IsMedicalInsurance == 0)
+                    {
+                        string sqlPairCode = $@"select [DirectoryCode],[DirectoryCode] from [dbo].[ICD10PairCode] 
+                         where [State] = 1 and [IsDelete] = 0 and [DirectoryCode] in()";
+                        var data = sqlConnection.Query<ICD10PairCodeDto>(sqlPairCode).ToList();
+                        if (data.Any())
+                        {
+                            foreach (var item in dataList)
+                            {
+                                var queryPairCode = data.FirstOrDefault(c => c.DiseaseId == item.DiseaseId);
+                                var pairCode = new QueryICD10InfoDto()
+                                {
+                                    Id = item.Id,
+                                    DiseaseCoding = item.DiseaseCoding,
+                                    DiseaseName = item.DiseaseName,
+                                    MnemonicCode = item.MnemonicCode,
+                                    ProjectCode = queryPairCode != null ? queryPairCode.ProjectCode : item.ProjectCode,
+                                    ProjectName = queryPairCode != null ? queryPairCode.ProjectName : item.ProjectName,
+                                    DiseaseId = item.DiseaseId,
+                                    PairCodeTime = queryPairCode?.CreateTime,
+                                    PairCodeUserName = queryPairCode?.PairCodeUserName
+
+                                };
+
+                                dataListNew.Add(pairCode);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        dataListNew = dataList;
+                    }
+
                     resultData.Add(totalPageCount, dataList);
                     sqlConnection.Close();
                     return resultData;
@@ -378,6 +495,43 @@ namespace BenDing.Repository.Providers.Web
                 }
             }
         }
+        /// <summary>
+        /// ICD10 对码
+        /// </summary>
+        /// <param name="param"></param>
+        public void Icd10PairCode(Icd10PairCodeParam param)
+        {
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string sqlStr = null;
+                try
+                {
+                    sqlConnection.Open();
+                    sqlStr = $@"update [dbo].[ICD10PairCode] set [IsDelete]=1,[DeleteTime]=GETDATE(),[DeleteUserId]='{param.User.UserId}'
+                              where [DiseaseId]='{param.DiseaseId}' 
+                             insert into  [dbo].[ICD10PairCode] 
+                            ([Id],[DiseaseId],[ProjectName],[ProjectCode],
+                             [State],[CreateTime],[CreateUserId],[IsDelete])
+                            values
+                            ('{Guid.NewGuid()}','{param.DiseaseId}','{param.ProjectName}','{param.ProjectCode}',
+                             1,GETDATE(),'{param.User.UserId}',0)";
+                    sqlConnection.Execute(sqlStr);
+                    sqlConnection.Close();
+
+
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(sqlStr);
+                    throw new Exception(e.Message);
+                }
+
+
+
+            }
+        }
+
         /// <summary>
         /// 保存门诊病人信息
         /// </summary>
@@ -597,7 +751,7 @@ namespace BenDing.Repository.Providers.Web
         /// </summary>
         /// <param name="user"></param>
         /// <param name="outpatientNo"></param>
-        public void UpdateOutpatientDetail(UserInfoDto user,string outpatientNo )
+        public void UpdateOutpatientDetail(UserInfoDto user, string outpatientNo)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
@@ -606,7 +760,7 @@ namespace BenDing.Repository.Providers.Web
                 {
                     sqlConnection.Open();
 
-                    insertSql =$@"update [dbo].[OutpatientFee] set [UploadMark]=1 ,[UploadTime]=getdate(),
+                    insertSql = $@"update [dbo].[OutpatientFee] set [UploadMark]=1 ,[UploadTime]=getdate(),
                         [UploadUserId] = '{user.UserId}',[UploadUserName]='{user.UserName}' where [Isdelete] = 0 and [OutpatientNo]='{outpatientNo}'";
                     sqlConnection.Close();
                 }

@@ -2,12 +2,36 @@
     ViewBag.Title = "医保ICD10导入";
     Layout = "~/Views/Shared/_Form.cshtml";
 }
-<form id="form1" method="post" enctype="multipart/form-data" action="/DataImport/ImportExcel" class="form-group">
-    <input name="file" type="file" id="file"/>
-    <input name="sheetName" type="text" id="sheetName" value="SQL Results" />
-    <button id="btn_import" type="submit" class="btn btn-info">
-        <span class="glyphicon glyphicon-pencil"></span>导入
-    </button>
+<form id="formImport" method="post" enctype="multipart/form-data" action="/DataImport/ImportExcel" class="form-group">
+    <div style="padding-top: 20px; margin-right: 20px;">
+        <table class="form">
+            <tr>
+                <th class="formTitle">
+                    工作表单元名称
+                </th>
+                <td class="formValue" colspan="3">
+                    <input name="sheetName" type="text" id="sheetName" class="form-control" value="SQL Results" />
+                </td>
+            </tr>
+
+            <tr>
+                <th class="formTitle">
+                </th>
+                <td class="formValue">
+                    <input name="file" type="file" id="file" />
+                </td>
+            </tr>
+
+            <tr>
+                <th class="formTitle">
+                </th>
+                <td class="formValue">
+                    <input type="submit" value="导入" />
+                </td>
+            </tr>
+        </table>
+    </div>
+
 </form>
 
 

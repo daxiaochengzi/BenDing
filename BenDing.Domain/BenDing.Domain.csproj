@@ -108,6 +108,7 @@
     <Compile Include="Models\Dto\Web\GetLeaveHospitalSettlementInfoDto.cs" />
     <Compile Include="Models\Dto\Web\HisHospitalizationPreSettlementDto.cs" />
     <Compile Include="Models\Dto\Web\HospitalThreeCatalogueCodeDto.cs" />
+    <Compile Include="Models\Dto\Web\ICD10PairCodeDto.cs" />
     <Compile Include="Models\Dto\Web\InpatientDiagnosisDto.cs" />
     <Compile Include="Models\Dto\Web\MedicalInsuranceXmlDto.cs" />
     <Compile Include="Models\Dto\Web\QueryOutpatientDepartmentCostDataDto.cs" />
@@ -191,6 +192,8 @@
     <Compile Include="Models\Params\Resident\QueryPrescriptionDetailDto.cs" />
     <Compile Include="Models\Params\Resident\QueryPrescriptionDetailParam.cs" />
     <Compile Include="Models\Params\SystemManage\AddHospitalLogParam.cs" />
+    <Compile Include="Models\Params\SystemManage\Icd10PairCodeParam.cs" />
+    <Compile Include="Models\Params\SystemManage\PairCodeIcd10UiParam.cs" />
     <Compile Include="Models\Params\UI\AddHospitalOrganizationGradeUiParam.cs" />
     <Compile Include="Models\Params\UI\CancelMonthlyHospitalizationUiParam.cs" />
     <Compile Include="Models\Params\UI\DirectoryComparisonManagementUiParam.cs" />
@@ -199,6 +202,7 @@
     <Compile Include="Models\Params\UI\HospitalizationModifyUiParam.cs" />
     <Compile Include="Models\Params\UI\HospitalizationPresettlementUiParam.cs" />
     <Compile Include="Models\Params\UI\HospitalizationRegisterCancelUi.cs" />
+    <Compile Include="Models\Params\UI\Icd10PairCodeUiParam.cs" />
     <Compile Include="Models\Params\UI\InpatientInfosUiParam.cs" />
     <Compile Include="Models\Params\UI\LeaveHospitalSettlementCancelUiParam.cs" />
     <Compile Include="Models\Params\UI\MedicalDirectoryCodePairUiParam.cs" />

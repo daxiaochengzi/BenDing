@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using BenDing.Domain.Models.Params;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.OutpatientDepartment;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Models.Params.Workers;
@@ -99,6 +101,24 @@ namespace BenDing.Service.Providers
             }
 
             return resultData;
+        }
+        /// <summary>
+        /// 下载
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public Int64 MedicalInsuranceDownloadIcd10(DataTable dt, string userId)
+        {
+            var data = _hisSqlRepository.MedicalInsuranceDownloadIcd10(dt, userId);
+            return  data;
+        }
+        /// <summary>
+        /// icd10对码
+        /// </summary>
+        /// <param name="param"></param>
+        public void Icd10PairCode(Icd10PairCodeParam param)
+        {
         }
 
         /// <summary>

@@ -1,0 +1,180 @@
+﻿@{
+    ViewBag.Title = "医保目录对码";
+    Layout = "~/Views/Shared/_Base.cshtml";
+}
+<style>
+    .layui-card-header.layui-card-header-auto {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        height: auto;
+    }
+
+    .layui-table-body {
+        overflow-y: scroll;
+    }
+</style>
+<div class="demoTable" id="PairCodeTable">
+    <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="data-form">
+        <div class="layui-form-item">
+
+            <div class="layui-inline">
+                <label class="layui-form-label">目录编码</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="ProjectCode" name="ProjectCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">目录名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="ProjectName" name="ProjectName" value="@ViewBag.DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">助记码 </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="MnemonicCode" name="MnemonicCode" placeholder="请输入助记码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn" lay-submit lay-filter="dataSearch" data-type="dataSearch">查询</button>
+                <button class="layui-btn" data-type="cleanSearch">清除</button>
+            </div>
+            <input type="hidden" id="empid" value="@ViewBag.empid" />
+            <input type="hidden" id="DiseaseId" value="@ViewBag.DiseaseId" />
+        </div>
+    </div>
+    <table class="layui-hide" id="dataTable" lay-filter="dataTable"></table>
+</div>
+
+
+<script>
+    layui.use(['table','form'], function () {
+        var $ = layui.$
+            , table = layui.table
+            , form = layui.form;
+        form.render(null, 'data-form');
+
+        //方法级渲染
+        table.render({
+            elem: '#dataTable'
+            , url: host +'/QueryMedicalInsuranceIcd10' //数据接口
+            , where: {
+                  UserId: $("#empid").val() //必传参数
+                , ProjectName: $("#ProjectName").val()
+                , ProjectCode: $("#ProjectCode").val()
+                , MnemonicCode: $("#MnemonicCode").val(),
+                  DiseaseId: $("#DiseaseId").val()
+
+            }
+            , parseData: function (res) { //res 即为原始返回的数据
+                return {
+                    "code": res.Code, //解析接口状态
+                    "msg": res.Message, //解析提示文本
+                    "count": res.Data.count, //解析数据长度
+                    "data": res.Data.data //解析数据列表
+                };
+            }
+            , cols: [[
+                { type: 'numbers', fixed: 'left' }
+                , { title: '对码', toolbar: '#tableCodeBtn', width: 100 ,align: 'center', fixed: true }
+                , { field: 'ProjectCode', title: '医保项目编码', width: 160, sort: true }
+                , { field: 'ProjectName', title: '医保项目名称', width: 160}
+                , { field: 'MnemonicCode', title: '助记码', width: 300 }
+            ]]
+            , height: $(window).height() - 128
+            , page: true
+            , id: 'dataTable'
+        });
+
+        //监听搜索
+        form.on('submit(dataSearch)', function (data) {
+            var field = data.field;
+            //执行重载
+            table.reload('dataTable', {
+                where: field
+            });
+        });
+
+        //监听工具条
+        table.on('tool(dataTable)', function (obj) {
+            var data = obj.data;
+            var userId = $("#empid").val();
+            //获取HIS编码DirectoryCode
+            var diseaseId = $("#DiseaseId").val();
+            //医保编码
+            var projectCode = data.ProjectCode;
+            //已对码ID
+            var pairCodeIcd10UiParam = {
+                DiseaseId: diseaseId,
+                ProjectCode: data.ProjectCode,
+                ProjectName: data.ProjectName
+            };
+            var pairCodeList = []; //对码数据
+            pairCodeList.push(pairCodeIcd10UiParam);
+            var sendData = { PairCodeList: pairCodeList, UserId:userId };
+            if (obj.event === 'pairCodeTo') {
+                $.ajax({
+                    url: host +'/Icd10PairCode',
+                    type: 'POST',
+                    data: JSON.stringify(sendData),
+                    dataType: "json",
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            layer.msg('对码失败\n' + errData, { time: 2000, icon: 5 })
+                        } else {
+                            layer.alert('对码成功',
+                                {
+                                    time: 2000,
+                                    icon: 6,
+                                    end: function() {
+                                        location.reload();
+                                    }
+                                });
+                        }
+                    },
+                    complete: function () {
+                        layer.close(this.layerIndex);
+                    },
+                });
+            } else {
+                layer.msg('数据不一致，请查证！', {
+                    time: 2000, icon: 6, end: function () {
+                        location.reload();
+                    }
+                });
+            }
+            return false;
+        });
+
+
+        var $ = layui.$, active = {
+            dataSearch: function () {
+                //执行重载
+                table.reload('dataTable', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    , where: {
+                        UserId: $("#empid").val() //必传参数
+                        , ProjectName: $("#ProjectName").val()
+                        , ProjectCodeType: $("#ProjectCodeType").val()
+                        , ProjectCode: $("#ProjectCode").val()
+                        , MnemonicCode: $("#MnemonicCode").val()
+                    }
+                }, 'data');
+            }
+        };
+
+        $('.demoTable .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+</script>
+
+
+<script type="text/html" id="tableCodeBtn">
+    <a class="layui-btn layui-btn-xs" lay-event="pairCodeTo"><i class="layui-icon layui-icon-add-1"></i></a>
+</script>

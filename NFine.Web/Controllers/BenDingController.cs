@@ -181,7 +181,7 @@ namespace NFine.Web.Controllers
             });
         }
         /// <summary>
-        /// 查询ICD10
+        /// 查询基层ICD10
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -190,6 +190,49 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new QueryICD10InfoDto()).RunWithTry(y =>
             {
 
+                var queryData = _hisSqlRepository.QueryICD10(param);
+
+                var data = new
+                {
+                    data = queryData.Values.FirstOrDefault(),
+                    count = queryData.Keys.FirstOrDefault()
+                };
+                y.Data = data;
+            });
+        }
+        /// <summary>
+        /// icd10对码
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData Icd10PairCode([FromBody]Icd10PairCodeUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                _webServiceBasicService.Icd10PairCode(new Icd10PairCodeParam()
+                {
+                    DiseaseId = param.DiseaseId,
+                    ProjectCode = param.ProjectCode,
+                    ProjectName = param.ProjectName,
+                    User = userBase
+                });
+
+
+            });
+        }
+        
+        /// <summary>
+        /// 查询医保ICD10
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData QueryMedicalInsuranceIcd10([FromUri]QueryICD10UiParam param)
+        {
+            return new ApiJsonResultData(ModelState, new QueryICD10InfoDto()).RunWithTry(y =>
+            {  //医保标志
+                param.IsMedicalInsurance = 1;
                 var queryData = _hisSqlRepository.QueryICD10(param);
 
                 var data = new

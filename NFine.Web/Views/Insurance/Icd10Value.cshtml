@@ -1,0 +1,226 @@
+﻿@{
+ Layout = "~/Views/Shared/_Base.cshtml";
+}
+<style>
+    .layui-card-header.layui-card-header-auto {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        height: auto;
+    }
+    .layui-form-label-nw {
+        float: left;
+        display: block;
+        padding: 9px 15px;
+        /* width: 80px; */
+        font-weight: 400;
+        line-height: 20px;
+        text-align: right;
+    }
+</style>
+
+
+
+<div class="layui-tab layui-tab-card layui-tab-brief" lay-filter="demo">
+    <ul class="layui-tab-title">
+        <li  class="layui-this">医保Icd10</li>
+        <li>基层Icd10对码管理</li>
+    </ul>
+    <input type="hidden" id="empid" value="@ViewBag.empid" />
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="app-content-list">
+                <div class="layui-form-item">
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">目录编码</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="DirectoryCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">目录名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn" lay-submit="" lay-filter="LAY-app-contlist-search">查询</button>
+                        <button class="layui-btn" data-type="cleanSearch">清除</button>
+                    </div>
+                </div>
+            </div>
+            <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
+        </div>
+        <div class="layui-tab-item">
+            <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="LAY-pair-content-list">
+                <div class="layui-form-item">
+                  
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">目录编码</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="DirectoryCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label-nw">目录名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                 
+                </div>
+            </div>
+            <table class="layui-hide" id="LAY-pair-content-list" lay-filter="LAY-pair-content-list"></table>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate'],
+            function() {
+                var $ = layui.$
+                    //Tab的切换功能，切换事件监听等，需要依赖element模块
+                    ,
+                    element = layui.element,
+                    form = layui.form,
+                    layer = layui.layer,
+                    table = layui.table;
+                form.render(null, 'yibao-content-list');
+                form.render(null, 'LAY-pair-content-list');
+
+                //监听搜索
+                form.on('submit(LAY-yibao-content-list)',
+                    function(data) {
+                        var field = data.field;
+                        //执行重载
+                        table.reload('LAY-yibao-content-list',
+                            {
+                                where: field
+                            });
+                    });
+                //监听搜索
+                form.on('submit(LAY-pair-content-list)',
+                    function(data) {
+                        var field = data.field;
+                        //执行重载
+                        table.reload('LAY-pair-content-list',
+                            {
+                                where: field
+                            });
+                    });
+                //医保目录
+                table.render({
+                    elem: '#LAY-yibao-content-list',
+                    height: $(window).height() - 128,
+                    url: host + '/QueryMedicalInsuranceIcd10' //数据接口
+                    ,
+                    parseData: function(res) { //res 即为原始返回的数据
+                        return {
+                            "code": res.Code, //解析接口状态
+                            "msg": res.Message, //解析提示文本
+                            "count": res.Data.count, //解析数据长度
+                            "data": res.Data.data //解析数据列表
+                        };
+                    },
+                    page: true,
+                    cols: [
+                        [
+                            { type: 'numbers', fixed: 'left' },
+                            { field: 'ProjectCode', title: '医保项目编码', width: 160, sort: true },
+                            { field: 'ProjectName', title: '医保项目名称', width: 160, sort: true },
+                            { field: 'MnemonicCode', title: '助记码', width: 300, sort: true }
+                           
+                        ]
+                    ]
+                    //,skin: 'line'
+                });
+                //对码管理
+                table.render({
+                    elem: '#LAY-pair-content-list',
+                    height: $(window).height() - 128,
+                    url: host + '/QueryIcd10' //数据接口
+                    ,
+                    where: { UserId: $("#empid").val() },
+                    parseData: function(res) { //res 即为原始返回的数据
+                        return {
+                            "code": res.Code, //解析接口状态
+                            "msg": res.Message, //解析提示文本
+                            "count": res.Data.count, //解析数据长度
+                            "data": res.Data.data //解析数据列表
+                        };
+                    },
+                    page: true,
+                    cols: [
+                        [
+                            { type: 'numbers', fixed: 'left' },
+                            { field: 'ID', title: '对码', toolbar: '#tableBtn', width: 100, align: 'center' },
+                            { field: 'DiseaseCoding', title: '医院目录编码', width: 310, sort: true },
+                            { field: 'DiseaseName', title: '医院目录名称', width: 300},
+                            { field: 'DiseaseId', title: '医院目录Id', width: 300,hide:true},
+                            { field: 'MnemonicCode', title: '助记码', width: 300 },
+                            { field: 'ProjectCode', title: '医保项目编码', width: 160 },
+                            { field: 'ProjectName', title: '医保项目名称', width: 160},
+                            { field: 'PairCodeUser', title: '对码操作人员', width: 100 },
+                            { field: 'PairCodeTime', title: '对码时间', width: 160 }
+                        ]
+                    ]
+                    //,skin: 'line'
+                });
+                //监听工具条
+                table.on('tool(LAY-pair-content-list)',
+                    function(obj) {
+                        var data = obj.data;
+                        if (obj.event === 'pairCode') {
+                            var directoryName = data.DirectoryName;
+                            var directoryCode = data.DirectoryCode;
+                            var params = "?UserId=" +
+                                $("#empid").val() +
+                                "&ProjectName=" +
+                                directoryCode +
+                                "&DiseaseId=" +
+                                data.DiseaseId;
+                            //iframe层-父子操作
+                            layer.open({
+                                id: 'PairCodeIcd10',
+                                type: 2,
+                                title: '对码信息',
+                                shadeClose: true, //点击遮罩关闭层
+                                area: ['1080px', '540px'],
+                                fixed: false, //不固定
+                                maxmin: true,
+                                content: hostPage + '/PairCodeIcd10' + params
+                            });
+                        } else if (obj.event === 'updatePairCode') {
+                            //layer.msg('ID：' + data.id + ' 的查看操作');
+                            layer.confirm('真的要重新对码吗?',
+                                function(index) {
+                                    obj.del();
+                                    layer.close(index);
+                                });
+                        }
+                    });
+
+                table.on('row(LAY-pair-content-list)',
+                    function(obj) {
+                        //获取当前行的所有兄弟姐妹元素，把他们的background-color样式清除，然后再给当前行设置颜色。
+                        $(obj.tr).siblings().css("background-color", "");
+                        obj.tr.css("background-color", "#FFFFCC");
+                    });
+
+                $('.layui-btn.layui-btn-list').on('click',
+                    function() {
+                        var type = $(this).data('type');
+                        active[type] ? active[type].call(this) : '';
+                    });
+                var active = {
+                    cleanSearch: function() {
+                        layer.msg('已删除');
+                    }
+                };
+
+            });
+    })();
+</script>
+
+

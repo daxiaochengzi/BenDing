@@ -7,16 +7,24 @@
 <script>
     
     function btn_Base_download() {
-        //$.modalOpen({
-        //    id: "Form",
-        //    title: "门诊月结结算",
-        //    url: "/SystemManage/DoorDiagnosisMonthlySettlement/Form",
-        //    width: "450px",
-        //    height: "340px",
-        //    callBack: function (iframeId) {
-        //        top.frames[iframeId].submitForm();
-        //    }
-        //});
+        $.submitForm({
+            url: "/SystemManage/DataImport/BaseDownload?keyValue=" + $("#ProjectType").val(),
+            success: function() {
+               
+            }
+        });
+    }
+    function btn_MedicalInsurance_download() {
+        $.modalOpen({
+            id: "Form",
+            title: "医保ICD10导入",
+            url: "/SystemManage/DataImport/ImportExcelIcd",
+            width: "450px",
+            height: "340px",
+            callBack: function (iframeId) {
+                top.frames[iframeId].submitForm();
+            }
+        });
     }
 </script>
 
@@ -35,11 +43,11 @@
                 <tr>
                     <th class="formTitle">项目类型</th>
                     <td class="formValue">
-                        <select id="PeopleType" name="PeopleType" class="form-control required">
-                            <option value="0">中药</option>
-                            <option value="1">西药</option>
-                            <option value="2">诊疗</option>
-                            <option value="3">诊疗</option>
+                        <select id="ProjectType" name="ProjectType" class="form-control required">
+                            <option value=0>中药</option>
+                            <option value=1>西药</option>
+                            <option value=2>诊疗</option>
+                            <option value=3>诊疗</option>
                         </select>
                     </td>
                    

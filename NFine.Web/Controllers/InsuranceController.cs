@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using BenDing.Domain.Models.Params.Base;
+using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
 
 namespace NFine.Web.Controllers
@@ -47,7 +48,30 @@ namespace NFine.Web.Controllers
             ViewBag.title = "医保入院登记";
             return View();
         }
-
+        /// <summary>
+        /// 诊断对码
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public ActionResult Icd10Value(GetHisBaseParam param)
+        {
+            ViewBag.empid = param.EmpId;
+            ViewBag.bid = param.BId;
+            ViewBag.transkey = param.TransKey;
+            ViewBag.title = "诊断对码";
+            return View();
+        }
+        public ActionResult PairCodeIcd10(PairCodeIcd10UiParam param)
+        {
+            ViewBag.empid = param.EmpId;
+            //参数可查询医保中心目录
+            ViewBag.DirectoryName = param.ProjectName;
+            ViewBag.title = "ICD10诊断对码";
+            ViewBag.DiseaseId = param.DiseaseId;
+            return View();
+        }
+     
+        
         /// <summary>
         /// 修改医保登记
         /// </summary>

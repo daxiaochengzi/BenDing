@@ -813,6 +813,8 @@
     <Content Include="Views\Insurance\DoorDiagnosisPatientSettlement.cshtml" />
     <Content Include="Views\Insurance\DoorDiagnosisPatientSettlementCancel.cshtml" />
     <Content Include="Views\Insurance\DoorDiagnosisPatientSettlePrint.cshtml" />
+    <Content Include="Views\Insurance\Icd10Value.cshtml" />
+    <Content Include="Views\Insurance\PairCodeIcd10.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

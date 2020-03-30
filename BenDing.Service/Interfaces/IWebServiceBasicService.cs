@@ -2,9 +2,11 @@
 using BenDing.Domain.Models.Params.Web;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
 
 namespace BenDing.Service.Interfaces
@@ -39,6 +41,18 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
         string GetCatalog(UserInfoDto user, CatalogParam param);
+        /// <summary>
+        /// 下载医保icd10
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Int64 MedicalInsuranceDownloadIcd10(DataTable dt, string userId);
+        /// <summary>
+        /// Icd10对码
+        /// </summary>
+        /// <param name="param"></param>
+        void Icd10PairCode(Icd10PairCodeParam param);
         /// <summary>
         /// 删除三大目录
         /// </summary>

@@ -18,6 +18,10 @@ namespace BenDing.Domain.Models.Params.Web
         /// 疾病编码
         /// </summary>
         public string DiseaseCoding { get; set; }
+        /// <summary>
+        /// 是否医保对码
+        /// </summary>
+        public int IsMedicalInsurance { get; set; }
 
 
     }
