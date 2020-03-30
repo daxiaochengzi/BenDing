@@ -28,7 +28,7 @@
     <input type="hidden" id="empid" value="@ViewBag.empid" />
     <div class="layui-tab-content">
         <div class="layui-tab-item layui-show">
-            <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="app-content-list">
+            <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="LAY-yibao-content-list">
                 <div class="layui-form-item">
 
                     <div class="layui-inline">
@@ -49,12 +49,12 @@
                     </div>
                 </div>
             </div>
-            <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
+            <table id="LAY-yibao-content-list" lay-filter="LAY-yibao-content-list"></table>
         </div>
         <div class="layui-tab-item">
             <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="LAY-pair-content-list">
                 <div class="layui-form-item">
-                  
+
                     <div class="layui-inline">
                         <label class="layui-form-label-nw">目录编码</label>
                         <div class="layui-input-inline">
@@ -67,7 +67,11 @@
                             <input type="text" name="DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
                         </div>
                     </div>
-                 
+                    <div class="layui-inline">
+                        <button class="layui-btn" lay-submit="" lay-filter="LAY-pair-content-list">查询</button>
+                        <button class="layui-btn" data-type="cleanSearch">清除</button>
+                    </div>
+
                 </div>
             </div>
             <table class="layui-hide" id="LAY-pair-content-list" lay-filter="LAY-pair-content-list"></table>
@@ -86,7 +90,7 @@
                     form = layui.form,
                     layer = layui.layer,
                     table = layui.table;
-                form.render(null, 'yibao-content-list');
+                form.render(null, 'LAY-yibao-content-list');
                 form.render(null, 'LAY-pair-content-list');
 
                 //监听搜索
@@ -127,8 +131,8 @@
                     cols: [
                         [
                             { type: 'numbers', fixed: 'left' },
-                            { field: 'ProjectCode', title: '医保项目编码', width: 160, sort: true },
-                            { field: 'ProjectName', title: '医保项目名称', width: 160, sort: true },
+                            { field: 'DiseaseCoding', title: '医保项目编码', width: 160, sort: true },
+                            { field: 'DiseaseName', title: '医保项目名称', width: 160, sort: true },
                             { field: 'MnemonicCode', title: '助记码', width: 300, sort: true }
                            
                         ]
@@ -155,13 +159,13 @@
                         [
                             { type: 'numbers', fixed: 'left' },
                             { field: 'ID', title: '对码', toolbar: '#tableBtn', width: 100, align: 'center' },
-                            { field: 'DiseaseCoding', title: '医院目录编码', width: 310, sort: true },
-                            { field: 'DiseaseName', title: '医院目录名称', width: 300},
-                            { field: 'DiseaseId', title: '医院目录Id', width: 300,hide:true},
-                            { field: 'MnemonicCode', title: '助记码', width: 300 },
+                            { field: 'DiseaseCoding', title: '医院目录编码', width: 160, sort: true },
+                            { field: 'DiseaseName', title: '医院目录名称', width: 200},
+                            { field: 'DiseaseId', title: '医院目录Id', width: 160,hide:true},
+                            { field: 'MnemonicCode', title: '助记码', width: 160 },
                             { field: 'ProjectCode', title: '医保项目编码', width: 160 },
                             { field: 'ProjectName', title: '医保项目名称', width: 160},
-                            { field: 'PairCodeUser', title: '对码操作人员', width: 100 },
+                            { field: 'PairCodeUser', title: '对码操作人员', width: 160 },
                             { field: 'PairCodeTime', title: '对码时间', width: 160 }
                         ]
                     ]

@@ -414,7 +414,7 @@ namespace BenDing.Repository.Providers.Web
                     sqlConnection.Open();
                     string querySql = $@"
                              select  [id],[DiseaseCoding],[DiseaseName] ,[MnemonicCode],[Remark] ,DiseaseId from [dbo].[ICD10]  where IsDelete=0 and IsMedicalInsurance={param.IsMedicalInsurance}";
-                    string countSql = $@"select  count(*) from [dbo].[ICD10]  where IsDelete=0";
+                    string countSql = $@"select  count(*) from [dbo].[ICD10]  where IsDelete=0  and IsMedicalInsurance={param.IsMedicalInsurance}";
 
                     string regexstr = @"[\u4e00-\u9fa5]";
                     string whereSql = "";
@@ -452,8 +452,10 @@ namespace BenDing.Repository.Providers.Web
                                 select t).ToList();
                     if (param.IsMedicalInsurance == 0)
                     {
-                        string sqlPairCode = $@"select [DirectoryCode],[DirectoryCode] from [dbo].[ICD10PairCode] 
-                         where [State] = 1 and [IsDelete] = 0 and [DirectoryCode] in()";
+                        var diseaseIdList = dataList.Select(c => c.DiseaseId).ToList();
+                        string strlist = CommonHelp.ListToStr(diseaseIdList);
+                        string sqlPairCode = $@"select [DiseaseId],[ProjectName],[ProjectCode] from [dbo].[ICD10PairCode] 
+                         where [State] = 1 and [IsDelete] = 0 and [DiseaseId] in({strlist})";
                         var data = sqlConnection.Query<ICD10PairCodeDto>(sqlPairCode).ToList();
                         if (data.Any())
                         {
@@ -477,13 +479,17 @@ namespace BenDing.Repository.Providers.Web
                                 dataListNew.Add(pairCode);
                             }
                         }
+                        else
+                        {
+                            dataListNew = dataList;
+                        }
                     }
                     else
                     {
                         dataListNew = dataList;
                     }
 
-                    resultData.Add(totalPageCount, dataList);
+                    resultData.Add(totalPageCount, dataListNew);
                     sqlConnection.Close();
                     return resultData;
 
