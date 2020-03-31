@@ -119,6 +119,9 @@ namespace BenDing.Service.Providers
         /// <param name="param"></param>
         public void Icd10PairCode(Icd10PairCodeParam param)
         {
+            _hisSqlRepository.Icd10PairCode(param);
+
+
         }
 
         /// <summary>

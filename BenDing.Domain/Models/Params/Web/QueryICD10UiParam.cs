@@ -19,9 +19,21 @@ namespace BenDing.Domain.Models.Params.Web
         /// </summary>
         public string DiseaseCoding { get; set; }
         /// <summary>
+        /// 医保编码
+        /// </summary>
+
+        public string ProjectCode { get; set; }
+        /// <summary>
+        /// 医保编码
+        /// </summary>
+
+        public string ProjectName { get; set; }
+        /// <summary>
         /// 是否医保对码
         /// </summary>
         public int IsMedicalInsurance { get; set; }
+
+      
 
 
     }

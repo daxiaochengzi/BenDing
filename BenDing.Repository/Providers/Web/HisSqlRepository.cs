@@ -454,7 +454,7 @@ namespace BenDing.Repository.Providers.Web
                     {
                         var diseaseIdList = dataList.Select(c => c.DiseaseId).ToList();
                         string strlist = CommonHelp.ListToStr(diseaseIdList);
-                        string sqlPairCode = $@"select [DiseaseId],[ProjectName],[ProjectCode] from [dbo].[ICD10PairCode] 
+                        string sqlPairCode = $@"select [DiseaseId],[ProjectName],[ProjectCode],[PairCodeUserName],[CreateTime] from [dbo].[ICD10PairCode] 
                          where [State] = 1 and [IsDelete] = 0 and [DiseaseId] in({strlist})";
                         var data = sqlConnection.Query<ICD10PairCodeDto>(sqlPairCode).ToList();
                         if (data.Any())
@@ -518,10 +518,10 @@ namespace BenDing.Repository.Providers.Web
                               where [DiseaseId]='{param.DiseaseId}' 
                              insert into  [dbo].[ICD10PairCode] 
                             ([Id],[DiseaseId],[ProjectName],[ProjectCode],
-                             [State],[CreateTime],[CreateUserId],[IsDelete])
+                             [State],[CreateTime],[CreateUserId],[IsDelete],[PairCodeUserName])
                             values
                             ('{Guid.NewGuid()}','{param.DiseaseId}','{param.ProjectName}','{param.ProjectCode}',
-                             1,GETDATE(),'{param.User.UserId}',0)";
+                             1,GETDATE(),'{param.User.UserId}',0,'{param.User.UserName}')";
                     sqlConnection.Execute(sqlStr);
                     sqlConnection.Close();
 

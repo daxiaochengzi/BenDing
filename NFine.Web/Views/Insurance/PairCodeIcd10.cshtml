@@ -23,18 +23,16 @@
                     <input type="text" id="ProjectCode" name="ProjectCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
                 </div>
             </div>
-            @*<div class="layui-inline">
+            <div class="layui-inline">
                 <label class="layui-form-label">目录名称</label>
                 <div class="layui-input-inline">
-                    <input type="text" id="ProjectName" name="ProjectName" value="@ViewBag.DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
-                </div>
-            </div>*@
-            <div class="layui-inline">
-                <label class="layui-form-label">助记码 </label>
-                <div class="layui-input-inline">
-                    <input type="text" id="MnemonicCode" name="MnemonicCode" placeholder="请输入助记码" autocomplete="off" class="layui-input">
+                    <input type="text" id="ProjectName" name="ProjectName" value="@ViewBag.ProjectName" placeholder="请输入名称" autocomplete="off" class="layui-input">
                 </div>
             </div>
+           
+        </div>
+        <div class="layui-form-item">
+
             <div class="layui-inline">
                 <button class="layui-btn" lay-submit lay-filter="dataSearch" data-type="dataSearch">查询</button>
                 <button class="layui-btn" data-type="cleanSearch">清除</button>
@@ -87,14 +85,9 @@
 
         //监听搜索
         form.on('submit(dataSearch)', function (data) {
-            var whereParam =
-            {
-                DiseaseCoding: $("#BaseDirectoryCode").val(),
-                Search: $("#BaseDirectoryName").val()
-            }
-
-            //var field = data.field;
-            //执行重载
+          
+            var field = data.field;
+            
             table.reload('dataTable', {
                 where: field
             });
@@ -111,8 +104,9 @@
             //已对码ID
             var pairCodeIcd10UiParam = {
                 DiseaseId: diseaseId,
-                ProjectCode: data.ProjectCode,
-                ProjectName: data.ProjectName
+                ProjectCode: data.DiseaseCoding,
+                ProjectName: data.DiseaseName,
+                UserId: userId
             };
             var pairCodeList = []; //对码数据
             pairCodeList.push(pairCodeIcd10UiParam);
@@ -121,9 +115,9 @@
                 $.ajax({
                     url: host +'/Icd10PairCode',
                     type: 'POST',
-                    data: JSON.stringify(sendData),
+                    data: pairCodeIcd10UiParam,
                     dataType: "json",
-                    contentType: 'application/json',
+                    //contentType: 'application/json',
                     success: function (data) {
                         if (data.Success === false) {
                             var errData = data.Message;

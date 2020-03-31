@@ -8,7 +8,9 @@ using BenDing.Domain.Models.Dto.Base;
 namespace BenDing.Domain.Models.Params.SystemManage
 {
    public class QueryMedicalInsuranceIcd10UiParam: PaginationDto
-    {
+    {/// <summary>
+    /// 
+    /// </summary>
         public string ProjectName { get; set; }
         /// <summary>
         /// 疾病编码

@@ -167,7 +167,7 @@
                             { field: 'MnemonicCode', title: '助记码', width: 160 },
                             { field: 'ProjectCode', title: '医保项目编码', width: 160 },
                             { field: 'ProjectName', title: '医保项目名称', width: 160},
-                            { field: 'PairCodeUser', title: '对码操作人员', width: 160 },
+                            { field: 'PairCodeUserName', title: '对码操作人员', width: 120 },
                             { field: 'PairCodeTime', title: '对码时间', width: 160 }
                         ]
                     ]
@@ -180,12 +180,13 @@
                         if (obj.event === 'pairCode') {
                             var directoryName = data.DirectoryName;
                             var directoryCode = data.DirectoryCode;
-                            var params = "?UserId=" +
+                            var params = "?EmpId=" +
                                 $("#empid").val() +
                                 "&ProjectName=" +
-                                directoryCode +
+                                data.DiseaseName +
                                 "&DiseaseId=" +
                                 data.DiseaseId;
+                            debugger;
                             //iframe层-父子操作
                             layer.open({
                                 id: 'PairCodeIcd10',
@@ -228,11 +229,11 @@
             });
     })();
 </script>
-@*<script type="text/html" id="tableBtn">
+<script type="text/html" id="tableBtn">
     {{#  if(d.ProjectCode == null){ }}
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="pairCode">未对码</a>
     {{#  } else { }}
     <a class="layui-btn layui-btn-xs" lay-event="updatePairCode">已对码</a>
     {{#  }}}
-</script>*@
+</script>
 
