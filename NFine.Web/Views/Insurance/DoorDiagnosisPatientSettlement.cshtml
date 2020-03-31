@@ -263,7 +263,8 @@
 
         }
         $('#DoorDiagnosisSettlement').on('click', function () {
-
+           
+          
             params["IdentityMark"] = $("#IdentityMark").val();
             params["AfferentSign"] = $("#AfferentSign").val();
             params["AccountPayment"] = $("#AccountPayment").val();
@@ -280,13 +281,6 @@
             //{
             //
             //}
-            doorDiagnosisSettlement();
-
-
-        });
-        // 结算方法
-        function doorDiagnosisSettlement() {
-
             $.ajax({
                 type: 'post',
                 url: host + '/OutpatientDepartmentCostInput',
@@ -312,7 +306,10 @@
                 }
 
             });
-        }
+
+
+        });
+      
         $('#queryData').on('click', function () {
             var paramsUserInfo = {
                 "AfferentSign": $("#AfferentSign").val() /*传入标志，1:身份证,2:医保个人编码*/,
