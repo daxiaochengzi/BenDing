@@ -63,7 +63,7 @@ namespace NFine.Web.Controllers
             IWebBasicRepository webServiceBasicRepository,
             IOutpatientDepartmentService outpatientDepartmentService,
             IOutpatientDepartmentRepository outpatientDepartmentRepository,
-            IWorkerMedicalInsuranceService workerMedicalInsuranceService
+            IWorkerMedicalInsuranceService workerMedicalInsuranceService  
             )
         {
             _webServiceBasicService = webServiceBasicService;
