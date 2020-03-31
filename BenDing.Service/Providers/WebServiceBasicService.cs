@@ -122,7 +122,7 @@ namespace BenDing.Service.Providers
             var icd10List = new List<Icd10PairCodeDateXml>();
             icd10List.Add(new Icd10PairCodeDateXml()
             {
-                DiseaseId = param.DiseaseId,
+                DiseaseId = param.DiseaseId,  
                 DiseaseName = param.ProjectName,
                 DiseaseCoding = param.ProjectCode
             });
