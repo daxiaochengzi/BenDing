@@ -7,13 +7,13 @@ using System.Xml.Serialization;
 
 namespace BenDing.Domain.Models.HisXml
 {
-  [XmlRoot("output", IsNullable = false)]
-  public  class Icd10PairCodeXml
+    [XmlRoot("sqldata")]
+    public  class Icd10PairCodeXml
     {
-        [XmlArrayAttribute("sqldata")]
-        [XmlArrayItem("row")]
-        public List<Icd10PairCodeDateXml> RowDataList { get; set; }
+        [XmlElement]
+        public List<Icd10PairCodeDateXml>  row { get; set; }
     }
+    
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public class Icd10PairCodeDateXml
     {

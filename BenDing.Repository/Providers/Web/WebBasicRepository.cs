@@ -13,7 +13,6 @@ namespace BenDing.Repository.Providers.Web
     {
         public BasicResultDto HIS_InterfaceList(string tradeCode, string inputParameter )
         {
-
             //11008
             var result = new BasicResultDto();
             // 创建 HTTP 绑定对象与设置最大传输接受数量

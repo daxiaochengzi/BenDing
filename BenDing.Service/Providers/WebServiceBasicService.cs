@@ -122,13 +122,19 @@ namespace BenDing.Service.Providers
             var icd10List = new List<Icd10PairCodeDateXml>();
             icd10List.Add(new Icd10PairCodeDateXml()
             {
-                DiseaseId = param.DiseaseId,  
+                DiseaseId = param.DiseaseId,
                 DiseaseName = param.ProjectName,
                 DiseaseCoding = param.ProjectCode
             });
+            var dd = new Icd10PairCodeDateXml()
+            {
+                DiseaseId = param.DiseaseId,
+                DiseaseName = param.ProjectName,
+                DiseaseCoding = param.ProjectCode
+            };        
             var xmlData = new Icd10PairCodeXml()
             {
-             RowDataList   = icd10List
+                row   = icd10List
             };
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
             var saveXml = new SaveXmlDataParam()
@@ -222,15 +228,24 @@ namespace BenDing.Service.Providers
             var time = _hisSqlRepository.GetICD10Time();
             var timeNew = Convert.ToDateTime(time).ToString("yyyy-MM-dd HH:ss:mm") ??
                           DateTime.Now.AddYears(-40).ToString("yyyy-MM-dd HH:ss:mm");
+            var rowParam = new ICD10InfoRowParam
+            {
+                开始时间 = timeNew,
+                结束时间 = DateTime.Now.ToString("yyyy-MM-dd HH:ss:mm"),
+                验证码 = param.AuthCode,
+                疾病类别 = 0,
+                病种名称 = ""
+            };
             var oICD10Info = new ICD10InfoParam
             {
                 开始时间 = timeNew,
                 结束时间 = DateTime.Now.ToString("yyyy-MM-dd HH:ss:mm"),
                 验证码 = param.AuthCode,
+                疾病类别 = 0,
                 病种名称 = ""
             };
             var data = _webServiceBasic.HIS_InterfaceList("08",
-                Newtonsoft.Json.JsonConvert.SerializeObject(oICD10Info));
+                Newtonsoft.Json.JsonConvert.SerializeObject(rowParam));
             List<ListCount> nums;
             var init = new ListCount();
             nums = GetResultData(init, data);

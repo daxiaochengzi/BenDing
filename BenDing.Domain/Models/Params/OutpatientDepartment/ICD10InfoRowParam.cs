@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace BenDing.Domain.Models.Params.Web
+namespace BenDing.Domain.Models.Params.OutpatientDepartment
 {
-   public class ICD10InfoParam
+  public  class ICD10InfoRowParam
     {
         public string 验证码 { get; set; }
         public string 病种名称 { get; set; }
-        public int 开始行数 { get; set; }
-        public int 结束行数 { get; set; }
         public string 开始时间 { get; set; }
         public string 结束时间 { get; set; }
         /// <summary>

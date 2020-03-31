@@ -164,6 +164,7 @@
     <Compile Include="Models\Params\OutpatientDepartment\CancelMonthlyHospitalizationParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\CancelOutpatientDepartmentCostParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\CancelOutpatientDepartmentCostUiParam.cs" />
+    <Compile Include="Models\Params\OutpatientDepartment\ICD10InfoRowParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\MonthlyHospitalizationParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\OutpatientDepartmentCostInputParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\OutpatientPlanBirthSettlementCancelParam.cs" />

@@ -112,8 +112,9 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
-                y.DataDescribe = CommonHelp.GetPropertyAliasDict(new UserInfoDto());
-                y.Data = userService.GetUserInfo();
+               
+                //y.DataDescribe = CommonHelp.GetPropertyAliasDict(new UserInfoDto());
+                //y.Data = userService.GetUserInfo();
 
             });
 

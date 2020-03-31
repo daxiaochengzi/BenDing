@@ -215,7 +215,7 @@
                     contentType: 'application/json',
                     async: false,
                     success: function (data) {
-                        debugger;
+                       
                         if (data.Success === false) {
                             var errData = data.Message;
                             //样式类名:墨绿深蓝风
@@ -227,7 +227,7 @@
                             table.reload('LAY-pair-content-list', {
                                 where: field
                             });
-                            //layer.alert('住院结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                            layer.alert(data.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         }
                     }
 
