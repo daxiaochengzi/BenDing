@@ -25,7 +25,10 @@
         <li  class="layui-this">医保Icd10</li>
         <li>基层Icd10对码管理</li>
     </ul>
-    <input type="hidden" id="empid" value="@ViewBag.empid" />
+    <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
+    <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
+    <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
+   
     <div class="layui-tab-content">
         <div class="layui-tab-item layui-show">
             <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="LAY-yibao-content-list">
@@ -185,7 +188,11 @@
                                 "&ProjectName=" +
                                 data.DiseaseName +
                                 "&DiseaseId=" +
-                                data.DiseaseId;
+                                data.DiseaseId+
+                                "&TransKey=" +
+                                $("#transkey").val()+
+                                "&BId=" +
+                                $("#bid").val();
                             debugger;
                             //iframe层-父子操作
                             layer.open({

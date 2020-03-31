@@ -60,7 +60,7 @@
                     <div class="layui-inline">
                         <button class="layui-btn" lay-submit="" lay-filter="LAY-app-contlist-search">查询</button>
                         <button class="layui-btn" data-type="cleanSearch">清除</button>
-                        <button class="layui-btn" data-type="updateSearch">更新目录</button>
+                       
                     </div>
                 </div>
             </div>
@@ -96,7 +96,7 @@
                     <div class="layui-inline">
                         <button class="layui-btn" lay-submit="" lay-filter="LAY-yibao-content-list">查询</button>
                         <button class="layui-btn" data-type="cleanSearch">清除</button>
-                        <button class="layui-btn" data-type="updateSearch">更新目录</button>
+                        @*<button class="layui-btn" data-type="updateSearch">更新目录</button>*@
                     </div>
                 </div>
             </div>
@@ -142,7 +142,7 @@
                     <div class="layui-inline">
                         <button class="layui-btn" lay-submit="" lay-filter="LAY-pair-content-list">查询</button>
                         <button class="layui-btn" data-type="cleanSearch">清除</button>
-                        <button class="layui-btn" data-type="updateSearch">更新目录</button>
+                        <button class="layui-btn" data-type="updateSearch"  lay-filter="updateSearch">更新目录</button>
                     </div>
                 </div>
             </div>
@@ -189,6 +189,39 @@
                 table.reload('LAY-pair-content-list', {
                     where: field
                 });
+            });
+            //更新目录
+            form.on('submit(updateSearch)', function (data) {
+                var updateSearchParam =
+                {
+                    CatalogType: $("#DirectoryCategoryCode").val(),
+                    UserId: $("#empid").val()
+                };
+                $.ajax({
+                    type: 'post',
+                    url: host + '/GetCatalog',
+                    data: updateSearchParam,
+                    dataType: "json",
+                    contentType: 'application/json',
+                    async: false,
+                    success: function (data) {
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            //样式类名:墨绿深蓝风
+                            layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                        } else {
+                            var field = data.field;
+                            //执行重载
+                            table.reload('LAY-pair-content-list', {
+                                where: field
+                            });
+                            layer.alert('住院结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        }
+                    }
+
+                });
+
+               
             });
             //医院目录
             table.render({

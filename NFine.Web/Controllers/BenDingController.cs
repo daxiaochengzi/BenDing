@@ -114,8 +114,8 @@ namespace NFine.Web.Controllers
         /// 获取三大目录
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        public ApiJsonResultData GetCatalog([FromUri]UiCatalogParam param)
+        [HttpPost]
+        public ApiJsonResultData GetCatalog([FromBody]UiCatalogParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
              {
@@ -125,7 +125,7 @@ namespace NFine.Web.Controllers
                      var inputInpatientInfo = new CatalogParam()
                      {
                          AuthCode = userBase.AuthCode,
-                         CatalogType = param.CatalogType,
+                         CatalogType =(CatalogTypeEnum)Convert.ToInt16(param.CatalogType),
                          OrganizationCode = userBase.OrganizationCode,
                          Nums = 1000,
                      };
@@ -163,7 +163,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public ApiJsonResultData GetIcd10([FromUri]UiCatalogParam param)
+        public ApiJsonResultData GetIcd10([FromUri]UiInIParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
@@ -173,7 +173,7 @@ namespace NFine.Web.Controllers
                     OrganizationCode = userBase.OrganizationCode,
                     AuthCode = userBase.AuthCode,
                     Nums = 1000,
-                    CatalogType = param.CatalogType
+                   
                 });
                 y.Data = data;
 
@@ -189,6 +189,10 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new QueryICD10InfoDto()).RunWithTry(y =>
             {
+                if (!string.IsNullOrWhiteSpace(param.Search))
+                {
+                    param.DiseaseName = param.Search;
+                }
 
                 var queryData = _hisSqlRepository.QueryICD10(param);
 
@@ -211,12 +215,14 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
                 _webServiceBasicService.Icd10PairCode(new Icd10PairCodeParam()
                 {
                     DiseaseId = param.DiseaseId,
                     ProjectCode = param.ProjectCode,
                     ProjectName = param.ProjectName,
-                    User = userBase
+                    User = userBase,
+                    BusinessId = param.BusinessId
                 });
 
 

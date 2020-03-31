@@ -7,13 +7,8 @@ using System.Threading.Tasks;
 
 namespace BenDing.Domain.Models.Params.UI
 {
-  public  class Icd10PairCodeUiParam
-    {   /// <summary>
-        /// UserId
-        /// </summary>
-        [Display(Name = "UserId")]
-        [Required(ErrorMessage = "{0}不能为空!!!")]
-        public string UserId { get; set; }
+  public  class Icd10PairCodeUiParam: UiInIDataParam
+    {  
         /// <summary>
         /// 基层疾病id
         /// </summary>

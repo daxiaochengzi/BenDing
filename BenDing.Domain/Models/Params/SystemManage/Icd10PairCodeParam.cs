@@ -24,5 +24,9 @@ namespace BenDing.Domain.Models.Params.SystemManage
         /// 
         /// </summary>
         public UserInfoDto User { get; set; }
+        /// <summary>
+        /// 业务id
+        /// </summary>
+        public string BusinessId { get; set; }
     }
 }

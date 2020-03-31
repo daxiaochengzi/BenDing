@@ -37,8 +37,10 @@
                 <button class="layui-btn" lay-submit lay-filter="dataSearch" data-type="dataSearch">查询</button>
                 <button class="layui-btn" data-type="cleanSearch">清除</button>
             </div>
-            <input type="hidden" id="empid" value="@ViewBag.empid" />
+            <input type="hidden" id="EmpId" value="@ViewBag.EmpId" />
             <input type="hidden" id="DiseaseId" value="@ViewBag.DiseaseId" />
+            <input type="hidden" id="BId" value="@ViewBag.BId" />
+            <input type="hidden" id="TransKey" value="@ViewBag.TransKey" />
         </div>
     </div>
     <table class="layui-hide" id="dataTable" lay-filter="dataTable"></table>
@@ -96,21 +98,18 @@
         //监听工具条
         table.on('tool(dataTable)', function (obj) {
             var data = obj.data;
-            var userId = $("#empid").val();
-            //获取HIS编码DirectoryCode
-            var diseaseId = $("#DiseaseId").val();
-            //医保编码
-            var projectCode = data.ProjectCode;
-            //已对码ID
             var pairCodeIcd10UiParam = {
-                DiseaseId: diseaseId,
+                DiseaseId: $("#DiseaseId").val(),
                 ProjectCode: data.DiseaseCoding,
                 ProjectName: data.DiseaseName,
-                UserId: userId
+                UserId: $("#EmpId").val(),
+                BusinessId: $("#BId").val(),
+                TransKey: $("#TransKey").val()
             };
-            var pairCodeList = []; //对码数据
-            pairCodeList.push(pairCodeIcd10UiParam);
-            var sendData = { PairCodeList: pairCodeList, UserId:userId };
+          
+            //var pairCodeList = []; //对码数据
+            //pairCodeList.push(pairCodeIcd10UiParam);
+            //var sendData = { PairCodeList: pairCodeList, UserId:userId };
             if (obj.event === 'pairCodeTo') {
                 $.ajax({
                     url: host +'/Icd10PairCode',

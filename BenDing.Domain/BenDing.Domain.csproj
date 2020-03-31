@@ -146,6 +146,7 @@
     <Compile Include="Models\HisXml\HospitalizationRegisterXml.cs" />
     <Compile Include="Models\HisXml\HospitalSettlementCancelXml.cs" />
     <Compile Include="Models\HisXml\HospitalSettlementXml.cs" />
+    <Compile Include="Models\HisXml\Icd10PairCodeXml.cs" />
     <Compile Include="Models\HisXml\OutpatientDepartmentCostCancelXml.cs" />
     <Compile Include="Models\HisXml\OutpatientDepartmentCostXml.cs" />
     <Compile Include="Models\HisXml\ReadCardXml.cs" />

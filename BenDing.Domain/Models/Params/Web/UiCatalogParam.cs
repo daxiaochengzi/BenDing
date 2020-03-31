@@ -13,6 +13,6 @@ namespace BenDing.Domain.Models.Params.Web
      /// </summary>
         [Display(Name = "目录类别编")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
-        public CatalogTypeEnum CatalogType { get; set; }
+        public string CatalogType { get; set; }
     }
 }

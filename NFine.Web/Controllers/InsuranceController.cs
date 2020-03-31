@@ -63,11 +63,14 @@ namespace NFine.Web.Controllers
         }
         public ActionResult PairCodeIcd10(PairCodeIcd10UiParam param)
         {
-            ViewBag.empid = param.EmpId;
+          
             //参数可查询医保中心目录
             ViewBag.ProjectName = param.ProjectName;
             ViewBag.title = "ICD10诊断对码";
             ViewBag.DiseaseId = param.DiseaseId;
+            ViewBag.EmpId = param.EmpId;
+            ViewBag.BId = param.BId;
+            ViewBag.TransKey = param.TransKey;
             return View();
         }
      
