@@ -194,6 +194,7 @@
     <Compile Include="Models\Params\SystemManage\AddHospitalLogParam.cs" />
     <Compile Include="Models\Params\SystemManage\Icd10PairCodeParam.cs" />
     <Compile Include="Models\Params\SystemManage\PairCodeIcd10UiParam.cs" />
+    <Compile Include="Models\Params\SystemManage\QueryMedicalInsuranceIcd10UiParam.cs" />
     <Compile Include="Models\Params\UI\AddHospitalOrganizationGradeUiParam.cs" />
     <Compile Include="Models\Params\UI\CancelMonthlyHospitalizationUiParam.cs" />
     <Compile Include="Models\Params\UI\DirectoryComparisonManagementUiParam.cs" />

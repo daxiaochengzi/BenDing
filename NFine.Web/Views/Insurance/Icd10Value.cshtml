@@ -34,17 +34,17 @@
                     <div class="layui-inline">
                         <label class="layui-form-label-nw">目录编码</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="DirectoryCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
+                            <input type="text" id="yibaoDirectoryCode" name="DirectoryCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label-nw">目录名称</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                            <input type="text" id="yibaoDirectoryName" name="DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button class="layui-btn" lay-submit="" lay-filter="LAY-app-contlist-search">查询</button>
+                        <button class="layui-btn" lay-submit="" lay-filter="LAY-yibao-content-list">查询</button>
                         <button class="layui-btn" data-type="cleanSearch">清除</button>
                     </div>
                 </div> 
@@ -58,13 +58,13 @@
                     <div class="layui-inline">
                         <label class="layui-form-label-nw">目录编码</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="DirectoryCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
+                            <input type="text" name="DiseaseCoding" placeholder="请输入编码" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label-nw">目录名称</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                            <input type="text"  name="DiseaseName" placeholder="请输入名称" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -95,7 +95,7 @@
 
                 //监听搜索
                 form.on('submit(LAY-yibao-content-list)',
-                    function(data) {
+                    function (data) {
                         var field = data.field;
                         //执行重载
                         table.reload('LAY-yibao-content-list',
@@ -107,6 +107,8 @@
                 form.on('submit(LAY-pair-content-list)',
                     function(data) {
                         var field = data.field;
+                       
+
                         //执行重载
                         table.reload('LAY-pair-content-list',
                             {
@@ -190,7 +192,7 @@
                                 type: 2,
                                 title: '对码信息',
                                 shadeClose: true, //点击遮罩关闭层
-                                area: ['1080px', '540px'],
+                                area: ['700px', '400px'],
                                 fixed: false, //不固定
                                 maxmin: true,
                                 content: hostPage + '/PairCodeIcd10' + params
@@ -226,5 +228,11 @@
             });
     })();
 </script>
-
+@*<script type="text/html" id="tableBtn">
+    {{#  if(d.ProjectCode == null){ }}
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="pairCode">未对码</a>
+    {{#  } else { }}
+    <a class="layui-btn layui-btn-xs" lay-event="updatePairCode">已对码</a>
+    {{#  }}}
+</script>*@
 

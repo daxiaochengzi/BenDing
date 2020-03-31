@@ -424,15 +424,15 @@ namespace BenDing.Repository.Providers.Web
                     }
                     else
                     {
-                        if (!string.IsNullOrWhiteSpace(param.Search))
+                        if (!string.IsNullOrWhiteSpace(param.DiseaseName))
                         {
-                            if (Regex.IsMatch(param.Search, regexstr))
+                            if (Regex.IsMatch(param.DiseaseName, regexstr))
                             {
-                                whereSql += " and DiseaseName like '%" + param.Search + "%'";
+                                whereSql += " and DiseaseName like '%" + param.DiseaseName + "%'";
                             }
                             else
                             {
-                                whereSql += " and MnemonicCode like '%" + param.Search + "%'";
+                                whereSql += " and MnemonicCode like '%" + param.DiseaseName + "%'";
                             }
                         }
 

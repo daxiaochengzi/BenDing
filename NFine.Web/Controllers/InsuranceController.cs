@@ -65,7 +65,7 @@ namespace NFine.Web.Controllers
         {
             ViewBag.empid = param.EmpId;
             //参数可查询医保中心目录
-            ViewBag.DirectoryName = param.ProjectName;
+            ViewBag.ProjectName = param.ProjectName;
             ViewBag.title = "ICD10诊断对码";
             ViewBag.DiseaseId = param.DiseaseId;
             return View();

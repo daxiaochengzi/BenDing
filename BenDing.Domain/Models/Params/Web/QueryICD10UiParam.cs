@@ -13,7 +13,7 @@ namespace BenDing.Domain.Models.Params.Web
      /// 查询关键字
      /// </summary>
 
-        public string Search{ get; set; }
+        public string DiseaseName{ get; set; }
         /// <summary>
         /// 疾病编码
         /// </summary>

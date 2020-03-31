@@ -228,13 +228,16 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public ApiJsonResultData QueryMedicalInsuranceIcd10([FromUri]QueryICD10UiParam param)
+        public ApiJsonResultData QueryMedicalInsuranceIcd10([FromUri]QueryMedicalInsuranceIcd10UiParam param)
         {
             return new ApiJsonResultData(ModelState, new QueryICD10InfoDto()).RunWithTry(y =>
             {  //医保标志
-                param.IsMedicalInsurance = 1;
-                var queryData = _hisSqlRepository.QueryICD10(param);
-
+                var iniParam = new QueryICD10UiParam()
+                {   DiseaseCoding = param.ProjectCode,
+                    DiseaseName = param.ProjectName,
+                    IsMedicalInsurance = 1
+                };
+                var queryData = _hisSqlRepository.QueryICD10(iniParam);
                 var data = new
                 {
                     data = queryData.Values.FirstOrDefault(),

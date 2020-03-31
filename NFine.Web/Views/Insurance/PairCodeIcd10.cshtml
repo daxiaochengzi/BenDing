@@ -23,12 +23,12 @@
                     <input type="text" id="ProjectCode" name="ProjectCode" placeholder="请输入编码" autocomplete="off" class="layui-input">
                 </div>
             </div>
-            <div class="layui-inline">
+            @*<div class="layui-inline">
                 <label class="layui-form-label">目录名称</label>
                 <div class="layui-input-inline">
                     <input type="text" id="ProjectName" name="ProjectName" value="@ViewBag.DirectoryName" placeholder="请输入名称" autocomplete="off" class="layui-input">
                 </div>
-            </div>
+            </div>*@
             <div class="layui-inline">
                 <label class="layui-form-label">助记码 </label>
                 <div class="layui-input-inline">
@@ -62,8 +62,7 @@
                   UserId: $("#empid").val() //必传参数
                 , ProjectName: $("#ProjectName").val()
                 , ProjectCode: $("#ProjectCode").val()
-                , MnemonicCode: $("#MnemonicCode").val(),
-                  DiseaseId: $("#DiseaseId").val()
+                 ,DiseaseId: $("#DiseaseId").val()
 
             }
             , parseData: function (res) { //res 即为原始返回的数据
@@ -77,8 +76,8 @@
             , cols: [[
                 { type: 'numbers', fixed: 'left' }
                 , { title: '对码', toolbar: '#tableCodeBtn', width: 100 ,align: 'center', fixed: true }
-                , { field: 'ProjectCode', title: '医保项目编码', width: 160, sort: true }
-                , { field: 'ProjectName', title: '医保项目名称', width: 160}
+                , { field: 'DiseaseCoding', title: '医保项目编码', width: 160, sort: true }
+                , { field: 'DiseaseName', title: '医保项目名称', width: 160}
                 , { field: 'MnemonicCode', title: '助记码', width: 300 }
             ]]
             , height: $(window).height() - 128
@@ -88,7 +87,13 @@
 
         //监听搜索
         form.on('submit(dataSearch)', function (data) {
-            var field = data.field;
+            var whereParam =
+            {
+                DiseaseCoding: $("#BaseDirectoryCode").val(),
+                Search: $("#BaseDirectoryName").val()
+            }
+
+            //var field = data.field;
             //执行重载
             table.reload('dataTable', {
                 where: field
