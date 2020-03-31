@@ -119,24 +119,29 @@ namespace BenDing.Service.Providers
         /// <param name="param"></param>
         public void Icd10PairCode(Icd10PairCodeParam param)
         {  //回参构建
-        //    var xmlData = new Icd10PairCodeXml()
-        //    {
-
-        //    };
-        //    var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-        //    var saveXml = new SaveXmlDataParam()
-        //    {
-        //        User = param.User,
-        //        MedicalInsuranceBackNum = "CXJB002",
-        //        MedicalInsuranceCode = "91",
-        //        BusinessId = param.BusinessId,
-        //        BackParam = strXmlBackParam
-        //    };
-        //    //存基层
-        //    _webServiceBasic.SaveXmlData(saveXml);
-            //_hisSqlRepository.Icd10PairCode(param);
-            
-
+            var icd10List = new List<Icd10PairCodeDateXml>();
+            icd10List.Add(new Icd10PairCodeDateXml()
+            {
+                DiseaseId = param.DiseaseId,
+                DiseaseName = param.ProjectName,
+                DiseaseCoding = param.ProjectCode
+            });
+            var xmlData = new Icd10PairCodeXml()
+            {
+             RowDataList   = icd10List
+            };
+            var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+            var saveXml = new SaveXmlDataParam()
+            {
+                User = param.User,
+                MedicalInsuranceBackNum = "CXJB002",
+                MedicalInsuranceCode = "91",
+                BusinessId = param.BusinessId,
+                BackParam = strXmlBackParam
+            };
+            //存基层
+            _webServiceBasic.SaveXmlData(saveXml);
+            _hisSqlRepository.Icd10PairCode(param);
         }
 
         /// <summary>

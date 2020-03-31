@@ -7,27 +7,30 @@ using System.Xml.Serialization;
 
 namespace BenDing.Domain.Models.HisXml
 {
-    [XmlRoot("output", IsNullable = false)]
+  [XmlRoot("output", IsNullable = false)]
   public  class Icd10PairCodeXml
-    {   /// <summary>
+    {
+        [XmlArrayAttribute("sqldata")]
+        [XmlArrayItem("row")]
+        public List<Icd10PairCodeDateXml> RowDataList { get; set; }
+    }
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public class Icd10PairCodeDateXml
+    {
+        /// <summary>
+        /// 疾病类型
+        /// </summary>
+        [XmlElement("icd10id", IsNullable = false)]
+        public string DiseaseId { get; set; }
+        /// <summary>
         /// 疾病编码
         /// </summary>
-        [XmlElement("aka120", IsNullable = false)]
+        [XmlElement("aka120h", IsNullable = false)]
         public string DiseaseCoding { get; set; }
         /// <summary>
         /// 疾病名称
         /// </summary>
-        [XmlElement("aka121", IsNullable = false)]
+        [XmlElement("aka121h", IsNullable = false)]
         public string DiseaseName { get; set; }
-        /// <summary>
-        /// 助记码
-        /// </summary>
-        [XmlElement("aka020", IsNullable = false)]
-        public string MnemonicCode { get; set; }
-        /// <summary>
-        /// 疾病类型
-        /// </summary>
-        [XmlElement("aka122", IsNullable = false)]
-        public string DiseaseType { get; set; }
     }
 }
