@@ -195,8 +195,7 @@
                 var directoryCategoryCode = $("#DirectoryCategoryCode").val();
                 if (directoryCategoryCode === "" || directoryCategoryCode=== undefined)
                 {
-                    //样式类名:墨绿深蓝风
-                    layer.msg("目录类别不能为空!!!", { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                    layer.alert("目录类别不能为空!!!", { icon: 5, title: '错误提示', skin: 'layui-layer-molv' });
 
                     return false;
                 }
@@ -218,8 +217,7 @@
                        
                         if (data.Success === false) {
                             var errData = data.Message;
-                            //样式类名:墨绿深蓝风
-                            layer.msg(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                            layer.alert(errData, { icon: 5, title: '错误提示', skin: 'layui-layer-molv' });
                         } else {
                         
                             var field = data.field;
@@ -227,7 +225,8 @@
                             table.reload('LAY-pair-content-list', {
                                 where: field
                             });
-                            layer.alert(data.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                            layer.alert(data.Data, { icon: 6,title: '温馨提示', shade: 0.1, skin: 'layui-layer-molv' });
+                           
                         }
                     }
 
@@ -378,7 +377,8 @@
             });
             var active = {
                 cleanSearch: function () {
-                    layer.msg('已删除');
+                    layer.alert('已删除', { icon: 5, title: '错误提示', skin: 'layui-layer-molv' });
+                  
                 }
             }
 

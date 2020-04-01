@@ -253,8 +253,10 @@
                 success: function (data) {
                     if (data.Success === false) {
                         var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                       
+                        
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                      
                     } else {
                         //计划生育结算调用插件
                         settlementPay(data.Data);
@@ -280,7 +282,8 @@
                     if (data.Success === false) {
                         var errData = data.Message;
                         //样式类名:墨绿深蓝风
-                        layer.msg(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                       
                     } else {
                        
                         $('#CashPayment').val(data.Data.SelfPayFeeAmount);
@@ -315,7 +318,7 @@
                     if (cashPayment !== "" || cashPayment !== undefined) {
 
                         if (accountPayment > cashPayment) {
-                            layer.msg("下账金额不能大于现金支付金额!!!", { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                            layer.alert("下账金额不能大于现金支付金额!!!", { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                             return false;
                         } else {
                             params["AccountPayment"] = $("#AccountPayment").val();
@@ -343,12 +346,13 @@
                     console.log(data);
                     if (data.Success === false) {
                         var errData = data.Message;
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                         //样式类名:墨绿深蓝风
-                        layer.msg(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                       
                     } else {
                         //$('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
                         $('#CashPayment').val(data.Data.SelfPayFeeAmount);
-                        layer.alert('门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        layer.alert('门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv', title: '温馨提示' });
                         buttonStatus("DoorDiagnosisSettlement", false);
                         //添加结算信息
                         if (data.Data.PayMsg !== null) {
@@ -450,7 +454,8 @@
                 if (data.Success === false) {
                     var errData = data.Message;
                     //样式类名:墨绿深蓝风
-                    layer.msg(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                   
                 } else {
                     jsonToForm(data.Data, "LAY-form-render");
                     var idCardNo = data.Data.IdCardNo;

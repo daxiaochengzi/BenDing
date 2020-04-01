@@ -168,11 +168,9 @@
                     },
                 });
             } else {
-                layer.msg('数据不一致，请查证！', {
-                    time: 2000, icon: 6, end: function () {
-                        location.reload();
-                    }
-                });
+                
+                layer.alert('数据不一致，请查证！', { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
+               
             }
             return false;
         });

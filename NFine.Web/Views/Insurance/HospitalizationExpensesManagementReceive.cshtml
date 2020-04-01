@@ -104,7 +104,8 @@
                     url: host + '/QueryHospitalizationFee',
                     where: queryParam
                     , parseData: function (res) { //res 即为原始返回的数据
-                        if (res.Success === false) layer.alert(res.Message, { skin: 'layui-layer-molv', icon: 3, title: '提示' });;
+                        if (res.Success === false) layer.alert(res.Message, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                         
                         return {
                             "code": res.Code,
                             "count": res.Data.count, //解析数据长度
@@ -128,10 +129,12 @@
                     if (res.Success === false) {
                         var errData = res.Message;
                         //样式类名:墨绿深蓝风
+                        
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                     } else {
                         if (url === "/DeletePrescriptionUpload") {
-                            layer.msg("撤销成功!!!", { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                            layer.alert('撤销成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv',title: '温馨提示' });
+                          
                         }
                         if (reloadTable) {
                             //重新加载表格

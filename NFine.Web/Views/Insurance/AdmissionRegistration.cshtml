@@ -221,7 +221,8 @@
                         if (data.Success === false) {
                             var errData = data.Message;
                             //样式类名:墨绿深蓝风
-                            layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                            layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                           
                         } else {
                             inpatientInfoData = data;
                             buttonStatus("queryData", true);
@@ -374,7 +375,7 @@
                             if (data.Success === false) {
                                 var errData = data.Message;
                                 //样式类名:墨绿深蓝风
-                                layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                                layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                             } else {
                                 jsonToForm(data.Data, "LAY-form-render");
                                 //加载诊断默认数据
@@ -552,7 +553,8 @@
                     var medicalCategory = $("#MedicalCategory").val();
                     //
                     if (medicalCategory === "" || medicalCategory === undefined) {
-                        layer.msg('医疗类别不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                        layer.alert('医疗类别不能为空!!!!', { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                      
                         return false;
                     }
 
@@ -584,11 +586,13 @@
                         success: function (data) {
                             if (data.Success === false) {
                                 var errData = data.Message;
+                                layer.alert("登记失败", { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                                 //样式类名:墨绿深蓝风
-                                layer.msg('登记失败\n' + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+
                             } else {
                                 buttonStatus("register", false);
-                                layer.msg('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                                layer.alert('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv',title: '温馨提示' });
+                               
                             
 
                             }

@@ -262,8 +262,7 @@
 
                 if (data.Success === false) {
                     var errData = data.Message;
-                    //样式类名:墨绿深蓝风
-                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                    layer.alert(errData, { icon: 5,title: '错误提示',skin: 'layui-layer-molv'  });
                 } else {
                     insuranceType = data.Data.InsuranceType;
                     jsonToForm(data.Data, "LAY-form-render");
@@ -356,7 +355,8 @@
         $('#Settlement').on('click', function () {
             var leaveHospitalInpatientState = $("#LeaveHospitalInpatientState").val();
             if (leaveHospitalInpatientState === undefined || leaveHospitalInpatientState === "") {
-                layer.alert("病人出院状态不能为空!!!", { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                layer.alert("病人出院状态不能为空!!!", { icon: 5,title: '错误提示',skin: 'layui-layer-molv',  });
+               
                 return false;
             }
 
@@ -384,17 +384,21 @@
                 //医疗类别
                 var medicalCategory = $("#MedicalCategory").val();
                 if (medicalCategory === "" || medicalCategory === undefined) {
-                    layer.msg('医疗类别不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                    
+                    layer.alert('医疗类别不能为空!!!!', { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
+                  
                     return false;
                 }
                 //胎儿数
                 var fetusNumber = $("#FetusNumber").val();
                 if (fetusNumber === "" || fetusNumber === undefined) {
-                    layer.msg('胎儿数不能为空!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                    layer.alert('胎儿数不能为空!!!!', { icon: 5, title: '错误提示', skin: 'layui-layer-molv' });
+                 
                     return false;
                 }
-                if (fetusNumber<=0) {
-                    layer.msg('胎儿数必须大于0!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' })
+                if (fetusNumber <= 0) {
+                    layer.alert('胎儿数必须大于!!!!', { icon: 5, title: '错误提示', skin: 'layui-layer-molv' });
+                  
                     return false;
                 }
                 debugger;
@@ -416,7 +420,7 @@
                     if (data.Success === false) {
                         var errData = data.Message;
                         //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                        layer.alert(errData, { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
                     } else {
                         if (data.Data.PayMsg !== null) {
                             settlementData(data.Data.PayMsg);
@@ -431,7 +435,8 @@
                         //    buttonStatus("PayCard", true);
                         //}
                         buttonStatus("Settlement", false);
-                        layer.msg('住院结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        layer.alert('住院结算成功', { icon: 6,title: '温馨提示', shade: 0.1, skin: 'layui-layer-molv' });
+                      
                     }
                 }
 
@@ -466,7 +471,8 @@
             var activeJsonData = JSON.parse(activeData);
             if (activeJsonData.Success === false)
             {
-                layer.alert(activeJsonData.Message, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                layer.alert(activeJsonData.Message, { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
+               
                 return false;
             }
             var getData = JSON.parse(activeJsonData.Data);
@@ -493,11 +499,10 @@
                     console.log(data);
                     if (data.Success === false) {
                         var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                        layer.alert(errData, { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
                     } else {
-
-                        layer.msg('住院结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        layer.alert('住院结算成功', { icon: 6,title: '温馨提示', shade: 0.1, skin: 'layui-layer-molv' });
+                     
                         if (insuranceType === "310") {
                             $("#CardPwd").attr("class", "layui-input");
                             //打开刷卡按钮

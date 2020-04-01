@@ -185,7 +185,7 @@
                     where: params
                     , parseData: function (res) { //res 即为原始返回的数据
                         isLoad = false;
-                        if (res.Success === false) layer.alert(res.Message, { skin: 'layui-layer-molv', icon: 3, title: '提示' });;
+                        if (res.Success === false) layer.alert(res.Message, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' }); 
                         return {
                             "code": res.Code,
                             "count": res.Data.count, //解析数据长度
@@ -206,11 +206,12 @@
                 success: function (res) {
                     if (res.Success === false) {
                         var errData = res.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                     } else {
                         if (url === "/PrescriptionUpload") {
-                            layer.msg(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                            
+                            layer.alert(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv',title: '温馨提示' });
+                          
                         }
                         if (reloadTable) {
                             //重新加载表格
@@ -299,11 +300,10 @@
                 success: function (res) {
                     if (data.Success === false) {
                         var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                     
                     } else {
-                       
-                        layer.msg(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        layer.alert(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv',title: '温馨提示' });
                         //刷新查询
                         tableDataLoad(layTableId);
                     }

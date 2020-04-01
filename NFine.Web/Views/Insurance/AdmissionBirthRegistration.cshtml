@@ -229,8 +229,9 @@
                     success: function (data) {
                         if (data.Success === false) {
                             var errData = data.Message;
+                            layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                             //样式类名:墨绿深蓝风
-                            layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                         
                         } else {
                             inpatientInfoData = data;
                             var idCardNo = data.Data.IdCardNo;
@@ -367,8 +368,10 @@
                         success: function (data) {
                             if (data.Success === false) {
                                 var errData = data.Message;
-                                //样式类名:墨绿深蓝风
-                                layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                                
+                                layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                              
+                              
                             } else {
                                 jsonToForm(data.Data, "LAY-form-render");
                                 //加载诊断默认数据
@@ -529,7 +532,9 @@
                     //医疗类别
                     var medicalCategory = $("#MedicalCategory").val();
                     if (medicalCategory === "" || medicalCategory === undefined) {
-                        layer.msg('医疗类别不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                        
+                        layer.alert('医疗类别不能为空!!!!', { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                      
                         return false;
                     }
                     var insuranceType = $("#InsuranceType").val();
@@ -545,7 +550,8 @@
                         //户口性质
                         var householdNature = $("#HouseholdNature").val();
                         if (householdNature === "" || householdNature === undefined) {
-                            layer.msg('户口性质不能为空!!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                            layer.alert('户口性质不能为空!!!!', { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                           
                             return false;
                         }
                       
@@ -554,11 +560,13 @@
                     //胎儿数
                     var fetusNumber = $("#FetusNumber").val();
                     if (fetusNumber === "" || fetusNumber === undefined) {
-                        layer.msg('胎儿数不能为空!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                        layer.alert('胎儿数不能为空!!!', { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                       
                         return false;
                     }
-                    if (fetusNumber<=0) {
-                        layer.msg('胎儿数必须大于0!!!', { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                    if (fetusNumber <= 0) {
+                        layer.alert('胎儿数必须大于0!!!', { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                      
                         return false;
                     }
                     field.BusinessId = field.BusinessId;
@@ -589,10 +597,11 @@
                         success: function (data) {
                             if (data.Success === false) {
                                 var errData = data.Message;
-                                //样式类名:墨绿深蓝风
-                                layer.msg('登记失败\n' + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+                                layer.alert("登记失败", { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                             
                             } else {
-                                layer.msg('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                                layer.alert('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv',title: '温馨提示' });
+                               
                                
                                 buttonStatus("BirthRegister", false);
 

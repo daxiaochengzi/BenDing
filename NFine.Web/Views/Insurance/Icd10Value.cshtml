@@ -117,6 +117,7 @@
                             {
                                 where: field
                             });
+                       
                     });
                 //医保目录
                 table.render({
@@ -125,6 +126,7 @@
                     url: host + '/QueryMedicalInsuranceIcd10' //数据接口
                     ,
                     parseData: function(res) { //res 即为原始返回的数据
+
                         return {
                             "code": res.Code, //解析接口状态
                             "msg": res.Message, //解析提示文本
@@ -193,7 +195,7 @@
                                 $("#transkey").val()+
                                 "&BId=" +
                                 $("#bid").val();
-                            debugger;
+                          
                             //iframe层-父子操作
                             layer.open({
                                 id: 'PairCodeIcd10',
@@ -228,8 +230,9 @@
                         active[type] ? active[type].call(this) : '';
                     });
                 var active = {
-                    cleanSearch: function() {
-                        layer.msg('已删除');
+                    cleanSearch: function () {
+                        layer.alert('已删除', { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
+                    
                     }
                 };
 

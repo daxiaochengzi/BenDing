@@ -209,7 +209,8 @@
                 if (data.Success === false) {
                     var errData = data.Message;
                     //样式类名:墨绿深蓝风
-                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                    layer.alert(errData, { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
+                    
                 } else {
                     jsonToForm(data.Data, "LAY-form-render");
                     //加载诊断默认数据
@@ -236,8 +237,7 @@
                    
                     if (data.Success === false) {
                         var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                        layer.alert(errData, { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
                     } else {
                         //$('#SettlementData').val(data.Data.PayMsg);
                      
@@ -336,11 +336,11 @@
                     console.log(data);
                     if (data.Success === false) {
                         var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                       
+
+                        layer.alert(errData, { icon: 5, title: '错误提示', skin: 'layui-layer-molv' });
                     } else {
-                        layer.msg('住院取消结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        layer.alert('住院取消结算成功', { icon: 6,title: '温馨提示', shade: 0.1, skin: 'layui-layer-molv' });
+                     
                         buttonStatus("SettlementCancel", false);
                     }
                 }

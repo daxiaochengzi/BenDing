@@ -161,8 +161,9 @@
                 console.log(data);
                 if (data.Success === false) {
                     var errData = data.Message;
-                    //样式类名:墨绿深蓝风
-                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                  
+                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                  
                 } else {
                     jsonToForm(data.Data, "LAY-form-render");
                     buttonStatus("DoorDiagnosisSettlementCancel", true);
@@ -184,13 +185,15 @@
                 success: function (data) {
                     if (data.Success === false) {
                         var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                       
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                 
                     } else {
 
                         $('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
                         $('#CashPayment').val(data.Data.SelfPayFeeAmount);
-                        layer.msg('门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        layer.alert('门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv',title: '温馨提示' });
+                      
                         buttonStatus("DoorDiagnosisSettlementCancel", false);
                     }
                 }
