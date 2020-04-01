@@ -231,7 +231,6 @@
                             var errData = data.Message;
                             layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                             //样式类名:墨绿深蓝风
-                         
                         } else {
                             inpatientInfoData = data;
                             var idCardNo = data.Data.IdCardNo;
@@ -324,9 +323,12 @@
                 page: false,
                 cols: [
                     [
-                        { title: '序号', type: 'numbers', width: 80 }, ,
-                        { field: 'DiagnosisName', title: '诊断名称', width: 280 },
-                        { field: 'DiagnosisCode', title: '诊断代码', width: 280 }, {
+                        { title: '序号', type: 'numbers', width: 80 }, 
+                        { field: 'DiseaseCoding', title: '基层疾病编码' },
+                        { field: 'DiseaseName', title: '基层疾病名称' },
+                        { field: 'ProjectCode', title: '医保疾病编码' },
+                        { field: 'ProjectName', title: '医保疾病名称' },
+                        {
                             field: 'IsMainDiagnosis',
                             title: '主诊',
                             width: 120,
