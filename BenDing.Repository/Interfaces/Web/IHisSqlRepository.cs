@@ -145,7 +145,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
         Int64 MedicalInsuranceDownloadIcd10(DataTable dt, string userId);
         /// <summary>
-        /// ICD10查询
+        /// ICD10查询  
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
