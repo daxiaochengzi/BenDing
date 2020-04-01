@@ -362,7 +362,7 @@ namespace BenDing.Service.Providers
              (param);
             iniParam.AfferentSign = param.AfferentSign;
             iniParam.IdentityMark = param.IdentityMark;
-            //获取诊断
+            //医保执行
             data = _outpatientDepartmentRepository.OutpatientPlanBirthPreSettlement(iniParam);
             //保存门诊病人
             outpatientParam.IsSave = true;

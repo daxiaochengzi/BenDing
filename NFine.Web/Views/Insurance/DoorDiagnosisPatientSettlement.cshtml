@@ -165,9 +165,9 @@
                         </div>
                     </div>
                     <div class="layui-form-item" id="DoorDiagnosisPreSettlementDiv"  style="text-align: center; margin-top: 20px;">
-                        <button type="button" Id="DoorDiagnosisPreSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">门诊预结算</button>
+                        <button type="button" Id="DoorDiagnosisPreSettlement" class="layui-btn">门诊预结算</button>
                     </div>
-                    <div class="layui-form-item" style="text-align: center; margin-top: 20px;">
+                    <div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="DoorDiagnosisSettlementDiv">
                         <button type="button" Id="DoorDiagnosisSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">门诊结算</button>
                     </div>
                 </div>
@@ -197,6 +197,7 @@
         $("#InsuranceBalanceDiv").hide();
         $("#AccountPaymentDiv").hide();
         $("#DoorDiagnosisPreSettlementDiv").hide();
+        $("#DoorDiagnosisSettlementDiv").hide();
         //计划生育结算入参
         var planBirthSettlementParam = null;
         //form数据回显:数据回显到Form表单主体部分
@@ -290,6 +291,7 @@
                         layer.alert('门诊预结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         //隐藏预结算按钮
                         $("#DoorDiagnosisPreSettlementDiv").hide();
+                        $("#DoorDiagnosisPreSettlementDiv").show();
                         //显示结算按钮
                         buttonStatus("DoorDiagnosisSettlement", true);
                         //添加预结算信息
@@ -392,6 +394,7 @@
                         // 居民
                         if (data.Data.InsuranceType === "342") {
                             $("#InsuranceBalance").val(data.Data.ResidentInsuranceBalance);
+                            $("#DoorDiagnosisPreSettlementDiv").show();
                             //居民显示结算按钮
                             buttonStatus("DoorDiagnosisSettlement", true);
                             //职工

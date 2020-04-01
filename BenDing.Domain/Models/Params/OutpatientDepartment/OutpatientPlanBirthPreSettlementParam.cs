@@ -12,17 +12,18 @@ using System.Xml.Serialization;
     public class OutpatientPlanBirthPreSettlementParam
     {
         ///<summary>
-        /// 身份标识
+        /// 身份标识 身份证号或者个人编号
         /// </summary>
-        [XmlElementAttribute("PI_CRBZ", IsNullable = false)]
+        [XmlElementAttribute("PI_SFBZ", IsNullable = false)]
         [Display(Name = "身份标识")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string IdentityMark { get; set; }
+        
         /// <summary>
         ///身份证号或者个人编号
         /// </summary>
-        [XmlElementAttribute("PI_SFBZ", IsNullable = false)]
-        [Display(Name = "身份证号或者个人编号")]
+        [XmlElementAttribute("PI_CRBZ", IsNullable = false)]
+        [Display(Name = "传入标志")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string AfferentSign { get; set; }
         /// <summary>
@@ -67,7 +68,7 @@ using System.Xml.Serialization;
         ///  
         /// </summary>
         [XmlArrayAttribute("PI_FYMX")]
-        [XmlArrayItem("row")]
+        [XmlArrayItem("ROW")]
         public List<PlanBirthSettlementRow> RowDataList { get; set; }
 
     }
