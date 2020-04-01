@@ -265,17 +265,65 @@
             });
 
         }
+        //门诊预结算
+        $('#DoorDiagnosisPreSettlement').on('click', function() {
+            params["IdentityMark"] = $("#IdentityMark").val();
+            params["AfferentSign"] = $("#AfferentSign").val();
+            $.ajax({
+                type: 'post',
+                url: host + '/OutpatientPlanBirthPreSettlement',
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    console.log(data);
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        //样式类名:墨绿深蓝风
+                        layer.msg(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                    } else {
+                       
+                        $('#CashPayment').val(data.Data.SelfPayFeeAmount);
+                        layer.alert('门诊预结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        //隐藏预结算按钮
+                        $("#DoorDiagnosisPreSettlementDiv").hide();
+                        //显示结算按钮
+                        buttonStatus("DoorDiagnosisSettlement", true);
+                        //添加预结算信息
+                        if (data.Data.PayMsg !== null) {
+                            settlementData(data.Data.PayMsg);
+                        }
+                    }
+                }
 
+            });
+        });
+        //门诊结算
         $('#DoorDiagnosisSettlement').on('click', function () {
            
           
             params["IdentityMark"] = $("#IdentityMark").val();
             params["AfferentSign"] = $("#AfferentSign").val();
-            params["AccountPayment"] = $("#AccountPayment").val();
-
             var settlementVal = $('input[name="Settlement"]:checked').val();
             if (settlementVal === "1") {
                 params["IsBirthHospital"] = 1;
+                //获取结算信息
+                var accountPayment = $("#AccountPayment").val();
+                if (accountPayment !== "" || accountPayment !== undefined) {
+                    //现金支付
+                    var cashPayment = $('#CashPayment').val();
+                    if (cashPayment !== "" || cashPayment !== undefined) {
+
+                        if (accountPayment > cashPayment) {
+                            layer.msg("下账金额不能大于现金支付金额!!!", { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                            return false;
+                        } else {
+                            params["AccountPayment"] = $("#AccountPayment").val();
+                        }
+                    }
+                }
+               
+                
             }
             ////计划生育结算
             //if (settlementVal === "1") {
@@ -402,7 +450,7 @@
                 if (data.Success === false) {
                     var errData = data.Message;
                     //样式类名:墨绿深蓝风
-                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
+                    layer.msg(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
                 } else {
                     jsonToForm(data.Data, "LAY-form-render");
                     var idCardNo = data.Data.IdCardNo;

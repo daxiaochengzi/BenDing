@@ -359,7 +359,7 @@ namespace BenDing.Service.Providers
                 BusinessId = param.BusinessId,
             });
             var iniParam = GetOutpatientPlanBirthPreSettlementParam
-             (outpatientPerson,outpatientDetailPerson);
+             (param);
             iniParam.AfferentSign = param.AfferentSign;
             iniParam.IdentityMark = param.IdentityMark;
             //获取诊断
@@ -456,8 +456,6 @@ namespace BenDing.Service.Providers
             };
             //存入中间层
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateData);
-
-
             //日志写入
             _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
             {
@@ -645,48 +643,74 @@ namespace BenDing.Service.Providers
         /// <summary>
         /// 获取门诊预结算参数
         /// </summary>
-        /// <param name="outpatientInfo">病人信息</param>
-        /// <param name="detail">病人明细</param>
+       
         /// <returns></returns>
         private OutpatientPlanBirthPreSettlementParam GetOutpatientPlanBirthPreSettlementParam(
-            BaseOutpatientInfoDto outpatientInfo, List<BaseOutpatientDetailDto> detail
+            OutpatientPlanBirthPreSettlementUiParam param
         )
         {
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            userBase.TransKey = param.TransKey;
+            var outpatientParam = new GetOutpatientPersonParam()
+            {
+                User = userBase,
+                UiParam = param,
+            };
+            var outpatientPerson = _serviceBasicService.GetOutpatientPerson(outpatientParam);
+            if (outpatientPerson == null) throw new Exception("his中未获取到当前病人!!!");
+            var outpatientDetailPerson = _serviceBasicService.GetOutpatientDetailPerson(new OutpatientDetailParam()
+            {
+                User = userBase,
+                BusinessId = param.BusinessId,
+            });
+            //获取主诊断
+            var diagnosisData = outpatientPerson.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == "是");
+            var inpatientDiagnosisDataDto = diagnosisData;
             var resultData = new OutpatientPlanBirthPreSettlementParam()
             {
-                OutpatientNo = outpatientInfo.OutpatientNumber,
-                DiagnosisDate = outpatientInfo.VisitDate,
-                ProjectNum = detail.Count(),
-                TotalAmount = outpatientInfo.MedicalTreatmentTotalCost
+                OutpatientNo = outpatientPerson.OutpatientNumber,
+                DiagnosisDate = Convert.ToDateTime(outpatientPerson.VisitDate).ToString("yyyyMMddHHmmss"),
+                ProjectNum = outpatientDetailPerson.Count(),
+                TotalAmount = outpatientPerson.MedicalTreatmentTotalCost,
+                AfferentSign = param.AfferentSign,
+                IdentityMark = param.IdentityMark,
+                AdmissionMainDiagnosisIcd10 = inpatientDiagnosisDataDto != null ? diagnosisData.DiagnosisCode : null
+
             };
             var rowDataList = new List<PlanBirthSettlementRow>();
             //升序
-            var dataSort = detail.OrderBy(c => c.BillTime).ToArray();
+            var dataSort = outpatientDetailPerson.OrderBy(c => c.BillTime).ToArray();
             int num = 0;
             foreach (var item in dataSort)
             {
-                num++;
-               
                 if (string.IsNullOrWhiteSpace(item.MedicalInsuranceProjectCode)) throw new Exception("[" + item + "]名称:" + item.DirectoryName + "未对码!!!");
-                var row = new PlanBirthSettlementRow()
+                if (!string.IsNullOrWhiteSpace(item.MedicalInsuranceProjectCode))
                 {
-                    ColNum = num,
-                    ProjectCode = item.MedicalInsuranceProjectCode,
-                    ProjectName = item.DirectoryName,
-                    UnitPrice = item.UnitPrice,
-                    Quantity = item.Quantity,
-                    TotalAmount = item.Amount,
-                    Formulation = item.Formulation,
-                    ManufacturerName = item.DrugProducingArea,
-                    Dosage = item.Dosage,
-                    Specification = item.Specification,
-                    Usage = item.Usage
-                };
+                    var row = new PlanBirthSettlementRow()
+                    {
+                        ColNum = num,
+                        ProjectCode = item.MedicalInsuranceProjectCode,
+                        ProjectName = item.DirectoryName,
+                        UnitPrice = item.UnitPrice,
+                        Quantity = item.Quantity,
+                        TotalAmount = item.Amount,
+                        Formulation = item.Formulation,
+                        ManufacturerName = item.DrugProducingArea,
+                        Dosage = item.Dosage,
+                        Specification = item.Specification,
+                        Usage = item.Usage
+                    };
 
-                rowDataList.Add(row);
+                    rowDataList.Add(row);
+                    num++;
+                }
+
+
             }
 
             resultData.RowDataList = rowDataList;
+
+
             return resultData;
 
         }
