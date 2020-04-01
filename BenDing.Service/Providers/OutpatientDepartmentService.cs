@@ -439,6 +439,8 @@ namespace BenDing.Service.Providers
                 (param );
             iniParam.AfferentSign = param.AfferentSign;
             iniParam.IdentityMark = param.IdentityMark;
+            iniParam.OutpatientNo = CommonHelp.GuidToStr(param.BusinessId);
+           
             // 医保执行
              resultData = _outpatientDepartmentRepository.OutpatientPlanBirthSettlement(iniParam);
             _serviceBasicService.GetOutpatientPerson(outpatientParam);
@@ -668,7 +670,7 @@ namespace BenDing.Service.Providers
             var inpatientDiagnosisDataDto = diagnosisData;
             var resultData = new OutpatientPlanBirthPreSettlementParam()
             {
-                OutpatientNo = outpatientPerson.OutpatientNumber,
+                OutpatientNo = CommonHelp.GuidToStr(param.BusinessId),//outpatientPerson.OutpatientNumber,
                 DiagnosisDate = Convert.ToDateTime(outpatientPerson.VisitDate).ToString("yyyyMMddHHmmss"),
                 ProjectNum = outpatientDetailPerson.Count(),
                 TotalAmount = outpatientPerson.MedicalTreatmentTotalCost,

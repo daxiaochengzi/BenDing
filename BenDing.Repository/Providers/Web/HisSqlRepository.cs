@@ -555,11 +555,11 @@ namespace BenDing.Repository.Providers.Web
                    INSERT INTO [dbo].[outpatient](
                    Id,[PatientName],[IdCardNo],[PatientSex],[BusinessId],[OutpatientNumber],[VisitDate]
                    ,[DepartmentId],[DepartmentName],[DiagnosticDoctor],[DiagnosticJson]
-                   ,[Operator] ,[MedicalTreatmentTotalCost],[Remark],[ReceptionStatus]
+                   ,[Operator] ,[MedicalTreatmentTotalCost],[Remark],[ReceptionStatus],[FixedEncoding]
                    ,[CreateTime],[DeleteTime],OrganizationCode,OrganizationName,CreateUserId,IsDelete)
                    VALUES('{param.Id}','{param.PatientName}','{param.IdCardNo}','{param.PatientSex}','{param.BusinessId}','{param.OutpatientNumber}','{param.VisitDate}'
                          ,'{param.DepartmentId}','{param.DepartmentName}','{param.DiagnosticDoctor}','{param.DiagnosticJson}' 
-                        ,'{param.Operator}','{param.MedicalTreatmentTotalCost}','{param.Remark}','{param.ReceptionStatus}'
+                        ,'{param.Operator}','{param.MedicalTreatmentTotalCost}','{param.Remark}','{param.ReceptionStatus}','{CommonHelp.GuidToStr(param.BusinessId)}'
                          ,getDate(),null,'{user.OrganizationCode}','{user.OrganizationName}','{user.UserId}',0
                     );";
                     sqlConnection.Execute(strSql);
