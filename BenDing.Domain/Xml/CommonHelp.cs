@@ -140,7 +140,7 @@ namespace BenDing.Domain.Xml
         /// <returns></returns>
         public static string DiagnosisStr(List<InpatientDiagnosisDto> param)
         {
-            var dataList = param.Select(c => c.DiagnosisCode).ToList();
+            var dataList = param.Select(c => c.DiseaseCoding).ToList();
             string str = string.Join(",", dataList.ToArray());
             string resultData = str.Length > 20 ? string.Join(",", dataList.Take(2).ToArray()) : str;
             return resultData;
@@ -209,8 +209,23 @@ namespace BenDing.Domain.Xml
 
             var resultData = new DiagnosisData();
 
+
+            //判断医保诊断不能为空
+
+            var emptyData = param.Where(c => c.ProjectCode == null).ToList();
+            if (emptyData.Any())
+            {
+                string msg = "";
+                foreach (var item in emptyData)
+                {
+                    msg += "["+item.DiseaseName+"]"+"["+ item.DiseaseCoding+ "]:";
+                }
+                throw new Exception("当前未对码诊断:" + msg);
+            }
+
+
             //主诊断
-            var mainDiagnosisList = param.Where(c => c.IsMainDiagnosis == true)
+                var mainDiagnosisList = param.Where(c => c.IsMainDiagnosis == true)
                 .Take(3).ToList();
             if (mainDiagnosisList.Any() == false) throw new Exception("主诊断不能为空!!!");
             resultData.DiagnosisDescribe = GetDiagnosisDescribe(resultData.DiagnosisDescribe, mainDiagnosisList);
@@ -248,13 +263,13 @@ namespace BenDing.Domain.Xml
                 {
                     if (resultData.Length < 100)//控制长度小于100
                     {
-                        resultData = resultData + "," + item.DiagnosisName;
+                        resultData = resultData + "," + item.DiseaseName;
                     }
 
                 }
                 else
                 {
-                    resultData = item.DiagnosisName;
+                    resultData = item.DiseaseName;
                 }
             }
 

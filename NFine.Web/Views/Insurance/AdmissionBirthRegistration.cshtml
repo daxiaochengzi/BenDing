@@ -324,10 +324,9 @@
                 cols: [
                     [
                         { title: '序号', type: 'numbers', width: 80 }, 
-                        { field: 'DiseaseCoding', title: '基层疾病编码' },
-                        { field: 'DiseaseName', title: '基层疾病名称' },
-                        { field: 'ProjectCode', title: '医保疾病编码' },
-                        { field: 'ProjectName', title: '医保疾病名称' },
+                        { field: 'DiseaseCoding', title: '基层疾病编码', width: 280 },
+                        { field: 'DiseaseName', title: '基层疾病名称', width: 280 },
+                        { field: 'ProjectCode', title: '医保疾病编码', width: 280 },
                         {
                             field: 'IsMainDiagnosis',
                             title: '主诊',
@@ -399,7 +398,7 @@
                 elem: '#DiagnosisSearchData',
                 checkedKey: 'id',
                 searchKey: 'Search',//搜索输入框的name值 默认keyword
-                searchPlaceholder: '名称/编码/助记码',	//搜索输入框的提示文字 默认关键词搜索
+                searchPlaceholder: '名称',	//搜索输入框的提示文字 默认关键词搜索
                 table: {
                     url: host + '/QueryICD10',
                     parseData: function (result) {
@@ -413,9 +412,9 @@
                     cols: [
                         [
                             { type: 'radio' },
-                            { field: 'DiseaseCoding', title: '疾病编码' },
-                            { field: 'DiseaseName', title: '疾病名称' },
-                            { field: 'MnemonicCode', title: '速记码' }
+                            { field: 'DiseaseCoding', title: '基层疾病编码' },
+                            { field: 'DiseaseName', title: '基层疾病名称' },
+                            { field: 'ProjectCode', title: '医保疾病编码' }
                         ]
                     ]
                 },
@@ -427,27 +426,29 @@
                     layui.each(oldData,
                         function (index, item) {
                             //排除空值
-                            if (item.DiagnosisCode !== undefined) {
+                            //排除空值
+                            if (item.DiseaseCoding !== undefined) {
                                 //新增诊断编码
-                                var addDiseaseCoding = data.data[0].DiseaseCoding;
+                                var addProjectCode = data.data[0].ProjectCode;
                                 //诊断去重
-                                if (item.DiagnosisCode !== addDiseaseCoding) {
+                                if (item.DiseaseCoding !== addDiseaseCoding) {
                                     var itemRow = {
-                                        DiagnosisName: item.DiagnosisName,
-                                        DiagnosisCode: item.DiagnosisCode,
-                                        IsMainDiagnosis: item.IsMainDiagnosis
+                                        DiseaseName: item.DiseaseName,
+                                        DiseaseCoding: item.DiseaseCoding,
+                                        IsMainDiagnosis: item.IsMainDiagnosis,
+                                        ProjectCode: item.ProjectCode
+
                                     };
                                     oldDataTable.push(itemRow);
 
                                 }
                             }
-
-
                         });
 
                     var newRow = {
-                        DiagnosisName: data.data[0].DiseaseName,
-                        DiagnosisCode: data.data[0].DiseaseCoding,
+                        DiseaseName: data.data[0].DiseaseName,
+                        DiseaseCoding: data.data[0].DiseaseCoding,
+                        ProjectCode: data.data[0].ProjectCode,
                         IsMainDiagnosis: false
                     };
                     //添加选中后的诊断
@@ -458,7 +459,7 @@
                         data: oldDataTable
                     });
 
-                    console.log(data);
+                 
 
                 }
             });
@@ -580,10 +581,10 @@
                    
                     //诊断列表
                     var dataTable1 = table.cache[layTableId];
-                    var diagnosisList = [];
+                    var diagnosisList = []
                     //排除空值
                     $.each(dataTable1, function (k, v) {
-                        if (v.DiagnosisCode !== undefined) {
+                        if (v.DiseaseCoding !== undefined) {
                             diagnosisList.push(v);
                         }
                     });

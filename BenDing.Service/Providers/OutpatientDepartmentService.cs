@@ -676,7 +676,7 @@ namespace BenDing.Service.Providers
                 TotalAmount = outpatientPerson.MedicalTreatmentTotalCost,
                 AfferentSign = param.AfferentSign,
                 IdentityMark = param.IdentityMark,
-                AdmissionMainDiagnosisIcd10 = inpatientDiagnosisDataDto != null ? diagnosisData.DiagnosisCode : null
+                AdmissionMainDiagnosisIcd10 = inpatientDiagnosisDataDto != null ? diagnosisData.ProjectCode : null
 
             };
             var rowDataList = new List<PlanBirthSettlementRow>();
@@ -749,7 +749,7 @@ namespace BenDing.Service.Providers
                 AfferentSign = param.AfferentSign,
                 AccountPayment=string.IsNullOrWhiteSpace(param.AccountPayment)==true?0: Convert.ToDecimal(param.AccountPayment) ,
                 IdentityMark = param.IdentityMark,
-                AdmissionMainDiagnosisIcd10 = diagnosisData!=null? diagnosisData.DiagnosisCode:null
+                AdmissionMainDiagnosisIcd10 = diagnosisData!=null? diagnosisData.ProjectCode:null
 
             };
             var rowDataList = new List<PlanBirthSettlementRow>();

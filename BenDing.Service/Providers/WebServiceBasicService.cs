@@ -384,10 +384,12 @@ namespace BenDing.Service.Providers
             {
                 var diagnosisList = dataValue.DiagnosisJson.Select(c => new InpatientDiagnosisDto()
                 {
-                    DiagnosisCode = c.DiagnosisCode,
-                    DiagnosisName = c.DiagnosisName,
+                    DiseaseCoding = c.DiseaseCoding,
+                    DiseaseName = c.DiseaseName,
                     IsMainDiagnosis = c.IsMainDiagnosis == "是" ? true : false,
-                    DiagnosisMedicalInsuranceCode = c.DiagnosisMedicalInsuranceCode
+                    ProjectCode=c.ProjectCode,
+                    ProjectName=c.ProjectName
+                    
                 }).ToList();
                 resultData = new InpatientInfoDto()
                 {
@@ -472,9 +474,10 @@ namespace BenDing.Service.Providers
             }
             var diagnosisList = dataValue.DiagnosisJson.Select(c => new InpatientDiagnosisDto()
             {
-                DiagnosisCode = c.DiagnosisCode,
-                DiagnosisName = c.DiagnosisName,
-                DiagnosisMedicalInsuranceCode = c.DiagnosisMedicalInsuranceCode,
+                DiseaseCoding = c.DiseaseCoding,
+                DiseaseName = c.DiagnosisName,
+                ProjectCode = c.DiagnosisMedicalInsuranceCode,
+                ProjectName=c.DiagnosisMedicalInsuranceName,
                 IsMainDiagnosis = c.IsMainDiagnosis == "是" ? true : false,
 
             }).ToList();
@@ -869,8 +872,8 @@ namespace BenDing.Service.Providers
                 resultData.AddRange(oneData.Select(c => new InpatientDiagnosisDto()
                 {
                     IsMainDiagnosis = true,
-                    DiagnosisName = c.DiseaseName,
-                    DiagnosisCode = c.DiseaseCoding
+                    DiseaseName = c.DiseaseName,
+                    DiseaseCoding = c.DiseaseCoding
                 }).ToList());
             }
             if (!string.IsNullOrWhiteSpace(two))
@@ -881,8 +884,8 @@ namespace BenDing.Service.Providers
                 resultData.AddRange(data.Select(c => new InpatientDiagnosisDto()
                 {
                     IsMainDiagnosis = false,
-                    DiagnosisName = c.DiseaseName,
-                    DiagnosisCode = c.DiseaseCoding
+                    DiseaseName = c.DiseaseName,
+                    DiseaseCoding = c.DiseaseCoding
                 }).ToList());
             }
             if (!string.IsNullOrWhiteSpace(three))
@@ -893,8 +896,8 @@ namespace BenDing.Service.Providers
                 resultData.AddRange(data.Select(c => new InpatientDiagnosisDto()
                 {
                     IsMainDiagnosis = false,
-                    DiagnosisName = c.DiseaseName,
-                    DiagnosisCode = c.DiseaseCoding
+                    DiseaseName = c.DiseaseName,
+                    DiseaseCoding = c.DiseaseCoding
                 }).ToList());
             }
             //获取诊断字符串集

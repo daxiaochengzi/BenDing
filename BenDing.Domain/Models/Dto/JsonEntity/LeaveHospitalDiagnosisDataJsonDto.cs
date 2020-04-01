@@ -17,7 +17,7 @@ namespace BenDing.Domain.Models.Dto.JsonEntity
         /// 出院诊断编码
         /// </summary>
         [JsonProperty(PropertyName = "出院诊断编码")]
-        public string DiagnosisCode { get; set; }
+        public string DiseaseCoding { get; set; }
         /// <summary>
         /// 主诊断标志
         /// </summary>

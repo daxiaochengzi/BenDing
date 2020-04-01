@@ -10,18 +10,27 @@ namespace BenDing.Domain.Models.Dto.Web
     {/// <summary>
     /// 诊断名称
     /// </summary>
-        public string DiagnosisName { get; set; }
+        public string DiseaseName { get; set; }
         /// <summary>
         /// 诊断编码
         /// </summary>
-        public string DiagnosisCode { get; set; }
+        public string DiseaseCoding { get; set; }
         /// <summary>
         /// 是否主诊断
         /// </summary>
         public bool IsMainDiagnosis { get; set; } = false;
+
+
         /// <summary>
-        /// 诊断医保编码
+        /// 诊断医保名称
         /// </summary>
-        public string DiagnosisMedicalInsuranceCode { get; set; }
+        public string ProjectName { get; set; }
+        /// <summary>
+        ///  诊断医保编码
+        /// </summary>
+    
+        public string ProjectCode { get; set; }
+       
+     
     }
 }
