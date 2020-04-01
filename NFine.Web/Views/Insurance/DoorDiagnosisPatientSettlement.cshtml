@@ -164,7 +164,7 @@
                             <input type="text" name="InvoiceNo" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
-                    <div class="layui-form-item" id="DoorDiagnosisPreSettlementDiv"  style="text-align: center; margin-top: 20px;">
+                    <div class="layui-form-item" id="DoorDiagnosisPreSettlementDiv" style="text-align: center; margin-top: 20px;">
                         <button type="button" Id="DoorDiagnosisPreSettlement" class="layui-btn">门诊预结算</button>
                     </div>
                     <div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="DoorDiagnosisSettlementDiv">
@@ -254,10 +254,10 @@
                 success: function (data) {
                     if (data.Success === false) {
                         var errData = data.Message;
-                       
-                        
+
+
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                      
+
                     } else {
                         //计划生育结算调用插件
                         settlementPay(data.Data);
@@ -269,7 +269,7 @@
 
         }
         //门诊预结算
-        $('#DoorDiagnosisPreSettlement').on('click', function() {
+        $('#DoorDiagnosisPreSettlement').on('click', function () {
             params["IdentityMark"] = $("#IdentityMark").val();
             params["AfferentSign"] = $("#AfferentSign").val();
             $.ajax({
@@ -284,14 +284,15 @@
                         var errData = data.Message;
                         //样式类名:墨绿深蓝风
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                       
+
                     } else {
-                       
+
                         $('#CashPayment').val(data.Data.SelfPayFeeAmount);
                         layer.alert('门诊预结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         //隐藏预结算按钮
                         $("#DoorDiagnosisPreSettlementDiv").hide();
-                        $("#DoorDiagnosisPreSettlementDiv").show();
+                        $("#DoorDiagnosisSettlementDiv").show();
+                        $("#AccountPaymentDiv").show();
                         //显示结算按钮
                         buttonStatus("DoorDiagnosisSettlement", true);
                         //添加预结算信息
@@ -305,8 +306,8 @@
         });
         //门诊结算
         $('#DoorDiagnosisSettlement').on('click', function () {
-           
-          
+
+
             params["IdentityMark"] = $("#IdentityMark").val();
             params["AfferentSign"] = $("#AfferentSign").val();
             var settlementVal = $('input[name="Settlement"]:checked').val();
@@ -327,8 +328,8 @@
                         }
                     }
                 }
-               
-                
+
+
             }
             ////计划生育结算
             //if (settlementVal === "1") {
@@ -350,7 +351,7 @@
                         var errData = data.Message;
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                         //样式类名:墨绿深蓝风
-                       
+
                     } else {
                         //$('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
                         $('#CashPayment').val(data.Data.SelfPayFeeAmount);
@@ -367,7 +368,7 @@
 
 
         });
-      
+
         $('#queryData').on('click', function () {
             var paramsUserInfo = {
                 "AfferentSign": $("#AfferentSign").val() /*传入标志，1:身份证,2:医保个人编码*/,
@@ -394,7 +395,7 @@
                         // 居民
                         if (data.Data.InsuranceType === "342") {
                             $("#InsuranceBalance").val(data.Data.ResidentInsuranceBalance);
-                            $("#DoorDiagnosisPreSettlementDiv").show();
+                            
                             //居民显示结算按钮
                             buttonStatus("DoorDiagnosisSettlement", true);
                             //职工
@@ -405,13 +406,12 @@
                         var settlementVal = $('input[name="Settlement"]:checked').val();
                         //计划生育结算
                         if (settlementVal === "1") {
-                            //$("#AccountPaymentDiv").show();
+                           
                             $("#DoorDiagnosisPreSettlementDiv").show();
+                        } else {
+                            $("#DoorDiagnosisSettlementDiv").show();
                         }
                         $("#InsuranceBalanceDiv").show();
-                      
-
-
                     }
                 }
 
@@ -458,7 +458,7 @@
                     var errData = data.Message;
                     //样式类名:墨绿深蓝风
                     layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                   
+
                 } else {
                     jsonToForm(data.Data, "LAY-form-render");
                     var idCardNo = data.Data.IdCardNo;
