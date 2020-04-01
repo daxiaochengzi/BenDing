@@ -1376,6 +1376,30 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
+        /// 门诊计划生育预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData OutpatientPlanBirthPreSettlement([FromBody]OutpatientPlanBirthPreSettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
+                //医保登录
+                _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+                var settlementData = _outpatientDepartmentService.OutpatientPlanBirthPreSettlement(param);
+                y.Data = new OutpatientCostReturnDataDto()
+                {
+                    SelfPayFeeAmount = settlementData.CashPayment,
+                    PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(settlementData))
+                };
+
+            });
+
+        }
+        /// <summary>
         /// 取消门诊费用结算
         /// </summary>
         /// <param name="param"></param>

@@ -164,7 +164,9 @@
                             <input type="text" name="InvoiceNo" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
-
+                    <div class="layui-form-item" id="DoorDiagnosisPreSettlementDiv"  style="text-align: center; margin-top: 20px;">
+                        <button type="button" Id="DoorDiagnosisPreSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">门诊预结算</button>
+                    </div>
                     <div class="layui-form-item" style="text-align: center; margin-top: 20px;">
                         <button type="button" Id="DoorDiagnosisSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">门诊结算</button>
                     </div>
@@ -194,8 +196,9 @@
         var activeJsonInfo = null;
         $("#InsuranceBalanceDiv").hide();
         $("#AccountPaymentDiv").hide();
+        $("#DoorDiagnosisPreSettlementDiv").hide();
         //计划生育结算入参
-        var planBirthSettlementParam = null
+        var planBirthSettlementParam = null;
         //form数据回显:数据回显到Form表单主体部分
         var jsonToForm = function (jsonData, formFilter) {
             var diagnosisList = jsonData.DiagnosisList;
@@ -262,6 +265,7 @@
             });
 
         }
+
         $('#DoorDiagnosisSettlement').on('click', function () {
 
             params["IdentityMark"] = $("#IdentityMark").val();
@@ -339,6 +343,8 @@
                         // 居民
                         if (data.Data.InsuranceType === "342") {
                             $("#InsuranceBalance").val(data.Data.ResidentInsuranceBalance);
+                            //居民显示结算按钮
+                            buttonStatus("DoorDiagnosisSettlement", true);
                             //职工
                         } else if (data.Data.InsuranceType === "310") {
                             $("#InsuranceBalance").val(data.Data.WorkersInsuranceBalance);
@@ -347,10 +353,11 @@
                         var settlementVal = $('input[name="Settlement"]:checked').val();
                         //计划生育结算
                         if (settlementVal === "1") {
-                            $("#AccountPaymentDiv").show();
+                            //$("#AccountPaymentDiv").show();
+                            $("#DoorDiagnosisPreSettlementDiv").show();
                         }
                         $("#InsuranceBalanceDiv").show();
-                        buttonStatus("DoorDiagnosisSettlement", true);
+                      
 
 
                     }
