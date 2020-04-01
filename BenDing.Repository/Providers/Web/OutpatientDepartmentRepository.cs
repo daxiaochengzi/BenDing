@@ -34,7 +34,7 @@ namespace BenDing.Repository.Providers.Web
             var result = MedicalInsuranceDll.CallService_cxjb("TPYP301");
             if (result != 1) throw new Exception("门诊费用录入执行出错");
             var iniData = XmlHelp.DeSerializerModel(new OutpatientDepartmentCostInputJsonDto(), true);
-            var c = AutoMapper.Mapper.Map<OutpatientDepartmentCostInputDto>(iniData);
+             resultData = AutoMapper.Mapper.Map<OutpatientDepartmentCostInputDto>(iniData);
             return resultData;
         }
 

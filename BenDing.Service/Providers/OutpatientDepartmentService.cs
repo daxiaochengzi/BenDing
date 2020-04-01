@@ -77,7 +77,7 @@ namespace BenDing.Service.Providers
             {
                 AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
                 IdentityMark = param.IdentityMark,
-                InformationNumber = param.AfferentSign,
+                AfferentSign = param.AfferentSign,
                 Operators = param.User.UserName
             };
             //医保数据写入
