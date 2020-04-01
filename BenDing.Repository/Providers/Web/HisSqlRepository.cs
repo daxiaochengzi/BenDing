@@ -502,6 +502,36 @@ namespace BenDing.Repository.Providers.Web
             }
         }
         /// <summary>
+        /// ICD10明细查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public List<QueryICD10InfoDto> QueryICD10Detail(List<string> param)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string strSql = null;
+                try
+                {
+                    sqlConnection.Open();
+                    strSql = @"select   DiseaseCoding, DiseaseName from [dbo].[ICD10]  where  IsDelete=0  and IsMedicalInsurance=0";
+                    if (param != null && param.Any())
+                    {
+                        var idlist = CommonHelp.ListToStr(param);
+                        strSql += $" and DiseaseCoding in({idlist})";
+                    }
+                    var data = sqlConnection.Query<QueryICD10InfoDto>(strSql);
+                    sqlConnection.Close();
+                    return data.ToList();
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(strSql);
+                    throw new Exception(e.Message);
+                }
+            }
+        }
+        /// <summary>
         /// ICD10 对码
         /// </summary>
         /// <param name="param"></param>

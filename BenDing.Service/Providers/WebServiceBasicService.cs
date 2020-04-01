@@ -851,9 +851,15 @@ namespace BenDing.Service.Providers
         private List<InpatientDiagnosisDto> GetDiagnosisList(string one, string two, string three)
         {
             var resultData = new List<InpatientDiagnosisDto>();
-            var queryIcd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam()
-            { Page = 1, Limit = 10000000 });
-            var icd10Data = queryIcd10Data.Values.FirstOrDefault();
+            var param=new List<string>();
+            if (!string.IsNullOrWhiteSpace(one)) param.Add(one);
+            if (!string.IsNullOrWhiteSpace(one)) param.Add(two);
+            if (!string.IsNullOrWhiteSpace(one)) param.Add(three);
+            //var queryIcd10Data = _hisSqlRepository.QueryICD10(new QueryICD10UiParam()
+            //{ Page = 1, Limit = 10000000 });
+            //var icd10Data = queryIcd10Data.Values.FirstOrDefault();
+
+            var icd10Data = _hisSqlRepository.QueryICD10Detail(param);
             if (icd10Data == null) throw new Exception("icd10为空请更新icd10!!!");
             if (!string.IsNullOrWhiteSpace(one))
             {
