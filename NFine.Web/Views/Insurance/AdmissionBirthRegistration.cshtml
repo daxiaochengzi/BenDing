@@ -174,7 +174,7 @@
                 <!--诊断列表-->
                 <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
                 <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                    <button type="submit" id="BirthRegister" disabled class="layui-btn layui-btn-radius" lay-submit lay-filter="BirthRegister">登记</button>
+                    <button type="submit" id="BirthRegister" disabled  class="layui-btn layui-btn-disabled layui-btn-radius" lay-submit lay-filter="BirthRegister">登记</button>
                 </div>
             </div>
 
@@ -236,6 +236,7 @@
                             inpatientInfoData = data;
                             var idCardNo = data.Data.IdCardNo;
                             buttonStatus("queryData", true);
+                         
                             if (idCardNo !== undefined && idCardNo !== null) {
                                 $("#IdentityMark").val(idCardNo);
                             } else {

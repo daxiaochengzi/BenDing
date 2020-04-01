@@ -172,11 +172,12 @@
                     </div>
                 </div>
                 <div class="layui-card-body" lay-size="sm">
-                    <fieldset id="SettleData" class="layui-elem-field layui-field-title" style="margin-top: 10px;">
+                    <fieldset  class="layui-elem-field layui-field-title" style="margin-top: 10px;">
                         <legend>医保结算信息</legend>
                     </fieldset>
+                    <div class="layui-inline" id="SettleData">
+                    </div>
                 </div>
-            </div>
 
         </form>
     </div>
@@ -395,9 +396,6 @@
                         // 居民
                         if (data.Data.InsuranceType === "342") {
                             $("#InsuranceBalance").val(data.Data.ResidentInsuranceBalance);
-                            
-                            //居民显示结算按钮
-                            buttonStatus("DoorDiagnosisSettlement", true);
                             //职工
                         } else if (data.Data.InsuranceType === "310") {
                             $("#InsuranceBalance").val(data.Data.WorkersInsuranceBalance);
@@ -410,6 +408,8 @@
                             $("#DoorDiagnosisPreSettlementDiv").show();
                         } else {
                             $("#DoorDiagnosisSettlementDiv").show();
+                            //居民显示结算按钮
+                            buttonStatus("DoorDiagnosisSettlement", true);
                         }
                         $("#InsuranceBalanceDiv").show();
                     }
@@ -508,6 +508,7 @@
                 }
             }
             if (html !== "") {
+                $("#SettleData").empty();
                 $("#SettleData").append(html);
             }
 

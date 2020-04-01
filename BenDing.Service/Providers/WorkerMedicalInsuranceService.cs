@@ -600,7 +600,7 @@ namespace BenDing.Service.Providers
 
             var saveData = new MedicalInsuranceDto
             {
-                AdmissionInfoJson = JsonConvert.SerializeObject(param),
+                AdmissionInfoJson = JsonConvert.SerializeObject(paramIni),
                 BusinessId = param.BusinessId,
                 Id = Guid.NewGuid(),
                 IsModify = false,
