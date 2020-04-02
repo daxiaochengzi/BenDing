@@ -213,6 +213,8 @@
 
         }
         //诊断数据表格实例化
+        //----
+        //诊断数据表格实例化
         var layTableId = "dataTableId";
         var tableIns = table.render({
             elem: '#dataTable',
@@ -220,9 +222,11 @@
             page: false,
             cols: [
                 [
-                    { title: '序号', type: 'numbers', width: 80 }, ,
-                    { field: 'DiagnosisName', title: '诊断名称', width: 280 },
-                    { field: 'DiagnosisCode', title: '诊断代码', width: 280 }, {
+                    { title: '序号', type: 'numbers', width: 80 },
+                    { field: 'DiseaseCoding', title: '基层疾病编码', width: 280 },
+                    { field: 'DiseaseName', title: '基层疾病名称', width: 280 },
+                    { field: 'ProjectCode', title: '医保疾病编码', width: 280 },
+                    {
                         field: 'IsMainDiagnosis',
                         title: '主诊',
                         width: 120,
@@ -240,62 +244,93 @@
                         fixed: 'right',
                         templet: function (d) {
                             return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="' +
-                                d.DiagnosisCode +
+                                d.ProjectCode +
                                 '"><i class="layui-icon layui-icon-delete"></i>移除</a>';
                         }
                     }
                 ]
             ]
         });
-        var params = {
-            "TransKey": $("#transkey").val() /*医保交易码*/,
-            "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
-            "UserId": $("#empid").val() /*授权操作人的ID*/
-        }
-        $.ajax({
-            type: 'get',
-            url: host + '/GetHisHospitalizationSettlement',
-            data: params,
-            dataType: "json",
-            async: false,
-            success: function (data) {
+        //诊断查询
+        var tableSelect = layui.tableSelect;
+        tableSelect.render({
+            elem: '#DiagnosisSearchData',
+            checkedKey: 'id',
+            searchKey: 'Search',//搜索输入框的name值 默认keyword
+            searchPlaceholder: '名称/编码/助记码',	//搜索输入框的提示文字 默认关键词搜索
+            table: {
+                url: host + '/QueryICD10',
+                parseData: function (result) {
+                    return {
+                        "code": result.Code,
+                        "msg": result.Message,
+                        "data": result.Data.data,
+                        "count": result.Data.count
+                    };
+                },
+                cols: [
+                    [
+                        { type: 'radio' },
+                        { field: 'DiseaseCoding', title: '基层疾病编码' },
+                        { field: 'DiseaseName', title: '基层疾病名称' },
+                        { field: 'ProjectCode', title: '医保疾病编码' }
 
-                if (data.Success === false) {
-                    var errData = data.Message;
-                    layer.alert(errData, { icon: 5,title: '错误提示',skin: 'layui-layer-molv'  });
-                } else {
-                    insuranceType = data.Data.InsuranceType;
-                    jsonToForm(data.Data, "LAY-form-render");
-                   
-                    if (data.Data.IsBirthHospital === 1) {
-                        if (insuranceType === "310") {
-                            $("#FetusNumberDiv").show();
-                            $("#MedicalCategoryDiv").show(); 
-                            $("#AccountPaymentDiv").show();
-                        }
-                       
-                    }
-                    $("#IsBirthHospital").val(data.Data.IsBirthHospital);
-                 
-                    //加载诊断默认数据
-                    tableIns.reload({
-                        data: data.Data.DiagnosisList
-                    });
-               
-                    buttonStatus("Settlement", true);
-                }
+                    ]
+                ]
             },
-           
-        });
+            done: function (elem, data) {
 
+                //获取table缓存
+                var oldData = table.cache[layTableId];
+                var oldDataTable = new Array;
+                layui.each(oldData,
+                    function (index, item) {
+                        //排除空值
+                        if (item.DiseaseCoding !== undefined) {
+                            //新增诊断编码
+                            var addProjectCode = data.data[0].ProjectCode;
+                            //诊断去重
+                            if (item.DiseaseCoding !== addDiseaseCoding) {
+                                var itemRow = {
+                                    DiseaseName: item.DiseaseName,
+                                    DiseaseCoding: item.DiseaseCoding,
+                                    IsMainDiagnosis: item.IsMainDiagnosis,
+                                    ProjectCode: item.ProjectCode
+
+                                };
+                                oldDataTable.push(itemRow);
+
+                            }
+                        }
+                    });
+
+                var newRow = {
+                    DiseaseName: data.data[0].DiseaseName,
+                    DiseaseCoding: data.data[0].DiseaseCoding,
+                    ProjectCode: data.data[0].ProjectCode,
+                    IsMainDiagnosis: false
+
+                };
+                //添加选中后的诊断
+                oldDataTable.push(newRow);
+
+                //更新table
+                tableIns.reload({
+                    data: oldDataTable
+                });
+
+
+
+            }
+        });
         //定义事件集合
         var active = {
             updateRow: function (obj) {
                 var oldData = table.cache[layTableId];
-
+                console.log(oldData);
                 for (var i = 0, row; i < oldData.length; i++) {
                     row = oldData[i];
-                    if (row.DiagnosisCode === obj.DiagnosisCode) {
+                    if (row.DiseaseCoding === obj.DiseaseCoding) {
                         $.extend(oldData[i], obj);
                         return;
                     }
@@ -347,11 +382,55 @@
                             function (index) {
                                 obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
                                 layer.close(index);
-                                activeByType('removeEmptyTableCache');
+                                //activeByType('removeEmptyTableCache');
                             });
-                        break; 
+                        break;
                 }
             });
+            //---------
+
+        var params = {
+            "TransKey": $("#transkey").val() /*医保交易码*/,
+            "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
+            "UserId": $("#empid").val() /*授权操作人的ID*/
+        }
+        $.ajax({
+            type: 'get',
+            url: host + '/GetHisHospitalizationSettlement',
+            data: params,
+            dataType: "json",
+            async: false,
+            success: function (data) {
+
+                if (data.Success === false) {
+                    var errData = data.Message;
+                    layer.alert(errData, { icon: 5,title: '错误提示',skin: 'layui-layer-molv'  });
+                } else {
+                    insuranceType = data.Data.InsuranceType;
+                    jsonToForm(data.Data, "LAY-form-render");
+                   
+                    if (data.Data.IsBirthHospital === 1) {
+                        if (insuranceType === "310") {
+                            $("#FetusNumberDiv").show();
+                            $("#MedicalCategoryDiv").show(); 
+                            $("#AccountPaymentDiv").show();
+                        }
+                       
+                    }
+                    $("#IsBirthHospital").val(data.Data.IsBirthHospital);
+                 
+                    //加载诊断默认数据
+                    tableIns.reload({
+                        data: data.Data.DiagnosisList
+                    });
+               
+                    buttonStatus("Settlement", true);
+                }
+            },
+           
+        });
+
+      
         $('#Settlement').on('click', function () {
             var leaveHospitalInpatientState = $("#LeaveHospitalInpatientState").val();
             if (leaveHospitalInpatientState === undefined || leaveHospitalInpatientState === "") {
@@ -401,7 +480,7 @@
                   
                     return false;
                 }
-                debugger;
+              
                 settlementParam["MedicalCategory"] = $("#MedicalCategory").val();
                 settlementParam["FetusNumber"] = fetusNumber;
                 settlementParam["AccountPayment"] = $("#AccountPayment").val() ;

@@ -315,43 +315,7 @@
                    
                     }
                 });
-            //诊断数据表格实例化
-            var layTableId = "dataTableId";
-            var tableIns = table.render({
-                elem: '#dataTable',
-                id: layTableId,
-                page: false,
-                cols: [
-                    [
-                        { title: '序号', type: 'numbers', width: 80 }, 
-                        { field: 'DiseaseCoding', title: '基层疾病编码', width: 280 },
-                        { field: 'DiseaseName', title: '基层疾病名称', width: 280 },
-                        { field: 'ProjectCode', title: '医保疾病编码', width: 280 },
-                        {
-                            field: 'IsMainDiagnosis',
-                            title: '主诊',
-                            width: 120,
-                            event: 'diagnosis',
-                            templet: function (d) {
-                                var html = [
-                                    '<input type="checkbox" name="IsMainDiagnosis" lay-skin="switch" lay-text="是|否"'
-                                ];
-                                html.push(d.IsMainDiagnosis === true ? 'checked' : '');
-                                html.push('/>');
-                                return html.join('');
-                            }
-                        }, {
-                            title: '操作',
-                            fixed: 'right',
-                            templet: function (d) {
-                                return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="' +
-                                    d.DiagnosisCode +
-                                    '"><i class="layui-icon layui-icon-delete"></i>移除</a>';
-                            }
-                        }
-                    ]
-                ]
-            });
+         
             /**根据当前住院病人的业务ID查询,返回数据回显到下面表单里面*/
             form.on('submit(LAY-form-search)',
                 function (data) {
@@ -393,12 +357,51 @@
                     });
                     return false; //阻止表单跳转
                 });
+            //----
+            //诊断数据表格实例化
+            var layTableId = "dataTableId";
+            var tableIns = table.render({
+                elem: '#dataTable',
+                id: layTableId,
+                page: false,
+                cols: [
+                    [
+                        { title: '序号', type: 'numbers', width: 80 },
+                        { field: 'DiseaseCoding', title: '基层疾病编码', width: 280 },
+                        { field: 'DiseaseName', title: '基层疾病名称', width: 280 },
+                        { field: 'ProjectCode', title: '医保疾病编码', width: 280 },
+                        {
+                            field: 'IsMainDiagnosis',
+                            title: '主诊',
+                            width: 120,
+                            event: 'diagnosis',
+                            templet: function (d) {
+                                var html = [
+                                    '<input type="checkbox" name="IsMainDiagnosis" lay-skin="switch" lay-text="是|否"'
+                                ];
+                                html.push(d.IsMainDiagnosis === true ? 'checked' : '');
+                                html.push('/>');
+                                return html.join('');
+                            }
+                        }, {
+                            title: '操作',
+                            fixed: 'right',
+                            templet: function (d) {
+                                return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="' +
+                                    d.ProjectCode +
+                                    '"><i class="layui-icon layui-icon-delete"></i>移除</a>';
+                            }
+                        }
+                    ]
+                ]
+            });
+            //诊断查询
             var tableSelect = layui.tableSelect;
             tableSelect.render({
                 elem: '#DiagnosisSearchData',
                 checkedKey: 'id',
                 searchKey: 'Search',//搜索输入框的name值 默认keyword
-                searchPlaceholder: '名称',	//搜索输入框的提示文字 默认关键词搜索
+                searchPlaceholder: '名称/编码/助记码',	//搜索输入框的提示文字 默认关键词搜索
                 table: {
                     url: host + '/QueryICD10',
                     parseData: function (result) {
@@ -415,6 +418,7 @@
                             { field: 'DiseaseCoding', title: '基层疾病编码' },
                             { field: 'DiseaseName', title: '基层疾病名称' },
                             { field: 'ProjectCode', title: '医保疾病编码' }
+
                         ]
                     ]
                 },
@@ -425,7 +429,6 @@
                     var oldDataTable = new Array;
                     layui.each(oldData,
                         function (index, item) {
-                            //排除空值
                             //排除空值
                             if (item.DiseaseCoding !== undefined) {
                                 //新增诊断编码
@@ -450,6 +453,7 @@
                         DiseaseCoding: data.data[0].DiseaseCoding,
                         ProjectCode: data.data[0].ProjectCode,
                         IsMainDiagnosis: false
+
                     };
                     //添加选中后的诊断
                     oldDataTable.push(newRow);
@@ -459,7 +463,7 @@
                         data: oldDataTable
                     });
 
-                 
+
 
                 }
             });
@@ -470,7 +474,7 @@
                     console.log(oldData);
                     for (var i = 0, row; i < oldData.length; i++) {
                         row = oldData[i];
-                        if (row.DiagnosisCode === obj.DiagnosisCode) {
+                        if (row.DiseaseCoding === obj.DiseaseCoding) {
                             $.extend(oldData[i], obj);
                             return;
                         }
@@ -518,8 +522,6 @@
                             activeByType('updateRow', obj.data); //更新行记录对象
                             break;
                         case "del":
-
-
                             layer.confirm('真的删除行么？',
                                 function (index) {
                                     obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
@@ -529,6 +531,8 @@
                             break;
                     }
                 });
+            //---------
+
             //登记
             form.on('submit(BirthRegister)',
                 function (data) {

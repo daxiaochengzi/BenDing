@@ -388,7 +388,7 @@ namespace BenDing.Service.Providers
                     DiseaseName = c.DiseaseName,
                     IsMainDiagnosis = c.IsMainDiagnosis == "是" ? true : false,
                     ProjectCode=c.ProjectCode,
-                    ProjectName=c.ProjectName
+               
                     
                 }).ToList();
                 resultData = new InpatientInfoDto()
@@ -477,7 +477,6 @@ namespace BenDing.Service.Providers
                 DiseaseCoding = c.DiseaseCoding,
                 DiseaseName = c.DiagnosisName,
                 ProjectCode = c.DiagnosisMedicalInsuranceCode,
-                ProjectName=c.DiagnosisMedicalInsuranceName,
                 IsMainDiagnosis = c.IsMainDiagnosis == "是" ? true : false,
 
             }).ToList();

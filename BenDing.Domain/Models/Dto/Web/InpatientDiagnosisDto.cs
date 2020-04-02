@@ -19,12 +19,6 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 是否主诊断
         /// </summary>
         public bool IsMainDiagnosis { get; set; } = false;
-
-
-        /// <summary>
-        /// 诊断医保名称
-        /// </summary>
-        public string ProjectName { get; set; }
         /// <summary>
         ///  诊断医保编码
         /// </summary>

@@ -128,35 +128,50 @@
                 , closeStop: '#AdmissionDate'
             });
         });
-        //数据表格实例化			
-        var layTableId = "layTableId";
+      
+
+        //----
+        //诊断数据表格实例化
+        var layTableId = "dataTableId";
         var tableIns = table.render({
             elem: '#dataTable',
             id: layTableId,
             page: false,
-            cols: [[
-                { title: '序号', type: 'numbers', width: 80 },
-                { field: 'DiseaseCoding', title: '基层疾病编码', width: 280 },
-                { field: 'DiseaseName', title: '基层疾病名称', width: 280 },
-                { field: 'ProjectCode', title: '医保疾病编码', width: 280 },
-                , {
-                    field: 'IsMainDiagnosis', title: '主诊', width: 120, event: 'diagnosis', templet: function (d) {
-                        var html = ['<input type="checkbox" name="IsMainDiagnosis" lay-skin="switch" lay-text="是|否"'];
-                        html.push(d.IsMainDiagnosis === true ? 'checked' : '');
-                        html.push('/>');
-                        return html.join('');
+            cols: [
+                [
+                    { title: '序号', type: 'numbers', width: 80 },
+                    { field: 'DiseaseCoding', title: '基层疾病编码', width: 280 },
+                    { field: 'DiseaseName', title: '基层疾病名称', width: 280 },
+                    { field: 'ProjectCode', title: '医保疾病编码', width: 280 },
+                    {
+                        field: 'IsMainDiagnosis',
+                        title: '主诊',
+                        width: 120,
+                        event: 'diagnosis',
+                        templet: function (d) {
+                            var html = [
+                                '<input type="checkbox" name="IsMainDiagnosis" lay-skin="switch" lay-text="是|否"'
+                            ];
+                            html.push(d.IsMainDiagnosis === true ? 'checked' : '');
+                            html.push('/>');
+                            return html.join('');
+                        }
+                    }, {
+                        title: '操作',
+                        fixed: 'right',
+                        templet: function (d) {
+                            return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="' +
+                                d.ProjectCode +
+                                '"><i class="layui-icon layui-icon-delete"></i>移除</a>';
+                        }
                     }
-                }
-                , {
-                    title: '操作', fixed: 'right', templet: function (d) {
-                        return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="' + d.DiagnosisCode + '"><i class="layui-icon layui-icon-delete"></i>移除</a>';
-                    }
-                }
-            ]]
+                ]
+            ]
         });
+        //诊断查询
         var tableSelect = layui.tableSelect;
         tableSelect.render({
-            elem: '#DiagnosisSearch',
+            elem: '#DiagnosisSearchData',
             checkedKey: 'id',
             searchKey: 'Search',//搜索输入框的name值 默认keyword
             searchPlaceholder: '名称/编码/助记码',	//搜索输入框的提示文字 默认关键词搜索
@@ -176,6 +191,7 @@
                         { field: 'DiseaseCoding', title: '基层疾病编码' },
                         { field: 'DiseaseName', title: '基层疾病名称' },
                         { field: 'ProjectCode', title: '医保疾病编码' }
+
                     ]
                 ]
             },
@@ -224,14 +240,14 @@
 
             }
         });
-        
         //定义事件集合
         var active = {
             updateRow: function (obj) {
                 var oldData = table.cache[layTableId];
+                console.log(oldData);
                 for (var i = 0, row; i < oldData.length; i++) {
                     row = oldData[i];
-                    if (row.DiagnosisCode === obj.DiagnosisCode) {
+                    if (row.DiseaseCoding === obj.DiseaseCoding) {
                         $.extend(oldData[i], obj);
                         return;
                     }
@@ -245,20 +261,21 @@
                 for (var i = 0, row; i < oldData.length; i++) {
                     row = oldData[i];
                     if (!row || !row.Id) {
-                        oldData.splice(i, 1);    //删除一项
+                        oldData.splice(i, 1); //删除一项
                     }
                     continue;
                 }
                 tableIns.reload({
                     data: oldData
                 });
-            },
+            }
         };
         //注册按钮事件
-        $('.layui-btn[data-type]').on('click', function () {
-            var type = $(this).data('type');
-            activeByType(type);
-        });
+        $('.layui-btn[data-type]').on('click',
+            function () {
+                var type = $(this).data('type');
+                activeByType(type);
+            });
         //激活事件
         var activeByType = function (type, arg) {
             if (arguments.length === 2) {
@@ -268,23 +285,28 @@
             }
         }
         //监听工具条
-        table.on('tool(dataTable)', function (obj) {
-            var data = obj.data, event = obj.event, tr = obj.tr; //获得当前行 tr 的DOM对象;
-            switch (event) {
-                case "diagnosis":
-                    var stateVal = tr.find("input[name='IsMainDiagnosis']").prop('checked') ? true : false;
-                    $.extend(obj.data, { 'IsMainDiagnosis': stateVal });
-                    activeByType('updateRow', obj.data);	//更新行记录对象
-                    break;
-                case "del":
-                    layer.confirm('真的删除行么？', function (index) {
-                        obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                        layer.close(index);
-                        //activeByType('removeEmptyTableCache');
-                    });
-                    break;
-            }
-        });
+        table.on('tool(dataTable)',
+            function (obj) {
+                var data = obj.data, event = obj.event, tr = obj.tr; //获得当前行 tr 的DOM对象;
+                switch (event) {
+                    case "diagnosis":
+                        var stateVal = tr.find("input[name='IsMainDiagnosis']").prop('checked') ? true : false;
+                        $.extend(obj.data, { 'IsMainDiagnosis': stateVal });
+                        activeByType('updateRow', obj.data); //更新行记录对象
+                        break;
+                    case "del":
+                        layer.confirm('真的删除行么？',
+                            function (index) {
+                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                                layer.close(index);
+                                //activeByType('removeEmptyTableCache');
+                            });
+                        break;
+                }
+            });
+            //---------
+
+
         //登记
         form.on('submit(updateRegister)', function (data) {
             var field = data.field;
