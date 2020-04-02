@@ -49,6 +49,20 @@ namespace NFine.Web.Controllers
             return View();
         }
         /// <summary>
+        /// 取消医保入院登记
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public ActionResult AdmissionRegistrationCancel(GetHisBaseParam param)
+        {
+            ViewBag.empid = param.EmpId;
+            ViewBag.bid = param.BId;
+            ViewBag.transkey = param.TransKey;
+            ViewBag.title = "取消医保入院登记";
+            return View();
+        }
+        
+        /// <summary>
         /// 诊断对码
         /// </summary>
         /// <param name="param"></param>

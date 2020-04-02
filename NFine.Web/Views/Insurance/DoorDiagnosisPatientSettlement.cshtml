@@ -28,7 +28,6 @@
             <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
             <object id="CSharpActiveX" classid="clsid:67475F7D-57A1-45AD-96F3-428A679B2E6C" codebase="ActiveSetup.CAB#version=1,0,0" width="0" height="0"></object>
             <div class="layui-card-header layuibd-card-header-auto">
-
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
                     <legend>病人信息</legend>
                 </fieldset>
@@ -178,7 +177,7 @@
                     <div class="layui-inline" id="SettleData">
                     </div>
                 </div>
-
+                </div>
         </form>
     </div>
 </div>
@@ -206,7 +205,7 @@
             var diagnosisList = jsonData.DiagnosisList;
             var diagnosisName = null;
             var diagnosisCode = null;
-            var diagnosisMedicalInsuranceCode = null
+            var diagnosisMedicalInsuranceCode = null;
             var diagnosisMedicalInsuranceName = null;
             if (diagnosisList !== null) {
 
@@ -241,7 +240,7 @@
         var params = {
             "TransKey": $("#transkey").val() /*医保交易码*/,
             "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
-            "UserId": $("#empid").val(), /*授权操作人的ID*/
+            "UserId": $("#empid").val() /*授权操作人的ID*/
         }
         //获取门诊计划生育结算参数
         function getOutpatientPlanBirthSettlementParam() {
@@ -255,14 +254,10 @@
                 success: function (data) {
                     if (data.Success === false) {
                         var errData = data.Message;
-
-
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-
                     } else {
                         //计划生育结算调用插件
-                        settlementPay(data.Data);
-
+                        //settlementPay(data.Data);
                     }
                 }
 
@@ -372,7 +367,6 @@
                 "IdentityMark": $("#IdentityMark").val() /*身份标识*/,
                 "UserId": $("#empid").val() /*授权操作人的ID*/
             }
-
             //获取居民信息
             $.ajax({
                 type: 'POST',
@@ -395,15 +389,17 @@
                             //职工
                         } else if (data.Data.InsuranceType === "310") {
                             $("#InsuranceBalance").val(data.Data.WorkersInsuranceBalance);
-
                         }
                         var settlementVal = $('input[name="Settlement"]:checked').val();
                         //计划生育结算
                         if (settlementVal === "1") {
                            
                             $("#DoorDiagnosisPreSettlementDiv").show();
-                        } else {
+                        } else//门诊结算
+                        {   //显示结算按钮
                             $("#DoorDiagnosisSettlementDiv").show();
+                            //隐藏预结算按钮
+                            $("#DoorDiagnosisPreSettlementDiv").hide();
                             //居民显示结算按钮
                             buttonStatus("DoorDiagnosisSettlement", true);
                         }

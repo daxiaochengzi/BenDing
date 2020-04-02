@@ -267,6 +267,8 @@ namespace BenDing.Domain.Xml
             return result;
         }
 
+      
+
         public static string DeSerializerModelStr(string rowsName)
         {
 

@@ -38,7 +38,9 @@ namespace BenDing.Domain.Models.Params.Web
         /// </summary>
        
         public string AfferentSign { get; set; }
-
-
+        /// <summary>
+        /// 结算xml数据
+        /// </summary>
+        public string SettlementXml { get; set; }
     }
 }

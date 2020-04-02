@@ -479,58 +479,94 @@ namespace BenDing.Service.Providers
         /// <param name="param"></param>
         /// <returns></returns>
         public string WorkerSettlementCancel(WorkerSettlementCancelParam param)
-        {  //划卡取消
-            if (param.WorkersStrokeCardNo != null)
-            {
-                _workerMedicalInsuranceRepository.CancelWorkerStrokeCard(new CancelWorkersStrokeCardParam()
+        {
+            string resultData = null;
+            if (param.CancelLimit == "1")
+            { //划卡取消
+                if (param.WorkersStrokeCardNo != null)
                 {
-                    WorkersStrokeCardNo = param.WorkersStrokeCardNo,
-                    Operate = param.User.UserName,
-                    Remarks = param.CancelSettlementRemarks
-                });
+                    _workerMedicalInsuranceRepository.CancelWorkerStrokeCard(new CancelWorkersStrokeCardParam()
+                    {
+                        WorkersStrokeCardNo = param.WorkersStrokeCardNo,
+                        Operate = param.User.UserName,
+                        Remarks = param.CancelSettlementRemarks
+                    });
+                }
+
+                // 结算取消
+                 resultData = _workerMedicalInsuranceRepository.WorkerSettlementCancel(param);
+                //取消交易id
+                var cancelTransactionId = param.User.TransKey;
+                //回参构建
+                var xmlData = new HospitalSettlementCancelXml()
+                {
+                    SettlementNo = param.SettlementNo,
+                };
+                var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                var saveXml = new SaveXmlDataParam()
+                {
+                    User = param.User,
+                    MedicalInsuranceBackNum = param.MedicalInsuranceHospitalizationNo,
+                    MedicalInsuranceCode = "42",
+                    BusinessId = param.BusinessId,
+                    BackParam = strXmlBackParam
+                };
+                //存基层
+                _webBasicRepository.SaveXmlData(saveXml);
+                var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
+                {
+                    UserId = param.User.UserId,
+                    Id = param.Id,
+                    CancelTransactionId = cancelTransactionId,
+                    MedicalInsuranceState = MedicalInsuranceState.MedicalInsurancePreSettlement,
+                    CancelSettlementRemarks = param.CancelSettlementRemarks
+
+                };
+                //存入中间层
+                _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
+                //添加日志
+                var logParam = new AddHospitalLogParam()
+                {
+                    JoinOrOldJson = JsonConvert.SerializeObject(param),
+                    ReturnOrNewJson = "{ yearSign= " + resultData + " }",
+                    User = param.User,
+                    Remark = "职工住院结算取消",
+                    RelationId = param.Id,
+                };
+                _systemManageRepository.AddHospitalLog(logParam);
+            }
+            else if(param.CancelLimit == "2")//取消结算,并删除资料<==>删除资料与取消入院
+            {
+                //回参构建
+                var xmlData = new HospitalizationRegisterXml()
+                {
+                    MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
+                };
+                var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                var saveXml = new SaveXmlDataParam()
+                {
+                    User = param.User,
+                    MedicalInsuranceBackNum = "Qxjs",
+                    MedicalInsuranceCode = "22",
+                    BusinessId = param.BusinessId,
+                    BackParam = strXmlBackParam
+                };
+                //存基层
+                _webBasicRepository.SaveXmlData(saveXml);
+
+                var updateParamData = new UpdateMedicalInsuranceResidentSettlementParam()
+                {
+                    UserId = param.User.UserId,
+                    Id = param.Id,
+                    CancelTransactionId = param.User.TransKey,
+                    MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceCancelSettlement,
+                    IsHisUpdateState = true
+                };
+                //更新中间层
+                _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
             }
 
-            // 结算取消
-            var resultData = _workerMedicalInsuranceRepository.WorkerSettlementCancel(param);
-            //取消交易id
-            var cancelTransactionId = param.User.TransKey;
-            //回参构建
-            var xmlData = new HospitalSettlementCancelXml()
-            {
-                SettlementNo = param.SettlementNo,
-            };
-            var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-            var saveXml = new SaveXmlDataParam()
-            {
-                User = param.User,
-                MedicalInsuranceBackNum = param.MedicalInsuranceHospitalizationNo,
-                MedicalInsuranceCode = "42",
-                BusinessId = param.BusinessId,
-                BackParam = strXmlBackParam
-            };
-            //存基层
-            _webBasicRepository.SaveXmlData(saveXml);
-            var updateParam = new UpdateMedicalInsuranceResidentSettlementParam()
-            {
-                UserId = param.User.UserId,
-                Id = param.Id,
-                CancelTransactionId = cancelTransactionId,
-                MedicalInsuranceState = MedicalInsuranceState.MedicalInsurancePreSettlement,
-                CancelSettlementRemarks = param.CancelSettlementRemarks
 
-            };
-            //存入中间层
-            _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParam);
-            //添加日志
-            var logParam = new AddHospitalLogParam()
-            {
-                JoinOrOldJson = JsonConvert.SerializeObject(param),
-                ReturnOrNewJson = "{ yearSign= " + resultData + " }",
-                User = param.User,
-                Remark = "职工住院结算取消",
-                RelationId = param.Id,
-            };
-            _systemManageRepository.AddHospitalLog(logParam);
 
             //if (param.CancelLimit == "2") //取消结算,并删除资料<==>删除资料与取消入院
             //{

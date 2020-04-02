@@ -8,7 +8,7 @@
     
     function btn_Base_download() {
         $.submitForm({
-            url: "/SystemManage/DataImport/BaseDownload?keyValue=" + $("#ProjectType").val(),
+            url: "/SystemManage/DataImport/BaseDownload",
             success: function() {
                
             }
@@ -39,18 +39,6 @@
                     <td class="formValue">
                         <a id="NF-adds" authorize="yes" class="btn btn-primary dropdown-text" onclick="btn_MedicalInsurance_download()"><i class="fa fa-plus"></i>医保下载更新</a>
                     </td>
-                </tr>
-                <tr>
-                    <th class="formTitle">项目类型</th>
-                    <td class="formValue">
-                        <select id="ProjectType" name="ProjectType" class="form-control required">
-                            <option value=0>中药</option>
-                            <option value=1>西药</option>
-                            <option value=2>诊疗</option>
-                            <option value=3>诊疗</option>
-                        </select>
-                    </td>
-                   
                 </tr>
                 <tr>
                     <th class="formTitle"></th>

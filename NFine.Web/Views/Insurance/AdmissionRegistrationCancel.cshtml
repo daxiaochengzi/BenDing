@@ -1,0 +1,188 @@
+﻿
+@{
+
+    Layout = "~/Views/Shared/_Base.cshtml";
+}
+<link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
+
+<style>
+    .layui-card-header.layuibd-card-header-auto {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        height: auto;
+    }
+
+    .layuibd-card-header-auto i.layuibd-button-btn {
+        position: relative;
+        right: 0;
+        top: 0;
+        vertical-align: middle
+    }
+</style>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <form class="layui-form" id="LAY-form" lay-filter="LAY-form-render">
+            <input type="hidden" id="bid" name="BusinessId" value="@ViewBag.bid" placeholder="业务ID" />
+            <input type="hidden" id="empid" name="UserId" value="@ViewBag.empid" placeholder="用户ID" />
+            <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
+            <div class="layui-card-body">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
+                    <legend>病人信息</legend>
+                </fieldset>
+                <!--主体部分-->
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">住院编号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="HospitalizationNo" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">身份证号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="IdCardNo" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">患者姓名</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="PatientName" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">性别</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="PatientSex" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">主诊医生</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="AdmissionDiagnosticDoctor" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">入院日期</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="AdmissionDate" id="date2" placeholder="yyyy-MM-dd" disabled autocomplete="off" class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">住院科室</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="InDepartmentName" autocomplete="off" disabled class="layui-input layui-disabled">
+                            <input type="hidden" name="InDepartmentId" class="layui-input">
+                        </div>
+                    </div>
+                  
+                </div>
+                <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
+                    <button type="submit" Id="HospitalizationRegisterCancel" lay-submit disabled class="layui-btn layui-btn-disabled layui-btn-radius">登记</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script>
+    layui.config({
+        base: '/Content/js/layui/plugin/'
+    }).extend({
+        autocomplete: 'layAutoComplete'
+        });
+    layui.use(['form', 'layer', 'element',  'autocomplete'],
+        function() {
+            var $ = layui.$,
+                element = layui.element,
+                form = layui.form,
+                layer = layui.layer;
+            var jsonToForm = function (jsonData, formFilter) {
+                //给表单赋值
+                form.val(formFilter,
+                    {
+                        "AdmissionDate": jsonData.Data.AdmissionDate,
+                        "HospitalizationNo": jsonData.Data.HospitalizationNo,
+                        "PatientName": jsonData.PatientName,
+                        "IdCardNo": jsonData.IdCardNo,
+                        "PatientSex": jsonData.PatientSex,
+                        "InDepartmentId": jsonData.Data.InDepartmentId,
+                        "AdmissionDiagnosticDoctor": jsonData.Data.AdmissionDiagnosticDoctor
+                    });
+            }
+            //病人信息
+            var inpatientInfoData = null;
+            //获取病人信息
+            function getInpatientInfo() {
+                var params = {
+                    "TransKey": $("#transkey").val() /*医保交易码*/,
+                    "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
+                    "UserId": $("#empid").val() /*授权操作人的ID*/
+                }
+                //获取病人信息
+                $.ajax({
+                    url: host + '/GetInpatientInfo',
+                    data: params,
+                    dataType: "json",
+                    type: 'post',
+                    success: function (data) {
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            //样式类名:墨绿深蓝风
+                            layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+
+                        } else {
+                            jsonToForm(data.Data, "LAY-form-render");
+                            //layer.msg('费用上传成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        }
+                    },
+                    complete: function () {
+                        form.render();
+                    }
+                });
+            }
+
+            //获取病人信息
+            getInpatientInfo();
+            //form数据回显:数据回显到Form表单主体部分
+            $('#HospitalizationRegisterCancel').on('click', function() {
+                var params = {
+                    "TransKey": $("#transkey").val() /*医保交易码*/,
+                    "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
+                    "UserId": $("#empid").val() /*授权操作人的ID*/
+                }//医保入院登记取消
+                $.ajax({
+                    type: 'get',
+                    url: host + '/MedicalInsuranceHospitalizationRegisterCancel',
+                    data: params,
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        } else {
+
+                            $('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
+                            $('#CashPayment').val(data.Data.SelfPayFeeAmount);
+                            layer.alert('门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv',title: '温馨提示' });
+                      
+                            buttonStatus("DoorDiagnosisSettlementCancel", false);
+                        }
+                    }
+
+                });
+            });
+            function buttonStatus(buttonId, status) {
+                //取消禁用
+                if (status === true) {
+                    $("#" + buttonId).attr("class", "layui-btn layui-btn-radius");
+                    $("#" + buttonId).removeAttr("disabled");
+                }//禁用
+                else {
+                    $("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
+                    $("#" + buttonId).attr("disabled", 'disabled');
+                }
+
+            }
+        });
+</script>

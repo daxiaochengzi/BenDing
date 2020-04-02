@@ -190,6 +190,7 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Controllers\BaseAsyncController.cs" />
     <Compile Include="Controllers\BenDingController.cs" />
+    <Compile Include="Controllers\BenDingNewController.cs" />
     <Compile Include="Controllers\ClientsDataController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InsuranceController.cs" />
@@ -815,6 +816,7 @@
     <Content Include="Views\Insurance\DoorDiagnosisPatientSettlePrint.cshtml" />
     <Content Include="Views\Insurance\Icd10Value.cshtml" />
     <Content Include="Views\Insurance\PairCodeIcd10.cshtml" />
+    <Content Include="Views\Insurance\AdmissionRegistrationCancel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

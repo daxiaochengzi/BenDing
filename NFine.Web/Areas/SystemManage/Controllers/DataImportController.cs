@@ -65,14 +65,11 @@ namespace NFine.Web.Areas.SystemManage.Controllers
 
                 }
             }
-
             return Content(content);
 
         }
-
         [HttpPost]
-       
-        public ActionResult BaseDownload(string keyValue)
+        public ActionResult BaseDownload()
         {
             var loginInfo = OperatorProvider.Provider.GetCurrent();
             var user = userApp.GetForm(loginInfo.UserId);
@@ -83,9 +80,10 @@ namespace NFine.Web.Areas.SystemManage.Controllers
                 OrganizationCode = userBase.OrganizationCode,
                 AuthCode = userBase.AuthCode,
                 Nums = 1000,
-                CatalogType = (CatalogTypeEnum)Convert.ToInt16(keyValue)
+
             });
-            return Success("下载成功");
+           
+            return Success(data);
         }
        
     }

@@ -22,5 +22,6 @@ namespace BenDing.Domain.Models.Params.Resident
         /// 用户信息
         /// </summary>
         public UserInfoDto User { get; set; }
+      
     }
 }

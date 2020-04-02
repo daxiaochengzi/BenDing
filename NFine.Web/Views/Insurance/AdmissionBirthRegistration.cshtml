@@ -316,47 +316,7 @@
                     }
                 });
          
-            /**根据当前住院病人的业务ID查询,返回数据回显到下面表单里面*/
-            form.on('submit(LAY-form-search)',
-                function (data) {
-
-                    var paramsUserInfo = {
-                        "AfferentSign": $("#AfferentSign").val() /*身份标志，1:身份证,2:医保个人编码身份证号*/,
-                        "IdentityMark": $("#IdentityMark").val(),
-                        "UserId": $("#empid").val() /*授权操作人的ID*/
-                    }
-                    $.ajax({
-                        type: 'POST',
-                        url: host + '/GetUserInfo',
-                        data: paramsUserInfo,
-                        dataType: "json",
-                        async: false,
-                        success: function (data) {
-                            if (data.Success === false) {
-                                var errData = data.Message;
-                                
-                                layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                              
-                              
-                            } else {
-                                jsonToForm(data.Data, "LAY-form-render");
-                                //加载诊断默认数据
-                                tableIns.reload({
-                                    data: inpatientInfoData.Data.DiagnosisList
-                                });
-                                buttonStatus("BirthRegister",true);
-                                //////诊断查询可编辑
-                                //$('#DiagnosisSearchData').attr("class", "layui-input");
-
-
-                            }
-                        },
-                        complete: function () {
-                            form.render();
-                        }
-                    });
-                    return false; //阻止表单跳转
-                });
+           
             //----
             //诊断数据表格实例化
             var layTableId = "dataTableId";
@@ -532,7 +492,47 @@
                     }
                 });
             //---------
+            /**根据当前住院病人的业务ID查询,返回数据回显到下面表单里面*/
+            form.on('submit(LAY-form-search)',
+                function (data) {
 
+                    var paramsUserInfo = {
+                        "AfferentSign": $("#AfferentSign").val() /*身份标志，1:身份证,2:医保个人编码身份证号*/,
+                        "IdentityMark": $("#IdentityMark").val(),
+                        "UserId": $("#empid").val() /*授权操作人的ID*/
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: host + '/GetUserInfo',
+                        data: paramsUserInfo,
+                        dataType: "json",
+                        async: false,
+                        success: function (data) {
+                            if (data.Success === false) {
+                                var errData = data.Message;
+                                
+                                layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                              
+                              
+                            } else {
+                                jsonToForm(data.Data, "LAY-form-render");
+                                //加载诊断默认数据
+                                tableIns.reload({
+                                    data: inpatientInfoData.Data.DiagnosisList
+                                });
+                                buttonStatus("BirthRegister",true);
+                                //////诊断查询可编辑
+                                //$('#DiagnosisSearchData').attr("class", "layui-input");
+
+
+                            }
+                        },
+                        complete: function () {
+                            form.render();
+                        }
+                    });
+                    return false; //阻止表单跳转
+                });
             //登记
             form.on('submit(BirthRegister)',
                 function (data) {

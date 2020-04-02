@@ -12,5 +12,6 @@ namespace BenDing.Domain.Models.Params.OutpatientDepartment
     /// 取消结算备注
     /// </summary>
         public string CancelSettlementRemarks { get; set; }
+        
     }
 }

@@ -31,6 +31,9 @@ namespace BenDing.Domain.Models.Params.UI
         /// 
         /// </summary>
         public int IsBirthHospital { get; set; }
-   
+
+        public  string SettlementXml { get; set; }
+
+
     }
 }
