@@ -129,7 +129,7 @@ namespace BenDing.Service.Providers
                 AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
                 PatientName = outpatientPerson.PatientName,
                 AccountAmountPay = 0,
-                MedicalInsuranceType = userInfoData.InsuranceType == "342" ? "10" : userInfoData.InsuranceType,
+                MedicalInsuranceType = userInfoData.InsuranceType == "310" ? "1" : userInfoData.InsuranceType,
             };
 
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
@@ -478,7 +478,7 @@ namespace BenDing.Service.Providers
                 AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
                 PatientName = outpatientPerson.PatientName,
                 AccountAmountPay = resultData.AccountPayment,
-                MedicalInsuranceType = userInfoData.InsuranceType == "342" ? "10" : userInfoData.InsuranceType,
+                MedicalInsuranceType = userInfoData.InsuranceType == "310" ? "1" : userInfoData.InsuranceType,
             };
 
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
