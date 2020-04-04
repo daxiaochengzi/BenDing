@@ -4,8 +4,16 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using BenDing.Domain.Models.Dto.OutpatientDepartment;
+using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.Base;
+using BenDing.Domain.Models.Params.OutpatientDepartment;
+using BenDing.Domain.Models.Params.UI;
+using BenDing.Domain.Models.Params.Web;
+using BenDing.Domain.Xml;
 using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces;
+using Newtonsoft.Json;
 
 namespace NFine.Web.Controllers
 {    /// <summary>
@@ -21,6 +29,7 @@ namespace NFine.Web.Controllers
         private readonly IResidentMedicalInsuranceRepository _residentMedicalInsuranceRepository;
         private readonly IResidentMedicalInsuranceService _residentMedicalInsuranceService;
         private readonly IOutpatientDepartmentService _outpatientDepartmentService;
+        private readonly IOutpatientDepartmentNewService _outpatientDepartmentNewService;
         private readonly IOutpatientDepartmentRepository _outpatientDepartmentRepository;
         private readonly IWorkerMedicalInsuranceService _workerMedicalInsuranceService;
         /// <summary>
@@ -45,7 +54,8 @@ namespace NFine.Web.Controllers
             IWebBasicRepository webServiceBasicRepository,
             IOutpatientDepartmentService outpatientDepartmentService,
             IOutpatientDepartmentRepository outpatientDepartmentRepository,
-            IWorkerMedicalInsuranceService workerMedicalInsuranceService
+            IWorkerMedicalInsuranceService workerMedicalInsuranceService,
+            IOutpatientDepartmentNewService outpatientDepartmentNewService
             )
         {
             _webServiceBasicService = webServiceBasicService;
@@ -58,8 +68,206 @@ namespace NFine.Web.Controllers
             _outpatientDepartmentService = outpatientDepartmentService;
             _outpatientDepartmentRepository = outpatientDepartmentRepository;
             _workerMedicalInsuranceService = workerMedicalInsuranceService;
+            _outpatientDepartmentNewService = outpatientDepartmentNewService;
         }
+        /// <summary>
+        /// 门诊费用结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData OutpatientDepartmentCostInput([FromBody]OutpatientPlanBirthSettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
+              
 
+                //门诊计划生育
+                if (param.IsBirthHospital == 1)
+                {
+                    var settlementData = _outpatientDepartmentNewService.OutpatientPlanBirthSettlement(param);
+                    y.Data = new OutpatientCostReturnDataDto()
+                    {
+                        SelfPayFeeAmount = settlementData.CashPayment,
+                        PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(settlementData))
+                    };
+
+                }
+                else
+                {   //普通门诊
+                    var data = _outpatientDepartmentNewService.OutpatientDepartmentCostInput(new GetOutpatientPersonParam()
+                    {
+                        User = userBase,
+                        UiParam = param,
+                        IdentityMark = param.IdentityMark,
+                        AfferentSign = param.AfferentSign,
+
+                    });
+                    if (data == null) throw new Exception("获取门诊结算反馈数据失败!!!");
+
+                    y.Data = new OutpatientCostReturnDataDto()
+                    {
+                        ReimbursementExpensesAmount = data.ReimbursementExpensesAmount,
+                        SelfPayFeeAmount = data.SelfPayFeeAmount,
+                        PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(data))
+                    };
+                }
+
+            });
+
+        }
+        /// <summary>
+        /// 门诊计划生育预结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData OutpatientPlanBirthPreSettlement([FromBody]OutpatientPlanBirthPreSettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
+               
+                var settlementData = _outpatientDepartmentNewService.OutpatientPlanBirthPreSettlement(param);
+                y.Data = new OutpatientCostReturnDataDto()
+                {
+                    SelfPayFeeAmount = settlementData.CashPayment,
+                    PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(settlementData))
+                };
+
+            });
+
+        }
+        /// <summary>
+        /// 取消门诊费用结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData CancelOutpatientDepartmentCost([FromUri]CancelOutpatientDepartmentCostUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+
+                _outpatientDepartmentNewService.CancelOutpatientDepartmentCost(param);
+            });
+
+        }
+        /// <summary>
+        ///查询门诊费用结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData QueryOutpatientDepartmentCost([FromUri]UiBaseDataParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var resultData = new QueryOutpatientDepartmentCostDataDto();
+              
+                var baseUser = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                baseUser.TransKey = param.TransKey;
+                var paramIni = new SettlementCancelParam
+                {
+                    User = baseUser,
+                    BusinessId = param.BusinessId
+                };
+                var cancelSettlementData = _webServiceBasicService.GetOutpatientSettlementCancel(paramIni);
+                var queryData = _hisSqlRepository.QueryOutpatient(new QueryOutpatientParam() { BusinessId = param.BusinessId });
+                if (queryData == null) throw new Exception("获取门诊结算病人失败!!!");
+                //获取医保病人信息
+                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    BusinessId = param.BusinessId
+                });
+                //获取门诊病人信息
+                resultData.DepartmentName = queryData.DepartmentName;
+                resultData.DiagnosticDoctor = queryData.DiagnosticDoctor;
+                resultData.IdCardNo = queryData.IdCardNo;
+                resultData.Operator = cancelSettlementData.CancelOperator;
+                resultData.PatientName = queryData.PatientName;
+                resultData.OutpatientNumber = queryData.OutpatientNumber;
+                resultData.VisitDate = queryData.VisitDate;
+                //医保门诊结算查询
+                var queryOutpatientData = _outpatientDepartmentService.QueryOutpatientDepartmentCost(param);
+                resultData.ReimbursementExpensesAmount = queryOutpatientData.ReimbursementExpensesAmount;
+                resultData.SelfPayFeeAmount = queryOutpatientData.SelfPayFeeAmount;
+                resultData.MedicalTreatmentTotalCost = queryOutpatientData.AllAmount;
+                resultData.SettlementNo = cancelSettlementData.SettlementNo;
+                if (!string.IsNullOrWhiteSpace(residentData.OtherInfo))
+                {
+                    resultData.PayMsg = CommonHelp.GetPayMsg(residentData.OtherInfo);
+                }
+                y.Data = resultData;
+
+            });
+
+        }
+        /// <summary>
+        ///门诊月结汇总
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData MonthlyHospitalization([FromUri]MonthlyHospitalizationUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                _outpatientDepartmentNewService.MonthlyHospitalization(param);
+            });
+
+        }
+        ///// <summary>
+        /////取消门诊月结汇总
+        ///// </summary>
+        ///// <param name="param"></param>
+        ///// <returns></returns>
+        //[HttpGet]
+        //public ApiJsonResultData CancelMonthlyHospitalization([FromUri]CancelMonthlyHospitalizationUiParam param)
+        //{
+        //    return new ApiJsonResultData(ModelState).RunWithTry(y =>
+        //    {
+        //        _outpatientDepartmentNewService.CancelMonthlyHospitalization(param);
+
+        //    });
+
+        //}
+        /// <summary>
+        /// 获取门诊生育结算参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetOutpatientPlanBirthSettlementParam([FromBody]OutpatientPlanBirthSettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var data = _outpatientDepartmentService.GetOutpatientPlanBirthSettlementParam(param);
+
+
+                y.Data = data;
+            });
+
+        }
+        /// <summary>
+        /// 门诊生育结算
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData OutpatientPlanBirthSettlement([FromBody]OutpatientPlanBirthSettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                //var resultData = JsonConvert.DeserializeObject<WorkerHospitalizationPreSettlementDto>(param.ResultData);
+                //_outpatientDepartmentService.OutpatientPlanBirthSettlement(param);
+
+            });
+
+        }
 
     }
 }
