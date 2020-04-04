@@ -53,7 +53,6 @@ namespace BenDing.Repository.Interfaces.Web
         /// <returns></returns>
         WorkerHospitalizationPreSettlementDto OutpatientPlanBirthSettlement(
               OutpatientPlanBirthSettlementParam param);
-
         /// <summary>
         /// 门诊计划生育结算查询
         /// </summary>
@@ -69,6 +68,5 @@ namespace BenDing.Repository.Interfaces.Web
           WorkerHospitalizationPreSettlementDto OutpatientPlanBirthSettlementCancel(
               OutpatientPlanBirthSettlementCancelParam param);
 
-        
       }
 }

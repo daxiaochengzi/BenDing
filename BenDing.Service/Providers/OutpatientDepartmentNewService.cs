@@ -19,6 +19,7 @@ using BenDing.Repository.Interfaces.Web;
 using BenDing.Service.Interfaces;
 using Newtonsoft.Json;
 using NFine.Application.BenDingManage;
+using NFine.Domain._03_Entity.BenDingManage;
 
 namespace BenDing.Service.Providers
 {
@@ -588,6 +589,64 @@ namespace BenDing.Service.Providers
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
 
             return resultData;
+        }
+        /// <summary>
+        /// 获取门诊月结入参
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public MonthlyHospitalizationParam GetMonthlyHospitalizationParam(MonthlyHospitalizationUiParam param)
+        {
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+           
+            var iniParam = 
+                new MonthlyHospitalizationParam()
+                {
+                    User = userBase,
+                    Participation = new MonthlyHospitalizationParticipationParam()
+                    {
+                        StartTime = Convert.ToDateTime(param.StartTime).ToString("yyyyMMdd"),
+                        EndTime = Convert.ToDateTime(param.EndTime).ToString("yyyyMMdd"),
+                        SummaryType = "22",
+                        PeopleType = ((int)param.PeopleType).ToString()
+                    }
+                };
+
+            return iniParam;
+        }
+        /// <summary>
+        /// 门诊月结
+        /// </summary>
+        /// <param name="param"></param>
+        public void MonthlyHospitalization(MonthlyHospitalizationUiParam param)
+        {
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            MonthlyHospitalizationDto data;
+            data = XmlHelp.DeSerializer<MonthlyHospitalizationDto>(param.SettlementXml);
+            //医保登录
+            _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+            var insertParam = new MonthlyHospitalizationEntity()
+            {
+                Amount = data.ReimbursementAllAmount,
+                Id = Guid.NewGuid(),
+                DocumentNo = data.DocumentNo,
+                PeopleNum = data.ReimbursementPeopleNum,
+                PeopleType = ((int)param.PeopleType).ToString(),
+                SummaryType = "22",
+                StartTime = Convert.ToDateTime(param.StartTime + " 00:00:00.000"),
+                EndTime = Convert.ToDateTime(param.EndTime + " 00:00:00.000"),
+                IsRevoke = false
+            };
+            _monthlyHospitalizationBase.Insert(insertParam, userBase);
+            //添加日志
+            var logParam = new AddHospitalLogParam()
+            {
+                JoinOrOldJson = JsonConvert.SerializeObject(param),
+                User = userBase,
+                Remark = "门诊月结汇总",
+                RelationId = insertParam.Id,
+            };
+            _systemManageRepository.AddHospitalLog(logParam);
         }
     }
 }

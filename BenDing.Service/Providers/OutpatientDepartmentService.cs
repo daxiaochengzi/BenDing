@@ -636,11 +636,9 @@ namespace BenDing.Service.Providers
 
             return resultData;
         }
-
         /// <summary>
         /// 获取门诊预结算参数
         /// </summary>
-       
         /// <returns></returns>
         private OutpatientPlanBirthPreSettlementParam GetOutpatientPlanBirthPreSettlementParam(
             OutpatientPlanBirthPreSettlementUiParam param

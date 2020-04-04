@@ -97,7 +97,6 @@ namespace BenDing.Repository.Providers.Web
             var result = MedicalInsuranceDll.CallService_cxjb("TPYP215");
             if (result != 1) throw new Exception("取消门诊月结汇总执行出错");
             XmlHelp.DeSerializerModel(new IniDto(), true);
-
         }
         /// <summary>
         /// 门诊计划生育预结算

@@ -37,5 +37,9 @@ namespace BenDing.Domain.Models.Params.UI
         [Display(Name = "报销结束时间")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string EndTime { get; set; }
+        /// <summary>
+        /// 结算xml
+        /// </summary>
+        public  string SettlementXml { get; set; }
     }
 }

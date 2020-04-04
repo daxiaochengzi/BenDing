@@ -28,12 +28,12 @@ namespace BenDing.Domain.Models.Params.UI
         /// </summary>
         public string AccountPayment { get; set; }
         /// <summary>
-        /// 
+        /// 是否生育
         /// </summary>
         public int IsBirthHospital { get; set; }
-
+        /// <summary>
+        /// 结算xml
+        /// </summary>
         public  string SettlementXml { get; set; }
-
-
     }
 }
