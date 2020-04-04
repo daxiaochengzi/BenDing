@@ -666,11 +666,12 @@ namespace BenDing.Service.Providers
             {
                 if (!string.IsNullOrWhiteSpace(inpatientDiagnosisDataDto.ProjectCode))
                 {
-                    throw new Exception("未对码诊断:" + "[" + inpatientDiagnosisDataDto.DiseaseName + "]" + "[" + inpatientDiagnosisDataDto.DiseaseCoding + "]");
+                    mainDiagnosis = inpatientDiagnosisDataDto.ProjectCode;
                 }
                 else
                 {
-                    mainDiagnosis = inpatientDiagnosisDataDto.ProjectCode;
+                    throw new Exception("未对码诊断:" + "[" + inpatientDiagnosisDataDto.DiseaseName + "]" + "[" + inpatientDiagnosisDataDto.DiseaseCoding + "]");
+                   
                 }
             }
 
@@ -752,11 +753,12 @@ namespace BenDing.Service.Providers
             {
                 if (!string.IsNullOrWhiteSpace(inpatientDiagnosisDataDto.ProjectCode))
                 {
-                    throw new Exception("未对码诊断:" + "[" + inpatientDiagnosisDataDto.DiseaseName + "]" + "[" + inpatientDiagnosisDataDto.DiseaseCoding + "]");
+                    mainDiagnosis = inpatientDiagnosisDataDto.ProjectCode;
+                   
                 }
                 else
                 {
-                    mainDiagnosis = inpatientDiagnosisDataDto.ProjectCode;
+                    throw new Exception("未对码诊断:" + "[" + inpatientDiagnosisDataDto.DiseaseName + "]" + "[" + inpatientDiagnosisDataDto.DiseaseCoding + "]");
                 }
             }
             var resultData = new OutpatientPlanBirthSettlementParam()
