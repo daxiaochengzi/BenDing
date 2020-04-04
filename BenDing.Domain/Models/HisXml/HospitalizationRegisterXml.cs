@@ -24,7 +24,7 @@ namespace BenDing.Domain.Models.HisXml
         public string InsuranceNo { get; set; }
 
         /// <summary>
-        /// 医保类型 10:居民  职工:310
+        /// 医保类型  职工:1 ;342:居民 
         /// </summary>
         [XmlElementAttribute("aae140", IsNullable = false)]
         public string MedicalInsuranceType { get; set; }

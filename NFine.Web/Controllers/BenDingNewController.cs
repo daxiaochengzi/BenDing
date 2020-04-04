@@ -45,6 +45,7 @@ namespace NFine.Web.Controllers
         /// <param name="outpatientDepartmentService"></param>
         /// <param name="outpatientDepartmentRepository"></param>
         /// <param name="workerMedicalInsuranceService"></param>
+        /// <param name="outpatientDepartmentNewService"></param>
         public BenDingNewController(IResidentMedicalInsuranceRepository insuranceRepository,
             IWebServiceBasicService webServiceBasicService,
             IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
