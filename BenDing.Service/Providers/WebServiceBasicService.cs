@@ -872,7 +872,8 @@ namespace BenDing.Service.Providers
                 {
                     IsMainDiagnosis = true,
                     DiseaseName = c.DiseaseName,
-                    DiseaseCoding = c.DiseaseCoding
+                    DiseaseCoding = c.DiseaseCoding,
+                    ProjectCode=c.ProjectCode!=null? c.ProjectCode:c.DiseaseCoding
                 }).ToList());
             }
             if (!string.IsNullOrWhiteSpace(two))
@@ -884,7 +885,8 @@ namespace BenDing.Service.Providers
                 {
                     IsMainDiagnosis = false,
                     DiseaseName = c.DiseaseName,
-                    DiseaseCoding = c.DiseaseCoding
+                    DiseaseCoding = c.DiseaseCoding,
+                    ProjectCode = c.ProjectCode != null ? c.ProjectCode : c.DiseaseCoding
                 }).ToList());
             }
             if (!string.IsNullOrWhiteSpace(three))
@@ -896,7 +898,8 @@ namespace BenDing.Service.Providers
                 {
                     IsMainDiagnosis = false,
                     DiseaseName = c.DiseaseName,
-                    DiseaseCoding = c.DiseaseCoding
+                    DiseaseCoding = c.DiseaseCoding,
+                    ProjectCode = c.ProjectCode != null ? c.ProjectCode : c.DiseaseCoding
                 }).ToList());
             }
             //获取诊断字符串集

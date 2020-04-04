@@ -86,7 +86,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">录入诊断</label>
                         <div class="layui-input-inline" style="width:280px;">
-                            <input type="text" id="DiagnosisSearch" placeholder="请输入诊断" class="layui-input">
+                            <input type="text" id="DiagnosisSearchData" name="DiagnosisSearchData" placeholder="请输入诊断" class="layui-input">
                         </div>
                     </div>
                 </div>
@@ -205,9 +205,9 @@
                         //排除空值
                         if (item.DiseaseCoding !== undefined) {
                             //新增诊断编码
-                            var addProjectCode = data.data[0].ProjectCode;
+                            var DiseaseCoding = data.data[0].DiseaseCoding;
                             //诊断去重
-                            if (item.DiseaseCoding !== addDiseaseCoding) {
+                            if (item.DiseaseCoding !== DiseaseCoding) {
                                 var itemRow = {
                                     DiseaseName: item.DiseaseName,
                                     DiseaseCoding: item.DiseaseCoding,

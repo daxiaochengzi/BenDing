@@ -26,7 +26,7 @@ namespace BenDing.Domain.Models.Params.Resident
         /// <summary>
         /// 账户下账金额
         /// </summary>
-        public  decimal AccountPayment { get; set; }
+        public string AccountPayment { get; set; } 
 
         /// <summary>
         /// 胎儿数

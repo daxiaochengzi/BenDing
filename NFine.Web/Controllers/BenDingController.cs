@@ -686,7 +686,7 @@ namespace NFine.Web.Controllers
                 }
                 else
                 {
-                   // CancelOperation("2");
+                    CancelOperation("2");
                 }
                 void CancelOperation(string cancelLimit)
                 {
@@ -1226,7 +1226,7 @@ namespace NFine.Web.Controllers
                               TransKey = param.TransKey,
                               UserId = param.UserId,
                               BusinessId = param.BusinessId,
-                              AccountPayment = param.AccountPayment,
+                              AccountPayment =!string.IsNullOrWhiteSpace(param.AccountPayment)==true?Convert.ToDecimal(param.AccountPayment):0 ,
                               DiagnosisList = param.DiagnosisList,
                               MedicalCategory = param.MedicalCategory,
                               FetusNumber = param.FetusNumber,

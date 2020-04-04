@@ -20,7 +20,7 @@
 </style>
 <div class="layui-fluid">
     <div class="layui-card">
-        <form class="layui-form"  id="LAY-form"  lay-filter="LAY-form-render">
+        <form class="layui-form" id="LAY-form" lay-filter="LAY-form-render">
             <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
             <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
             <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
@@ -77,7 +77,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="layui-inline"  id="FetusNumberDiv">
+                    <div class="layui-inline" id="FetusNumberDiv">
                         <label class="layui-form-label">胎儿数</label>
                         <div class="layui-input-inline">
                             <input type="text" id="FetusNumber" name="FetusNumber" autocomplete="off" class="layui-input">
@@ -86,7 +86,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">费用合计</label>
                         <div class="layui-input-inline">
-                            <input type="text"  id="HospitalizationTotalCost" name="HospitalizationTotalCost" autocomplete="off" disabled class="layui-input layui-disabled">
+                            <input type="text" id="HospitalizationTotalCost" name="HospitalizationTotalCost" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -96,11 +96,11 @@
                         </div>
                     </div>
                     @*<div class="layui-inline">
-                        <label class="layui-form-label">报销金额</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="ReimbursementExpenses"  name="ReimbursementExpenses" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>*@
+                    <label class="layui-form-label">报销金额</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="ReimbursementExpenses"  name="ReimbursementExpenses" autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
+                </div>*@
 
                     <div class="layui-inline">
                         <label class="layui-form-label">诊断医生</label>
@@ -114,17 +114,27 @@
                             <input type="text" name="Operator" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
-                    <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                        <button type="button" Id="PreSettlement" class="layui-btn layui-btn-disabled layui-btn-radius" >预结算</button>
-                    </div>
+
                 </div>
             </div>
-            <div class="layui-form-item"  id="DiagnosisDiv">
-                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
-                    <legend>出院诊断信息</legend>
-                </fieldset>
-                <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
 
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>出院诊断</legend>
+            </fieldset>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">录入诊断</label>
+                    <div class="layui-input-inline" style="width: 280px;">
+                        <input type="text" name="DiagnosisSearchData" id="DiagnosisSearchData" class="layui-input layui-disabled">
+                    </div>
+                </div>
+
+
+            </div>
+            <!--诊断列表-->
+            <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
+            <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
+                <button type="button" Id="PreSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">预结算</button>
             </div>
             <div class="layui-card-body" lay-size="sm">
                 <fieldset id="PreSettleData" class="layui-elem-field layui-field-title" style="margin-top: 10px;">
@@ -132,10 +142,10 @@
                 </fieldset>
                 <!--医保预结算信息-->
                 @*<div class="layui-form-item layui-form-text">
-                    <div class="layui-input-block">
-                        <textarea class="layui-textarea" style="font-size: 20px" id="PreSettlementData"></textarea>
-                    </div>
-                </div>*@
+                <div class="layui-input-block">
+                    <textarea class="layui-textarea" style="font-size: 20px" id="PreSettlementData"></textarea>
+                </div>
+            </div>*@
             </div>
 
         </form>
@@ -157,8 +167,7 @@
         var isBirthHospital = 0;
         //险种类型
         var insuranceType = 0;
-        //诊断数据表格实例化
-        var layTableId = "dataTableId";
+       
         $("#DiagnosisDiv").hide();
         $("#FetusNumberDiv").hide();
         $("#MedicalCategoryDiv").hide(); 
@@ -181,8 +190,6 @@
                 });
 
         }
-
-
         //----
         //诊断数据表格实例化
         var layTableId = "dataTableId";
@@ -258,7 +265,7 @@
                         //排除空值
                         if (item.DiseaseCoding !== undefined) {
                             //新增诊断编码
-                            var addProjectCode = data.data[0].ProjectCode;
+                            var addDiseaseCoding = data.data[0].DiseaseCoding;
                             //诊断去重
                             if (item.DiseaseCoding !== addDiseaseCoding) {
                                 var itemRow = {
@@ -393,10 +400,11 @@
                 var diagnosisList = [];
                 //排除空值
                 $.each(dataTable1, function (k, v) {
-                    if (v.DiagnosisCode !== undefined) {
+                    if (v.DiseaseCoding !== undefined) {
                         diagnosisList.push(v);
                     }
                 });
+               
                
                 if (diagnosisList.length === 0) {
                     
