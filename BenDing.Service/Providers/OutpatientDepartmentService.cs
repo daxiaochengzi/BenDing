@@ -661,6 +661,19 @@ namespace BenDing.Service.Providers
             //获取主诊断
             var diagnosisData = outpatientPerson.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == "是");
             var inpatientDiagnosisDataDto = diagnosisData;
+            string mainDiagnosis = null;
+            if (inpatientDiagnosisDataDto != null)
+            {
+                if (!string.IsNullOrWhiteSpace(inpatientDiagnosisDataDto.ProjectCode))
+                {
+                    throw new Exception("未对码诊断:" + "[" + inpatientDiagnosisDataDto.DiseaseName + "]" + "[" + inpatientDiagnosisDataDto.DiseaseCoding + "]");
+                }
+                else
+                {
+                    mainDiagnosis = inpatientDiagnosisDataDto.ProjectCode;
+                }
+            }
+
             var resultData = new OutpatientPlanBirthPreSettlementParam()
             {
                 OutpatientNo = CommonHelp.GuidToStr(param.BusinessId),//outpatientPerson.OutpatientNumber,
@@ -669,7 +682,7 @@ namespace BenDing.Service.Providers
                 TotalAmount = outpatientPerson.MedicalTreatmentTotalCost,
                 AfferentSign = param.AfferentSign,
                 IdentityMark = param.IdentityMark,
-                AdmissionMainDiagnosisIcd10 = inpatientDiagnosisDataDto != null ? diagnosisData.ProjectCode : null
+                AdmissionMainDiagnosisIcd10 = mainDiagnosis,
 
             };
             var rowDataList = new List<PlanBirthSettlementRow>();
@@ -733,6 +746,19 @@ namespace BenDing.Service.Providers
             });
             //获取主诊断
             var diagnosisData = outpatientPerson.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == "是");
+            var inpatientDiagnosisDataDto = diagnosisData;
+            string mainDiagnosis = null;
+            if (inpatientDiagnosisDataDto != null)
+            {
+                if (!string.IsNullOrWhiteSpace(inpatientDiagnosisDataDto.ProjectCode))
+                {
+                    throw new Exception("未对码诊断:" + "[" + inpatientDiagnosisDataDto.DiseaseName + "]" + "[" + inpatientDiagnosisDataDto.DiseaseCoding + "]");
+                }
+                else
+                {
+                    mainDiagnosis = inpatientDiagnosisDataDto.ProjectCode;
+                }
+            }
             var resultData = new OutpatientPlanBirthSettlementParam()
             {
                 OutpatientNo = outpatientPerson.OutpatientNumber,
@@ -742,7 +768,7 @@ namespace BenDing.Service.Providers
                 AfferentSign = param.AfferentSign,
                 AccountPayment=string.IsNullOrWhiteSpace(param.AccountPayment)==true?0: Convert.ToDecimal(param.AccountPayment) ,
                 IdentityMark = param.IdentityMark,
-                AdmissionMainDiagnosisIcd10 = diagnosisData!=null? diagnosisData.ProjectCode:null
+                AdmissionMainDiagnosisIcd10 = mainDiagnosis
 
             };
             var rowDataList = new List<PlanBirthSettlementRow>();
