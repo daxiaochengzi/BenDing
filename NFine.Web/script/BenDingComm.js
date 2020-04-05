@@ -31,3 +31,41 @@ function settlementData(data) {
     }
 
 }
+
+function GetHospitalInfo() {
+    var params = {
+        "TransKey": iniJs("#transkey").val() /*医保交易码*/,
+        "BusinessId": iniJs("#bid").val() /*当前住院记录的业务ID*/,
+        "UserId": iniJs("#empid").val() /*授权操作人的ID*/
+    }
+    iniJs.ajax({
+        type: 'get',
+        url: host + '/CancelOutpatientDepartmentCost',
+        data: params,
+        dataType: "json",
+        async: false,
+        success: function (data) {
+            if (data.Success === false) {
+                var errData = data.Message;
+                MsgError(errData);
+                
+            } else {
+                MsgSuccess('门诊取消结算成功');
+               
+                
+                //buttonStatus("DoorDiagnosisSettlementCancel", false);
+
+                return data.Data;
+            }
+        }
+
+    });
+
+}
+
+function MsgSuccess(successData) {
+    iniMsg.alert(successData, { icon: 6, shade: 0.1, skin: 'layui-layer-molv', title: '温馨提示' });
+}
+function MsgError(errData) {
+    iniMsg.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+}

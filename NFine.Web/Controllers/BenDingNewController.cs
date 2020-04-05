@@ -322,6 +322,24 @@ namespace NFine.Web.Controllers
             });
 
         }
+        #region 公共信息
+        /// <summary>
+        /// 获取医院信息
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData GetHospitalInfo([FromUri]UiBaseDataParam param)
+        {
+            return new ApiJsonResultData(ModelState, new QueryMedicalInsuranceDetailInfoDto()).RunWithTry(y =>
+            {
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //获取医院等级
+                var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
 
+            });
+
+        }
+     #endregion
     }
 }
