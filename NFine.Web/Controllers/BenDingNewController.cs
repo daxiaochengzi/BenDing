@@ -336,10 +336,10 @@ namespace NFine.Web.Controllers
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 //获取医院等级
                 var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
-
+                y.Data = gradeData;
             });
 
         }
-     #endregion
+        #endregion
     }
 }

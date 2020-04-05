@@ -5,7 +5,7 @@
 }
 
 <link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
-
+<script src="~/script/BenDingComm.js"></script>
 <style>
     .layui-card-header.layuibd-card-header-auto {
         padding-top: 15px;
@@ -186,13 +186,19 @@
         base: '/Content/js/layui/plugin/'
     }).extend({
         autocomplete: 'layAutoComplete'
-    });
+        });
+    var iniJs;
+    var iniMsg;
     layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'], function () {
         var $ = layui.$,
             element = layui.element,
             form = layui.form,
             layer = layui.layer,
             table = layui.table;
+        //初始化公共页面
+        iniJs = $;
+        iniMsg = layer;
+
         var activeJsonInfo = null;
         $("#InsuranceBalanceDiv").hide();
         $("#AccountPaymentDiv").hide();
@@ -242,6 +248,12 @@
             "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
             "UserId": $("#empid").val() /*授权操作人的ID*/
         }
+        ////初始化页面数据
+        window.GetHospitalInfoParam = function (param) {
+            //可以被外部引用
+            console.log(param);
+        }
+        GetHospitalInfo(GetHospitalInfoParam);
         //获取门诊计划生育结算参数
         function getOutpatientPlanBirthSettlementParam() {
 
