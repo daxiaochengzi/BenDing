@@ -5,7 +5,7 @@
 }
 
 <link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
-
+<script src="~/script/BenDingComm.js"></script>
 <style>
     .layui-card-header.layuibd-card-header-auto {
         padding-top: 15px;
@@ -165,30 +165,40 @@
             "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
             "UserId": $("#empid").val() /*授权操作人的ID*/
         }
+        ////初始化页面数据
+        //window.iniPageData = function(){
+ 
+        //    //可以被外部引用
+ 
+        //    console.log("call hello");
+ 
+        //}
+        //benDingJs.test("123");
         //数据初始化
-        $.ajax({
-            type: 'get',
-            url: host + '/QueryOutpatientDepartmentCost',
-            data: params,
-            dataType: "json",
-            async: false,
-            success: function (data) {
-                if (data.Success === false) {
-                    var errData = data.Message;
-                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+        //$.ajax({
+        //    type: 'get',
+        //    url: host + '/QueryOutpatientDepartmentCost',
+        //    data: params,
+        //    dataType: "json",
+        //    async: false,
+        //    success: function (data) {
+        //        if (data.Success === false) {
+        //            var errData = data.Message;
+        //            layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                    
-                } else {
-                    jsonToForm(data.Data, "LAY-form-render");
-                    if (data.Data.PayMsg !== null) {
-                        settlementData(data.Data.PayMsg);
-                    }
-                    buttonStatus("DoorDiagnosisSettlementCancel", true);
-                }
-            },
-            complete: function () {
-                form.render();
-            }
-        });
+        //        } else {
+        //            jsonToForm(data.Data, "LAY-form-render");
+        //            if (data.Data.PayMsg !== null) {
+        //                settlementData(data.Data.PayMsg);
+        //            }
+        //            buttonStatus("DoorDiagnosisSettlementCancel", true);
+                   
+        //        }
+        //    },
+        //    complete: function () {
+        //        form.render();
+        //    }
+        //});
         //门诊取消结算
         $('#DoorDiagnosisSettlementCancel').on('click', function () {
             params["CancelSettlementRemarks"] = $("#CancelSettlementRemarks").val();
@@ -231,19 +241,7 @@
             }
 
         }
-        //按钮状态
-        function buttonStatus(buttonId, status) {
-            //取消禁用
-            if (status === true) {
-                $("#" + buttonId).attr("class", "layui-btn layui-btn-radius");
-
-            }//禁用
-            else {
-                $("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
-
-            }
-
-        }
+       
 
 
     });

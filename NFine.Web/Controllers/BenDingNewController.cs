@@ -71,6 +71,75 @@ namespace NFine.Web.Controllers
             _workerMedicalInsuranceService = workerMedicalInsuranceService;
             _outpatientDepartmentNewService = outpatientDepartmentNewService;
         }
+
+        /// <summary>
+        /// 获取普通门诊结算入参
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetOutpatientDepartmentCostInputParam([FromBody] OutpatientPlanBirthSettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
+                var data = _outpatientDepartmentNewService.GetOutpatientDepartmentCostInputParam(new GetOutpatientPersonParam()
+                {
+                    User = userBase,
+                    UiParam = param,
+                    IdentityMark = param.IdentityMark,
+                    AfferentSign = param.AfferentSign,
+
+                });
+                y.Data = XmlSerializeHelper.XmlSerialize(data);
+
+            });
+        }
+        /// <summary>
+        /// 获取门诊计划生育预结算参数
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetOutpatientPlanBirthPreSettlementParam([FromBody] OutpatientPlanBirthPreSettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+             
+                var data = _outpatientDepartmentNewService.GetOutpatientPlanBirthPreSettlementParam(param);
+                y.Data = XmlSerializeHelper.XmlSerialize(data);
+
+            });
+        }
+        /// <summary>
+        /// 获取门诊计划生育结算参数
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetOutpatientPlanBirthSettlementParam([FromBody]OutpatientPlanBirthSettlementUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+
+                var data = _outpatientDepartmentNewService.GetOutpatientPlanBirthSettlementParam(param);
+                y.Data = XmlSerializeHelper.XmlSerialize(data);
+
+            });
+        }
+        /// <summary>
+        /// 获取门诊月结参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetMonthlyHospitalizationParam([FromBody] MonthlyHospitalizationUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var data = _outpatientDepartmentNewService.GetMonthlyHospitalizationParam(param);
+                y.Data = XmlSerializeHelper.XmlSerialize(data);
+
+            });
+        }
         /// <summary>
         /// 门诊费用结算
         /// </summary>
@@ -207,6 +276,7 @@ namespace NFine.Web.Controllers
             });
 
         }
+        //
         /// <summary>
         ///门诊月结汇总
         /// </summary>
@@ -236,23 +306,6 @@ namespace NFine.Web.Controllers
         //    });
 
         //}
-        /// <summary>
-        /// 获取门诊生育结算参数
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public ApiJsonResultData GetOutpatientPlanBirthSettlementParam([FromBody]OutpatientPlanBirthSettlementUiParam param)
-        {
-            return new ApiJsonResultData(ModelState).RunWithTry(y =>
-            {
-                var data = _outpatientDepartmentService.GetOutpatientPlanBirthSettlementParam(param);
-
-
-                y.Data = data;
-            });
-
-        }
         /// <summary>
         /// 门诊生育结算
         /// </summary>

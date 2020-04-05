@@ -536,6 +536,7 @@
     <Content Include="Global.asax" />
     <Content Include="Index.htm" />
     <EmbeddedResource Include="script\swagger_lang.js" />
+    <Content Include="script\BenDingComm.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
