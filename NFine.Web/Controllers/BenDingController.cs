@@ -77,7 +77,7 @@ namespace NFine.Web.Controllers
             _outpatientDepartmentRepository = outpatientDepartmentRepository;
             _workerMedicalInsuranceService = workerMedicalInsuranceService;
         }
-        #region 基层接口
+        #region 基层接口 
         /// <summary>
         /// 获取登陆信息
         /// </summary>
