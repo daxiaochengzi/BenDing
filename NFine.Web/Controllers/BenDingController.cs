@@ -714,7 +714,7 @@ namespace NFine.Web.Controllers
                     {
                         if (residentData.IsBirthHospital == 0)
                         {
-                            if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement) throw new Exception("当前病人未医保结算");
+                           
                             //获取医院等级
                             var gradeData = _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
                             var cancelParam = new WorkerSettlementCancelParam()

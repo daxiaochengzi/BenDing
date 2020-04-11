@@ -139,9 +139,9 @@ namespace BenDing.Repository.Providers.Web
         {
             WorkerHospitalizationPreSettlementDto data = null;
             var xmlStr = XmlHelp.SaveXml(param);
-            if (!xmlStr) throw new Exception("门诊计划生育结算保存参数出错");
+            if (!xmlStr) throw new Exception("门诊计划生育结算取消保存参数出错");
             int result = MedicalInsuranceDll.CallService_cxjb("SYBX006");
-            if (result != 1) throw new Exception("门诊计划生育结算执行出错!!!");
+            if (result != 1) throw new Exception("门诊计划生育结算取消执行出错!!!");
             var dataIni = XmlHelp.DeSerializerModel(new WorkerBirthPreSettlementJsonDto(), true);
             if (dataIni != null) data = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(dataIni);
             return data;
