@@ -32,7 +32,8 @@ function settlementData(data) {
 
 }
 
-function GetHospitalInfo() {
+function GetHospitalInfo(GetHospitalInfoParam) {
+    
     var params = {
         "TransKey": iniJs("#transkey").val() /*医保交易码*/,
         "BusinessId": iniJs("#bid").val() /*当前住院记录的业务ID*/,
@@ -40,7 +41,7 @@ function GetHospitalInfo() {
     }
     iniJs.ajax({
         type: 'get',
-        url: host + '/CancelOutpatientDepartmentCost',
+        url: hostNew + '/GetHospitalInfo',
         data: params,
         dataType: "json",
         async: false,
@@ -50,12 +51,15 @@ function GetHospitalInfo() {
                 MsgError(errData);
                 
             } else {
-                MsgSuccess('门诊取消结算成功');
-               
                 
-                //buttonStatus("DoorDiagnosisSettlementCancel", false);
-
-                return data.Data;
+                var paramBase =
+                {
+                    "Account": data.Data.MedicalInsuranceAccount,
+                    "Pwd": data.Data.MedicalInsurancePwd,
+                    "OperatorId": iniJs("#empid").val() /*授权操作人的ID*/
+                };
+                GetHospitalInfoParam(paramBase);
+            
             }
         }
 
