@@ -198,7 +198,12 @@
         //初始化公共页面
         iniJs = $;
         iniMsg = layer;
-
+        //医院基础信息
+        var hospitalInfoParam = {
+            "Account": null,
+            "Pwd": null,
+            "OperatorId": null /*授权操作人的ID*/
+        };
         var activeJsonInfo = null;
         $("#InsuranceBalanceDiv").hide();
         $("#AccountPaymentDiv").hide();
@@ -248,41 +253,45 @@
             "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
             "UserId": $("#empid").val() /*授权操作人的ID*/
         }
-        ////初始化页面数据
-        window.GetHospitalInfoParam = function (param) {
-            //可以被外部引用
-            console.log(param);
+        //获取医院基本信息回调方法
+        window.getHospitalInfoBack = function() {};
+        getHospitalInfo(getHospitalInfoBack);
+        //初始化病人基本信息
+        function iniInpatientInfo() {
+            // 居民
+            if (baseInfo.Inpatient.InsuranceType === "342") {
+                $("#InsuranceBalance").val(baseInfo.Inpatient.ResidentInsuranceBalance);
+                //职工
+            } else if (baseInfo.Inpatient.InsuranceType === "310") {
+                $("#InsuranceBalance").val(baseInfo.Inpatient.WorkersInsuranceBalance);
+            }
+            var settlementVal = $('input[name="Settlement"]:checked').val();
+            //计划生育结算
+            if (settlementVal === "1") {
+                           
+                $("#DoorDiagnosisPreSettlementDiv").show();
+            } else//门诊结算
+            {   //显示结算按钮
+                $("#DoorDiagnosisSettlementDiv").show();
+                //隐藏预结算按钮
+                $("#DoorDiagnosisPreSettlementDiv").hide();
+                //居民显示结算按钮
+                buttonStatus("DoorDiagnosisSettlement", true);
+            }
+            $("#InsuranceBalanceDiv").show();
         }
-        GetHospitalInfo(GetHospitalInfoParam);
-        //获取门诊计划生育结算参数
-        function getOutpatientPlanBirthSettlementParam() {
-
-            $.ajax({
-                type: 'POST',
-                url: host + '/GetOutpatientPlanBirthSettlementParam',
-                data: params,
-                dataType: "json",
-                async: false,
-                success: function (data) {
-                    if (data.Success === false) {
-                        var errData = data.Message;
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                    } else {
-                        //计划生育结算调用插件
-                        //settlementPay(data.Data);
-                    }
-                }
-
-            });
-
+        //获取医保病人信息
+        window.getInpatientInfoBack = function () {
+            iniInpatientInfo();
         }
-        //门诊预结算
-        $('#DoorDiagnosisPreSettlement').on('click', function () {
-            params["IdentityMark"] = $("#IdentityMark").val();
+        //获取门诊结算参数
+        function getOutpatientDepartmentCostInputParam() {
+
             params["AfferentSign"] = $("#AfferentSign").val();
+            params["IdentityMark"] = $("#IdentityMark").val();
             $.ajax({
                 type: 'post',
-                url: host + '/OutpatientPlanBirthPreSettlement',
+                url: hostNew + '/GetOutpatientDepartmentCostInputParam',
                 data: params,
                 dataType: "json",
                 async: false,
@@ -290,11 +299,104 @@
                     console.log(data);
                     if (data.Success === false) {
                         var errData = data.Message;
-                        //样式类名:墨绿深蓝风
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        //样式类名:墨绿深蓝风
 
                     } else {
+                        var activeX = document.getElementById("CSharpActiveX");
+                        //门诊结算
+                        var activeData = activeX.OutpatientMethods(data.Data,JSON.stringify(baseInfo.HospitalInfo),"OutpatientDepartmentCostInput");
+                        var activeJsonData = JSON.parse(activeData);
+                        if (activeJsonData.Success === false) {
+                            msgError(activeJsonData.Message);
+                        } else {
+                            outpatientDepartmentCostInput(activeJsonData.Data, activeJsonData.OtherInfo);
+                        }
+                       
+                    }
+                }
 
+            });
+        }
+        //普通门诊结算
+        function outpatientDepartmentCostInput(costInputData, accountBalance) {
+            params["SettlementXml"] = costInputData;
+            params["InsuranceType"] = $("#InsuranceType").val();
+            params["AccountBalance"] = accountBalance;
+            $.ajax({
+                type: 'post',
+                url: hostNew + '/OutpatientDepartmentCostInput',
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    console.log(data);
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        msgError(errData);
+                       
+
+                    } else {
+                        //$('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
+                        $('#CashPayment').val(data.Data.SelfPayFeeAmount);
+                        msgSuccess('门诊结算成功');
+                        buttonStatus("DoorDiagnosisSettlement", false);
+                        //添加结算信息
+                        if (data.Data.PayMsg !== null) {
+                            settlementData(data.Data.PayMsg);
+                        }
+                    }
+                }
+
+            });
+        }
+        //获取门诊计划生育预结算参数
+        function getOutpatientPlanBirthPreSettlementParam() {
+            params["AfferentSign"] = $("#AfferentSign").val();
+            params["IdentityMark"] = $("#IdentityMark").val();
+            $.ajax({
+                type: 'POST',
+                url: hostNew + '/GetOutpatientPlanBirthPreSettlementParam',
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                    } else {
+                        var activeX = document.getElementById("CSharpActiveX");
+                        //门诊计划生育预结算
+                        var activeData = activeX.OutpatientMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo),"OutpatientPlanBirthPreSettlement");
+                        var activeJsonData = JSON.parse(activeData);
+                        if (activeJsonData.Success === false) {
+                            msgError(activeJsonData.Message);
+                        } else {
+                            outpatientPlanBirthPreSettlement(activeJsonData.Data);
+                        }
+                    }
+                }
+
+            });
+
+        }
+        //门诊计划生育预结算
+        function outpatientPlanBirthPreSettlement(settlementData) {
+            params["SettlementXml"] = settlementData;
+            $.ajax({
+                type: 'post',
+                url: hostNew + '/OutpatientPlanBirthPreSettlement',
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    console.log(data);
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        msgError(errData);
+                       
+
+                    } else {
                         $('#CashPayment').val(data.Data.SelfPayFeeAmount);
                         layer.alert('门诊预结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         //隐藏预结算按钮
@@ -311,6 +413,76 @@
                 }
 
             });
+        }
+        //获取门诊计划生育结算参数
+        function getOutpatientPlanBirthSettlementParam() {
+            params["AfferentSign"] = $("#AfferentSign").val();
+            params["IdentityMark"] = $("#IdentityMark").val();
+            $.ajax({
+                type: 'POST',
+                url: hostNew + '/GetOutpatientPlanBirthSettlementParam',
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                    } else {
+                        var activeX = document.getElementById("CSharpActiveX");
+                        //门诊计划生育结算
+                        var activeData = activeX.OutpatientMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo),"OutpatientPlanBirthPreSettlement");
+                        var activeJsonData = JSON.parse(activeData);
+                        if (activeJsonData.Success === false) {
+                            msgError(activeJsonData.Message);
+                        } else {
+                            outpatientPlanBirthSettlement(activeJsonData.Data, activeJsonData.OtherInfo);
+                        }
+                    }
+                }
+
+            });
+
+        }
+        //门诊计划生育结算
+        function outpatientPlanBirthSettlement(settlementData, accountBalance) {
+            params["SettlementXml"] = settlementData;
+            params["InsuranceType"] = $("#InsuranceType").val();
+            params["AccountBalance"] = accountBalance;
+            $.ajax({
+                type: 'post',
+                url: hostNew + '/outpatientPlanBirthSettlement',
+                data: params,
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    console.log(data);
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        msgError(errData);
+                    } else {
+                        $('#CashPayment').val(data.Data.SelfPayFeeAmount);
+                        layer.alert('门诊预结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        //隐藏预结算按钮
+                        $("#DoorDiagnosisPreSettlementDiv").hide();
+                        $("#DoorDiagnosisSettlementDiv").show();
+                        $("#AccountPaymentDiv").show();
+                        //显示结算按钮
+                        buttonStatus("DoorDiagnosisSettlement", true);
+                        //添加预结算信息
+                        if (data.Data.PayMsg !== null) {
+                            settlementData(data.Data.PayMsg);
+                        }
+                    }
+                }
+
+            });
+        }
+        //门诊预结算
+        $('#DoorDiagnosisPreSettlement').on('click', function () {
+            params["IdentityMark"] = $("#IdentityMark").val();
+            params["AfferentSign"] = $("#AfferentSign").val();
+            getOutpatientPlanBirthPreSettlementParam();
         });
         //门诊结算
         $('#DoorDiagnosisSettlement').on('click', function () {
@@ -334,121 +506,20 @@
                         }
                     }
                 }
+                //计划生育
+                getOutpatientPlanBirthSettlementParam();
+            } else {
+                //普通
+                getOutpatientDepartmentCostInputParam();
             }
-            ////计划生育结算
-            //if (settlementVal === "1") {
-            //    //计划生育结算调用插件
-            //    var resultData = getOutpatientPlanBirthSettlementParam();
-            //} else
-            //{
-            //
-            //}
-            $.ajax({
-                type: 'post',
-                url: host + '/OutpatientDepartmentCostInput',
-                data: params,
-                dataType: "json",
-                async: false,
-                success: function (data) {
-                    console.log(data);
-                    if (data.Success === false) {
-                        var errData = data.Message;
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                        //样式类名:墨绿深蓝风
-
-                    } else {
-                        //$('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);
-                        $('#CashPayment').val(data.Data.SelfPayFeeAmount);
-                        layer.alert('门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv', title: '温馨提示' });
-                        buttonStatus("DoorDiagnosisSettlement", false);
-                        //添加结算信息
-                        if (data.Data.PayMsg !== null) {
-                            settlementData(data.Data.PayMsg);
-                        }
-                    }
-                }
-
-            });
+       
+          
 
 
         });
-
         $('#queryData').on('click', function () {
-            var paramsUserInfo = {
-                "AfferentSign": $("#AfferentSign").val() /*传入标志，1:身份证,2:医保个人编码*/,
-                "IdentityMark": $("#IdentityMark").val() /*身份标识*/,
-                "UserId": $("#empid").val() /*授权操作人的ID*/
-            }
-            //获取居民信息
-            $.ajax({
-                type: 'POST',
-                url: host + '/GetUserInfo',
-                data: paramsUserInfo,
-                dataType: "json",
-                async: false,
-                success: function (data) {
-                    console.log(data);
-                    if (data.Success === false) {
-                        var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-                        return false;
-
-                    } else {
-                        // 居民
-                        if (data.Data.InsuranceType === "342") {
-                            $("#InsuranceBalance").val(data.Data.ResidentInsuranceBalance);
-                            //职工
-                        } else if (data.Data.InsuranceType === "310") {
-                            $("#InsuranceBalance").val(data.Data.WorkersInsuranceBalance);
-                        }
-                        var settlementVal = $('input[name="Settlement"]:checked').val();
-                        //计划生育结算
-                        if (settlementVal === "1") {
-                           
-                            $("#DoorDiagnosisPreSettlementDiv").show();
-                        } else//门诊结算
-                        {   //显示结算按钮
-                            $("#DoorDiagnosisSettlementDiv").show();
-                            //隐藏预结算按钮
-                            $("#DoorDiagnosisPreSettlementDiv").hide();
-                            //居民显示结算按钮
-                            buttonStatus("DoorDiagnosisSettlement", true);
-                        }
-                        $("#InsuranceBalanceDiv").show();
-                    }
-                }
-
-            });
-
-
+            getInpatientInfo(getInpatientInfoBack);
         });
-        ////结算支付
-        //function settlementPay(paramData) {
-        //    console.log(paramData);
-        //    //初始化插件
-        //    var activeX = document.getElementById("CSharpActiveX");
-        //    var paramBase =
-        //    {
-        //        "Account": "cpq2677",
-        //        "Pwd": "888888",
-        //        "OperatorId": $("#empid").val() /*授权操作人的ID*/
-        //    };
-        //    //var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
-        //    var activeData = activeX.OutpatientPlanBirthSettlement(JSON.stringify(paramData), JSON.stringify(paramBase));
-
-        //    var activeJsonData = JSON.parse(activeData);
-
-        //    if (activeJsonData.Success === false) {
-        //        layer.msg(activeJsonData.Message, { icon: 5, skin: 'layui-layer-molv' });
-        //        return false;
-        //    } else {
-        //        //结算信息赋值
-        //        activeJsonInfo = activeJsonData.Data;
-        //        doorDiagnosisSettlement();
-        //    }
-
-        //}
         //初始化参数
         $.ajax({
             type: 'get',
@@ -496,40 +567,6 @@
 
                 }
             });
-
-        //获取结算返回值
-        function settlementData(data) {
-            var html = "";
-            for (var i in data) {
-                if (data.hasOwnProperty(i)) {
-
-                    html += '<div class="layui-inline">';
-                    html += '     <label class="layui-form-label">' + data[i].Name + '</label>';
-                    html += '     <div class="layui-input-inline">';
-                    html += '     <input type="text" name="AdmissionDiagnosticDoctor" autocomplete="off"   value="' + data[i].Value + '" disabled class="layui-input layui-disabled">';
-                    html += '     </div>';
-                    html += '</div>';
-                }
-            }
-            if (html !== "") {
-                $("#SettleData").empty();
-                $("#SettleData").append(html);
-            }
-
-        }
-        //按钮状态
-        function buttonStatus(buttonId, status) {
-            //取消禁用
-            if (status === true) {
-                $("#" + buttonId).attr("class", "layui-btn layui-btn-radius");
-            }//禁用
-            else {
-                $("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
-
-            }
-
-        }
-
     });
 
 

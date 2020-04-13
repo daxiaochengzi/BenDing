@@ -119,7 +119,6 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-
                 var data = _outpatientDepartmentNewService.GetOutpatientPlanBirthSettlementParam(param);
                 y.Data = XmlSerializeHelper.XmlSerialize(data);
 
@@ -152,14 +151,13 @@ namespace NFine.Web.Controllers
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 userBase.TransKey = param.TransKey;
-              
-
                 //门诊计划生育
                 if (param.IsBirthHospital == 1)
                 {
                     var settlementData = _outpatientDepartmentNewService.OutpatientPlanBirthSettlement(param);
                     y.Data = new OutpatientCostReturnDataDto()
                     {
+                       
                         SelfPayFeeAmount = settlementData.CashPayment,
                         PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(settlementData))
                     };
@@ -173,6 +171,10 @@ namespace NFine.Web.Controllers
                         UiParam = param,
                         IdentityMark = param.IdentityMark,
                         AfferentSign = param.AfferentSign,
+                        InsuranceType = param.InsuranceType,
+                        AccountBalance = param.AccountBalance,
+                        SettlementXml = param.SettlementXml,
+
 
                     });
                     if (data == null) throw new Exception("获取门诊结算反馈数据失败!!!");
@@ -212,6 +214,20 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
+        /// 获取取消门诊费用结算参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData GetCancelOutpatientDepartmentCostParam([FromUri]CancelOutpatientDepartmentCostUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                _outpatientDepartmentNewService.GetCancelOutpatientDepartmentCostParam(param);
+            });
+
+        }
+        /// <summary>
         /// 取消门诊费用结算
         /// </summary>
         /// <param name="param"></param>
@@ -226,6 +242,7 @@ namespace NFine.Web.Controllers
             });
 
         }
+        
         /// <summary>
         ///查询门诊费用结算
         /// </summary>
@@ -271,6 +288,8 @@ namespace NFine.Web.Controllers
                 {
                     resultData.PayMsg = CommonHelp.GetPayMsg(residentData.OtherInfo);
                 }
+
+                resultData.IsBirthHospital = residentData.IsBirthHospital;
                 y.Data = resultData;
 
             });

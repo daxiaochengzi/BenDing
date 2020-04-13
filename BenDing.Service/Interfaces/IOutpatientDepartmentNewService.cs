@@ -31,7 +31,7 @@ namespace BenDing.Service.Interfaces
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        string GetCancelOutpatientDepartmentCost(CancelOutpatientDepartmentCostUiParam param);
+        string GetCancelOutpatientDepartmentCostParam(CancelOutpatientDepartmentCostUiParam param);
         /// <summary>
         /// 门诊取消结算
         /// </summary>

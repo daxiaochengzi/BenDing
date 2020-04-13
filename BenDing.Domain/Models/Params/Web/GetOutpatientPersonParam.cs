@@ -42,5 +42,16 @@ namespace BenDing.Domain.Models.Params.Web
         /// 结算xml数据
         /// </summary>
         public string SettlementXml { get; set; }
+
+        /// <summary>
+        /// 账户余额
+        /// </summary>
+
+        public string AccountBalance { get; set; }
+        /// <summary>
+        /// 保险类型
+        /// </summary>
+        public string InsuranceType { get; set; }
+
     }
 }

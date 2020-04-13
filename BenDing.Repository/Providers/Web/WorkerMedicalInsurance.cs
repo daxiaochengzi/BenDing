@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace BenDing.Repository.Providers.Web
 {
    public class WorkerMedicalInsurance
-    {/// <summary>
+    {  /// <summary>
      /// 住院登记
      /// </summary>
      /// <param name="pi_sfbz">个人IC卡号或身份证号</param>

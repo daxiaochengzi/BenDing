@@ -39,7 +39,6 @@ namespace BenDing.Domain.Models.Dto.OutpatientDepartment
         [JsonProperty(PropertyName = "PO_SMBZ")]
      
         public string Remark { get; set; }
-
- 
+       
     }
 }

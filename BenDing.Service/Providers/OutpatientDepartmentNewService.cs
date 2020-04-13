@@ -127,23 +127,18 @@ namespace BenDing.Service.Providers
                 RelationId = param.Id,
                 Remark = "[R][OutpatientDepartment]门诊病人结算"
             });
-            //获取病人的基础信息
-            var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
-            {
-                IdentityMark = param.IdentityMark,
-                AfferentSign = param.AfferentSign,
-            });
+        
             //回参构建
             var xmlData = new OutpatientDepartmentCostXml()
             {
-                AccountBalance = userInfoData.InsuranceType == "342" ? userInfoData.ResidentInsuranceBalance : userInfoData.WorkersInsuranceBalance,
+                AccountBalance = !string.IsNullOrWhiteSpace(param.AccountBalance) == true ? Convert.ToDecimal(param.AccountBalance) : 0,
                 MedicalInsuranceOutpatientNo = resultData.DocumentNo,
                 CashPayment = resultData.SelfPayFeeAmount,
                 SettlementNo = resultData.DocumentNo,
                 AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
                 PatientName = outpatientPerson.PatientName,
                 AccountAmountPay = 0,
-                MedicalInsuranceType = userInfoData.InsuranceType == "310" ? "1" : userInfoData.InsuranceType,
+                MedicalInsuranceType = param.InsuranceType == "310" ? "1" : param.InsuranceType,
             };
 
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
@@ -178,7 +173,7 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public string GetCancelOutpatientDepartmentCost(CancelOutpatientDepartmentCostUiParam param)
+        public string GetCancelOutpatientDepartmentCostParam(CancelOutpatientDepartmentCostUiParam param)
         {
             string resultData = null;
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
@@ -548,23 +543,19 @@ namespace BenDing.Service.Providers
                 RelationId = outpatientParam.Id,
                 Remark = "[R][OutpatientDepartment]门诊生育结算"
             });
-            //获取病人的基础信息
-            var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
-            {
-                IdentityMark = param.IdentityMark,
-                AfferentSign = param.AfferentSign,
-            });
+        
             // 回参构建
             var xmlData = new OutpatientDepartmentCostXml()
             {
-                AccountBalance = userInfoData.InsuranceType == "342" ? userInfoData.ResidentInsuranceBalance : userInfoData.WorkersInsuranceBalance,
+                AccountBalance = !string.IsNullOrWhiteSpace(param.AccountBalance) == true ? Convert.ToDecimal(param.AccountBalance) : 0,
+
                 MedicalInsuranceOutpatientNo = resultData.DocumentNo,
                 CashPayment = resultData.CashPayment,
                 SettlementNo = resultData.DocumentNo,
                 AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
                 PatientName = outpatientPerson.PatientName,
                 AccountAmountPay = resultData.AccountPayment,
-                MedicalInsuranceType = userInfoData.InsuranceType == "310" ? "1" : userInfoData.InsuranceType,
+                MedicalInsuranceType = param.InsuranceType == "310" ? "1" : param.InsuranceType,
             };
 
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);

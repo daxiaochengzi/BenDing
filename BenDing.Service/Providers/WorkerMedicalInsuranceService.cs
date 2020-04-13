@@ -316,7 +316,7 @@ namespace BenDing.Service.Providers
             infoParam.DiagnosisIcd10Three = diagnosisData.DiagnosisIcd10Three;
             infoParam.LeaveHospitalMainDiagnosis = diagnosisData.DiagnosisDescribe;
             infoParam.IsHospitalizationFrequency = "1";
-            // 医保
+            // 医保执行
             var resultData = _workerMedicalInsuranceRepository.WorkerHospitalizationSettlement(infoParam);
             //报销金额 =统筹支付+补充医疗保险支付金额+专项基金支付金额+
             //公务员补贴+公务员补助+其它支付金额
