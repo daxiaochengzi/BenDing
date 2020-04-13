@@ -588,12 +588,12 @@ namespace BenDing.Service.Providers
         /// <returns></returns>
         public MonthlyHospitalizationParam GetMonthlyHospitalizationParam(MonthlyHospitalizationUiParam param)
         {
-            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            //var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
            
             var iniParam = 
                 new MonthlyHospitalizationParam()
                 {
-                    User = userBase,
+                    User = new UserInfoDto(),
                     Participation = new MonthlyHospitalizationParticipationParam()
                     {
                         StartTime = Convert.ToDateTime(param.StartTime).ToString("yyyyMMdd"),

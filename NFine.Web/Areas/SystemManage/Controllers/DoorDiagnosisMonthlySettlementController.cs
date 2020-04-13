@@ -21,14 +21,14 @@ namespace NFine.Web.Areas.SystemManage.Controllers
     {
         private UserApp userApp = new UserApp();
         private MonthlyHospitalizationApp monthlyApp = new MonthlyHospitalizationApp();
-        private readonly IOutpatientDepartmentService _outpatientService;
-      
+        private readonly IOutpatientDepartmentNewService _outpatientNewService;
+       // 
         /// <summary>
         /// 
         /// </summary>
         public DoorDiagnosisMonthlySettlementController()
         {
-            _outpatientService = Bootstrapper.UnityIOC.Resolve<IOutpatientDepartmentService>();
+            _outpatientNewService = Bootstrapper.UnityIOC.Resolve<IOutpatientDepartmentNewService>();
         }
         [HttpGet]
         [HandlerAjaxOnly]
@@ -51,6 +51,25 @@ namespace NFine.Web.Areas.SystemManage.Controllers
             };
             return Content(data.ToJson());
         }
+        ///// <summary>
+        ///// 获取门诊月结入参
+        ///// </summary>
+        ///// <param name="pagination"></param>
+        ///// <returns></returns>
+        //[HttpGet]
+        //[HandlerAjaxOnly]
+        //public ActionResult GetHospitalInfo(string Id)
+        //{  
+        //    _outpatientNewService.GetMonthlyHospitalizationParam(new MonthlyHospitalizationUiParam()
+        //    {
+        //        EndTime = pagination.SettlementEndTime,
+        //        StartTime = pagination.SettlementStartTime,
+        //        PeopleType = (PeopleType)Convert.ToInt16(pagination.PeopleType),
+
+        //    });
+            
+        //    return Content("");
+        //}
         [HttpPost]
         [HandlerAjaxOnly]
         [ValidateAntiForgeryToken]
@@ -62,13 +81,13 @@ namespace NFine.Web.Areas.SystemManage.Controllers
                 throw new Exception("结算结束不能为空!!!");
             var loginInfo = OperatorProvider.Provider.GetCurrent();
             var user = userApp.GetForm(loginInfo.UserId);
-            _outpatientService.MonthlyHospitalization(new MonthlyHospitalizationUiParam()
-            {
-                UserId = user.F_HisUserId,
-                PeopleType = (PeopleType)Convert.ToInt16(doorDiagnosis.PeopleType),
-                EndTime = doorDiagnosis.SettlementEndTime,
-                StartTime = doorDiagnosis.SettlementStartTime,
-            });
+            //_outpatientService.MonthlyHospitalization(new MonthlyHospitalizationUiParam()
+            //{
+            //    UserId = user.F_HisUserId,
+            //    PeopleType = (PeopleType)Convert.ToInt16(doorDiagnosis.PeopleType),
+            //    EndTime = doorDiagnosis.SettlementEndTime,
+            //    StartTime = doorDiagnosis.SettlementStartTime,
+            //});
            
             return Success("操作成功。");
         }
@@ -80,22 +99,22 @@ namespace NFine.Web.Areas.SystemManage.Controllers
         public ActionResult DeleteForm(string keyValue)
         {
 
-            var monthly= monthlyApp.GetForm(keyValue);
-            var loginInfo = OperatorProvider.Provider.GetCurrent();
-            var user = userApp.GetForm(loginInfo.UserId);
-            _outpatientService.CancelMonthlyHospitalization(new CancelMonthlyHospitalizationUiParam()
-            {
-                UserId = user.F_HisUserId,
-                DocumentNo = monthly.DocumentNo,
-                PeopleType = monthly.PeopleType,
-                SummaryType = monthly.SummaryType
-            });
-            monthly.IsRevoke = true;
-            //更新月结状态
-            monthlyApp.SubmitForm(monthly, keyValue, new UserInfoDto()
-            {
-                UserId = user.F_HisUserId,
-            });
+            //var monthly= monthlyApp.GetForm(keyValue);
+            //var loginInfo = OperatorProvider.Provider.GetCurrent();
+            //var user = userApp.GetForm(loginInfo.UserId);
+            //_outpatientService.CancelMonthlyHospitalization(new CancelMonthlyHospitalizationUiParam()
+            //{
+            //    UserId = user.F_HisUserId,
+            //    DocumentNo = monthly.DocumentNo,
+            //    PeopleType = monthly.PeopleType,
+            //    SummaryType = monthly.SummaryType
+            //});
+            //monthly.IsRevoke = true;
+            ////更新月结状态
+            //monthlyApp.SubmitForm(monthly, keyValue, new UserInfoDto()
+            //{
+            //    UserId = user.F_HisUserId,
+            //});
             return Success("操作成功。");
         }
     }

@@ -95,20 +95,21 @@ namespace NFine.Web.Areas.SystemManage.Controllers
         public ActionResult SubmitForm(OrganizeEntity organizeEntity, string keyValue)
         {
             organizeEntity.F_CategoryId = "Department";
-            try
-            { //医保账户认证
-                var result =
-                    MedicalInsuranceDll.ConnectAppServer_cxjb(organizeEntity.F_MedicalInsuranceAccount,
-                        organizeEntity.F_MedicalInsurancePwd);
-                if (result != 1)
-                {
-                    XmlHelp.DeSerializerModel(new IniXmlDto(), true);
-                }
-            }
-            catch (Exception e)
-            {
-                return Error(e.Message);
-            }
+            //取消认证
+            //try
+            //{ //医保账户认证
+            //    var result =
+            //        MedicalInsuranceDll.ConnectAppServer_cxjb(organizeEntity.F_MedicalInsuranceAccount,
+            //            organizeEntity.F_MedicalInsurancePwd);
+            //    if (result != 1)
+            //    {
+            //        XmlHelp.DeSerializerModel(new IniXmlDto(), true);
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    return Error(e.Message);
+            //}
           
             organizeApp.SubmitForm(organizeEntity, keyValue);
             return Success("操作成功。");
