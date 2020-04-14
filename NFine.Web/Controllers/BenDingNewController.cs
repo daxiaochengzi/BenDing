@@ -173,7 +173,7 @@ namespace NFine.Web.Controllers
                         AfferentSign = param.AfferentSign,
                         InsuranceType = param.InsuranceType,
                         AccountBalance = param.AccountBalance,
-                        SettlementXml = param.SettlementXml,
+                        SettlementXml = param.SettlementJson,
 
 
                     });

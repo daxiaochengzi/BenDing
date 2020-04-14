@@ -65,7 +65,7 @@ namespace BenDing.Repository.Interfaces.Web
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-          WorkerHospitalizationPreSettlementDto OutpatientPlanBirthSettlementCancel(
+          void OutpatientPlanBirthSettlementCancel(
               OutpatientPlanBirthSettlementCancelParam param);
 
       }

@@ -424,7 +424,8 @@ namespace BenDing.Service.Providers
             OutpatientPlanBirthPreSettlementUiParam param)
         {
             WorkerHospitalizationPreSettlementDto resultData;
-            var iniData = XmlHelp.DeSerializer<WorkerBirthPreSettlementJsonDto>(param.SettlementXml);
+            var iniData = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.SettlementJson);
+
             resultData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(iniData);
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
@@ -490,7 +491,8 @@ namespace BenDing.Service.Providers
           OutpatientPlanBirthSettlementUiParam param)
         {
             WorkerHospitalizationPreSettlementDto resultData;
-            var iniData = XmlHelp.DeSerializer<WorkerBirthPreSettlementJsonDto>(param.SettlementXml);
+
+            var iniData = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.SettlementJson);
             resultData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(iniData);
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;

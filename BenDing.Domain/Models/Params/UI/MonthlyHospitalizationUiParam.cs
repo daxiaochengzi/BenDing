@@ -40,6 +40,6 @@ namespace BenDing.Domain.Models.Params.UI
         /// <summary>
         /// 结算xml
         /// </summary>
-        public  string SettlementXml { get; set; }
+        public  string SettlementJson { get; set; }
     }
 }

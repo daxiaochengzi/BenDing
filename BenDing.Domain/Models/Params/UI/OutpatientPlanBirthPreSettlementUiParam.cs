@@ -27,7 +27,7 @@ namespace BenDing.Domain.Models.Params.UI
         /// <summary>
         /// 
         /// </summary>
-        public string SettlementXml  { get; set; }
+        public string SettlementJson { get; set; }
 
 }
 }

@@ -152,7 +152,77 @@ namespace BenDing.Domain.Xml
                 return result;
             }
         }
+        /// <summary>
+        /// 错误检查
+        /// </summary>
+        public static string DeSerializerXmlInfo(string operatorId)
+        {
+            string jsonStr = null;
+            string pathXml = null;
+            var valid = new ValidXmlDto();
+            var is64Bit = Environment.Is64BitOperatingSystem;
+            if (is64Bit)
+            {
+                pathXml = @"C:\Program Files (x86)\Microsoft\BenDingActiveSetup\" + "ResponseParams.xml";
+            }
+            else
+            {
+                pathXml = @"C:\Program Files\Microsoft\BenDingActiveSetup\" + "ResponseParams.xml";
+            }
 
+            // pathXml = System.AppDomain.CurrentDomain.BaseDirectory + "ResponseParams.xml";
+
+            if (!System.IO.File.Exists(pathXml))
+            {
+                throw new SystemException("ResponseParams文件不存在!!!");
+            }
+            XmlDocument doc = new XmlDocument();
+            doc.Load(pathXml);
+            //获取xml字符串
+
+            var fhz = doc.SelectSingleNode("/ROW/PO_FHZ");
+            if (fhz != null)
+            {
+                valid.PO_FHZ = fhz.InnerText;
+            }
+            else
+            {
+                var fhzNew = doc.SelectSingleNode("/row/po_fhz");
+                valid.PO_FHZ = fhzNew.InnerText;
+            }
+            var msg = doc.SelectSingleNode("/ROW/PO_MSG");
+            if (msg != null)
+            {
+                valid.PO_MSG = msg.InnerText;
+            }
+            else
+            {
+                var msgNew = doc.SelectSingleNode("/row/po_msg");
+                valid.PO_MSG = msgNew.InnerText;
+            }
+            if (valid.PO_FHZ != "1")
+            {
+                Logs.LogWrite(new LogParam()
+                {
+                    Msg = valid.PO_MSG,
+                    OperatorCode = operatorId,
+                    ResultData = JsonConvert.SerializeXmlNode(doc)
+
+                });
+                throw new SystemException(valid.PO_MSG);
+            }
+            string jsonText = JsonConvert.SerializeXmlNode(doc);
+
+            var resultData = JsonConvert.DeserializeObject<ResultData>(jsonText);
+            if (resultData?.Row != null && resultData.Row.ToString() != "")
+            {
+                jsonStr = JsonConvert.SerializeObject(resultData.Row);
+
+            }
+            doc = null;
+            return jsonStr;
+
+        }
         //public static bool SavePrescriptionUploadWorkersParam(PrescriptionUploadWorkersDetailListParam t,string num)
         //{
         //    var strXml = ToUnXml(t);

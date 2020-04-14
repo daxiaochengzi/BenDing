@@ -321,8 +321,8 @@
         }
         //普通门诊结算
         function outpatientDepartmentCostInput(costInputData, accountBalance) {
-            debugger;
-            params["SettlementXml"] = costInputData;
+           
+            params["SettlementJson"] = costInputData;
             params["InsuranceType"] = $("#InsuranceType").val();
             params["AccountBalance"] = accountBalance;
             $.ajax({
@@ -383,7 +383,7 @@
         }
         //门诊计划生育预结算
         function outpatientPlanBirthPreSettlement(settlementData) {
-            params["SettlementXml"] = settlementData;
+            params["SettlementJson"] = settlementData;
             $.ajax({
                 type: 'post',
                 url: hostNew + '/OutpatientPlanBirthPreSettlement',
@@ -447,7 +447,7 @@
         }
         //门诊计划生育结算
         function outpatientPlanBirthSettlement(settlementData, accountBalance) {
-            params["SettlementXml"] = settlementData;
+            params["SettlementJson"] = settlementData;
             params["InsuranceType"] = $("#InsuranceType").val();
             params["AccountBalance"] = accountBalance;
             $.ajax({

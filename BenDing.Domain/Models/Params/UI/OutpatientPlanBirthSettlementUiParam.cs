@@ -34,7 +34,7 @@ namespace BenDing.Domain.Models.Params.UI
         /// <summary>
         /// 结算xml
         /// </summary>
-        public  string SettlementXml { get; set; }
+        public  string SettlementJson { get; set; }
         /// <summary>
         /// 账户余额
         /// </summary>
