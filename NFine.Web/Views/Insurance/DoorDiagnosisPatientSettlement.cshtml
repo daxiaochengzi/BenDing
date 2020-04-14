@@ -254,7 +254,8 @@
             "UserId": $("#empid").val() /*授权操作人的ID*/
         }
         //获取医院基本信息回调方法
-        window.getHospitalInfoBack = function() {};
+        window.getHospitalInfoBack = function () { };
+     
         getHospitalInfo(getHospitalInfoBack);
         //初始化病人基本信息
         function iniInpatientInfo() {
@@ -320,6 +321,7 @@
         }
         //普通门诊结算
         function outpatientDepartmentCostInput(costInputData, accountBalance) {
+            debugger;
             params["SettlementXml"] = costInputData;
             params["InsuranceType"] = $("#InsuranceType").val();
             params["AccountBalance"] = accountBalance;
@@ -334,7 +336,6 @@
                     if (data.Success === false) {
                         var errData = data.Message;
                         msgError(errData);
-                       
 
                     } else {
                         //$('#ReimbursementExpenses').val(data.Data.ReimbursementExpensesAmount);

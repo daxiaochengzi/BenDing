@@ -70,6 +70,7 @@ function getHospitalInfo(getHospitalInfoParam) {
         dataType: "json",
         async: false,
         success: function (data) {
+            
             console.log(data);
             if (data.Success === false) {
                 var errData = data.Message;
@@ -90,7 +91,7 @@ function getHospitalInfo(getHospitalInfoParam) {
 
 function getInpatientInfo(getInpatientInfoBack)
 {
-   
+    debugger;
     baseInfo.HospitalInfo["AfferentSign"] = iniJs("#AfferentSign").val();
     baseInfo.HospitalInfo["IdentityMark"] = iniJs("#IdentityMark").val();
     var activeX = document.getElementById("CSharpActiveX");
@@ -100,7 +101,7 @@ function getInpatientInfo(getInpatientInfoBack)
             msgError(activeJsonData.Message);
         } else {
             //病人信息赋值
-            var activeJsonInfo = activeJsonData.Data;
+            var activeJsonInfo = JSON.parse(activeJsonData.Data);
             baseInfo.Inpatient["PersonalCoding"] = activeJsonInfo.PersonalCoding;
             baseInfo.Inpatient["PatientName"] = activeJsonInfo.PatientName;
             baseInfo.Inpatient["PatientSex"] = activeJsonInfo.PatientSex;

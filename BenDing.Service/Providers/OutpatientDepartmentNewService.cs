@@ -85,7 +85,7 @@ namespace BenDing.Service.Providers
         public OutpatientDepartmentCostInputDto OutpatientDepartmentCostInput(GetOutpatientPersonParam param)
         {
             OutpatientDepartmentCostInputDto resultData = null;
-            var iniData= XmlHelp.DeSerializer<OutpatientDepartmentCostInputJsonDto>(param.SettlementXml);
+            var iniData = JsonConvert.DeserializeObject<OutpatientDepartmentCostInputJsonDto>(param.SettlementXml);
             resultData = AutoMapper.Mapper.Map<OutpatientDepartmentCostInputDto>(iniData);
             //获取门诊病人数据
             var outpatientPerson = _serviceBasicService.GetOutpatientPerson(param);
