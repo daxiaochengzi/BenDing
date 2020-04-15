@@ -498,7 +498,7 @@
                     var cashPayment = $('#CashPayment').val();
                     if (cashPayment !== "" || cashPayment !== undefined) {
 
-                        if (accountPayment > cashPayment) {
+                        if (parseFloat(accountPayment) > parseFloat(cashPayment)) {
                             layer.alert("下账金额不能大于现金支付金额!!!", { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                             return false;
                         } else {
