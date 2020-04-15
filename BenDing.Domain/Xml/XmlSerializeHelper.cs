@@ -36,9 +36,34 @@ namespace BenDing.Domain.Xml
                 throw new Exception("将实体对象转换成XML异常", ex);
             }
         }
-
         /// <summary>
-        /// 
+        /// 医保转xml
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static string MedicalInsuranceXmlSerialize<T>(T o)
+        {
+            var encoding = Encoding.GetEncoding("GBK");
+            if (o == null)
+                throw new ArgumentNullException("实体不能为空!!!");
+
+            var ser = new XmlSerializer(o.GetType());
+            using (var ms = new MemoryStream())
+            {
+                using (var writer = new XmlTextWriter(ms, encoding))
+                {
+                    writer.Formatting = System.Xml.Formatting.Indented;
+                    XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+                    ns.Add("", "");//把命名空间设置为空，这样就没有命名空间了
+                    ser.Serialize(writer, o, ns);
+                }
+                var encodingData = encoding.GetString(ms.ToArray());
+                return System.Text.RegularExpressions.Regex.Replace(encodingData, "^[^<]", "");
+            }
+        }
+        /// <summary>
+        /// 基层转xml
         /// </summary>
         /// <param name="o"></param>
         /// <param name="encoding"></param>

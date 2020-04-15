@@ -37,6 +37,7 @@ function buttonStatus(buttonId, status) {
 }
 //获取结算返回值
 function settlementData(data) {
+    debugger;
     var html = "";
     for (var i in data) {
         if (data.hasOwnProperty(i)) {
@@ -76,6 +77,7 @@ function getHospitalInfo(getHospitalInfoParam) {
                 var errData = data.Message;
                 msgError(errData);
             } else {
+               
 
                 baseInfo.HospitalInfo["Account"] = data.Data.MedicalInsuranceAccount;
                 baseInfo.HospitalInfo["Pwd"] = data.Data.MedicalInsurancePwd;

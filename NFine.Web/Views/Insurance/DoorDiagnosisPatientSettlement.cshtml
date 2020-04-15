@@ -198,19 +198,13 @@
         //初始化公共页面
         iniJs = $;
         iniMsg = layer;
-        //医院基础信息
-        var hospitalInfoParam = {
-            "Account": null,
-            "Pwd": null,
-            "OperatorId": null /*授权操作人的ID*/
-        };
-        var activeJsonInfo = null;
+     
+    
         $("#InsuranceBalanceDiv").hide();
         $("#AccountPaymentDiv").hide();
         $("#DoorDiagnosisPreSettlementDiv").hide();
         $("#DoorDiagnosisSettlementDiv").hide();
-        //计划生育结算入参
-        var planBirthSettlementParam = null;
+      
         //form数据回显:数据回显到Form表单主体部分
         var jsonToForm = function (jsonData, formFilter) {
             var diagnosisList = jsonData.DiagnosisList;
@@ -367,6 +361,7 @@
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                     } else {
                         var activeX = document.getElementById("CSharpActiveX");
+                       
                         //门诊计划生育预结算
                         var activeData = activeX.OutpatientMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo),"OutpatientPlanBirthPreSettlement");
                         var activeJsonData = JSON.parse(activeData);
@@ -382,8 +377,8 @@
 
         }
         //门诊计划生育预结算
-        function outpatientPlanBirthPreSettlement(settlementData) {
-            params["SettlementJson"] = settlementData;
+        function outpatientPlanBirthPreSettlement(settlementJsonData) {
+            params["SettlementJson"] = settlementJsonData;
             $.ajax({
                 type: 'post',
                 url: hostNew + '/OutpatientPlanBirthPreSettlement',
@@ -406,8 +401,10 @@
                         $("#AccountPaymentDiv").show();
                         //显示结算按钮
                         buttonStatus("DoorDiagnosisSettlement", true);
+                        
                         //添加预结算信息
                         if (data.Data.PayMsg !== null) {
+                            debugger;
                             settlementData(data.Data.PayMsg);
                         }
                     }

@@ -223,7 +223,8 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
-                _outpatientDepartmentNewService.GetCancelOutpatientDepartmentCostParam(param);
+                var data=_outpatientDepartmentNewService.GetCancelOutpatientDepartmentCostParam(param);
+                y.Data = data;
             });
 
         }

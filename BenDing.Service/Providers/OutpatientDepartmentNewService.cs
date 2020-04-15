@@ -615,7 +615,7 @@ namespace BenDing.Service.Providers
         {
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             MonthlyHospitalizationDto data;
-            data = XmlHelp.DeSerializer<MonthlyHospitalizationDto>(param.SettlementXml);
+            data = XmlHelp.DeSerializer<MonthlyHospitalizationDto>(param.SettlementJson);
             //医保登录
             _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
             var insertParam = new MonthlyHospitalizationEntity()
