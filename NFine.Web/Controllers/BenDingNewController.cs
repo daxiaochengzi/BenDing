@@ -140,6 +140,22 @@ namespace NFine.Web.Controllers
             });
         }
         /// <summary>
+        /// 获取门诊月结取消参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData GetMonthlyHospitalizationCancelUiParam([FromUri] GetMonthlyHospitalizationCancelUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var data = _outpatientDepartmentNewService.GetMonthlyHospitalizationCancelUiParam(param);
+                y.Data = XmlSerializeHelper.XmlSerialize(data);
+
+            });
+        }
+        
+        /// <summary>
         /// 门诊费用结算
         /// </summary>
         /// <param name="param"></param>
@@ -296,7 +312,8 @@ namespace NFine.Web.Controllers
             });
 
         }
-        //
+        
+
         /// <summary>
         ///门诊月结汇总
         /// </summary>

@@ -818,6 +818,7 @@
     <Content Include="Views\Insurance\Icd10Value.cshtml" />
     <Content Include="Views\Insurance\PairCodeIcd10.cshtml" />
     <Content Include="Views\Insurance\AdmissionRegistrationCancel.cshtml" />
+    <Content Include="Views\Shared\_CSharpActiveX.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
