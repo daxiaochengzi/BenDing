@@ -37,7 +37,7 @@ function buttonStatus(buttonId, status) {
 }
 //获取结算返回值
 function settlementData(data) {
-    debugger;
+   
     var html = "";
     for (var i in data) {
         if (data.hasOwnProperty(i)) {
@@ -93,7 +93,7 @@ function getHospitalInfo(getHospitalInfoParam) {
 
 function getInpatientInfo(getInpatientInfoBack)
 {
-    debugger;
+  
     baseInfo.HospitalInfo["AfferentSign"] = iniJs("#AfferentSign").val();
     baseInfo.HospitalInfo["IdentityMark"] = iniJs("#IdentityMark").val();
     var activeX = document.getElementById("CSharpActiveX");

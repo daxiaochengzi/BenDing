@@ -386,11 +386,12 @@
                 dataType: "json",
                 async: false,
                 success: function (data) {
+                    
                     console.log(data);
                     if (data.Success === false) {
                         var errData = data.Message;
                         msgError(errData);
-                       
+                      
 
                     } else {
                         $('#CashPayment').val(data.Data.SelfPayFeeAmount);
@@ -404,7 +405,7 @@
                         
                         //添加预结算信息
                         if (data.Data.PayMsg !== null) {
-                            debugger;
+                       
                             settlementData(data.Data.PayMsg);
                         }
                     }
@@ -429,6 +430,7 @@
                     } else {
                         var activeX = document.getElementById("CSharpActiveX");
                         //门诊计划生育结算
+                        debugger;
                         var activeData = activeX.OutpatientMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo),"OutpatientPlanBirthPreSettlement");
                         var activeJsonData = JSON.parse(activeData);
                         if (activeJsonData.Success === false) {
