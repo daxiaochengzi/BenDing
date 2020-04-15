@@ -367,7 +367,7 @@ namespace BenDing.Service.Providers
             var diagnosisData = outpatientPerson.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == "是");
             var resultData = new OutpatientPlanBirthSettlementParam()
             {
-                OutpatientNo = outpatientPerson.OutpatientNumber,
+                OutpatientNo = CommonHelp.GuidToStr(param.BusinessId),
                 DiagnosisDate = Convert.ToDateTime(outpatientPerson.VisitDate).ToString("yyyyMMddHHmmss"),
                 ProjectNum = outpatientDetailPerson.Count(),
                 TotalAmount = outpatientPerson.MedicalTreatmentTotalCost,
