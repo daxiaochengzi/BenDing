@@ -463,11 +463,11 @@
                 async: false,
                 success: function (data) {
                     console.log(data);
-                    if (data.Success === false) {
+                    if (data.Success === false) {  
                         var errData = data.Message;
                         msgError(errData);
                     } else {
-                        //$('#CashPayment').val(data.Data.SelfPayFeeAmount);
+                        $('#CashPayment').val(data.Data.SelfPayFeeAmount);
                         layer.alert('门诊预结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         //隐藏预结算按钮
                         $("#DoorDiagnosisPreSettlementDiv").hide();
