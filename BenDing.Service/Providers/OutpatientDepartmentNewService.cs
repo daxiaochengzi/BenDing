@@ -607,6 +607,21 @@ namespace BenDing.Service.Providers
 
             return iniParam;
         }
+
+        public MonthlyHospitalizationCancelParam GetMonthlyHospitalizationCancelUiParam(GetMonthlyHospitalizationCancelUiParam param)
+        {
+            var resultData = new MonthlyHospitalizationCancelParam();
+           var monthlyData= _monthlyHospitalizationBase.GetForm(Guid.Parse(param.Id));
+            if (monthlyData.IsRevoke)throw  new Exception("本条记录已取消,不能再次操作");
+            //var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            resultData.DocumentNo = monthlyData.DocumentNo;
+            resultData.PeopleType = monthlyData.PeopleType;
+            resultData.SummaryType = monthlyData.SummaryType;
+
+
+            return resultData;
+        }
+
         /// <summary>
         /// 门诊月结
         /// </summary>
@@ -615,9 +630,8 @@ namespace BenDing.Service.Providers
         {
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             MonthlyHospitalizationDto data;
-            data = XmlHelp.DeSerializer<MonthlyHospitalizationDto>(param.SettlementJson);
-            //医保登录
-            _residentMedicalInsuranceService.Login(new QueryHospitalOperatorParam() { UserId = param.UserId });
+
+            data = JsonConvert.DeserializeObject<MonthlyHospitalizationDto>(param.SettlementJson);
             var insertParam = new MonthlyHospitalizationEntity()
             {
                 Amount = data.ReimbursementAllAmount,

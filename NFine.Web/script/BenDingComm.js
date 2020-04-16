@@ -22,7 +22,23 @@ var baseInfo = {
 
     }
 };
+//判断插件是否存在
+function DetectActiveX() {
+    try {
+        var activeX = document.getElementById("CSharpActiveX");
+        var versionNumber = activeX.name;
+        var activeVersionNumber = activeX.GetVersionNumber();
+        if (parseInt(versionNumber) > parseInt(activeVersionNumber)) {
+            msgError("当前插件版本过低,请下载新的版本!!!");
+        }
 
+    }
+    catch (e) {
+        msgError("请检查当前医保插件是否安装,IE浏览器插件功能是否打开!!!");
+        return false;
+    }
+    return true;
+}
 //按钮状态
 function buttonStatus(buttonId, status) {
     //取消禁用

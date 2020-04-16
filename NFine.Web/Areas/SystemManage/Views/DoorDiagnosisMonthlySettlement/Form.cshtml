@@ -1,77 +1,110 @@
 ﻿
 @{
-    ViewBag.Title = "Form";
+    ViewBag.Title = "FormSave";
     Layout = "~/Views/Shared/_Form.cshtml";
 }
 
 <script>
+    var hospitalInfo = {
+        "Account": null,
+        "Pwd": null,
+        "OperatorId": null
+    };
     function submitForm() {
-        if (!$('#form1').formValid()) {
+      
+        var startTime = $("#startTime").val();
+        var endTime = $("#endTime").val();
+        
+        if (startTime === null || startTime === "") {
+            $.modalAlert("结算开始日期不能为空!!!", "error");
             return false;
         }
-        var submitParam =
-        {
-            SettlementStartTime: $("#startTime").val(),
-            SettlementEndTime: $("#endTime").val(),
-            PeopleType: $("#PeopleType").val()
-
+        if (endTime === null || endTime === "") {
+            $.modalAlert("结算开始日期不能为空!!!", "error");
+            return false;
         }
-
-        $.submitForm({
-            url: "/SystemManage/DoorDiagnosisMonthlySettlement/SubmitForm",
-            param: submitParam,
-            success: function() {
-                $.currentWindow().$("#gridList").trigger("reloadGrid");
+        getHospitalInfo();
+    }
+    function getHospitalInfo() {
+        var params = {
+            "TransKey": '00000000000000000000000000000000' /*医保交易码*/,
+            "BusinessId": "'00000000000000000000000000000000'" /*当前住院记录的业务ID*/,
+            "UserId": $("#empid").val() /*授权操作人的ID*/
+        }
+        $.ajax({
+            type: 'get',
+            url:   '/api/BenDingNew/GetHospitalInfo',
+            data: params,
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data.Success === false) {
+                    var errData = data.Message;
+                    $.modalAlert(errData,"error");
+                } else {
+                    hospitalInfo["Account"] = data.Data.MedicalInsuranceAccount;
+                    hospitalInfo["Pwd"] = data.Data.MedicalInsurancePwd;
+                    hospitalInfo["OperatorId"] = $("#empid").val();
+                    monthlyHospitalization();
+                }
             }
         });
-    };
-    function getHospitalInfo() {
-    
-        //var params = {
-        //    "TransKey": iniJs("#transkey").val() /*医保交易码*/,
-        //    "BusinessId": iniJs("#bid").val() /*当前住院记录的业务ID*/,
-        //    "UserId": iniJs("#empid").val() /*授权操作人的ID*/
-        //}
-        //$.ajax({
-        //    type: 'get',
-        //    url:   '/api/BenDingNew/GetHospitalInfo',
-        //    data: params,
-        //    dataType: "json",
-        //    async: false,
-        //    success: function (data) {
-        //        console.log(data);
-        //        if (data.Success === false) {
-        //            var errData = data.Message;
-        //            msgError(errData);
-        //        } else {
-
-        //            baseInfo.HospitalInfo["Account"] = data.Data.MedicalInsuranceAccount;
-        //            baseInfo.HospitalInfo["Pwd"] = data.Data.MedicalInsurancePwd;
-        //            baseInfo.HospitalInfo["OperatorId"] = iniJs("#empid").val();
-                  
-            
-        //        }
-        //    }
-
-        //});
 
     }
+    //调用门诊汇总月结插件
+    function monthlyHospitalization() {
+        var paramIni =
+        {
+            "PeopleType": $("#PeopleType").val(), //人员类别
+            "SummaryType": "22", //汇总类别
+            "StartTime": $("#startTime").val(), //报销开始日期
+            "EndTime": $("#endTime").val()
+          
+         }
+        var activeX = document.getElementById("CSharpActiveX");
+        
+        //门诊汇总月结
+        var activeData = activeX.OutpatientMethods(JSON.stringify(paramIni), JSON.stringify(hospitalInfo),"MonthlyHospitalization");
+        var activeJsonData = JSON.parse(activeData);
+        if (activeJsonData.Success === false) {
+            $.modalAlert(activeJsonData.Message,"error");
+        } else {
+            var submitParam =
+            {
+                "SettlementStartTime": $("#startTime").val(),
+                "SettlementEndTime": $("#endTime").val(),
+                "PeopleType": $("#PeopleType").val(),
+                "SettlementJson": activeJsonData.Data
+            }
+            
+            $.submitForm({
+                url: "/SystemManage/DoorDiagnosisMonthlySettlement/SubmitForm",
+                param: submitParam,
+                success: function() {
+                    $.currentWindow().$("#gridList").trigger("reloadGrid");
+                }
+            });
+        }
+    }
+   
 </script>
     <form id="form1">
         <div style="padding-top: 20px; margin-right: 20px;">
+            <input type="hidden" id="empid" name="UserId" value="@ViewBag.empid" placeholder="用户ID" />
+            @{Html.RenderPartial("_CSharpActiveX");}
             <table class="form">
                 <tr>
                     <th class="formTitle">结算开始日期</th>
                     <td class="formValue">
                         <input type="text" class="Wdate" name="SettlementStartTime" id="startTime"
-                            onClick="WdatePicker({autoPickDate:true,dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endTime\')||\'new Date()\'}',readOnly:true})" style="height: 34px;width: 330px" />
+                               onClick="WdatePicker({ autoPickDate: true, dateFmt: 'yyyy-MM-dd', maxDate: '#F{$dp.$D(\'endTime\')||\'new Date()\'}', readOnly: true })" style="height: 34px; width: 330px"/>
                     </td>
                 </tr>
                 <tr>
                     <th class="formTitle">结算截止日期</th>
                     <td class="formValue">
                         <input type="text" class="Wdate" name="SettlementEndTime" id="endTime"
-                            onClick="WdatePicker({autoPickDate:true,dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startTime\')}',maxDate:new Date(),readOnly:true})" style="height: 34px;width: 330px" />
+                               onClick="WdatePicker({ autoPickDate: true, dateFmt: 'yyyy-MM-dd', minDate: '#F{$dp.$D(\'startTime\')}', maxDate: new Date(), readOnly: true })" style="height: 34px; width: 330px"/>
                     </td>
                 </tr>
                 <tr>
@@ -83,7 +116,6 @@
                         </select>
                     </td>
                 </tr>
-
             </table>
         </div>
     </form>

@@ -19,5 +19,9 @@ namespace NFine.Domain.Params
         /// 结算人群
         /// </summary>
         public string PeopleType { get; set; }
+        /// <summary>
+        /// 结算回参
+        /// </summary>
+        public  string SettlementJson { get; set; }
     }
 }
