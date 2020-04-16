@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Service.Interfaces;
-using NFine.Application.SystemManage;
+using NFine.Application.SystemManage; 
 using NFine.Code;
 
 namespace NFine.Web.Areas.SystemManage.Controllers
