@@ -164,7 +164,7 @@
                         </div>
                     </div>
                     <div class="layui-form-item" id="DoorDiagnosisPreSettlementDiv" style="text-align: center; margin-top: 20px;">
-                        <button type="button" Id="DoorDiagnosisPreSettlement" class="layui-btn">门诊预结算</button>
+                        <button type="button" Id="DoorDiagnosisPreSettlement" class="layui-btn layui-btn-radius">门诊预结算</button>
                     </div>
                     <div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="DoorDiagnosisSettlementDiv">
                         <button type="button" Id="DoorDiagnosisSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">门诊结算</button>
@@ -270,6 +270,7 @@
             if (settlementVal === "1") {
                            
                 $("#DoorDiagnosisPreSettlementDiv").show();
+             
             } else//门诊结算
             {   //显示结算按钮
                 $("#DoorDiagnosisSettlementDiv").show();
