@@ -457,7 +457,7 @@
             params["AccountBalance"] = accountBalance;
             $.ajax({
                 type: 'post',
-                url: hostNew + '/outpatientPlanBirthSettlement',
+                url: hostNew + '/OutpatientDepartmentCostInput',
                 data: params,
                 dataType: "json",
                 async: false,
@@ -467,7 +467,7 @@
                         var errData = data.Message;
                         msgError(errData);
                     } else {
-                        $('#CashPayment').val(data.Data.SelfPayFeeAmount);
+                        //$('#CashPayment').val(data.Data.SelfPayFeeAmount);
                         layer.alert('门诊预结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         //隐藏预结算按钮
                         $("#DoorDiagnosisPreSettlementDiv").hide();
@@ -525,6 +525,7 @@
         });
         $('#queryData').on('click', function () {
             getInpatientInfo(getInpatientInfoBack);
+            buttonStatus("queryData", false);
         });
         //初始化参数
         $.ajax({
