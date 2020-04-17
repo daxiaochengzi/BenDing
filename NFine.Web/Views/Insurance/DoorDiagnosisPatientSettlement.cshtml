@@ -26,11 +26,17 @@
             <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
             <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
             <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
+
             @{Html.RenderPartial("_CSharpActiveX");}
             <div class="layui-card-header layuibd-card-header-auto">
+               
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
                     <legend>病人信息</legend>
                 </fieldset>
+                <div style="float: right; margin-right: 15%;margin-top: -35px">
+                    <a href="http://localhost:1851//api/BenDing//DownloadFile">医保插件下载</a>
+                </div>
+
                 <!--病人信息-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">结算方式</label>
@@ -39,6 +45,7 @@
                         <input type="radio" name="Settlement" value="1" title="计划生育结算">
 
                     </div>
+              
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">身份标识</label>
@@ -121,7 +128,7 @@
                             <input type="text" name="DepartmentName" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
-               
+
                     <div class="layui-inline">
                         <label class="layui-form-label">费用合计</label>
                         <div class="layui-input-inline">
@@ -505,7 +512,11 @@
                     //现金支付
                     var cashPayment = $('#CashPayment').val();
                     if (cashPayment !== "" || cashPayment !== undefined) {
-
+                        var insuranceBalance = $("#InsuranceBalance").val();
+                        if (parseFloat(accountPayment) > parseFloat(insuranceBalance)) {
+                            layer.alert("下账金额不能大于账户余额!!!", { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                            return false;
+                        }
                         if (parseFloat(accountPayment) > parseFloat(cashPayment)) {
                             layer.alert("下账金额不能大于现金支付金额!!!", { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                             return false;

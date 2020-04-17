@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
+using System.Web;
 using System.Web.Http;
 using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
@@ -1832,5 +1837,27 @@ namespace NFine.Web.Controllers
 
         }
         #endregion
+
+        /// <summary>
+        /// 下载文件
+        /// </summary>
+        [HttpGet]
+        public HttpResponseMessage DownloadFile()
+        {
+            string fileName = "ActiveSetup.msi";
+            string filePath = HttpContext.Current.Server.MapPath("~/")+ "bin/ActiveSetup.msi";
+            FileStream stream = new FileStream(filePath, FileMode.Open);
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StreamContent(stream);
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+            {
+                FileName = HttpUtility.UrlEncode(fileName)
+            };
+            response.Headers.Add("Access-Control-Expose-Headers", "FileName");
+            response.Headers.Add("FileName", HttpUtility.UrlEncode(fileName));
+            return response;
+
+        }
     }
 }
