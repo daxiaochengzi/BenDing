@@ -436,8 +436,8 @@
                     } else {
                         var activeX = document.getElementById("CSharpActiveX");
                         //门诊计划生育结算
-                        debugger;
-                        var activeData = activeX.OutpatientMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo),"OutpatientPlanBirthPreSettlement");
+                      
+                        var activeData = activeX.OutpatientMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo),"OutpatientPlanBirthSettlement");
                         var activeJsonData = JSON.parse(activeData);
                         if (activeJsonData.Success === false) {
                             msgError(activeJsonData.Message);
@@ -452,6 +452,7 @@
         }
         //门诊计划生育结算
         function outpatientPlanBirthSettlement(settlementData, accountBalance) {
+          
             params["SettlementJson"] = settlementData;
             params["InsuranceType"] = $("#InsuranceType").val();
             params["AccountBalance"] = accountBalance;
@@ -474,7 +475,7 @@
                         $("#DoorDiagnosisSettlementDiv").show();
                         $("#AccountPaymentDiv").show();
                         //显示结算按钮
-                        buttonStatus("DoorDiagnosisSettlement", true);
+                        buttonStatus("DoorDiagnosisSettlement", false);
                         //添加预结算信息
                         if (data.Data.PayMsg !== null) {
                             settlementData(data.Data.PayMsg);
