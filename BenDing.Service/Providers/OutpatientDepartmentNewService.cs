@@ -292,6 +292,15 @@ namespace BenDing.Service.Providers
             //获取主诊断
             var diagnosisData = outpatientPerson.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == "是");
             var inpatientDiagnosisDataDto = diagnosisData;
+            if (inpatientDiagnosisDataDto == null) throw new Exception("计划生育主诊断不能为空");
+            if (!string.IsNullOrWhiteSpace(inpatientDiagnosisDataDto.ProjectCode)==false)throw new Exception("诊断:"+inpatientDiagnosisDataDto.DiseaseName+"未医保对码!!!");
+            List<string> diagnosisCode;
+            diagnosisCode = new List<string>();
+            diagnosisCode.Add("O04.905"); diagnosisCode.Add("O04.902");
+            diagnosisCode.Add("O04.901");
+            var diagnosisResult = diagnosisCode.Where(c => c.Contains(inpatientDiagnosisDataDto.ProjectCode));
+            if (diagnosisResult==null) throw new Exception("诊断:" + inpatientDiagnosisDataDto.DiseaseName + "不属于计划生育诊断!!!");
+
             var resultData = new OutpatientPlanBirthPreSettlementParam()
             {
                 OutpatientNo = CommonHelp.GuidToStr(param.BusinessId),//outpatientPerson.OutpatientNumber,
@@ -300,7 +309,7 @@ namespace BenDing.Service.Providers
                 TotalAmount = outpatientPerson.MedicalTreatmentTotalCost,
                 AfferentSign = param.AfferentSign,
                 IdentityMark = param.IdentityMark,
-                AdmissionMainDiagnosisIcd10 = inpatientDiagnosisDataDto != null ? diagnosisData.ProjectCode : null
+                AdmissionMainDiagnosisIcd10 =  diagnosisData.ProjectCode
 
             };
             var rowDataList = new List<PlanBirthSettlementRow>();
@@ -365,6 +374,16 @@ namespace BenDing.Service.Providers
             });
             //获取主诊断
             var diagnosisData = outpatientPerson.DiagnosisList.FirstOrDefault(c => c.IsMainDiagnosis == "是");
+           
+            var inpatientDiagnosisDataDto = diagnosisData;
+            if (inpatientDiagnosisDataDto == null) throw new Exception("计划生育主诊断不能为空");
+            if (!string.IsNullOrWhiteSpace(inpatientDiagnosisDataDto.ProjectCode) == false) throw new Exception("诊断:" + inpatientDiagnosisDataDto.DiseaseName + "未医保对码!!!");
+            List<string> diagnosisCode;
+            diagnosisCode = new List<string>();
+            diagnosisCode.Add("O04.905"); diagnosisCode.Add("O04.902");
+            diagnosisCode.Add("O04.901");
+            var diagnosisResult = diagnosisCode.Where(c => c.Contains(inpatientDiagnosisDataDto.ProjectCode));
+            if (diagnosisResult == null) throw new Exception("诊断:" + inpatientDiagnosisDataDto.DiseaseName + "不属于计划生育诊断!!!");
             var resultData = new OutpatientPlanBirthSettlementParam()
             {
                 OutpatientNo = CommonHelp.GuidToStr(param.BusinessId),
@@ -374,7 +393,7 @@ namespace BenDing.Service.Providers
                 AfferentSign = param.AfferentSign,
                 AccountPayment = string.IsNullOrWhiteSpace(param.AccountPayment) == true ? 0 : Convert.ToDecimal(param.AccountPayment),
                 IdentityMark = param.IdentityMark,
-                AdmissionMainDiagnosisIcd10 = diagnosisData != null ? diagnosisData.ProjectCode : null
+                AdmissionMainDiagnosisIcd10 = diagnosisData.ProjectCode
 
             };
             var rowDataList = new List<PlanBirthSettlementRow>();
@@ -420,13 +439,13 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public WorkerHospitalizationPreSettlementDto OutpatientPlanBirthPreSettlement(
+        public WorkerBirthSettlementDto OutpatientPlanBirthPreSettlement(
             OutpatientPlanBirthPreSettlementUiParam param)
         {
-            WorkerHospitalizationPreSettlementDto resultData;
+            WorkerBirthSettlementDto resultData;
             var iniData = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.SettlementJson);
 
-            resultData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(iniData);
+            resultData = AutoMapper.Mapper.Map<WorkerBirthSettlementDto>(iniData);
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
           
@@ -487,13 +506,13 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public WorkerHospitalizationPreSettlementDto OutpatientPlanBirthSettlement(
+        public WorkerBirthSettlementDto OutpatientPlanBirthSettlement(
           OutpatientPlanBirthSettlementUiParam param)
         {
-            WorkerHospitalizationPreSettlementDto resultData;
+            WorkerBirthSettlementDto resultData;
 
             var iniData = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.SettlementJson);
-            resultData = AutoMapper.Mapper.Map<WorkerHospitalizationPreSettlementDto>(iniData);
+            resultData = AutoMapper.Mapper.Map<WorkerBirthSettlementDto>(iniData);
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
             //门诊病人信息存储
@@ -521,10 +540,13 @@ namespace BenDing.Service.Providers
             if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已办理医保结算,不能办理再次结算!!!");
             
             _serviceBasicService.GetOutpatientPerson(outpatientParam);
+            var accountPayment = resultData.AccountPayment + resultData.CivilServantsSubsidies +
+                                 resultData.CivilServantsSubsidy + resultData.OtherPaymentAmount +
+                                 resultData.BirthAallowance + resultData.SupplementPayAmount;
             var updateData = new UpdateMedicalInsuranceResidentSettlementParam()
             {
                 UserId = userBase.UserId,
-                ReimbursementExpensesAmount = CommonHelp.ValueToDouble(resultData.ReimbursementExpenses),
+                ReimbursementExpensesAmount = CommonHelp.ValueToDouble(accountPayment),
                 SelfPayFeeAmount = resultData.CashPayment,
                 OtherInfo = JsonConvert.SerializeObject(resultData),
                 Id = residentData.Id,
@@ -545,7 +567,7 @@ namespace BenDing.Service.Providers
                 RelationId = outpatientParam.Id,
                 Remark = "[R][OutpatientDepartment]门诊生育结算"
             });
-        
+           
             // 回参构建
             var xmlData = new OutpatientDepartmentCostXml()
             {
@@ -556,7 +578,7 @@ namespace BenDing.Service.Providers
                 SettlementNo = resultData.DocumentNo,
                 AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
                 PatientName = outpatientPerson.PatientName,
-                AccountAmountPay = resultData.AccountPayment,
+                AccountAmountPay = accountPayment,
                 MedicalInsuranceType = param.InsuranceType == "310" ? "1" : param.InsuranceType,
             };
 

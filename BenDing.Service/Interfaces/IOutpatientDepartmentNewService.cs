@@ -59,14 +59,14 @@ namespace BenDing.Service.Interfaces
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        WorkerHospitalizationPreSettlementDto OutpatientPlanBirthPreSettlement(
+        WorkerBirthSettlementDto OutpatientPlanBirthPreSettlement(
             OutpatientPlanBirthPreSettlementUiParam param);
         /// <summary>
         /// 门诊计划生育结算
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        WorkerHospitalizationPreSettlementDto OutpatientPlanBirthSettlement(
+        WorkerBirthSettlementDto OutpatientPlanBirthSettlement(
             OutpatientPlanBirthSettlementUiParam param);
         /// <summary>
         /// 获取门诊月结入参

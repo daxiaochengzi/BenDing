@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web;
 using System.Web.Mvc;
 using BenDing.Domain.Models.Enums;
@@ -85,6 +89,29 @@ namespace NFine.Web.Areas.SystemManage.Controllers
            
             return Success(data);
         }
-       
+
+        /// <summary>
+        /// 下载文件
+        /// </summary>
+        [HttpGet]
+        public HttpResponseMessage DownloadFile()
+        {
+            //< a href = "http://localhost:51170/api/File/DownloadFile" > 下载模板 </ a >
+             string fileName = "报表模板.xlsx";
+            string filePath = Server.MapPath("/");
+            FileStream stream = new FileStream(filePath, FileMode.Open);
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StreamContent(stream);
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+            {
+                FileName = HttpUtility.UrlEncode(fileName)
+            };
+            response.Headers.Add("Access-Control-Expose-Headers", "FileName");
+            response.Headers.Add("FileName", HttpUtility.UrlEncode(fileName));
+            return response;
+        }
+
+
     }
 }
