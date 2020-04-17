@@ -220,9 +220,14 @@ namespace NFine.Web.Controllers
                 userBase.TransKey = param.TransKey;
                
                 var settlementData = _outpatientDepartmentNewService.OutpatientPlanBirthPreSettlement(param);
+                var accountPayment = settlementData.AccountPayment + settlementData.CivilServantsSubsidies +
+                                settlementData.CivilServantsSubsidy + settlementData.OtherPaymentAmount +
+                                settlementData.BirthAallowance + settlementData.SupplementPayAmount;
+
+                var cashPayment = settlementData.TotalAmount - accountPayment;
                 y.Data = new OutpatientCostReturnDataDto()
                 {
-                    SelfPayFeeAmount = settlementData.CashPayment,
+                    SelfPayFeeAmount = cashPayment<0?0: cashPayment,
                     PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(settlementData))
                 };
 

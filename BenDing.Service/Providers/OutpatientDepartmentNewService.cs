@@ -444,11 +444,10 @@ namespace BenDing.Service.Providers
         {
             WorkerBirthSettlementDto resultData;
             var iniData = JsonConvert.DeserializeObject<WorkerBirthPreSettlementJsonDto>(param.SettlementJson);
-
             resultData = AutoMapper.Mapper.Map<WorkerBirthSettlementDto>(iniData);
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
-          
+           
             var outpatientParam = new GetOutpatientPersonParam()
             {
                 User = userBase,
@@ -578,7 +577,7 @@ namespace BenDing.Service.Providers
                 SettlementNo = resultData.DocumentNo,
                 AllAmount = outpatientPerson.MedicalTreatmentTotalCost,
                 PatientName = outpatientPerson.PatientName,
-                AccountAmountPay = accountPayment,
+                AccountAmountPay = resultData.AccountPayment,
                 MedicalInsuranceType = param.InsuranceType == "310" ? "1" : param.InsuranceType,
             };
 

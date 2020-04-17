@@ -121,6 +121,7 @@
                             <input type="text" name="DepartmentName" autocomplete="off" disabled class="layui-input layui-disabled">
                         </div>
                     </div>
+               
                     <div class="layui-inline">
                         <label class="layui-form-label">费用合计</label>
                         <div class="layui-input-inline">
@@ -209,7 +210,7 @@
         if (verification === false) {
             return false;
         }
-      
+       
         //form数据回显:数据回显到Form表单主体部分
         var jsonToForm = function (jsonData, formFilter) {
             var diagnosisList = jsonData.DiagnosisList;
@@ -454,7 +455,7 @@
         function outpatientPlanBirthSettlement(settlementData, accountBalance) {
           
             params["SettlementJson"] = settlementData;
-            params["InsuranceType"] = $("#InsuranceType").val();
+            params["InsuranceType"] = baseInfo.Inpatient.InsuranceType;
             params["AccountBalance"] = accountBalance;
             $.ajax({
                 type: 'post',
@@ -469,7 +470,7 @@
                         msgError(errData);
                     } else {
                         $('#CashPayment').val(data.Data.SelfPayFeeAmount);
-                        layer.alert('门诊预结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        layer.alert('门诊结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         //隐藏预结算按钮
                         $("#DoorDiagnosisPreSettlementDiv").hide();
                         $("#DoorDiagnosisSettlementDiv").show();
