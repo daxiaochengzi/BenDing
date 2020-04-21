@@ -74,7 +74,11 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
         MonthlyHospitalizationParam GetMonthlyHospitalizationParam(MonthlyHospitalizationUiParam param);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
         MonthlyHospitalizationCancelParam GetMonthlyHospitalizationCancelUiParam(
             GetMonthlyHospitalizationCancelUiParam param);
         /// <summary>

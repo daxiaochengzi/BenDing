@@ -152,9 +152,6 @@ namespace BenDing.Repository.Providers.Web
             return data;
         }
 
-     
-
-
         /// <summary>
         /// 入院登记修改
         /// </summary>

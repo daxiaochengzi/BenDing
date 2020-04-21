@@ -25,6 +25,10 @@ namespace BenDing.Domain.Models.Params.UI
       
         public int  FetusNumber { get; set; }
         /// <summary>
+        /// 结算json
+        /// </summary>
+        public string SettlementJson { get; set; }
+        /// <summary>
         /// 诊断
         /// </summary>
 

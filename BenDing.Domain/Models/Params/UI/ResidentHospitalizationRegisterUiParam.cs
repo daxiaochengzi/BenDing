@@ -54,6 +54,11 @@ namespace BenDing.Domain.Models.Params.UI
         [XmlIgnoreAttribute]
         public  string InsuranceType { get; set; }
         /// <summary>
+        /// 结算xml
+        /// </summary>
+        [XmlIgnore]
+        public string SettlementJson { get; set; }
+        /// <summary>
         /// 诊断
         /// </summary>
         [XmlIgnore]
