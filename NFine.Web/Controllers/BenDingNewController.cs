@@ -37,6 +37,8 @@ namespace NFine.Web.Controllers
         private readonly IOutpatientDepartmentNewService _outpatientDepartmentNewService;
         private readonly IOutpatientDepartmentRepository _outpatientDepartmentRepository;
         private readonly IWorkerMedicalInsuranceService _workerMedicalInsuranceService;
+        private readonly IWorkerMedicalInsuranceNewService _workerMedicalInsuranceNewService;
+
         /// <summary>
         /// 
         /// </summary>
@@ -52,6 +54,8 @@ namespace NFine.Web.Controllers
         /// <param name="workerMedicalInsuranceService"></param>
         /// <param name="outpatientDepartmentNewService"></param>
         /// <param name="residentMedicalInsuranceNewService"></param>
+        /// <param name="workerMedicalInsuranceNewService"></param>
+
         public BenDingNewController(IResidentMedicalInsuranceRepository insuranceRepository,
             IWebServiceBasicService webServiceBasicService,
             IMedicalInsuranceSqlRepository medicalInsuranceSqlRepository,
@@ -63,7 +67,8 @@ namespace NFine.Web.Controllers
             IOutpatientDepartmentRepository outpatientDepartmentRepository,
             IWorkerMedicalInsuranceService workerMedicalInsuranceService,
             IOutpatientDepartmentNewService outpatientDepartmentNewService,
-            IResidentMedicalInsuranceNewService residentMedicalInsuranceNewService
+            IResidentMedicalInsuranceNewService residentMedicalInsuranceNewService,
+            IWorkerMedicalInsuranceNewService workerMedicalInsuranceNewService
             )
         {
             _webServiceBasicService = webServiceBasicService;
@@ -78,6 +83,8 @@ namespace NFine.Web.Controllers
             _workerMedicalInsuranceService = workerMedicalInsuranceService;
             _outpatientDepartmentNewService = outpatientDepartmentNewService;
             _residentMedicalInsuranceNewService = residentMedicalInsuranceNewService;
+            _workerMedicalInsuranceNewService = workerMedicalInsuranceNewService;
+            
         }
 
         #region 门诊
@@ -326,8 +333,6 @@ namespace NFine.Web.Controllers
             });
 
         }
-        
-
         /// <summary>
         ///门诊月结汇总
         /// </summary>
@@ -393,9 +398,9 @@ namespace NFine.Web.Controllers
 
         }
         #endregion
-        #region 居民
+        #region 医保
         /// <summary>
-        /// 医保入院登记
+        /// 获取医保入院登记参数
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -408,7 +413,12 @@ namespace NFine.Web.Controllers
                 var workerParam = AutoMapper.Mapper.Map<WorKerHospitalizationRegisterUiParam>(param);
                 if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");     
                 ////职工
-                //if (param.InsuranceType == "310") _workerMedicalInsuranceService.WorkerHospitalizationRegister(workerParam);
+                if (param.InsuranceType == "310")
+                { 
+                  var workerDataParam =  _workerMedicalInsuranceNewService.GetWorkerHospitalizationRegisterParam(
+                     workerParam);
+                    y.Data = XmlSerializeHelper.XmlSerialize(workerDataParam);
+                }
                 //居民
                 if (param.InsuranceType == "342")
                 {
@@ -433,7 +443,7 @@ namespace NFine.Web.Controllers
                 if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
                
                 ////职工
-                //if (param.InsuranceType == "310") _workerMedicalInsuranceService.WorkerHospitalizationRegister(workerParam);
+                if (param.InsuranceType == "310") _workerMedicalInsuranceNewService.WorkerHospitalizationRegister(workerParam);
                 //居民
                 if (param.InsuranceType == "342") _residentMedicalInsuranceNewService.HospitalizationRegister(param);
             });
@@ -441,7 +451,7 @@ namespace NFine.Web.Controllers
         }
 
         /// <summary>
-        /// 医保入院登记修改
+        /// 获取医保入院登记修改参数
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
@@ -458,8 +468,13 @@ namespace NFine.Web.Controllers
                 {
                     BusinessId = param.BusinessId
                 });
-                ////职工
-                //if (residentData.InsuranceType == "310") _workerMedicalInsuranceService.ModifyWorkerHospitalization(param);
+                //职工
+                if (residentData.InsuranceType == "310")
+                {
+                    var hospitalizationModifyParam = _workerMedicalInsuranceNewService.GetModifyWorkerHospitalizationParam(param);
+                    y.Data = XmlSerializeHelper.XmlSerialize(hospitalizationModifyParam);
+                }
+               
                 //居民
                 if (residentData.InsuranceType == "342")
                 {
@@ -489,7 +504,7 @@ namespace NFine.Web.Controllers
                     BusinessId = param.BusinessId
                 });
                 ////职工
-                //if (residentData.InsuranceType == "310") _workerMedicalInsuranceService.ModifyWorkerHospitalization(param);
+                if (residentData.InsuranceType == "310") _workerMedicalInsuranceNewService.ModifyWorkerHospitalization(param);
                 //居民
                 if (residentData.InsuranceType == "342") _residentMedicalInsuranceService.HospitalizationModify(param);
             });
@@ -498,17 +513,16 @@ namespace NFine.Web.Controllers
 
 
         /// <summary>
-        /// 医保住院费用预结算
+        /// 获取医保住院费用预结算参数
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet]
-        public ApiJsonResultData GetHospitalizationPreSettlement([FromUri]HospitalizationPreSettlementUiParam param)
+        public ApiJsonResultData GetHospitalizationPreSettlementParam([FromUri]HospitalizationPreSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {
                 var resultData = new SettlementDto();
-               
                 //获取医保病人信息
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
                 {
@@ -526,31 +540,29 @@ namespace NFine.Web.Controllers
                 if (!queryData.Any()) throw new Exception("当前病人没有处方明细,不能进行预结算!!!");
                 if (queryData.Count(c => c.UploadMark == 0) > 0) throw new Exception("当前病人还有处方明细未上传至医保,不能进行预结算!!!");
                 if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已医保结算,不能预结算!!!");
-                ////职工
-                //if (residentData.InsuranceType == "310")
-                //{
-                //    if (residentData.IsBirthHospital == 0)
-                //    {
-                //        var workerSettlementData = _workerMedicalInsuranceService.WorkerHospitalizationPreSettlement(param);
-                //    }//职工生育预结算
-                //    else if (residentData.IsBirthHospital == 1)
-                //    {
-                //        if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
-                //        var workerSettlementData = _workerMedicalInsuranceService.WorkerBirthPreSettlement(new WorkerBirthPreSettlementUiParam()
-                //        {
-                //            TransKey = param.TransKey,
-                //            BusinessId = param.BusinessId,
-                //            DiagnosisList = param.DiagnosisList,
-                //            UserId = param.UserId,
-                //            MedicalCategory = param.MedicalCategory,
-                //            FetusNumber = param.FetusNumber
+                //职工
+                if (residentData.InsuranceType == "310")
+                {
+                    if (residentData.IsBirthHospital == 0)
+                    {
+                        var workerSettlementData = _workerMedicalInsuranceNewService.GetWorkerHospitalizationPreSettlementParam(param);
+                    }//职工生育预结算
+                    else if (residentData.IsBirthHospital == 1)
+                    {
+                        if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
+                        var workerSettlementData = _workerMedicalInsuranceNewService.GetWorkerBirthPreSettlementParam(new WorkerBirthPreSettlementUiParam()
+                        {
+                            TransKey = param.TransKey,
+                            BusinessId = param.BusinessId,
+                            DiagnosisList = param.DiagnosisList,
+                            UserId = param.UserId,
+                            MedicalCategory = param.MedicalCategory,
+                            FetusNumber = param.FetusNumber
 
-                //        });
-                        
-                //    }
+                        });
 
-
-                //}
+                    }
+                }
                 //居民
                 if (residentData.InsuranceType == "342")
                 {
@@ -571,7 +583,6 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {
                 var resultData = new SettlementDto();
-               
                 //获取医保病人信息
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
                 {
@@ -589,39 +600,40 @@ namespace NFine.Web.Controllers
                 if (!queryData.Any()) throw new Exception("当前病人没有处方明细,不能进行预结算!!!");
                 if (queryData.Count(c => c.UploadMark == 0) > 0) throw new Exception("当前病人还有处方明细未上传至医保,不能进行预结算!!!");
                 if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement) throw new Exception("当前病人已医保结算,不能预结算!!!");
-                ////职工
-                //if (residentData.InsuranceType == "310")
-                //{
+                //职工
+                if (residentData.InsuranceType == "310")
+                {
 
-                //    if (residentData.IsBirthHospital == 0)
-                //    {
-                //        var workerSettlementData = _workerMedicalInsuranceService.WorkerHospitalizationPreSettlement(param);
-                //        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
-                //        resultData.CashPayment = workerSettlementData.CashPayment;
-                //        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
-                //        resultData.TotalAmount = workerSettlementData.TotalAmount;
-                //    }//职工生育预结算
-                //    else if (residentData.IsBirthHospital == 1)
-                //    {
-                //        if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
-                //        var workerSettlementData = _workerMedicalInsuranceService.WorkerBirthPreSettlement(new WorkerBirthPreSettlementUiParam()
-                //        {
-                //            TransKey = param.TransKey,
-                //            BusinessId = param.BusinessId,
-                //            DiagnosisList = param.DiagnosisList,
-                //            UserId = param.UserId,
-                //            MedicalCategory = param.MedicalCategory,
-                //            FetusNumber = param.FetusNumber
+                    if (residentData.IsBirthHospital == 0)
+                    {
+                        var workerSettlementData = _workerMedicalInsuranceNewService.WorkerHospitalizationPreSettlement(param);
+                        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
+                        resultData.CashPayment = workerSettlementData.CashPayment;
+                        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
+                        resultData.TotalAmount = workerSettlementData.TotalAmount;
+                    }//职工生育预结算
+                    else if (residentData.IsBirthHospital == 1)
+                    {
+                        if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
+                        var workerSettlementData = _workerMedicalInsuranceNewService.WorkerBirthPreSettlement(new WorkerBirthPreSettlementUiParam()
+                        {
+                            TransKey = param.TransKey,
+                            BusinessId = param.BusinessId,
+                            DiagnosisList = param.DiagnosisList,
+                            UserId = param.UserId,
+                            MedicalCategory = param.MedicalCategory,
+                            FetusNumber = param.FetusNumber,
+                            SettlementJson = param.SettlementJson
 
-                //        });
-                //        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
-                //        resultData.CashPayment = workerSettlementData.CashPayment;
-                //        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
-                //        resultData.TotalAmount = workerSettlementData.TotalAmount;
-                //    }
+                        });
+                        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
+                        resultData.CashPayment = workerSettlementData.CashPayment;
+                        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
+                        resultData.TotalAmount = workerSettlementData.TotalAmount;
+                    }
 
 
-                //}
+                }
                 //居民
                 if (residentData.InsuranceType == "342")
                 {
@@ -639,12 +651,12 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
-        /// 医保出院费用结算
+        /// 获取医保出院费用结算参数
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData GetHospitalizationSettlement([FromBody]LeaveHospitalSettlementUiParam param)
+        public ApiJsonResultData GetHospitalizationSettlementParam([FromBody]LeaveHospitalSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {
@@ -656,47 +668,42 @@ namespace NFine.Web.Controllers
                 {
                     BusinessId = param.BusinessId
                 });
-                ////职工
-                //if (residentData.InsuranceType == "310")
-                //{
-                //    if (residentData.IsBirthHospital == 0)
-                //    {
-                //        var workerSettlementData = _workerMedicalInsuranceService.WorkerHospitalizationSettlement(new WorkerHospitalizationSettlementUiParam()
-                //        {
-                //            DiagnosisList = param.DiagnosisList,
-                //            TransKey = param.TransKey,
-                //            BusinessId = param.BusinessId,
-                //            LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
-                //            UserId = param.UserId,
-                //        });
-                //        resultData.CashPayment = workerSettlementData.CashPayment;
-                //        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
-                //        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
-                //        resultData.TotalAmount = workerSettlementData.TotalAmount;
-                //    }//职工生育结算
-                //    else if (residentData.IsBirthHospital == 1)
-                //    {
-                //        var workerSettlementData = _workerMedicalInsuranceService.WorkerBirthSettlement(
-                //          new WorkerBirthSettlementUiParam()
-                //          {
-                //              TransKey = param.TransKey,
-                //              UserId = param.UserId,
-                //              BusinessId = param.BusinessId,
-                //              AccountPayment = !string.IsNullOrWhiteSpace(param.AccountPayment) == true ? Convert.ToDecimal(param.AccountPayment) : 0,
-                //              DiagnosisList = param.DiagnosisList,
-                //              MedicalCategory = param.MedicalCategory,
-                //              FetusNumber = param.FetusNumber,
-                //              LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
+                //职工
+                if (residentData.InsuranceType == "310")
+                {
+                    if (residentData.IsBirthHospital == 0)
+                    {
+                        var workerSettlementData = _workerMedicalInsuranceNewService.GetWorkerHospitalizationSettlementParam(new WorkerHospitalizationSettlementUiParam()
+                        {
+                            DiagnosisList = param.DiagnosisList,
+                            TransKey = param.TransKey,
+                            BusinessId = param.BusinessId,
+                            LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
+                            UserId = param.UserId,
+                        });
+                        y.Data = XmlSerializeHelper.XmlSerialize(workerSettlementData);
+                       
+                    }//职工生育结算
+                    else if (residentData.IsBirthHospital == 1)
+                    {
+                        var workerSettlementData = _workerMedicalInsuranceNewService.GetWorkerBirthSettlementParam(
+                          new WorkerBirthSettlementUiParam()
+                          {
+                              TransKey = param.TransKey,
+                              UserId = param.UserId,
+                              BusinessId = param.BusinessId,
+                              AccountPayment = !string.IsNullOrWhiteSpace(param.AccountPayment) == true ? Convert.ToDecimal(param.AccountPayment) : 0,
+                              DiagnosisList = param.DiagnosisList,
+                              MedicalCategory = param.MedicalCategory,
+                              FetusNumber = param.FetusNumber,
+                              LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
 
-                //          });
-                //        resultData.CashPayment = workerSettlementData.CashPayment;
-                //        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
-                //        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
-                //        resultData.TotalAmount = workerSettlementData.TotalAmount;
-                //    }
+                          });
+                        y.Data = XmlSerializeHelper.XmlSerialize(workerSettlementData);
+                    }
 
 
-                //}
+                }
                 //居民
                 if (residentData.InsuranceType == "342")
                 {
@@ -727,47 +734,49 @@ namespace NFine.Web.Controllers
                 {
                     BusinessId = param.BusinessId
                 });
-                ////职工
-                //if (residentData.InsuranceType == "310")
-                //{
-                //    if (residentData.IsBirthHospital == 0)
-                //    {
-                //        var workerSettlementData = _workerMedicalInsuranceService.WorkerHospitalizationSettlement(new WorkerHospitalizationSettlementUiParam()
-                //        {
-                //            DiagnosisList = param.DiagnosisList,
-                //            TransKey = param.TransKey,
-                //            BusinessId = param.BusinessId,
-                //            LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
-                //            UserId = param.UserId,
-                //        });
-                //        resultData.CashPayment = workerSettlementData.CashPayment;
-                //        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
-                //        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
-                //        resultData.TotalAmount = workerSettlementData.TotalAmount;
-                //    }//职工生育结算
-                //    else if (residentData.IsBirthHospital == 1)
-                //    {
-                //        var workerSettlementData = _workerMedicalInsuranceService.WorkerBirthSettlement(
-                //          new WorkerBirthSettlementUiParam()
-                //          {
-                //              TransKey = param.TransKey,
-                //              UserId = param.UserId,
-                //              BusinessId = param.BusinessId,
-                //              AccountPayment = !string.IsNullOrWhiteSpace(param.AccountPayment) == true ? Convert.ToDecimal(param.AccountPayment) : 0,
-                //              DiagnosisList = param.DiagnosisList,
-                //              MedicalCategory = param.MedicalCategory,
-                //              FetusNumber = param.FetusNumber,
-                //              LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
+                //职工
+                if (residentData.InsuranceType == "310")
+                {
+                    if (residentData.IsBirthHospital == 0)
+                    {
+                        var workerSettlementData = _workerMedicalInsuranceNewService.WorkerHospitalizationSettlement(new WorkerHospitalizationSettlementUiParam()
+                        {
+                            DiagnosisList = param.DiagnosisList,
+                            TransKey = param.TransKey,
+                            BusinessId = param.BusinessId,
+                            LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
+                            UserId = param.UserId,
+                            SettlementJson = param.SettlementJson
+                        });
+                        resultData.CashPayment = workerSettlementData.CashPayment;
+                        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
+                        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
+                        resultData.TotalAmount = workerSettlementData.TotalAmount;
+                    }//职工生育结算
+                    else if (residentData.IsBirthHospital == 1)
+                    {
+                        var workerSettlementData = _workerMedicalInsuranceNewService.WorkerBirthSettlement(
+                          new WorkerBirthSettlementUiParam()
+                          {
+                              TransKey = param.TransKey,
+                              UserId = param.UserId,
+                              BusinessId = param.BusinessId,
+                              AccountPayment = !string.IsNullOrWhiteSpace(param.AccountPayment) == true ? Convert.ToDecimal(param.AccountPayment) : 0,
+                              DiagnosisList = param.DiagnosisList,
+                              MedicalCategory = param.MedicalCategory,
+                              FetusNumber = param.FetusNumber,
+                              LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
+                              SettlementJson = param.SettlementJson
 
-                //          });
-                //        resultData.CashPayment = workerSettlementData.CashPayment;
-                //        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
-                //        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
-                //        resultData.TotalAmount = workerSettlementData.TotalAmount;
-                //    }
+                          });
+                        resultData.CashPayment = workerSettlementData.CashPayment;
+                        resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
+                        resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
+                        resultData.TotalAmount = workerSettlementData.TotalAmount;
+                    }
 
 
-                //}
+                }
                 //居民
                 if (residentData.InsuranceType == "342")
                 {

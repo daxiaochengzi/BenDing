@@ -15,14 +15,11 @@ namespace BenDing.Domain.Models.Params.UI
     {/// <summary>
         /// 71：顺产: 72: 剖宫产
         /// </summary>
-       
-        
         public string MedicalCategory { get; set; }
 
         /// <summary>
         /// 胎儿数
         /// </summary>
-      
         public int  FetusNumber { get; set; }
         /// <summary>
         /// 结算json
