@@ -572,13 +572,12 @@ namespace NFine.Web.Controllers
             });
 
         }
-
         /// <summary>
         /// 获取医保住院费用预结算参数
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         public ApiJsonResultData GetHospitalizationPreSettlementParam([FromUri]HospitalizationPreSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
@@ -621,6 +620,7 @@ namespace NFine.Web.Controllers
                             FetusNumber = param.FetusNumber
 
                         });
+                        y.Data = XmlSerializeHelper.XmlSerialize(workerSettlementData);
 
                     }
                 }
@@ -638,7 +638,7 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         public ApiJsonResultData HospitalizationPreSettlement([FromUri]HospitalizationPreSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
@@ -717,7 +717,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData GetHospitalizationSettlementParam([FromBody]LeaveHospitalSettlementUiParam param)
+        public ApiJsonResultData GetLeaveHospitalSettlementParam([FromBody]LeaveHospitalSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {
