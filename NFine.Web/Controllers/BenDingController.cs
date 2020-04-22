@@ -1781,7 +1781,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData WorkerBirthHospitalizationRegister([FromBody]WorkerBirthHospitalizationRegisterUiParam param)
+        public ApiJsonResultData WorkerBirthHospitalizationRegister([FromBody]BirthHospitalizationRegisterUiParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {//医保登录

@@ -76,7 +76,7 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
         WorkerBirthHospitalizationRegisterParam GetWorkerBirthHospitalizationRegisterParam(
-          WorkerBirthHospitalizationRegisterUiParam param);
+          BirthHospitalizationRegisterUiParam param);
 
         /// <summary>
         /// 职工生育入院登记
@@ -84,7 +84,7 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
         WorkerBirthHospitalizationRegisterDto WorkerBirthHospitalizationRegister(
-          WorkerBirthHospitalizationRegisterUiParam param);
+          BirthHospitalizationRegisterUiParam param);
         /// <summary>
         /// 获取职工计划生育预结算入参
         /// </summary>

@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_Base.cshtml";
 }
 <link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
-
+<script src="~/script/BenDingComm.js"></script>
 <style>
     .layui-card-header.layuibd-card-header-auto {
         padding-top: 15px;
@@ -187,8 +187,9 @@
         base: '/Content/js/layui/plugin/'
     }).extend({
         autocomplete: 'layAutoComplete'
-    });
-
+        });
+    var iniJs;
+    var iniMsg;
     layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'],
         function () {
             var $ = layui.$,
@@ -197,7 +198,9 @@
                 layer = layui.layer,
                 table = layui.table,
                 laydate = layui.laydate;
-
+            //初始化公共页面
+            iniJs = $;
+            iniMsg = layer;
             form.render(null, 'LAY-form-render');
             //执行一个laydate实例
             laydate.render({ elem: '#date1' });
@@ -211,10 +214,15 @@
                         closeStop: '#date2'
                     });
                 });
+            //插件检查
+            var verification = DetectActiveX();
+            if (verification === false) {
+                return false;
+            }
             //病人信息
             var inpatientInfoData = null;
-            //获取病人信息
-            function getInpatientInfo() {
+            //获取住院病人信息
+            function getHospitalizationInpatientInfo() {
                 var params = {
                     "TransKey": $("#transkey").val() /*医保交易码*/,
                     "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
@@ -253,8 +261,11 @@
                     }
                 });
             }
-            //获取病人信息
-            getInpatientInfo();
+            //获取住院病人信息
+            getHospitalizationInpatientInfo();
+            //获取医院基本信息回调方法
+            window.getHospitalInfoBack = function () { };
+            getHospitalInfo(getHospitalInfoBack);
             //根据医疗类别进行初始化
             function setMedicalCategoryIni(num) {
                 var medicalCategory = $("#MedicalCategory");
@@ -302,7 +313,6 @@
                 setMedicalCategoryIni(jsonData.InsuranceType);
               
             }
-
             form.on('select(AfferentSign)',
                 function (data) {
                     var val = data.value;
@@ -315,9 +325,7 @@
                    
                     }
                 });
-         
-           
-            //----
+            //
             //诊断数据表格实例化
             var layTableId = "dataTableId";
             var tableIns = table.render({
@@ -491,146 +499,160 @@
                             break;
                     }
                 });
-            //---------
+           
+            //初始化病人基本信息
+            function iniInpatientInfo() {
+
+                jsonToForm(data.Data, "LAY-form-render");
+                //加载诊断默认数据
+                tableIns.reload({
+                    data: inpatientInfoData.Data.DiagnosisList
+                });
+                buttonStatus("BirthRegister", true);
+            }
+            //获取医保病人信息
+            window.getInpatientInfoBack = function () {
+                iniInpatientInfo();
+            }
+            //入参初始化
+            function getBirthHospitalizationRegisterParamIni()
+            {
+                var field = data.field;
+                //医疗类别
+                var medicalCategory = $("#MedicalCategory").val();
+                if (medicalCategory === "" || medicalCategory === undefined) {
+                    msgError('医疗类别不能为空!!!!');
+                    return false;
+                }
+                var insuranceType = $("#InsuranceType").val();
+              
+                //职工
+                if (insuranceType === "342") {
+                    //户口性质
+                    var householdNature = $("#HouseholdNature").val();
+                    if (householdNature === "" || householdNature === undefined) {
+                        msgError('户口性质不能为空!!!!');
+                        return false;
+                    }
+                }
+                //胎儿数
+                var fetusNumber = $("#FetusNumber").val();
+                if (fetusNumber === "" || fetusNumber === undefined) {
+                    msgError('胎儿数不能为空!!!!');
+                    return false;
+                }
+                if (fetusNumber <= 0) {
+                    msgError('胎儿数必须大于0!!!!');
+                    return false;
+                }
+                field.BusinessId = field.BusinessId;
+                //医保交易码
+                field.TransKey = $("#transkey").val();
+                //授权操作人的ID
+                field.UserId = $("#empid").val();
+                //诊断列表
+                var dataTable1 = table.cache[layTableId];
+                var diagnosisList = [];
+                //排除空值
+                $.each(dataTable1, function (k, v) {
+                    if (v.DiseaseCoding !== undefined) {
+                        diagnosisList.push(v);
+                    }
+                });
+                //诊断列表 
+                field.DiagnosisList = diagnosisList;
+
+                return field;
+            }
+            //获取医保入院登记参数
+            function getBirthHospitalizationRegisterParam() {
+                var fieldParam = getBirthHospitalizationRegisterParamIni();
+                $.ajax({
+                    type: 'POST',
+                    url: hostNew + '/GetBirthHospitalizationRegisterParam',
+                    async: false,
+                    data: JSON.stringify(fieldParam),
+                    dataType: "json",
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            msgError(errData);
+                            //样式类名:墨绿深蓝风
+                        } else {
+                            var activeX = document.getElementById("CSharpActiveX");
+                            //获取医保类型
+                            var insuranceTypeValue = $("#InsuranceType").val();
+                            var activeData;
+                            var activeJsonData;
+                            if (insuranceTypeValue === "342") { //居民入生育院登记
+                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "HospitalizationRegister");
+                                activeJsonData = JSON.parse(activeData);
+                                if (activeJsonData.Success === false) {
+                                    msgError(activeJsonData.Message);
+                                } else {
+                                    birthHospitalizationRegister(activeJsonData.Data);
+                                }
+                            }
+                            if (insuranceTypeValue === "310") {
+                                //职工入生育院登记
+                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerBirthHospitalizationRegister");
+                                activeJsonData = JSON.parse(activeData);
+                                if (activeJsonData.Success === false) {
+                                    msgError(activeJsonData.Message);
+                                } else {
+                                    birthHospitalizationRegister(activeJsonData.Data)
+                                }
+                            }
+
+
+
+                        }
+                    }
+                });
+
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            }
+            //住院登记
+            function birthHospitalizationRegister(parameters) {
+                var fieldParam = getBirthHospitalizationRegisterParamIni();
+                fieldParam["SettlementJson"] = parameters;
+                $.ajax({
+                    type: 'POST',
+                    url: hostNew + '/BirthHospitalizationRegister',
+                    async: false,
+                    data: JSON.stringify(fieldParam),
+                    dataType: "json",
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            msgError(errData);
+                        } else {
+                            msgSuccess('登记成功');
+                            buttonStatus("BirthRegister", false);
+                        }
+                        return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+                    }
+                });
+            }
+
             /**根据当前住院病人的业务ID查询,返回数据回显到下面表单里面*/
             form.on('submit(LAY-form-search)',
                 function (data) {
 
-                    var paramsUserInfo = {
-                        "AfferentSign": $("#AfferentSign").val() /*身份标志，1:身份证,2:医保个人编码身份证号*/,
-                        "IdentityMark": $("#IdentityMark").val(),
-                        "UserId": $("#empid").val() /*授权操作人的ID*/
-                    }
-                    $.ajax({
-                        type: 'POST',
-                        url: host + '/GetUserInfo',
-                        data: paramsUserInfo,
-                        dataType: "json",
-                        async: false,
-                        success: function (data) {
-                            if (data.Success === false) {
-                                var errData = data.Message;
-                                
-                                layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                              
-                              
-                            } else {
-                                jsonToForm(data.Data, "LAY-form-render");
-                                //加载诊断默认数据
-                                tableIns.reload({
-                                    data: inpatientInfoData.Data.DiagnosisList
-                                });
-                                buttonStatus("BirthRegister",true);
-                                //////诊断查询可编辑
-                                //$('#DiagnosisSearchData').attr("class", "layui-input");
-
-
-                            }
-                        },
-                        complete: function () {
-                            form.render();
-                        }
-                    });
+                    getInpatientInfo(getInpatientInfoBack);
+                    buttonStatus("queryData", false);
                     return false; //阻止表单跳转
                 });
             //登记
             form.on('submit(BirthRegister)',
                 function (data) {
-                    var field = data.field;
-                    //医疗类别
-                    var medicalCategory = $("#MedicalCategory").val();
-                    if (medicalCategory === "" || medicalCategory === undefined) {
-                        
-                        layer.alert('医疗类别不能为空!!!!', { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                      
-                        return false;
-                    }
-                    var insuranceType = $("#InsuranceType").val();
-                    //默认为居民
-                    var urlMethodName = "/HospitalizationRegister";
-                    //居民
-                    if (insuranceType === "310") {
-                        urlMethodName = "/WorkerBirthHospitalizationRegister";
-                    }
-                    //职工
-                    if (insuranceType === "342")
-                    {
-                        //户口性质
-                        var householdNature = $("#HouseholdNature").val();
-                        if (householdNature === "" || householdNature === undefined) {
-                            layer.alert('户口性质不能为空!!!!', { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                           
-                            return false;
-                        }
-                      
-                        
-                    }
-                    //胎儿数
-                    var fetusNumber = $("#FetusNumber").val();
-                    if (fetusNumber === "" || fetusNumber === undefined) {
-                        layer.alert('胎儿数不能为空!!!', { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                       
-                        return false;
-                    }
-                    if (fetusNumber <= 0) {
-                        layer.alert('胎儿数必须大于0!!!', { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                      
-                        return false;
-                    }
-                    field.BusinessId = field.BusinessId;
-                    //医保交易码
-                    field.TransKey = $("#transkey").val();
-                    //授权操作人的ID
-                    field.UserId = $("#empid").val();
-                   
-                    //诊断列表
-                    var dataTable1 = table.cache[layTableId];
-                    var diagnosisList = []
-                    //排除空值
-                    $.each(dataTable1, function (k, v) {
-                        if (v.DiseaseCoding !== undefined) {
-                            diagnosisList.push(v);
-                        }
-                    });
-                    //诊断列表 
-                    field.DiagnosisList = diagnosisList;
-                 
-                    $.ajax({
-                        type: 'POST',
-                        url: host + urlMethodName,
-                        async: false,
-                        data: JSON.stringify(field),
-                        dataType: "json",
-                        contentType: 'application/json',
-                        success: function (data) {
-                            if (data.Success === false) {
-                                var errData = data.Message;
-                                layer.alert("登记失败", { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                             
-                            } else {
-                                layer.alert('登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv',title: '温馨提示' });
-                               
-                               
-                                buttonStatus("BirthRegister", false);
 
-                            }
-                        }
-                    });
-                    return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+                    getBirthHospitalizationRegisterParam();
+
                 });
-            //按钮状态
-            function buttonStatus(buttonId, status) { 
-                //取消禁用
-                if (status === true) {
-                    $("#" + buttonId).attr("class", "layui-btn layui-btn-radius");
-                    $("#" + buttonId).removeAttr("disabled");
-                }//禁用
-                else {
-                    $("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
-                    $("#" + buttonId).attr("disabled", 'disabled');
-                }
           
-            }
         });
 
 </script>

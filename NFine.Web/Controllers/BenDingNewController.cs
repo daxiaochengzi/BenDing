@@ -405,7 +405,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData GetResidentHospitalizationRegisterParam([FromBody]ResidentHospitalizationRegisterUiParam param)
+        public ApiJsonResultData GetHospitalizationRegisterParam([FromBody]ResidentHospitalizationRegisterUiParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
@@ -484,7 +484,6 @@ namespace NFine.Web.Controllers
             });
 
         }
-
         /// <summary>
         /// 医保入院登记修改
         /// </summary>
@@ -510,7 +509,69 @@ namespace NFine.Web.Controllers
             });
 
         }
+        /// <summary>
+        /// 获取生育住院参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetBirthHospitalizationRegisterParam([FromBody]BirthHospitalizationRegisterUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                //初始化居民参数
+                var residentParam = AutoMapper.Mapper.Map<ResidentHospitalizationRegisterUiParam>(param);
+                if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
+                ////职工
+                if (param.InsuranceType == "310")
+                {
+                    var workerDataParam = _workerMedicalInsuranceNewService.GetWorkerBirthHospitalizationRegisterParam(
+                        param);
+                    y.Data = XmlSerializeHelper.XmlSerialize(workerDataParam);
+                }
+                //居民
+                if (param.InsuranceType == "342")
+                {
+                    var hospitalizationRegisterParam = _residentMedicalInsuranceNewService.GetResidentHospitalizationRegisterParam(residentParam);
+                    y.Data = XmlSerializeHelper.XmlSerialize(hospitalizationRegisterParam);
+                }
 
+
+            });
+
+        }
+
+        /// <summary>
+        /// 生育入院登记
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData BirthHospitalizationRegister([FromBody]BirthHospitalizationRegisterUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+
+                //初始化居民参数
+                var residentParam = AutoMapper.Mapper.Map<ResidentHospitalizationRegisterUiParam>(param);
+                if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
+                ////职工
+                if (param.InsuranceType == "310")
+                {
+                    _workerMedicalInsuranceService.WorkerBirthHospitalizationRegister(param);
+                }
+                //居民
+                if (param.InsuranceType == "342")
+                {
+                    _residentMedicalInsuranceNewService.HospitalizationRegister(residentParam);
+                }
+
+
+               
+
+            });
+
+        }
 
         /// <summary>
         /// 获取医保住院费用预结算参数
@@ -870,10 +931,6 @@ namespace NFine.Web.Controllers
                     y.Data = XmlSerializeHelper.XmlSerialize(settlementCancelParam);
 
                 }
-
-
-
-                
             });
         }
         /// <summary>

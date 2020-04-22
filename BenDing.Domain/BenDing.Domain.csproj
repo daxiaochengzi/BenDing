@@ -273,7 +273,7 @@
     <Compile Include="Models\Params\UI\UiICD10Param.cs" />
     <Compile Include="Models\Params\Base\UiInIDataParam.cs" />
     <Compile Include="Models\Params\Base\UiInIParam.cs" />
-    <Compile Include="Models\Params\UI\WorkerBirthHospitalizationRegisterUiParam.cs" />
+    <Compile Include="Models\Params\UI\BirthHospitalizationRegisterUiParam.cs" />
     <Compile Include="Models\Params\UI\WorkerBirthPreSettlementUiParam.cs" />
     <Compile Include="Models\Params\UI\WorkerBirthSettlementUiParam.cs" />
     <Compile Include="Models\Params\UI\WorKerHospitalizationRegisterUiParam.cs" />

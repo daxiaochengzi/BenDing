@@ -9,8 +9,10 @@ using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Params.Base;
 
 namespace BenDing.Domain.Models.Params.UI
-{
-   public class WorkerBirthHospitalizationRegisterUiParam: UiBaseDataParam
+{/// <summary>
+/// 生育入院登记
+/// </summary>
+   public class BirthHospitalizationRegisterUiParam: UiBaseDataParam
     {///<summary>
      /// 身份标识 （身份证号或者个人编号）
      /// </summary>
@@ -25,17 +27,31 @@ namespace BenDing.Domain.Models.Params.UI
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string AfferentSign { get; set; }
         /// <summary>
-        /// 医疗类别71：顺产72：剖宫产
+        /// 医疗类别11：普通入院23: 市内转院住院14: 大病门诊15: 大病住院22: 急诊入院71：顺产72
         /// </summary>
+        [XmlElement("PI_YLLB", IsNullable = false)]
         [Display(Name = " 医疗类别")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string MedicalCategory { get; set; }
         /// <summary>
         /// 胎儿数
         /// </summary>
-       
-        public int FetusNumber { get; set; }
-       
+        [XmlElement("PI_TES", IsNullable = false)]
+        public string FetusNumber { get; set; }
+        /// <summary>
+        /// 户口性质
+        /// </summary>
+        [XmlElement("PI_HKXZ", IsNullable = false)]
+        public string HouseholdNature { get; set; }
+
+        /// <summary>
+        /// 医保类型编码
+        /// </summary>
+        [Display(Name = "医保类型编码")]
+        [Required(ErrorMessage = "{0}不能为空!!!")]
+        [XmlIgnoreAttribute]
+        public string InsuranceType { get; set; }
+
         /// <summary>
         /// 配偶身份证号码
         /// </summary>

@@ -618,7 +618,7 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public WorkerBirthHospitalizationRegisterDto WorkerBirthHospitalizationRegister(WorkerBirthHospitalizationRegisterUiParam param)
+        public WorkerBirthHospitalizationRegisterDto WorkerBirthHospitalizationRegister(BirthHospitalizationRegisterUiParam param)
         {
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
@@ -886,7 +886,7 @@ namespace BenDing.Service.Providers
         /// <param name="param"></param>
         /// <returns></returns>
         private WorkerBirthHospitalizationRegisterParam GetWorkerHospitalizationWorkerBirth
-            (InpatientInfoDto inpatientInfo, WorkerBirthHospitalizationRegisterUiParam param)
+            (InpatientInfoDto inpatientInfo, BirthHospitalizationRegisterUiParam param)
         {
             var iniParam = new WorkerBirthHospitalizationRegisterParam()
             {
