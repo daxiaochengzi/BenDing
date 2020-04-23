@@ -74,7 +74,7 @@ function settlementData(data) {
 }
 
 function getHospitalInfo(getHospitalInfoParam) {
-    
+   
     var params = {
         "TransKey": iniJs("#transkey").val() /*医保交易码*/,
         "BusinessId": iniJs("#bid").val() /*当前住院记录的业务ID*/,

@@ -128,7 +128,9 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">医疗类别</label>
                         <div class="layui-input-inline">
-                            <select id="MedicalCategory" name="MedicalCategory" lay-filter="MedicalCategoryType"></select>
+                            <select id="MedicalCategory" name="MedicalCategory" lay-filter="MedicalCategoryType">
+                              
+                            </select>
                         </div>
                     </div>
 
@@ -178,6 +180,7 @@
             //初始化公共页面
             iniJs = $;
             iniMsg = layer;
+            var inpatientInfoData=null;
             form.render(null, 'LAY-form-render');
             //执行一个laydate实例
             laydate.render({ elem: '#date1' });
@@ -235,33 +238,54 @@
             if (verification === false) {
                 return false;
             }
+            //获取医疗类别
+            function getMedicalCategory(num) {
+
+                var optionHtml = " <option value=''>请选择医疗类别</option>";
+                //居民
+                if (num === "342") {
+                    optionHtml += "<option value='11'>11-普通入院</option>";
+                    optionHtml += "<option value='14'>14-大病门诊</option>";
+                    optionHtml += "<option value='15'>15-大病住院</option>";
+                    optionHtml += "<option value='22'>22-急诊入院</option>";
+                    optionHtml += "<option value='23'>23-市内转院住院</option>";
+                }
+                //职工
+                if (num === "310") {
+                    optionHtml += "<option value='21'>11-普通入院</option>";
+                    optionHtml += "<option value='41'>41-工伤住院</option>";
+                }
+                $("#MedicalCategory").append(optionHtml);
+
+            }
             //form数据回显:数据回显到Form表单主体部分
-            var jsonToForm = function (jsonData, formFilter) {
+            var jsonToForm = function ( formFilter) {
                 //给表单赋值
                 form.val(formFilter,
                     {
                         "AdmissionDate": inpatientInfoData.Data.AdmissionDate,
                         "HospitalizationNo": inpatientInfoData.Data.HospitalizationNo,
-                        "PatientName": jsonData.PatientName,
-                        "IdCardNo": jsonData.IdCardNo,
-                        "PatientSex": jsonData.PatientSex,
+                        "PatientName": baseInfo.Inpatient.PatientName,
+                        "IdCardNo": baseInfo.Inpatient.IdCardNo,
+                        "PatientSex": baseInfo.Inpatient.PatientSex,
                         "InDepartmentName": inpatientInfoData.Data.InDepartmentName,
                         "InDepartmentId": inpatientInfoData.Data.InDepartmentId,
                         "AdmissionDiagnosticDoctor": inpatientInfoData.Data.AdmissionDiagnosticDoctor,
                         "AdmissionBed": inpatientInfoData.Data.AdmissionBed,
                         "AdmissionWard": inpatientInfoData.Data.AdmissionWard,
                         "AdmissionOperator": inpatientInfoData.Data.AdmissionOperator,
-                        "PersonalCoding": jsonData.PersonalCoding,
-                        "InsuranceType": jsonData.InsuranceType,
-                        "PersonnelClassification": jsonData.PersonnelClassification
+                        "PersonalCoding": baseInfo.Inpatient.PersonalCoding,
+                        "InsuranceType": baseInfo.Inpatient.InsuranceType
+                       
                     });
-                //初始化医保类型
-                getMedicalCategory(jsonData.InsuranceType);
+                ////初始化医保类型
+              
             }
-            //病人信息
-            var inpatientInfoData = null;
+            
+          
             //获取病人信息
             function getHospitalizationInpatientInfo() {
+               
                 var params = {
                     "TransKey": $("#transkey").val() /*医保交易码*/,
                     "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
@@ -274,7 +298,9 @@
                     dataType: "json",
                     type: 'post',
                     success: function (data) {
+                    
                         if (data.Success === false) {
+                           
                             var errData = data.Message;
                             //样式类名:墨绿深蓝风
                             layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
@@ -307,7 +333,8 @@
             getHospitalInfo(getHospitalInfoBack);
             //初始化病人基本信息
             function iniInpatientInfo() {
-                            jsonToForm(data.Data, "LAY-form-render");
+                getMedicalCategory(baseInfo.Inpatient.InsuranceType);
+                            jsonToForm("LAY-form-render");
                             //加载诊断默认数据
                             tableIns.reload({
                                 data: inpatientInfoData.Data.DiagnosisList
@@ -318,26 +345,8 @@
             window.getInpatientInfoBack = function () {
                 iniInpatientInfo();
             }
-            //获取医疗类别
-            function getMedicalCategory(num) {
-                var medicalCategory = $("#MedicalCategory");
-                var optionHtml = " <option value=''>请选择医疗类别</option>";
-                //居民
-                if (num === "342") {
-                    optionHtml += "<option value='11'>11-普通入院</option>";
-                    optionHtml += "<option value='14'>14-大病门诊</option>";
-                    optionHtml += "<option value='15'>15-大病住院</option>";
-                    optionHtml += "<option value='22'>22-急诊入院</option>";
-                    optionHtml += "<option value='23'>23-市内转院住院</option>";
-                }
-                //职工
-                if (num === "310") {
-                    optionHtml += "<option value='21'>11-普通入院</option>";
-                    optionHtml += "<option value='41'>41-工伤住院</option>";
-                }
-                medicalCategory.append(optionHtml);
-
-            }
+          
+           
             //MedicalCategoryType医疗类别 隐藏显示胎儿数输入框
             form.on('select(MedicalCategoryType)',
                 function (data) {
@@ -508,7 +517,7 @@
                     buttonStatus("queryData", false);
                     return false; //阻止表单跳转
                 });
-            function getHospitalizationRegisterParamIni() {
+            function getHospitalizationRegisterParamIni(data) {
                 var field = data.field;
                 if ($("#InsuranceType").val() === "310") {
                     if (field.AfferentSign === "1") {
@@ -524,8 +533,9 @@
                 //医疗类别
                 var medicalCategory = $("#MedicalCategory").val();
                 if (medicalCategory === "" || medicalCategory === undefined) {
-                    layer.alert('医疗类别不能为空!!!!', { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                    return false;
+                    msgError('医疗类别不能为空!!!!');
+                 
+                    
                 }
 
                 field.BusinessId = field.BusinessId;
@@ -550,8 +560,8 @@
             }
 
             //获取医保入院登记参数
-            function getHospitalizationRegisterParam() {
-                var fieldParam = getHospitalizationRegisterParamIni();
+            function getHospitalizationRegisterParam(data) {
+                var fieldParam = getHospitalizationRegisterParamIni(data);
                 $.ajax({
                     type: 'POST',
                     url: hostNew + '/GetHospitalizationRegisterParam',
@@ -563,6 +573,7 @@
                         if (data.Success === false) {
                             var errData = data.Message;
                             msgError(errData);
+                            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
                             //样式类名:墨绿深蓝风
                         } else {
                             var activeX = document.getElementById("CSharpActiveX");
@@ -577,7 +588,8 @@
                                 if (activeJsonData.Success === false) {
                                     msgError(activeJsonData.Message);
                                 } else {
-                                    hospitalizationRegister(activeJsonData.Data);
+                                    fieldParam["SettlementJson"] = activeJsonData.Data
+                                    hospitalizationRegister(fieldParam);
                                 }
                             }
                             if (insuranceTypeValue === "310")
@@ -588,23 +600,19 @@
                                 if (activeJsonData.Success === false) {
                                     msgError(activeJsonData.Message);
                                 } else {
-                                    hospitalizationRegister(activeJsonData.Data);
+                                    hospitalizationRegister(activeJsonData.Data, fieldParam);
                                    
                                 }
                             }
-                          
-                           
-
+                         
                         }
                     }
                 });
 
-                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+              
             }
             //住院登记
-            function hospitalizationRegister(parameters) {
-                var fieldParam = getHospitalizationRegisterParamIni();
-                fieldParam["SettlementJson"] = parameters;
+            function hospitalizationRegister(fieldParam) {
                 $.ajax({
                     type: 'POST',
                     url: hostNew + '/HospitalizationRegister', 
@@ -620,14 +628,16 @@
                         } else {
                             buttonStatus("register", false);
                             msgSuccess('入院登记成功');
+                            
                         }
-                        return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+                      
                     }
                 });
             }
             form.on('submit(register)',
                 function (data) {
-                    getHospitalizationRegisterParam();
+                    getHospitalizationRegisterParam(data);
+                    return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
                 });
         });
 

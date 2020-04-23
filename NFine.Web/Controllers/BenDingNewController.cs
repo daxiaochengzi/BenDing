@@ -441,7 +441,7 @@ namespace NFine.Web.Controllers
                 //初始化职工参数
                 var workerParam = AutoMapper.Mapper.Map<WorKerHospitalizationRegisterUiParam>(param);
                 if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
-               
+
                 ////职工
                 if (param.InsuranceType == "310") _workerMedicalInsuranceNewService.WorkerHospitalizationRegister(workerParam);
                 //居民
