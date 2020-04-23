@@ -34,7 +34,7 @@
                     <legend>病人信息</legend>
                 </fieldset>
                 <div style="float: right; margin-right: 15%;margin-top: -35px">
-                    <a href="http://localhost:1851//api/BenDing//DownloadFile">医保插件下载</a>
+                    <a  id="BenDingDownloadFile" href="/api/BenDing/DownloadFile" >医保插件下载</a>
                 </div>
 
                 <!--病人信息-->
@@ -210,7 +210,7 @@
         $("#AccountPaymentDiv").hide();
         $("#DoorDiagnosisPreSettlementDiv").hide();
         $("#DoorDiagnosisSettlementDiv").hide();
-        //插件检查
+       // 插件检查
         var verification = DetectActiveX();
         if (verification === false) {
             return false;
@@ -546,6 +546,7 @@
             dataType: "json",
             async: false,
             success: function (data) {
+               
                 console.log(data);
                 if (data.Success === false) {
                     var errData = data.Message;

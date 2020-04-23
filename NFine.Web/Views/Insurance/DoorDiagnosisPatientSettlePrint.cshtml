@@ -182,12 +182,14 @@
         //数据初始化
         $.ajax({
             type: 'get',
-            url: host + '/QueryOutpatientDepartmentCost',
+            url: hostNew + '/QueryOutpatientDepartmentCost',
             data: params,
             dataType: "json",
             async: false,
             success: function (data) {
+                
                 if (data.Success === false) {
+                   
                     var errData = data.Message;
                     layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
 
@@ -224,13 +226,13 @@
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                     } else {
                         var activeX = document.getElementById("CSharpActiveX");
-                        debugger;
+                        
                         //普通门诊取消结算
                         var activeData;
                         var activeJsonData;
                         if (isBirthHospital === 0) {
                             activeData = activeX.OutpatientMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo),"CancelOutpatientDepartmentCost");
-                            debugger;
+                          
                             activeJsonData = JSON.parse(activeData);
                             if (activeJsonData.Success === false) {
                                 msgError(activeJsonData.Message);
@@ -242,7 +244,7 @@
                         //计划生育门诊取消结算
                         if (isBirthHospital === 1) {
                             activeData = activeX.OutpatientMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo),"OutpatientPlanBirthSettlementCancel");
-                            debugger;
+                           
                             activeJsonData = JSON.parse(activeData);
                             if (activeJsonData.Success === false) {
                                 msgError(activeJsonData.Message);
@@ -258,7 +260,7 @@
         }
         //取消结算方法
         function CancelOutpatientDepartmentCost() {
-            debugger;
+           
             $.ajax({
                 type: 'get',
                 url: hostNew + '/CancelOutpatientDepartmentCost',
