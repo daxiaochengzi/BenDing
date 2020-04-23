@@ -33,6 +33,10 @@ namespace BenDing.Domain.Models.Params.UI
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string MedicalCategory { get; set; }
         /// <summary>
+        /// 结算json
+        /// </summary>
+        public string SettlementJson { get; set; }
+        /// <summary>
         /// 诊断
         /// </summary>
 

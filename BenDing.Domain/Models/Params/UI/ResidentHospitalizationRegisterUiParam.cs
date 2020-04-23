@@ -29,7 +29,7 @@ namespace BenDing.Domain.Models.Params.UI
         [Required(ErrorMessage = "{0}不能为空!!!")]
         public string IdentityMark { get; set; }
         /// <summary>
-        /// 医疗类别11：普通入院23: 市内转院住院14: 大病门诊15: 大病住院22: 急诊入院71：顺产72：剖宫产41：病理剖宫产
+        /// 医疗类别11：普通入院23: 市内转院住院14: 大病门诊15: 大病住院22: 急诊入院71：顺产72
         /// </summary>
         [XmlElement("PI_YLLB", IsNullable = false)]
         [Display(Name = " 医疗类别")]
@@ -53,6 +53,11 @@ namespace BenDing.Domain.Models.Params.UI
         [Required(ErrorMessage = "{0}不能为空!!!")]
         [XmlIgnoreAttribute]
         public  string InsuranceType { get; set; }
+        /// <summary>
+        /// 结算xml
+        /// </summary>
+        [XmlIgnore]
+        public string SettlementJson { get; set; }
         /// <summary>
         /// 诊断
         /// </summary>

@@ -3,8 +3,7 @@
     ViewBag.Title = "住院结算";
 }
 <link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
-
-
+<script src="~/script/BenDingComm.js"></script>
 <style>
     .layui-card-header.layuibd-card-header-auto {
         padding-top: 15px;
@@ -184,7 +183,9 @@
         base: '/Content/js/layui/plugin/'
     }).extend({
         autocomplete: 'layAutoComplete'
-    });
+        });
+    var iniJs;
+    var iniMsg;
     layui.use(['form', 'laypage', 'layer', 'table', 'element', 'autocomplete'], function () {
         var $ = layui.$,
             element = layui.element,
@@ -192,14 +193,17 @@
             layer = layui.layer,
             table = layui.table;
         //险种类型
-        var insuranceType = 0;
+        var insuranceType = "0";
         //结算单据号
         var settlementNo = null;
         //是否生育入院登记
-      
+        //初始化公共页面
+        iniJs = $;
+        iniMsg = layer;
         $("#FetusNumberDiv").hide();
         $("#MedicalCategoryDiv").hide();
         $("#AccountPaymentDiv").hide();
+       
         //form数据回显:数据回显到Form表单主体部分
         var jsonToForm = function (jsonData, formFilter) {
             //给表单赋值
@@ -394,7 +398,15 @@
                 }
             });
             //---------
-
+        //插件检查
+        var verification = DetectActiveX();
+        if (verification === false) {
+            return false;
+        }
+        //获取医院基本信息回调方法
+        window.getHospitalInfoBack = function () { };
+     
+        getHospitalInfo(getHospitalInfoBack);
         var params = {
             "TransKey": $("#transkey").val() /*医保交易码*/,
             "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
@@ -432,20 +444,19 @@
                
                     buttonStatus("Settlement", true);
                 }
-            },
+            }
            
         });
+        function getHospitalizationSettlementParamIni() {
 
-      
-        $('#Settlement').on('click', function () {
             var leaveHospitalInpatientState = $("#LeaveHospitalInpatientState").val();
             if (leaveHospitalInpatientState === undefined || leaveHospitalInpatientState === "") {
-                layer.alert("病人出院状态不能为空!!!", { icon: 5,title: '错误提示',skin: 'layui-layer-molv',  });
-               
+                msgError("病人出院状态不能为空!!!");
+
                 return false;
             }
 
-           
+
             //诊断列表
             var dataTable1 = table.cache[layTableId];
             var diagnosisList = [];
@@ -464,36 +475,130 @@
                 "LeaveHospitalInpatientState": leaveHospitalInpatientState, /*授权操作人的ID*/
                 "DiagnosisList": diagnosisList
             };
-             var   isBirthHospital = $("#IsBirthHospital").val();
-         
-            if (isBirthHospital=== "1") {
+            var isBirthHospital = $("#IsBirthHospital").val();
+
+            if (isBirthHospital === "1") {
                 //医疗类别
                 var medicalCategory = $("#MedicalCategory").val();
                 if (medicalCategory === "" || medicalCategory === undefined) {
-                    
-                    layer.alert('医疗类别不能为空!!!!', { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
-                  
+                    msgError("医疗类别不能为空!!!");
+
+
                     return false;
                 }
                 //胎儿数
                 var fetusNumber = $("#FetusNumber").val();
                 if (fetusNumber === "" || fetusNumber === undefined) {
-                    layer.alert('胎儿数不能为空!!!!', { icon: 5, title: '错误提示', skin: 'layui-layer-molv' });
-                 
+                    msgError("胎儿数不能为空!!!");
+
+
                     return false;
                 }
                 if (fetusNumber <= 0) {
-                    layer.alert('胎儿数必须大于!!!!', { icon: 5, title: '错误提示', skin: 'layui-layer-molv' });
-                  
+                    msgError("胎儿数必须大于0!!!");
                     return false;
                 }
-              
+
                 settlementParam["MedicalCategory"] = $("#MedicalCategory").val();
                 settlementParam["FetusNumber"] = fetusNumber;
-                settlementParam["AccountPayment"] = $("#AccountPayment").val() ;
+                settlementParam["AccountPayment"] = $("#AccountPayment").val();
             }
-        
-          
+
+            return settlementParam;
+        }
+        //获取医保结算参数
+        function getHospitalizationSettlementParam() {
+          var  settlementParam = getHospitalizationSettlementParamIni();
+            $.ajax({
+                type: 'POST',
+                url: hostNew + '/GetLeaveHospitalSettlementParam',
+                async: false,
+                data: JSON.stringify(settlementParam),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        msgError(errData);
+                        //样式类名:墨绿深蓝风
+                    } else {
+                        var activeX = document.getElementById("CSharpActiveX");
+                        //获取医保类型
+                        var insuranceTypeValue = $("#InsuranceType").val();
+                        var activeData;
+                        var activeJsonData;
+                        var isBirthHospital = $("#IsBirthHospital").val();
+                        if (insuranceType === "342") {
+                            //居民预结算
+                            activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "LeaveHospitalSettlement");
+                            activeJsonData = JSON.parse(activeData);
+                            if (activeJsonData.Success === false) {
+                                msgError(activeJsonData.Message);
+                            } else {
+                                hospitalizationSettlement(activeJsonData.Data);
+                            }
+                        }
+                        if (insuranceType === "310") {
+                            //职工生育预结算
+                            if (isBirthHospital === 1) {
+                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerHospitalizationSettlement");
+                            }
+                            else//职工预结算
+                            {
+                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerBirthSettlement");
+                            }
+
+                            activeJsonData = JSON.parse(activeData);
+                            if (activeJsonData.Success === false) {
+                                msgError(activeJsonData.Message);
+                            } else {
+                                hospitalizationSettlement(activeJsonData.Data);
+
+                            }
+                        }
+
+
+
+                    }
+                }
+            });
+
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        }
+        //结算
+        function hospitalizationSettlement(parameters) {
+            var  settlementParam = getHospitalizationSettlementParamIni();
+            settlementParam["SettlementJson"] = parameters;
+            $.ajax({
+                type: 'POST',
+                url: hostNew + '/LeaveHospitalSettlement',
+                data: JSON.stringify(params),
+                dataType: "json",
+                contentType: 'application/json',
+                async: false,
+                success: function (data) {
+
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        //样式类名:墨绿深蓝风
+                        layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+
+                    } else {
+                        // $('#PreSettlementData').val(data.Data.PayMsg);
+                        if (data.Data.PayMsg !== null) {
+                            settlementData(data.Data.PayMsg);
+                        }
+                        $('#ReimbursementExpenses').val(data.Data.ReimbursementExpenses);
+                        $('#CashPayment').val(data.Data.CashPayment);
+                        $('#HospitalizationTotalCost').val(data.Data.TotalAmount);
+                        layer.msg('住院结算成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+                        buttonStatus("PreSettlement", false);
+                    }
+                }
+
+            });
+        }
+        $('#Settlement').on('click', function () {
             $.ajax({
                 type: 'post',
                 url: host + '/LeaveHospitalSettlement',
@@ -528,110 +633,81 @@
 
             });
         });
-        $('#PayCard').on('click', function () {
+        //$('#PayCard').on('click', function () {
 
-           //初始化插件
-            var activeX = document.getElementById("CSharpActiveX");
-            //var param =
-            //{
-            //    "PI_SFBZ":"511521201704210171",
-            //    "PI_CRBZ":"1"
-            //}
-            var paramBase =
-            {
-                "Account": "cpq2677", 
-                "Pwd": "888888",
-                "OperatorId": $("#empid").val() /*授权操作人的ID*/,
-            }
-            var param =
-            {
-                "MedicalCategory":"2",
-                "AllAmount": "3.00",
-                "CardPwd": "123456",
-                "Operator":"李茜"
-            }
+        //   //初始化插件
+        //    var activeX = document.getElementById("CSharpActiveX");
+        //    //var param =
+        //    //{
+        //    //    "PI_SFBZ":"511521201704210171",
+        //    //    "PI_CRBZ":"1"
+        //    //}
+        //    var paramBase =
+        //    {
+        //        "Account": "cpq2677", 
+        //        "Pwd": "888888",
+        //        "OperatorId": $("#empid").val() /*授权操作人的ID*/,
+        //    }
+        //    var param =
+        //    {
+        //        "MedicalCategory":"2",
+        //        "AllAmount": "3.00",
+        //        "CardPwd": "123456",
+        //        "Operator":"李茜"
+        //    }
 
       
-           //var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
-            var activeData = activeX.WorkersSettlement(JSON.stringify(param), JSON.stringify(paramBase));
-            var activeJsonData = JSON.parse(activeData);
-            if (activeJsonData.Success === false)
-            {
-                layer.alert(activeJsonData.Message, { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
+        //   //var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
+        //    var activeData = activeX.WorkersSettlement(JSON.stringify(param), JSON.stringify(paramBase));
+        //    var activeJsonData = JSON.parse(activeData);
+        //    if (activeJsonData.Success === false)
+        //    {
+        //        layer.alert(activeJsonData.Message, { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
                
-                return false;
-            }
-            var getData = JSON.parse(activeJsonData.Data);
-            var workerStrokeCard =
-            {
-                "TransKey": $("#transkey").val() /*医保交易码*/,
-                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
-                "UserId": $("#empid").val() /*授权操作人的ID*/,
-                "AllAmount": "3.00", /*授权操作人的ID*/
-                "CardType": "2", //住院
-                "DocumentNo": settlementNo,// getData.SettlementNo
-                "SelfPayFeeAmount": getData.SelfPayment,
-                "AccountPayAmount":getData.AccountPayment
-            };
+        //        return false;
+        //    }
+        //    var getData = JSON.parse(activeJsonData.Data);
+        //    var workerStrokeCard =
+        //    {
+        //        "TransKey": $("#transkey").val() /*医保交易码*/,
+        //        "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
+        //        "UserId": $("#empid").val() /*授权操作人的ID*/,
+        //        "AllAmount": "3.00", /*授权操作人的ID*/
+        //        "CardType": "2", //住院
+        //        "DocumentNo": settlementNo,// getData.SettlementNo
+        //        "SelfPayFeeAmount": getData.SelfPayment,
+        //        "AccountPayAmount":getData.AccountPayment
+        //    };
 
-            $.ajax({
-                type: 'post',
-                url: host + '/WorkerStrokeCard',
-                data: JSON.stringify(workerStrokeCard),
-                dataType: "json",
-                contentType: 'application/json',
-                async: false,
-                success: function (data) {
-                    console.log(data);
-                    if (data.Success === false) {
-                        var errData = data.Message;
-                        layer.alert(errData, { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
-                    } else {
-                        layer.alert('住院结算成功', { icon: 6,title: '温馨提示', shade: 0.1, skin: 'layui-layer-molv' });
+        //    $.ajax({
+        //        type: 'post',
+        //        url: host + '/WorkerStrokeCard',
+        //        data: JSON.stringify(workerStrokeCard),
+        //        dataType: "json",
+        //        contentType: 'application/json',
+        //        async: false,
+        //        success: function (data) {
+        //            console.log(data);
+        //            if (data.Success === false) {
+        //                var errData = data.Message;
+        //                layer.alert(errData, { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
+        //            } else {
+        //                layer.alert('住院结算成功', { icon: 6,title: '温馨提示', shade: 0.1, skin: 'layui-layer-molv' });
                      
-                        if (insuranceType === "310") {
-                            $("#CardPwd").attr("class", "layui-input");
-                            //打开刷卡按钮
-                            buttonStatus("PayCard", false);
-                        }
+        //                if (insuranceType === "310") {
+        //                    $("#CardPwd").attr("class", "layui-input");
+        //                    //打开刷卡按钮
+        //                    buttonStatus("PayCard", false);
+        //                }
 
-                        buttonStatus("Settlement", false);
-                    }
-                }
+        //                buttonStatus("Settlement", false);
+        //            }
+        //        }
 
-            });
-        });
-        //获取结算返回值
-        function settlementData(data) {
-            var html = "";
-            for (var i in data) {
-                if (data.hasOwnProperty(i)) {
-
-                    html += '<div class="layui-inline">';
-                    html += '     <label class="layui-form-label">' + data[i].Name + '</label>';
-                    html += '     <div class="layui-input-inline">';
-                    html += '     <input type="text" name="AdmissionDiagnosticDoctor" autocomplete="off"   value="' + data[i].Value + '" disabled class="layui-input layui-disabled">';
-                    html += '     </div>';
-                    html += '</div>';
-                }
-            }
-            if (html !== "") {
-                $("#SettleData").append(html);
-            }
-
-        }
-        //按钮状态
-        function buttonStatus(buttonId, status) {
-            //取消禁用
-            if (status === true) {
-                $("#" + buttonId).attr("class", "layui-btn layui-btn-radius");
-            }//禁用
-            else {
-                $("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
-
-            }
-
-        }
+        //    });
+        //});
+      
+      
 
     });
 

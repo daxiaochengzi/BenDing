@@ -35,7 +35,11 @@ namespace BenDing.Domain.Models.Params.UI
         /// 账户支付
         /// </summary>
         public decimal AccountPayment { get; set; }
-  
+        /// <summary>
+        /// 结算json
+        /// </summary>
+        public string SettlementJson { get; set; }
+
         /// <summary>
         /// 诊断
         /// </summary>

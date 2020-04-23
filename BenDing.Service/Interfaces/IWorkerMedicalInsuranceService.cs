@@ -60,7 +60,7 @@ namespace BenDing.Service.Interfaces
         /// <param name="param"></param>
         /// <returns></returns>
         WorkerBirthHospitalizationRegisterDto WorkerBirthHospitalizationRegister(
-           WorkerBirthHospitalizationRegisterUiParam param);
+           BirthHospitalizationRegisterUiParam param);
         /// <summary>
         /// 职工预结算
         /// </summary>

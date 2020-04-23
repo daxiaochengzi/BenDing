@@ -3,7 +3,7 @@
     ViewBag.Title = "住院预结算";
 }
 <link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
-
+<script src="~/script/BenDingComm.js"></script>
 <style>
     .layui-card-header.layuibd-card-header-auto {
         padding-top: 15px;
@@ -137,15 +137,10 @@
                 <button type="button" Id="PreSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">预结算</button>
             </div>
             <div class="layui-card-body" lay-size="sm">
-                <fieldset id="PreSettleData" class="layui-elem-field layui-field-title" style="margin-top: 10px;">
+                <fieldset id="SettleData" class="layui-elem-field layui-field-title" style="margin-top: 10px;">
                     <legend>医保预结算信息</legend>
                 </fieldset>
-                <!--医保预结算信息-->
-                @*<div class="layui-form-item layui-form-text">
-                <div class="layui-input-block">
-                    <textarea class="layui-textarea" style="font-size: 20px" id="PreSettlementData"></textarea>
-                </div>
-            </div>*@
+             
             </div>
 
         </form>
@@ -157,16 +152,21 @@
     }).extend({
         autocomplete: 'layAutoComplete'
         });
+    var iniJs;
+    var iniMsg;
     layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'], function() {
         var $ = layui.$,
             element = layui.element,
             form = layui.form,
             layer = layui.layer,
             table = layui.table;
+        //初始化公共页面
+        iniJs = $;
+        iniMsg = layer;
         //是否生育入院登记
         var isBirthHospital = 0;
         //险种类型
-        var insuranceType = 0;
+        var insuranceType = "0";
        
         $("#DiagnosisDiv").hide();
         $("#FetusNumberDiv").hide();
@@ -364,18 +364,62 @@
                         break;
                 }
             });
-            //---------
-
-
-
         var params = {
             "TransKey": $("#transkey").val() /*医保交易码*/,
             "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
-            "UserId": $("#empid").val() /*授权操作人的ID*/,
+            "UserId": $("#empid").val() /*授权操作人的ID*/
             
         }
-        $('#PreSettlement').on('click', function () {
+        //插件检查
+        var verification = DetectActiveX();
+        if (verification === false) {
+            return false;
+        }
+        //获取医院基本信息回调方法
+        window.getHospitalInfoBack = function () { };
+     
+        getHospitalInfo(getHospitalInfoBack);
+        //数据初始化
+        $.ajax({
+            type: 'get',
+            url: host + '/GetHisHospitalizationPreSettlement',
+            data: params,
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                console.log(data);  
+                if (data.Success === false) {
+                    var errData = data.Message;
+                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
 
+                } else {
+                    jsonToForm(data.Data, "LAY-form-render");
+                    isBirthHospital = data.Data.IsBirthHospital;
+                    buttonStatus("PreSettlement", true);
+                    insuranceType = data.Data.InsuranceType;
+                 
+                    if (data.Data.IsBirthHospital === 1) {
+                        if (insuranceType === "310") {
+                            $("#DiagnosisDiv").show();
+                            $("#FetusNumberDiv").show();
+                            $("#MedicalCategoryDiv").show(); 
+                            //加载诊断默认数据
+                            tableIns.reload({
+                                data: data.Data.DiagnosisList
+                            });
+                            $("#DiagnosisDiv").show();
+                        }
+                        
+                    }
+                 
+                }
+            },
+            complete: function () {
+                form.render();
+            }
+        });
+
+        function getHospitalizationPreSettlementParamIni() {
             if (isBirthHospital === 1) {
                 //医疗类别
                 var medicalCategory = $("#MedicalCategory").val();
@@ -416,11 +460,73 @@
                 params["MedicalCategory"] = $("#MedicalCategory").val();
                 params["FetusNumber"] = fetusNumber;
             }
+        }
+        //获取医保预结算参数
+        function getHospitalizationPreSettlementParam() {
+          
             $.ajax({
-                type: 'get',
-                url: host + '/HospitalizationPreSettlement',
-                data: params,
+                type: 'POST',
+                url: hostNew + '/GetHospitalizationPreSettlementParam',
+                async: false,
+                data: JSON.stringify(params),
                 dataType: "json",
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        msgError(errData);
+                        //样式类名:墨绿深蓝风
+                    } else {
+                        var activeX = document.getElementById("CSharpActiveX");
+                        
+                        var activeData;
+                        var activeJsonData;
+                        if (insuranceType === "342") {
+                            //居民预结算
+                            activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "HospitalizationPreSettlement");
+                            activeJsonData = JSON.parse(activeData);
+                            if (activeJsonData.Success === false) {
+                                msgError(activeJsonData.Message);
+                            } else {
+                                hospitalizationPreSettlement(activeJsonData.Data);
+                            }
+                        }
+                        if (insuranceType === "310") {
+                            //职工生育预结算
+                            if (isBirthHospital === 1) {
+                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerBirthPreSettlement");  
+                            }
+                            else//职工预结算
+                            {
+                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerHospitalizationPreSettlement");
+                            }
+                          
+                            activeJsonData = JSON.parse(activeData);
+                            if (activeJsonData.Success === false) {
+                                msgError(activeJsonData.Message);
+                            } else {
+                                hospitalizationPreSettlement(activeJsonData.Data);
+
+                            }
+                        }
+
+
+
+                    }
+                }
+            });
+
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        }
+        //预结算
+        function hospitalizationPreSettlement(parameters) {
+            params["SettlementJson"] = parameters;
+            $.ajax({
+                type: 'POST',
+                url: hostNew + '/HospitalizationPreSettlement',
+                data: JSON.stringify(params),
+                dataType: "json",
+                contentType: 'application/json',
                 async: false,
                 success: function (data) {
                  
@@ -430,9 +536,9 @@
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                         
                     } else {
-                       // $('#PreSettlementData').val(data.Data.PayMsg);
+                        // $('#PreSettlementData').val(data.Data.PayMsg);
                         if (data.Data.PayMsg !== null) {
-                            preSettlement(data.Data.PayMsg);
+                            settlementData(data.Data.PayMsg);
                         }
                         $('#ReimbursementExpenses').val(data.Data.ReimbursementExpenses);
                         $('#CashPayment').val(data.Data.CashPayment);
@@ -443,79 +549,17 @@
                 }
                
             });
-        });
-        //获取预结算返回值
-        function preSettlement(data) {
-            var html = "";
-            for (var i in data) {
-                if (data.hasOwnProperty(i)) {
+        }
 
-                    html += '<div class="layui-inline">';
-                    html += '     <label class="layui-form-label">' + data[i].Name+'</label>';
-                    html += '     <div class="layui-input-inline">';
-                    html += '     <input type="text" name="AdmissionDiagnosticDoctor" autocomplete="off"   value="' + data[i].Value+'" disabled class="layui-input layui-disabled">';
-                    html += '     </div>';
-                    html += '</div>';
-                }
-            }
-            if (html !== "") {
-                $("#PreSettleData").append(html);
-            }
-           
-         }
-        $.ajax({
-            type: 'get',
-            url: host + '/GetHisHospitalizationPreSettlement',
-            data: params,
-            dataType: "json",
-            async: false,
-            success: function (data) {
-                console.log(data);  
-                if (data.Success === false) {
-                    var errData = data.Message;
-                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+        $('#PreSettlement').on('click', function () {
 
-                } else {
-                    jsonToForm(data.Data, "LAY-form-render");
-                    isBirthHospital = data.Data.IsBirthHospital;
-                    buttonStatus("PreSettlement", true);
-                    insuranceType = data.Data.InsuranceType;
-                 
-                    if (data.Data.IsBirthHospital === 1) {
-                        if (insuranceType === "310") {
-                            $("#DiagnosisDiv").show();
-                            $("#FetusNumberDiv").show();
-                            $("#MedicalCategoryDiv").show(); 
-                            //加载诊断默认数据
-                            tableIns.reload({
-                                data: data.Data.DiagnosisList
-                            });
-                            $("#DiagnosisDiv").show();
-                        }
-                        
-                    }
-                 
-                }
-            },
-            complete: function () {
-                form.render();
-            }
+            getHospitalizationPreSettlementParam();
+
         });
+      
 
       
-        //按钮状态
-        function buttonStatus(buttonId, status) { 
-            //取消禁用
-            if (status === true) {
-                $("#" +buttonId).attr("class", "layui-btn layui-btn-radius");
-            }//禁用
-            else
-            {
-                $("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
-                
-            }
-          
-        }
+        
     });
 
 

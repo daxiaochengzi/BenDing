@@ -2,7 +2,7 @@
     ViewBag.Title = "住院费用清单上传";
     Layout = "~/Views/Shared/_Base.cshtml";
 }
-
+<script src="~/script/BenDingComm.js"></script>
 <div class="layui-tab layui-tab-card layui-tab-brief" lay-filter="demo" >
     <ul class="layui-tab-title">
         <li class="layui-this">院内费用明细</li>
@@ -72,7 +72,11 @@
     }).extend({ //设定模块别名
         autocomplete: 'layAutoComplete'
     });
-
+    var iniJs;
+    var iniMsg;
+    //初始化公共页面
+    iniJs = $;
+    iniMsg = layer;
     layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'], function () {
         var $ = layui.$
             //Tab的切换功能，切换事件监听等，需要依赖element模块
@@ -224,7 +228,15 @@
                 }
             });
         }
+        //插件检查
+        var verification = DetectActiveX();
+        if (verification === false) {
+            return false;
+        }
+        //获取医院基本信息回调方法
+        window.getHospitalInfoBack = function () { };
 
+        getHospitalInfo(getHospitalInfoBack);
         /**处方明细查询*/
         form.on('submit(LAY-bill-data-list)', function (data) {
 
@@ -258,13 +270,14 @@
 
         //处方上传（费用清单上传）
         var prescriptionUpload = function (tableData) {
-            var params = {
-                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
-                , "UserId": $("#empid").val() /*授权操作人的ID*/
-                , "DataIdList": tableData
-                , "TransKey": $("#transkey").val()
-            }
-            tableDataQuery("POST", "/PrescriptionUpload", params, true, layTableId);
+            getPrescriptionUploadParam(tableData);
+            //var params = {
+            //    "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
+            //    , "UserId": $("#empid").val() /*授权操作人的ID*/
+            //    , "DataIdList": tableData
+            //    , "TransKey": $("#transkey").val()
+            //}
+            //tableDataQuery("POST", "/PrescriptionUpload", params, true, layTableId);
         }
         //头工具栏事件
         table.on('toolbar(dataTableBillId)', function (obj) {
@@ -289,10 +302,91 @@
         $(function () {
             tableDataLoad(layTableId);
         });
-      
+        function getPrescriptionUploadParam(tableData) {
+            var uploadParam = {
+                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
+                , "UserId": $("#empid").val() /*授权操作人的ID*/
+                , "DataIdList": tableData
+                , "TransKey": $("#transkey").val()
+            }
+            $.ajax({
+                type: 'POST',
+                url: hostNew + '/GetPrescriptionUploadParam',
+                async: false,
+                data: JSON.stringify(uploadParam),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        msgError(errData);
+                        //样式类名:墨绿深蓝风
+                    } else {
+                      
+                        var uploadData = data.Data;
+                        if (uploadData !== undefined && uploadData !== null && uploadData.length > 0) {
+                            var activeX = document.getElementById("CSharpActiveX");
+                            for (var i = 0; i < uploadData.length; i++) {
+
+                                var uploadDataParam = uploadData[i];
+                                var activeData = activeX.HospitalizationMethods(JSON.stringify(uploadDataParam), JSON.stringify(baseInfo.HospitalInfo), "PrescriptionUploadData");
+                                var  activeJsonData = JSON.parse(activeData);
+                                if (activeJsonData.Success === false) {
+                                    msgError(activeJsonData.Message);
+                                }
+                                else
+                                {
+                                    prescriptionUploadData(tableData,activeJsonData.Data, uploadDataParam);
+                                }
+                            }
+                            
+                            
+
+                        } else {
+                            msgError("获取上传数据失败!!!");
+                            return false;
+                        }
+
+
+
+                    }
+                }
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        }
+        //数据回写
+        function prescriptionUploadData(tableData, projectBatch, uploadDataParam) {
+            var uploadParam = {
+                 "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
+                , "UserId": $("#empid").val() /*授权操作人的ID*/
+                , "DataIdList": tableData
+                , "TransKey": $("#transkey").val()
+                , "ProjectBatch": projectBatch  /*批次号*/
+                , "UploadData": uploadDataParam /*医保上传数据*/
+            }
+            $.ajax({
+                type: 'POST',
+                url: hostNew + '/PrescriptionUpload',
+                async: false,
+                data: JSON.stringify(uploadParam),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        msgError(errData);
+                        //样式类名:墨绿深蓝风
+                    } else {
+                        //重新加载表格
+                        tableDataLoad(layTableId);
+                    }
+                   
+                    
+                }
+            });
+        }
         //更新费用
         form.on('submit(renewalCost)', function (data) {
-
             $.ajax({
                 url: host + "/GetInpatientInfoDetail?UserId=" + $("#empid").val() + "&BusinessId=" + $("#bid").val(),
                 dataType: "json",
@@ -301,7 +395,6 @@
                     if (data.Success === false) {
                         var errData = data.Message;
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                     
                     } else {
                         layer.alert(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv',title: '温馨提示' });
                         //刷新查询
@@ -313,31 +406,32 @@
         });
         //医保费用上传
         form.on('submit(allUpload)', function (data) {
-            var params = {
-                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
-                , "UserId": $("#empid").val() /*授权操作人的ID*/
-                , "TransKey": $("#transkey").val()
-            };
-            $.ajax({
-                url: host + "/PrescriptionUpload",
-                data: params,
-                dataType: "json",
-                type: 'post',
-                success: function (res) {
-                    if (data.Success === false) {
-                        var errData = data.Message;
-                        //样式类名:墨绿深蓝风
-                        layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
-                    } else {
+            getPrescriptionUploadParam(null);
+            //var params = {
+            //    "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
+            //    , "UserId": $("#empid").val() /*授权操作人的ID*/
+            //    , "TransKey": $("#transkey").val()
+            //};
+            //$.ajax({
+            //    url: host + "/PrescriptionUpload",
+            //    data: params,
+            //    dataType: "json",
+            //    type: 'post',
+            //    success: function (res) {
+            //        if (data.Success === false) {
+            //            var errData = data.Message;
+            //            //样式类名:墨绿深蓝风
+            //            layer.msg(errData + errData, { time: 10000, icon: 5, skin: 'layui-layer-molv' });
+            //        } else {
 
-                        layer.msg(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
-                        tableDataLoad(layTableId);
-                    }
-                },
-                complete: function () {
-                    form.render();
-                }
-            });
+            //            layer.msg(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
+            //            tableDataLoad(layTableId);
+            //        }
+            //    },
+            //    complete: function () {
+            //        form.render();
+            //    }
+            //});
         });
 
 

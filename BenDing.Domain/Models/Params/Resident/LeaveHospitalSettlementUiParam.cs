@@ -34,6 +34,10 @@ namespace BenDing.Domain.Models.Params.Resident
 
         public int FetusNumber { get; set; }
         /// <summary>
+        /// 结算json
+        /// </summary>
+        public string SettlementJson { get; set; }
+        /// <summary>
         /// 诊断
         /// </summary>
 

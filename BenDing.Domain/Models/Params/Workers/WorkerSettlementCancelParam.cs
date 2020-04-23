@@ -28,6 +28,10 @@ namespace BenDing.Domain.Models.Params.Workers
 
         public  string WorkersStrokeCardNo { get; set; }
         /// <summary>
+        /// 结算json
+        /// </summary>
+        public string SettlementJson { get; set; }
+        /// <summary>
         /// 取消结算备注
         /// </summary>
         public string CancelSettlementRemarks { get; set; }
