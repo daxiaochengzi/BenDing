@@ -24,6 +24,7 @@
             <input type="hidden" id="bid" name="BusinessId" value="@ViewBag.bid" placeholder="业务ID" />
             <input type="hidden" id="empid" name="UserId" value="@ViewBag.empid" placeholder="用户ID" />
             <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
+            @{Html.RenderPartial("_CSharpActiveX");}
             <div class="layui-card-header layuibd-card-header-auto">
                 <!--搜索部分-->
                 <div class="layui-form-item">
@@ -32,7 +33,7 @@
                             <select id="AfferentSign" name="AfferentSign" lay-filter="AfferentSign" lay-verify="required">
                                 <option value="">请选择条件</option>
                                 <option id="AfferentSignIcCard" value="1" selected>身份证号</option>
-                                <option  id="AfferentSignNum" value="2">个人编号</option>
+                                <option id="AfferentSignNum" value="2">个人编号</option>
                             </select>
                         </div>
                     </div>
@@ -43,7 +44,7 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button  disabled class="layui-btn layui-btn-disabled layui-btn-radius" lay-submit="" id="queryData"   lay-filter="LAY-form-search">
+                        <button disabled class="layui-btn layui-btn-disabled layui-btn-radius" lay-submit="" id="queryData" lay-filter="LAY-form-search">
                             查询
                         </button>
                     </div>
@@ -174,7 +175,7 @@
                 <!--诊断列表-->
                 <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
                 <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                    <button type="submit" id="BirthRegister" disabled  class="layui-btn layui-btn-disabled layui-btn-radius" lay-submit lay-filter="BirthRegister">登记</button>
+                    <button type="submit" id="BirthRegister" disabled class="layui-btn layui-btn-disabled layui-btn-radius" lay-submit lay-filter="BirthRegister">登记</button>
                 </div>
             </div>
 

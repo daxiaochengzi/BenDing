@@ -3,15 +3,16 @@
     Layout = "~/Views/Shared/_Base.cshtml";
 }
 <script src="~/script/BenDingComm.js"></script>
-<div class="layui-tab layui-tab-card layui-tab-brief" lay-filter="demo" >
+<div class="layui-tab layui-tab-card layui-tab-brief" lay-filter="demo">
+    @{Html.RenderPartial("_CSharpActiveX");}
     <ul class="layui-tab-title">
         <li class="layui-this">院内费用明细</li>
         <li>已传费用明细</li>
     </ul>
     <div class="layui-tab-content">
-        <input type="hidden" id="bid" name="BusinessId" value="@ViewBag.bid" placeholder="业务ID" />
-        <input type="hidden" id="empid" name="UserId" value="@ViewBag.empid" placeholder="用户ID" />
-        <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
+        <input type="hidden" id="bid" name="BusinessId" value="@ViewBag.bid" placeholder="业务ID"/>
+        <input type="hidden" id="empid" name="UserId" value="@ViewBag.empid" placeholder="用户ID"/>
+        <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id"/>
 
         <div class="layui-tab-item layui-show">
 
