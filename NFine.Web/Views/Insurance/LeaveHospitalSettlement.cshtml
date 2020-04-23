@@ -4,7 +4,6 @@
 }
 <link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
 <script src="~/script/BenDingComm.js"></script>
-
 <style>
     .layui-card-header.layuibd-card-header-auto {
         padding-top: 15px;
@@ -404,6 +403,10 @@
         if (verification === false) {
             return false;
         }
+        //获取医院基本信息回调方法
+        window.getHospitalInfoBack = function () { };
+     
+        getHospitalInfo(getHospitalInfoBack);
         var params = {
             "TransKey": $("#transkey").val() /*医保交易码*/,
             "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
@@ -596,9 +599,6 @@
             });
         }
         $('#Settlement').on('click', function () {
-
-
-          
             $.ajax({
                 type: 'post',
                 url: host + '/LeaveHospitalSettlement',

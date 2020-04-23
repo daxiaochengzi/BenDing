@@ -540,7 +540,6 @@ namespace NFine.Web.Controllers
             });
 
         }
-
         /// <summary>
         /// 生育入院登记
         /// </summary>
@@ -578,7 +577,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData GetHospitalizationPreSettlementParam([FromUri]HospitalizationPreSettlementUiParam param)
+        public ApiJsonResultData GetHospitalizationPreSettlementParam([FromBody]HospitalizationPreSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {
@@ -639,7 +638,7 @@ namespace NFine.Web.Controllers
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost]
-        public ApiJsonResultData HospitalizationPreSettlement([FromUri]HospitalizationPreSettlementUiParam param)
+        public ApiJsonResultData HospitalizationPreSettlement([FromBody]HospitalizationPreSettlementUiParam param)
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {
@@ -835,8 +834,6 @@ namespace NFine.Web.Controllers
                         resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
                         resultData.TotalAmount = workerSettlementData.TotalAmount;
                     }
-
-
                 }
                 //居民
                 if (residentData.InsuranceType == "342")
@@ -858,9 +855,9 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         public ApiJsonResultData GetLeaveHospitalSettlementCancelParam(
-            [FromUri] LeaveHospitalSettlementCancelUiParam param)
+            [FromBody] LeaveHospitalSettlementCancelUiParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {
@@ -1020,6 +1017,47 @@ namespace NFine.Web.Controllers
 
 
                 }
+            });
+
+        }
+        /// <summary>
+        /// 医保处方上传
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetPrescriptionUploadParam([FromBody]PrescriptionUploadUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //处方上传
+                var data = _residentMedicalInsuranceNewService.GetPrescriptionUploadParam(param,userBase);
+                y.Data = data;
+            });
+
+        }
+
+        /// <summary>
+        /// 医保处方上传
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData PrescriptionUpload([FromBody]PrescriptionUploadUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+
+                var updateParam = new PrescriptionUploadUpdateDataParam()
+                {
+                    BusinessId = param.BusinessId,
+                    User = userBase,
+                    ProjectBatch = param.ProjectBatch,
+                    UploadData = param.UploadData
+                };
+                //处方上传
+                var data = _residentMedicalInsuranceNewService.PrescriptionUploadUpdateData(updateParam);
+                y.Data = data;
             });
 
         }

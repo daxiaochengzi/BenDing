@@ -893,7 +893,7 @@ namespace BenDing.Service.Providers
                 IdentityMark = param.IdentityMark,
                 AfferentSign = param.AfferentSign,
                 MedicalCategory = param.MedicalCategory,
-                FetusNumber = param.FetusNumber,
+                FetusNumber =Convert.ToInt32(param.FetusNumber),
                 SpouseIdCardNo = param.SpouseIdCardNo,
                 SpouseName = param.SpouseName,
                 AdmissionDate =  Convert.ToDateTime(inpatientInfo.AdmissionDate).ToString("yyyyMMdd"),

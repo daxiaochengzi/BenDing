@@ -527,7 +527,7 @@ namespace BenDing.Service.Providers
         }
 
         /// <summary>
-        /// 医保处方上传
+        /// 获取医保上传数据参数
         /// </summary>
         /// <param name="param"></param>
         /// <param name="user"></param>

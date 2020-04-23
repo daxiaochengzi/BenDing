@@ -597,6 +597,16 @@ namespace NFine.Web.Controllers
             { ////获取操作人员信息
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 userBase.TransKey = param.TransKey;
+
+                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    BusinessId = param.BusinessId,
+                    OrganizationCode = userBase.OrganizationCode
+                };
+                //获取医保病人信息
+                var residentData =
+                    _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+
                 var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
                 //获取住院病人
                 var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);
@@ -616,7 +626,8 @@ namespace NFine.Web.Controllers
                 data.CancelOperator = settlementCancelData.CancelOperator;
                 data.SettlementNo = settlementCancelData.SettlementNo;
                 data.DiagnosisNo = settlementCancelData.DiagnosisNo;
-
+                data.IsBirthHospital = residentData.IsBirthHospital;
+                data.InsuranceType = residentData.InsuranceType;
                 y.Data = data;
 
             });

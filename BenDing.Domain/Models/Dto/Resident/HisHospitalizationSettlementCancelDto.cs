@@ -67,7 +67,16 @@ namespace BenDing.Domain.Models.Dto.Resident
         ///取消经办人
         /// </summary>
         public string CancelOperator { get; set; }
-       
+        /// <summary>
+        /// 是否生育入院
+        /// </summary>
+        public int IsBirthHospital { get; set; }
+
+        /// <summary>
+        /// 医保类型(居民，职工,异地)
+        /// </summary>
+        public string InsuranceType { get; set; }
+
         /// <summary>
         /// 出院诊断
         /// </summary>
