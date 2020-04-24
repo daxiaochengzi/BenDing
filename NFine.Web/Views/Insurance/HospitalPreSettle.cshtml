@@ -3,7 +3,7 @@
     ViewBag.Title = "住院预结算";
 }
 <link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
-<script src="~/script/BenDingComm.js"></script>
+
 <style>
     .layui-card-header.layuibd-card-header-auto {
         padding-top: 15px;
@@ -117,22 +117,21 @@
 
                 </div>
             </div>
-
-            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-                <legend>出院诊断</legend>
-            </fieldset>
-            <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">录入诊断</label>
-                    <div class="layui-input-inline" style="width: 280px;">
-                        <input type="text" name="DiagnosisSearchData" id="DiagnosisSearchData" class="layui-input layui-disabled">
+            <div id="DiagnosisDiv">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                    <legend>出院诊断</legend>
+                </fieldset>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">录入诊断</label>
+                        <div class="layui-input-inline" style="width: 280px;">
+                            <input type="text" name="DiagnosisSearchData" id="DiagnosisSearchData" class="layui-input layui-disabled">
+                        </div>
                     </div>
                 </div>
-
-
+                <!--诊断列表-->
+                <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
             </div>
-            <!--诊断列表-->
-            <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
             <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
                 <button type="button" Id="PreSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">预结算</button>
             </div>
@@ -459,11 +458,13 @@
                 params["DiagnosisList"] = diagnosisList;
                 params["MedicalCategory"] = $("#MedicalCategory").val();
                 params["FetusNumber"] = fetusNumber;
+
+                
             }
         }
         //获取医保预结算参数
         function getHospitalizationPreSettlementParam() {
-          
+            getHospitalizationPreSettlementParamIni();
             $.ajax({
                 type: 'POST',
                 url: hostNew + '/GetHospitalizationPreSettlementParam',
