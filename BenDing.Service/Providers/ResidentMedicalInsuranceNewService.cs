@@ -894,18 +894,17 @@ namespace BenDing.Service.Providers
                         DetailId = item.DetailId,
                         DoctorJobNumber = item.OperateDoctorId,
                         Id = item.Id,
-                        LimitApprovalDate = "",
-                        LimitApprovalUser = "",
-                        LimitApprovalMark = "",
+                        LimitApprovalDate = item.ApprovalTime,
+                        LimitApprovalUser = item.ApprovalUserName,
+                        LimitApprovalMark = item.ApprovalMark.ToString(),
                         LimitApprovalRemark = ""
-
                     };
                     //是否现在使用药品
                     if (pairCodeData.RestrictionSign == "1")
                     {
-                        rowData.LimitApprovalDate = CommonHelp.FormatDateTime(item.BillTime);
-                        rowData.LimitApprovalUser = rowData.DoctorJobNumber;
-                        rowData.LimitApprovalMark = "1";
+                        rowData.LimitApprovalDate =Convert.ToDateTime(item.ApprovalTime).ToString("yyyyMMddHHmmss");
+                        rowData.LimitApprovalUser = item.ApprovalUserName;
+                        rowData.LimitApprovalMark = item.ApprovalMark.ToString();
 
                     }
 
