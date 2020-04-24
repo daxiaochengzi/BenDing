@@ -507,7 +507,7 @@ namespace NFine.Web.Controllers
                 ////职工
                 if (residentData.InsuranceType == "310") _workerMedicalInsuranceNewService.ModifyWorkerHospitalization(param);
                 //居民
-                if (residentData.InsuranceType == "342") _residentMedicalInsuranceService.HospitalizationModify(param);
+                if (residentData.InsuranceType == "342") _residentMedicalInsuranceNewService.HospitalizationModify(param);
             });
 
         }
@@ -1138,7 +1138,6 @@ namespace NFine.Web.Controllers
             });
 
         }
-
         /// <summary>
         /// 医保处方上传
         /// </summary>
@@ -1160,6 +1159,34 @@ namespace NFine.Web.Controllers
                 //处方上传
                 var data = _residentMedicalInsuranceNewService.PrescriptionUploadUpdateData(updateParam);
                 y.Data = data;
+            });
+
+        }
+        /// <summary>
+        /// 获取处方取消上传参数
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetDeletePrescriptionUploadParam([FromBody]BaseUiBusinessIdDataParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            { 
+              var deleteParam=  _residentMedicalInsuranceNewService.GetDeletePrescriptionUploadParam(param);
+                y.Data = XmlSerializeHelper.XmlSerialize(deleteParam);
+            });
+
+        }
+
+        /// <summary>
+        /// 医保删除处方数据
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData DeletePrescriptionUpload([FromBody]BaseUiBusinessIdDataParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            { 
+                _residentMedicalInsuranceNewService.DeletePrescriptionUpload(param);
             });
 
         }

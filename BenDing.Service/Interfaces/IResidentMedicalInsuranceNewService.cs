@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.Resident;
 using BenDing.Domain.Models.Dto.Web;
+using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.Resident;
 using BenDing.Domain.Models.Params.UI;
 
@@ -88,5 +89,17 @@ namespace BenDing.Service.Interfaces
         /// <returns></returns>
         void LeaveHospitalSettlementCancel(LeaveHospitalSettlementCancelParam param,
             LeaveHospitalSettlementCancelInfoParam infoParam);
+        /// <summary>
+        /// 获取处方取消上传参数
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        DeletePrescriptionUploadParam GetDeletePrescriptionUploadParam(BaseUiBusinessIdDataParam param);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        void  DeletePrescriptionUpload(BaseUiBusinessIdDataParam param);
+
     }
 }

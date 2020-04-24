@@ -832,7 +832,6 @@ namespace BenDing.Service.Providers
             return resultData;
 
         }
-
         /// <summary>
         /// 获取处方上传入参
         /// </summary>
@@ -919,6 +918,130 @@ namespace BenDing.Service.Providers
             resultData.RowDataList = rowDataList;
             return resultData;
 
+        }
+        /// <summary>
+        /// 获取处方取消上传参数
+        /// </summary>
+        /// <param name="param"></param>
+        public DeletePrescriptionUploadParam GetDeletePrescriptionUploadParam(BaseUiBusinessIdDataParam param)
+        {
+            var resultData = new DeletePrescriptionUploadParam();
+            var userBase = _webserviceBasicService.GetUserBaseInfo(param.UserId);
+            userBase.TransKey = param.TransKey;
+            //获取医保病人信息
+            var residentDataParam = new QueryMedicalInsuranceResidentInfoParam()
+            {
+                BusinessId = param.BusinessId,
+                OrganizationCode = userBase.OrganizationCode,
+            };
+            List<QueryInpatientInfoDetailDto> queryData;
+            //获取病人明细
+            var queryDataDetail = _hisSqlRepository.InpatientInfoDetailQuery
+                (new InpatientInfoDetailQueryParam() { BusinessId = param.BusinessId });
+            //获取选择
+            queryData = param.DataIdList != null ? queryDataDetail.Where(c => param.DataIdList.Contains(c.Id.ToString())).ToList() : queryDataDetail;
+            //获取病人医保信息
+            var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(residentDataParam);
+            if (queryData.Any())
+            {
+                //获取已上传数据、
+                var uploadDataId = queryData.Where(c => c.UploadMark == 1).Select(d => d.Id).ToList();
+                var batchNumberList = queryData.Where(c => c.UploadMark == 1).GroupBy(d => d.BatchNumber)
+                    .Select(b => b.Key).ToList();
+                if (batchNumberList.Any())
+                {
+                    var deleteParam = new DeletePrescriptionUploadParam()
+                    {
+                        BatchNumber = string.Join(",", batchNumberList.ToArray()),
+                        MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo
+                    };
+                    resultData = deleteParam;
+                }
+
+                
+            }
+
+            return resultData;
+        }
+        /// <summary>
+        ///处方取消上传
+        /// </summary>
+        /// <param name="param"></param>
+        public void DeletePrescriptionUpload(BaseUiBusinessIdDataParam param)
+        {
+            var userBase = _webserviceBasicService.GetUserBaseInfo(param.UserId);
+            userBase.TransKey = param.TransKey;
+            //获取医保病人信息
+            var residentDataParam = new QueryMedicalInsuranceResidentInfoParam()
+            {
+                BusinessId = param.BusinessId,
+                OrganizationCode = userBase.OrganizationCode,
+            };
+            List<QueryInpatientInfoDetailDto> queryData;
+            //获取病人明细
+            var queryDataDetail = _hisSqlRepository.InpatientInfoDetailQuery
+                (new InpatientInfoDetailQueryParam() { BusinessId = param.BusinessId });
+            //获取选择
+            queryData = param.DataIdList != null ? queryDataDetail.Where(c => param.DataIdList.Contains(c.Id.ToString())).ToList() : queryDataDetail;
+            //获取病人医保信息
+            var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(residentDataParam);
+            if (queryData.Any())
+            {
+                //获取已上传数据、
+                var uploadDataId = queryData.Where(c => c.UploadMark == 1).Select(d => d.Id).ToList();
+                var batchNumberList = queryData.Where(c => c.UploadMark == 1).GroupBy(d => d.BatchNumber).Select(b => b.Key).ToList();
+                if (batchNumberList.Any())
+                {
+                    var deleteParam = new DeletePrescriptionUploadParam()
+                    {
+                        BatchNumber = string.Join(",", batchNumberList.ToArray()),
+                        MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo
+                    };
+
+                    //医保执行
+                    //_residentMedicalInsuranceRepository.DeletePrescriptionUpload(deleteParam, uploadDataId, userBase);
+                    //取消医保上传状态
+                    var updateFeeParam =
+                        uploadDataId.Select(c => new UpdateHospitalizationFeeParam { Id = c })
+                            .ToList();
+                    _medicalInsuranceSqlRepository.UpdateHospitalizationFee(updateFeeParam, true, userBase);
+                    //日志
+                    var joinJson = JsonConvert.SerializeObject(queryData.Select(c => c.DetailId).ToList());
+                    var logParam = new AddHospitalLogParam
+                    {
+                        User = userBase,
+                        RelationId = Guid.Parse(param.BusinessId),
+                        JoinOrOldJson = joinJson,
+                        ReturnOrNewJson = "",
+                        Remark = "医保取消处方明细id执行成功"
+                    };
+                    _systemManageRepository.AddHospitalLog(logParam);
+                    // 回参构建
+                    var xmlData = new HospitalizationFeeUploadCancelXml()
+                    {
+                        MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
+                        RowDataList = queryData.Select(c => new HospitalizationFeeUploadRowXml() { SerialNumber = c.DetailId }).ToList()
+                    };
+                    var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                    var saveXml = new SaveXmlDataParam()
+                    {
+                        User = userBase,
+                        MedicalInsuranceBackNum = "CXJB005",
+                        MedicalInsuranceCode = "32",
+                        BusinessId = param.BusinessId,
+                        BackParam = strXmlBackParam
+                    };
+                    //存基层
+                    _webBasicRepository.SaveXmlData(saveXml);
+                    //日志
+                    logParam.Remark = "基层取消处方明细id执行成功";
+                    _systemManageRepository.AddHospitalLog(logParam);
+                }
+            }
+            else
+            {
+                throw new Exception("未获取到医保退处方数据,请核实数据的正确性!!!");
+            }
         }
     }
 }
