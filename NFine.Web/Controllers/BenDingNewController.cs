@@ -417,7 +417,9 @@ namespace NFine.Web.Controllers
                 { 
                   var workerDataParam =  _workerMedicalInsuranceNewService.GetWorkerHospitalizationRegisterParam(
                      workerParam);
-                    y.Data = XmlSerializeHelper.XmlSerialize(workerDataParam);
+                     var data = JsonConvert.SerializeObject(workerDataParam); 
+                    
+                    y.Data = data;
                 }
                 //居民
                 if (param.InsuranceType == "342")
@@ -472,7 +474,7 @@ namespace NFine.Web.Controllers
                 if (residentData.InsuranceType == "310")
                 {
                     var hospitalizationModifyParam = _workerMedicalInsuranceNewService.GetModifyWorkerHospitalizationParam(param);
-                    y.Data = XmlSerializeHelper.XmlSerialize(hospitalizationModifyParam);
+                    y.Data =  JsonConvert.SerializeObject(hospitalizationModifyParam);  
                 }
                
                 //居民
@@ -604,12 +606,13 @@ namespace NFine.Web.Controllers
                 {
                     if (residentData.IsBirthHospital == 0)
                     {
-                        var workerSettlementData = _workerMedicalInsuranceNewService.GetWorkerHospitalizationPreSettlementParam(param);
+                        var workerPreSettlementParam = _workerMedicalInsuranceNewService.GetWorkerHospitalizationPreSettlementParam(param);
+                        y.Data = JsonConvert.SerializeObject(workerPreSettlementParam);
                     }//职工生育预结算
                     else if (residentData.IsBirthHospital == 1)
                     {
                         if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
-                        var workerSettlementData = _workerMedicalInsuranceNewService.GetWorkerBirthPreSettlementParam(new WorkerBirthPreSettlementUiParam()
+                        var workerBirthPreSettlementData = _workerMedicalInsuranceNewService.GetWorkerBirthPreSettlementParam(new WorkerBirthPreSettlementUiParam()
                         {
                             TransKey = param.TransKey,
                             BusinessId = param.BusinessId,
@@ -619,7 +622,7 @@ namespace NFine.Web.Controllers
                             FetusNumber = param.FetusNumber
 
                         });
-                        y.Data = XmlSerializeHelper.XmlSerialize(workerSettlementData);
+                        y.Data = XmlSerializeHelper.XmlSerialize(workerBirthPreSettlementData);
 
                     }
                 }
@@ -733,7 +736,7 @@ namespace NFine.Web.Controllers
                 {
                     if (residentData.IsBirthHospital == 0)
                     {
-                        var workerSettlementData = _workerMedicalInsuranceNewService.GetWorkerHospitalizationSettlementParam(new WorkerHospitalizationSettlementUiParam()
+                        var workerSettlementParam = _workerMedicalInsuranceNewService.GetWorkerHospitalizationSettlementParam(new WorkerHospitalizationSettlementUiParam()
                         {
                             DiagnosisList = param.DiagnosisList,
                             TransKey = param.TransKey,
@@ -741,12 +744,12 @@ namespace NFine.Web.Controllers
                             LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
                             UserId = param.UserId,
                         });
-                        y.Data = XmlSerializeHelper.XmlSerialize(workerSettlementData);
-                       
+                        y.Data = JsonConvert.SerializeObject(workerSettlementParam);
+
                     }//职工生育结算
                     else if (residentData.IsBirthHospital == 1)
                     {
-                        var workerSettlementData = _workerMedicalInsuranceNewService.GetWorkerBirthSettlementParam(
+                        var workerBirthSettlementParam = _workerMedicalInsuranceNewService.GetWorkerBirthSettlementParam(
                           new WorkerBirthSettlementUiParam()
                           {
                               TransKey = param.TransKey,
@@ -759,7 +762,7 @@ namespace NFine.Web.Controllers
                               LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
 
                           });
-                        y.Data = XmlSerializeHelper.XmlSerialize(workerSettlementData);
+                        y.Data = XmlSerializeHelper.XmlSerialize(workerBirthSettlementParam);
                     }
 
 

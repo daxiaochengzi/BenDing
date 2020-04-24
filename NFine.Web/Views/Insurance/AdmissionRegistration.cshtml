@@ -600,7 +600,8 @@
                                 if (activeJsonData.Success === false) {
                                     msgError(activeJsonData.Message);
                                 } else {
-                                    hospitalizationRegister(activeJsonData.Data, fieldParam);
+                                    fieldParam["SettlementJson"] = activeJsonData.Data
+                                    hospitalizationRegister(fieldParam);
                                    
                                 }
                             }
