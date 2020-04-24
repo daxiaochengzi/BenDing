@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Base.cshtml";
 }
 <link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
-
+<script src="~/script/BenDingComm.js"></script>
 <style>
     .layui-card-header.layuibd-card-header-auto {
         padding-top: 15px;
@@ -91,12 +91,18 @@
     }).extend({
         autocomplete: 'layAutoComplete'
         });
+    var iniJs;
+    var iniMsg;
     layui.use(['form', 'layer', 'element',  'autocomplete'],
         function() {
             var $ = layui.$,
                 element = layui.element,
                 form = layui.form,
                 layer = layui.layer;
+            //是否生育
+            var isBirthHospital = 0;
+            //险种类型
+            var insuranceType;
             var jsonToForm = function (jsonData, formFilter) {
                 //给表单赋值
                 form.val(formFilter,
@@ -133,6 +139,8 @@
                             layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
 
                         } else {
+                            isBirthHospital = data.Data.IsBirthHospital;
+                            insuranceType = data.Data.InsuranceType;
                             jsonToForm(data.Data, "LAY-form-render");
                             buttonStatus('HospitalizationRegisterCancel', true)
                             //HospitalizationRegisterCancel
@@ -144,9 +152,105 @@
                     }
                 });
             }
-
             //获取病人信息
             getInpatientInfo();
+            //插件检查
+            var verification = DetectActiveX();
+            if (verification === false) {
+                return false;
+            }
+
+            //获取医院基本信息回调方法
+            window.getHospitalInfoBack = function () { };
+            getHospitalInfo(getHospitalInfoBack);
+            //获取医保取消结算参数
+            function getLeaveHospitalSettlementCancelParam() {
+
+                var cancelParams = {
+                    "TransKey": $("#transkey").val() /*医保交易码*/,
+                    "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
+                    "UserId": $("#empid").val() /*授权操作人的ID*/,
+                    "CancelLimit": "2"/*取消程度*/
+                   
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: hostNew + '/GetLeaveHospitalSettlementCancelParam',
+                    async: false,
+                    data: JSON.stringify(cancelParams),
+                    dataType: "json",
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            msgError(errData);
+                            //样式类名:墨绿深蓝风
+                        } else {
+                            var activeX = document.getElementById("CSharpActiveX");
+                            //获取医保类型
+                            var insuranceTypeValue = $("#InsuranceType").val();
+                            var activeData;
+                            var activeJsonData;
+                            var isBirthHospital = $("#IsBirthHospital").val();
+                            if (insuranceType === "342") {
+                                //居民取消结算
+                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "LeaveHospitalSettlementCancel");
+                                activeJsonData = JSON.parse(activeData);
+                                if (activeJsonData.Success === false) {
+                                    msgError(activeJsonData.Message);
+                                } else {
+                                    leaveHospitalSettlementCancel(activeJsonData.Data);
+                                }
+                            }
+                            if (insuranceType === "310") {
+                                //职工生育取消结算
+                                if (isBirthHospital === 1) {
+                                    activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerSettlementCancel");
+                                }
+                                else//职工取消结算
+                                {
+                                    activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "LeaveHospitalSettlementCancel");
+                                }
+
+                                activeJsonData = JSON.parse(activeData);
+                                if (activeJsonData.Success === false) {
+                                    msgError(activeJsonData.Message);
+                                } else {
+                                    leaveHospitalSettlementCancel(activeJsonData.Data);
+                                }
+                            }
+
+
+
+                        }
+                    }
+                });
+
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            }
+            function leaveHospitalSettlementCancel(cancelParams) {
+                //医保入院登记取消
+                $.ajax({
+                    type: 'get',
+                    url: host + '/MedicalInsuranceHospitalizationRegisterCancel',
+                    data: params,
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        } else {
+
+
+                            layer.alert('操作成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv', title: '温馨提示' });
+
+                            buttonStatus("DoorDiagnosisSettlementCancel", false);
+                        }
+                    }
+
+                });
+            }
             //form数据回显:数据回显到Form表单主体部分
             $('#HospitalizationRegisterCancel').on('click', function() {
                 var params = {
@@ -175,17 +279,6 @@
 
                 });
             });
-            function buttonStatus(buttonId, status) {
-                //取消禁用
-                if (status === true) {
-                    $("#" + buttonId).attr("class", "layui-btn layui-btn-radius");
-                    $("#" + buttonId).removeAttr("disabled");
-                }//禁用
-                else {
-                    $("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
-                    $("#" + buttonId).attr("disabled", 'disabled');
-                }
-
-            }
+           
         });
 </script>
