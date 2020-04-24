@@ -232,8 +232,8 @@
                 //医保入院登记取消
                 $.ajax({
                     type: 'get',
-                    url: host + '/MedicalInsuranceHospitalizationRegisterCancel',
-                    data: params,
+                    url: hostNew + '/MedicalInsuranceHospitalizationRegisterCancel',
+                    data: cancelParams,
                     dataType: "json",
                     async: false,
                     success: function (data) {
