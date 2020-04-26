@@ -49,6 +49,18 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 批次号
         /// </summary>
         public string BatchNumber { get; set; }
-        
+        /// <summary>
+        /// 审核标志
+        /// </summary>
+        public int ApprovalMark { get; set; }
+        /// <summary>
+        /// 审核人员
+        /// </summary>
+        public string ApprovalUserName { get; set; }
+        /// <summary>
+        /// 审核时间
+        /// </summary>
+        public string ApprovalTime { get; set; }
+
     }
 }
