@@ -176,13 +176,34 @@
         window.getHospitalInfoBack = function () { };
         getHospitalInfo(getHospitalInfoBack);
         //获取取消处方上传参数
+        function deletePrescriptionUpload(uploadParam) {
+
+            $.ajax({
+                type: "POST",
+                url: hostNew + "/DeletePrescriptionUpload",
+                data: JSON.stringify(uploadParam),
+                dataType: "json",
+                contentType: 'application/json',
+                async: false,
+                success: function (res) {
+                    if (res.Success === false) {
+                        var errData = res.Message;
+                        //样式类名:墨绿深蓝风
+                        msgError(errData);
+                    } else {
+                        tableDataLoad(layTableId);
+                        msgSuccess("操作成功");
+                    }
+                },
+                complete: function () {
+                    form.render();
+                }
+            });
+
+        }
+        //获取取消处方上传参数
         function getDeletePrescriptionUploadParam(params) {
-            //var params = {
-            //    "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
-            //    , "UserId": $("#empid").val() /*授权操作人的ID*/
-            //    , "DataIdList": tableData
-            //    , "TransKey": $("#transkey").val()
-            //}
+          
             $.ajax({
                 type: "POST",
                 url: hostNew +"/GetDeletePrescriptionUploadParam",
@@ -190,9 +211,9 @@
                 dataType: "json",
                 contentType: 'application/json',
                 async: false,
-                success: function (res) {
-                    if (res.Success === false) {
-                        var errData = res.Message;
+                success: function (data) {
+                    if (data.Success === false) {
+                        var errData = data.Message;
                         //样式类名:墨绿深蓝风
                         msgError(errData);
                     } else
@@ -206,7 +227,6 @@
                         } else {
                             deletePrescriptionUpload(params);
                         }
-                        
                     }
                 },
                 complete: function () {
@@ -215,37 +235,7 @@
             });
 
         }
-        //获取取消处方上传参数
-        function deletePrescriptionUpload(uploadParam) {
-            var params = {
-                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
-                , "UserId": $("#empid").val() /*授权操作人的ID*/
-                , "DataIdList": tableData
-                , "TransKey": $("#transkey").val()
-            }
-            $.ajax({
-                type: "POST",
-                url: hostNew +"/DeletePrescriptionUpload",
-                data: JSON.stringify(uploadParam),
-                dataType: "json",
-                contentType: 'application/json',
-                async: false,
-                success: function (res) {
-                    if (res.Success === false) {
-                        var errData = res.Message;
-                        //样式类名:墨绿深蓝风
-                        msgError(errData);
-                    } else {
-
-                        msgSuccess("操作成功");
-                    }
-                },
-                complete: function () {
-                    form.render();
-                }
-            });
-
-        }
+     
         //医保费用上传
         form.on('submit(allUploadReceive)', function (data) {
             

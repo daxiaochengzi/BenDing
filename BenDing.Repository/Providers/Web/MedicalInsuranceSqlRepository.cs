@@ -431,13 +431,13 @@ namespace BenDing.Repository.Providers.Web
                         var updateId = CommonHelp.ListToStr(param.DirectoryCodeList);
                         sqlStr = $@"
                             select a.FixedEncoding,a.DirectoryCode,b.ProjectCode,b.ProjectCodeType,
-                            b.ProjectName,b.ProjectLevel,b.Formulation,b.Specification,b.Unit,a.DirectoryCategoryCode,
+                            b.ProjectName,b.ProjectLevel,b.Formulation,b.RestrictionSign,b.Specification,b.Unit,a.DirectoryCategoryCode,
                             b.OneBlock,b.TwoBlock,b.ThreeBlock,b.FourBlock,b.Manufacturer,b.LimitPaymentScope,b.NewCodeMark,
                             b.ResidentOutpatientBlock,b.ResidentOutpatientSign,b.ResidentSelfPayProportion,b.WorkersSelfPayProportion
                             from [dbo].[ThreeCataloguePairCode] as a
                             inner join [dbo].[MedicalInsuranceProject] as b on b.ProjectCode=a.ProjectCode
                             where a.OrganizationCode='{param.OrganizationCode}' and a.[DirectoryCode] in({updateId})
-                             and a.IsDelete=0  and b.IsDelete=0 and b.EffectiveSign=1";
+                             and a.IsDelete=0  and b.IsDelete=0 and b.EffectiveSign=1 ";
                         resultData = sqlConnection.Query<QueryMedicalInsurancePairCodeDto>(sqlStr).ToList();
                         sqlConnection.Close();
                     }
