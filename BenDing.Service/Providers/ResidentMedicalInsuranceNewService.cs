@@ -903,9 +903,9 @@ namespace BenDing.Service.Providers
                     //是否现在使用药品
                     if (pairCodeData.RestrictionSign == "1")
                     {
-                        rowData.LimitApprovalDate = CommonHelp.FormatDateTime(item.BillTime);
-                        rowData.LimitApprovalUser = rowData.DoctorJobNumber;
-                        rowData.LimitApprovalMark = "1";
+                        //rowData.LimitApprovalDate = Convert.ToDateTime("").ToString("yyyyMMddHHmmss");
+                        //rowData.LimitApprovalUser = rowData.DoctorJobNumber;
+                        //rowData.LimitApprovalMark = "1";
 
                     }
 
