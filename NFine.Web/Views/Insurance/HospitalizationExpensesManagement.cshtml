@@ -18,6 +18,15 @@
 
             <div class="layui-form" lay-filter="LAY-bill-data-list">
                 <div class="layui-form-item">
+                    
+                    <div class="layui-inline">
+                        <label class="layui-form-label">限制项目</label>
+                        <div class="layui-input-inline">
+                            <input type="radio" name="Examine" value="1" >
+                        </div>
+                    </div>
+
+                   
                     <div class="layui-inline">
                         <label class="layui-form-label">药品名称</label>
                         <div class="layui-input-inline">
@@ -183,6 +192,11 @@
                 , "UploadMark": 0 /*上传状态*/
                 , "IsLoad": isLoad
             };
+            //是否限制项目查询
+            var examine = $('input[name="Examine"]:checked').val();
+            if (examine === 1) {
+                params["IsExamine"] = 1;
+            }
             //执行重载
             table.reload(tableId,
                 {
@@ -274,15 +288,47 @@
             getPrescriptionUploadParam(tableData);
             
         }
+        function batchExamineData(tableData) {
+            var uploadParam = {
+                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
+                , "UserId": $("#empid").val() /*授权操作人的ID*/
+                , "DataIdList": tableData
+                , "TransKey": $("#transkey").val()
+            }
+            $.ajax({
+                type: 'POST',
+                url: hostNew + '/BatchExamineData',
+                async: false,
+                data: JSON.stringify(uploadParam),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        msgError(errData);
+                        //样式类名:墨绿深蓝风
+                    } else {
+
+                      
+                        tableDataLoad(layTableId);
+                        msgSuccess("审核成功!!!");
+                    }
+                }
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            }
+   
         //头工具栏事件
         table.on('toolbar(dataTableBillId)', function (obj) {
             var checkStatus = table.checkStatus(obj.config.id);
+            var data;
+            var dataIds=[];
             switch (obj.event) {
                 case 'batchUpdateData':
-                  
-                    var data = checkStatus.data;//选中行的数据
+
+                    data = checkStatus.data; //选中行的数据
                     //排除已经上传了的数据
-                    var dataIds = [];
+                
                     for (var i in data) {
                         if (data[i].UploadMark === 0) {
                             dataIds.push(data[i].Id);
@@ -291,6 +337,18 @@
                     //layer.msg('选中了：' + dataIds.length + ' 个未上传的数据');
                     prescriptionUpload(dataIds);
                     break;
+                case "batchExamineData":
+                    data = checkStatus.data; //选中行的数据
+                    //排除已经上传了的数据
+                    for (var i in data) {
+                        if (data[i].UploadMark === 0) {
+                            dataIds.push(data[i].Id);
+                        }
+                    }
+                    //layer.msg('选中了：' + dataIds.length + ' 个未上传的数据');
+                    batchExamineData(dataIds);
+                    break;
+
             };
         });
         //页面初始化加载默认数据
@@ -406,9 +464,12 @@
 </script>
 
 <script type="text/html" id="toolbarOne">
-    
-    <div class="layui-btn-container" >
+
+    <div class="layui-btn-container">
         <button class="layui-btn layui-btn-sm" lay-event="batchUpdateData">批量上传</button>
+    </div>
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="batchExamineData">批量审核</button>
     </div>
 </script>
 

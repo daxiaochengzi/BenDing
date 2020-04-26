@@ -1176,7 +1176,26 @@ namespace NFine.Web.Controllers
             });
 
         }
+        /// <summary>
+        /// 基层数据审核
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData BatchExamineData([FromBody]BaseUiBusinessIdDataParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                _hisSqlRepository.BatchExamineData(new BatchExamineDataParam()
+                {
+                    DataIdList = param.DataIdList,
+                    User = userBase
+                } );
+               
+            });
 
+        }
+        //
         /// <summary>
         /// 医保删除处方数据
         /// </summary>

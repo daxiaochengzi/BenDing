@@ -93,6 +93,11 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         void SaveOutpatientDetail(UserInfoDto user, List<BaseOutpatientDetailDto> param);
         /// <summary>
+        /// 基层数据批量审核
+        /// </summary>
+        /// <param name="param"></param>
+         void BatchExamineData(BatchExamineDataParam param);
+        /// <summary>
         /// 基层端三大目录查询
         /// </summary>
         /// <param name="param"></param>

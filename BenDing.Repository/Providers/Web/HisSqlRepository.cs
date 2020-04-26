@@ -324,7 +324,6 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
-
         /// <summary>
         /// ICD10获取最新时间
         /// </summary>
@@ -567,7 +566,6 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
-
         /// <summary>
         /// 保存门诊病人信息
         /// </summary>
@@ -644,7 +642,6 @@ namespace BenDing.Repository.Providers.Web
         /// <summary>
         /// 保存住院结算
         /// </summary>
-
         /// <param name="param"></param>
         public void SaveInpatientSettlement(SaveInpatientSettlementParam param)
         {
@@ -672,7 +669,6 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
-
         /// <summary>
         /// 查询门诊病人信息
         /// </summary>
@@ -809,7 +805,6 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
-
         /// <summary>
         /// 保存住院病人明细
         /// </summary>
@@ -931,6 +926,35 @@ namespace BenDing.Repository.Providers.Web
                 }
             }
         }
+
+        /// <summary>
+        /// 批量审核数据
+        /// </summary>
+        public void BatchExamineData(BatchExamineDataParam param)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string strSql = null;
+                try
+                {
+                    sqlConnection.Open();
+                    strSql = $@"update [dbo].[HospitalizationFee] set ApprovalMark=1, [ApprovalUserName]='{param.User.UserName}',[ApprovalTime]=GETDATE(),[ApprovalUserId]='{param.User.UserId}'";
+                    if (param.DataIdList != null && param.DataIdList.Any())
+                    {
+                        var idlist = CommonHelp.ListToStr(param.DataIdList);
+                        strSql += $" IsDelete=0 and Id in({idlist}) ";
+                    }
+                    var data = sqlConnection.Execute(strSql);
+                    sqlConnection.Close();
+                  
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(strSql);
+                    throw new Exception(e.Message);
+                }
+            }
+        }
         /// <summary>
         /// 住院清单查询
         /// </summary>
@@ -956,6 +980,9 @@ namespace BenDing.Repository.Providers.Web
                 //是否上传标志
                 if (param.UploadMark == 1)
                     whereSql += "  and UploadMark=1";
+                //是否审核
+                if (param.IsExamine == 1)
+                    whereSql += "  and IsExamine=1";
                 //药品名称模糊查询
                 if (!string.IsNullOrWhiteSpace(param.DirectoryName))
                     whereSql += " and DirectoryName like '" + param.DirectoryName + "%'";

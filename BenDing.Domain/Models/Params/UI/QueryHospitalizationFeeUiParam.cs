@@ -41,5 +41,9 @@ namespace BenDing.Domain.Models.Params.UI
         /// 
         /// </summary>
         public  string UserId { get; set; }
+        /// <summary>
+        /// 是否审核
+        /// </summary>
+        public int IsExamine { get; set; }
     }
 }
