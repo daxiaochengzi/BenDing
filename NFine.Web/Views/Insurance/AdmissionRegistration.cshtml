@@ -46,7 +46,7 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button disabled class="layui-btn layui-btn-disabled layui-btn-radius" lay-submit="" id="queryData" lay-filter="LAY-form-search">
+                        <button type="button" disabled class="layui-btn layui-btn-disabled layui-btn-radius" id="queryData">
                             查询
                         </button>
                     </div>
@@ -128,9 +128,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">医疗类别</label>
                         <div class="layui-input-inline">
-                            <select id="MedicalCategory" name="MedicalCategory" lay-filter="MedicalCategoryType">
-                              
-                            </select>
+                            <select id="MedicalCategory" name="MedicalCategory" lay-filter="MedicalCategoryType"></select>
                         </div>
                     </div>
 
@@ -180,7 +178,7 @@
             //初始化公共页面
             iniJs = $;
             iniMsg = layer;
-            var inpatientInfoData=null;
+            var inpatientInfoData = null;
             form.render(null, 'LAY-form-render');
             //执行一个laydate实例
             laydate.render({ elem: '#date1' });
@@ -259,7 +257,7 @@
 
             }
             //form数据回显:数据回显到Form表单主体部分
-            var jsonToForm = function ( formFilter) {
+            var jsonToForm = function (formFilter) {
                 //给表单赋值
                 form.val(formFilter,
                     {
@@ -276,16 +274,16 @@
                         "AdmissionOperator": inpatientInfoData.Data.AdmissionOperator,
                         "PersonalCoding": baseInfo.Inpatient.PersonalCoding,
                         "InsuranceType": baseInfo.Inpatient.InsuranceType
-                       
+
                     });
                 ////初始化医保类型
-              
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可
             }
-            
-          
+
+
             //获取病人信息
             function getHospitalizationInpatientInfo() {
-               
+
                 var params = {
                     "TransKey": $("#transkey").val() /*医保交易码*/,
                     "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
@@ -298,9 +296,9 @@
                     dataType: "json",
                     type: 'post',
                     success: function (data) {
-                    
+
                         if (data.Success === false) {
-                           
+
                             var errData = data.Message;
                             //样式类名:墨绿深蓝风
                             layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
@@ -334,19 +332,20 @@
             //初始化病人基本信息
             function iniInpatientInfo() {
                 getMedicalCategory(baseInfo.Inpatient.InsuranceType);
-                            jsonToForm("LAY-form-render");
-                            //加载诊断默认数据
-                            tableIns.reload({
-                                data: inpatientInfoData.Data.DiagnosisList
-                            });
-                            buttonStatus("register", true);
+                jsonToForm("LAY-form-render");
+            
+                //加载诊断默认数据
+                tableIns.reload({
+                    data: inpatientInfoData.Data.DiagnosisList
+                });
+                buttonStatus("register", true);
             }
             //获取医保病人信息
             window.getInpatientInfoBack = function () {
                 iniInpatientInfo();
             }
-          
-           
+
+
             //MedicalCategoryType医疗类别 隐藏显示胎儿数输入框
             form.on('select(MedicalCategoryType)',
                 function (data) {
@@ -396,12 +395,12 @@
                             { field: 'DiseaseCoding', title: '基层疾病编码' },
                             { field: 'DiseaseName', title: '基层疾病名称' },
                             { field: 'ProjectCode', title: '医保疾病编码' }
-                          
+
                         ]
                     ]
                 },
                 done: function (elem, data) {
-               
+
                     //获取table缓存
                     var oldData = table.cache[layTableId];
                     var oldDataTable = new Array;
@@ -412,18 +411,17 @@
                                 //新增诊断编码
                                 var addDiseaseCoding = data.data[0].DiseaseCoding;
                                 //诊断去重
-                                if (item.DiseaseCoding !== addDiseaseCoding)
-                                {
+                                if (item.DiseaseCoding !== addDiseaseCoding) {
                                     var itemRow = {
                                         DiseaseName: item.DiseaseName,
                                         DiseaseCoding: item.DiseaseCoding,
-                                        IsMainDiagnosis:item.IsMainDiagnosis,
+                                        IsMainDiagnosis: item.IsMainDiagnosis,
                                         ProjectCode: item.ProjectCode
-                                       
+
                                     };
                                     oldDataTable.push(itemRow);
 
-                                }  
+                                }
                             }
                         });
 
@@ -432,7 +430,7 @@
                         DiseaseCoding: data.data[0].DiseaseCoding,
                         ProjectCode: data.data[0].ProjectCode,
                         IsMainDiagnosis: false
-                       
+
                     };
                     //添加选中后的诊断
                     oldDataTable.push(newRow);
@@ -442,8 +440,8 @@
                         data: oldDataTable
                     });
 
-                 
-                   
+
+
                 }
             });
             //定义事件集合
@@ -511,12 +509,13 @@
                     }
                 });
             /**根据当前住院病人的业务ID查询,返回数据回显到下面表单里面*/
-            form.on('submit(LAY-form-search)',
-                function (data) {
-                    getInpatientInfo(getInpatientInfoBack);
-                    buttonStatus("queryData", false);
-                    return false; //阻止表单跳转
-                });
+            $('#queryData').on('click', function () {
+                getInpatientInfo(getInpatientInfoBack);
+                buttonStatus("queryData", false);
+
+            });
+
+
             function getHospitalizationRegisterParamIni(data) {
                 var field = data.field;
                 if ($("#InsuranceType").val() === "310") {
@@ -534,8 +533,8 @@
                 var medicalCategory = $("#MedicalCategory").val();
                 if (medicalCategory === "" || medicalCategory === undefined) {
                     msgError('医疗类别不能为空!!!!');
-                 
-                    
+
+
                 }
 
                 field.BusinessId = field.BusinessId;
@@ -581,9 +580,8 @@
                             var insuranceTypeValue = $("#InsuranceType").val();
                             var activeData;
                             var activeJsonData;
-                            if (insuranceTypeValue=== "342")
-                            { //医保入院登记
-                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo),"HospitalizationRegister");
+                            if (insuranceTypeValue === "342") { //医保入院登记
+                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "HospitalizationRegister");
                                 activeJsonData = JSON.parse(activeData);
                                 if (activeJsonData.Success === false) {
                                     msgError(activeJsonData.Message);
@@ -592,31 +590,30 @@
                                     hospitalizationRegister(fieldParam);
                                 }
                             }
-                            if (insuranceTypeValue === "310")
-                            {
+                            if (insuranceTypeValue === "310") {
                                 //医保入院登记
-                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo),"WorkerHospitalizationRegister");
+                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerHospitalizationRegister");
                                 activeJsonData = JSON.parse(activeData);
                                 if (activeJsonData.Success === false) {
                                     msgError(activeJsonData.Message);
                                 } else {
                                     fieldParam["SettlementJson"] = activeJsonData.Data
                                     hospitalizationRegister(fieldParam);
-                                   
+
                                 }
                             }
-                         
+
                         }
                     }
                 });
 
-              
+
             }
             //住院登记
             function hospitalizationRegister(fieldParam) {
                 $.ajax({
                     type: 'POST',
-                    url: hostNew + '/HospitalizationRegister', 
+                    url: hostNew + '/HospitalizationRegister',
                     async: false,
                     data: JSON.stringify(fieldParam),
                     dataType: "json",
@@ -629,9 +626,9 @@
                         } else {
                             buttonStatus("register", false);
                             msgSuccess('入院登记成功');
-                            
+
                         }
-                      
+
                     }
                 });
             }

@@ -473,12 +473,7 @@ namespace BenDing.Service.Providers
             };
 
 
-            var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
-            {
-                IdentityMark = residentData.IdentityMark,
-                AfferentSign = residentData.AfferentSign,
-
-            });
+        
 
             // 回参构建
             var xmlData = new HospitalSettlementXml()
@@ -489,8 +484,8 @@ namespace BenDing.Service.Providers
                 SettlementNo = data.DocumentNo,
                 PaidAmount = data.PaidAmount,
                 AllAmount = data.TotalAmount,
-                PatientName = userInfoData.PatientName,
-                AccountBalance = userInfoData.WorkersInsuranceBalance,
+                PatientName = inpatientInfoData.PatientName,
+                //AccountBalance = param.WorkersInsuranceBalance,
                 AccountAmountPay = 0,
             };
 
@@ -902,6 +897,10 @@ namespace BenDing.Service.Providers
                     //是否现在使用药品
                     if (pairCodeData.RestrictionSign == "1")
                     {
+                        if (item.ApprovalMark == 0)
+                        {
+                            throw new Exception(item.DirectoryName + "为限制性药品未审核");
+                        } 
                         rowData.LimitApprovalDate =Convert.ToDateTime(item.ApprovalTime).ToString("yyyyMMddHHmmss");
                         rowData.LimitApprovalUser = item.ApprovalUserName;
                         rowData.LimitApprovalMark = item.ApprovalMark.ToString();

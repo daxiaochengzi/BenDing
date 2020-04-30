@@ -115,6 +115,19 @@ namespace BenDing.Domain.Models.Dto.Web
         ///组织机构
         /// </summary>
         public  string OrganizationCode { get; set; }
+        /// <summary>
+        /// 医保限制用药标志
+        /// </summary>
+
+        public string RestrictionSign { get; set; }
+        /// <summary>
+        /// 限制审核标志
+        /// </summary>
+        public int  ApprovalMark { get; set; }
+        /// <summary>
+        /// 限制审核人员
+        /// </summary>
+        public string ApprovalUserName { get; set; }
 
     }
 }

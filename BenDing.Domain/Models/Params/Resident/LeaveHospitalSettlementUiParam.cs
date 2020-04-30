@@ -38,6 +38,10 @@ namespace BenDing.Domain.Models.Params.Resident
         /// </summary>
         public string SettlementJson { get; set; }
         /// <summary>
+        /// 余额
+        /// </summary>
+        public decimal InsuranceBalance { get; set; }
+        /// <summary>
         /// 诊断
         /// </summary>
 

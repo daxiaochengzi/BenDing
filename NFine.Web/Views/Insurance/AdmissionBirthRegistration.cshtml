@@ -44,7 +44,7 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button disabled class="layui-btn layui-btn-disabled layui-btn-radius" lay-submit="" id="queryData" lay-filter="LAY-form-search">
+                        <button disabled class="layui-btn layui-btn-disabled layui-btn-radius"  type="button" id="queryData" >
                             查询
                         </button>
                     </div>
@@ -638,14 +638,11 @@
                 });
             }
 
-            /**根据当前住院病人的业务ID查询,返回数据回显到下面表单里面*/
-            form.on('submit(LAY-form-search)',
-                function (data) {
 
-                    getInpatientInfo(getInpatientInfoBack);
-                    buttonStatus("queryData", false);
-                    return false; //阻止表单跳转
-                });
+            $('#queryData').on('click', function () {
+                getInpatientInfo(getInpatientInfoBack);
+                buttonStatus("queryData", false);
+            });
             //登记
             form.on('submit(BirthRegister)',
                 function (data) {

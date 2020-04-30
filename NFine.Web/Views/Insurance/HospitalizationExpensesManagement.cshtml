@@ -9,70 +9,67 @@
         <li>已传费用明细</li>
     </ul>
     <div class="layui-tab-content">
-        <input type="hidden" id="bid" name="BusinessId" value="@ViewBag.bid" placeholder="业务ID"/>
-        <input type="hidden" id="empid" name="UserId" value="@ViewBag.empid" placeholder="用户ID"/>
-        <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id"/>
+        <input type="hidden" id="bid" name="BusinessId" value="@ViewBag.bid" placeholder="业务ID" />
+        <input type="hidden" id="empid" name="UserId" value="@ViewBag.empid" placeholder="用户ID" />
+        <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
 
         <div class="layui-tab-item layui-show">
 
             <div class="layui-form" lay-filter="LAY-bill-data-list">
-                <div class="layui-form-item">
-                    
-                    <div class="layui-inline">
-                        <label class="layui-form-label">限制项目</label>
-                        <div class="layui-input-inline">
-                            <input type="radio" name="Examine" value="1" >
-                        </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">限制项目</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="Examine" value="1">
                     </div>
 
-                   
-                    <div class="layui-inline">
-                        <label class="layui-form-label">药品名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="DirectoryName" placeholder="请输入药品名称" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">费用日期</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="date1" name="BillTime" placeholder="请输入费用日期" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <button class="layui-btn" lay-submit lay-filter="LAY-bill-data-list">查询</button>
-                        <button class="layui-btn" data-type="cleanSearch">清除</button>
-                        <button class="layui-btn" id="renewalCost" lay-submit lay-filter="renewalCost">更新费用</button>
-                        <button class="layui-btn" id="allUpload" lay-submit lay-filter="allUpload">全部上传</button>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">药品名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="DirectoryName" placeholder="请输入药品名称" autocomplete="off" class="layui-input">
                     </div>
                 </div>
-            </div>
-            <!--院内费用明细列表-->
-            <table id="dataTableBillId" lay-filter="dataTableBillId"></table>
-        </div>
-        <div class="layui-tab-item">
-            <div class="layui-form">
-                <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">药品名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="DirectoryName" placeholder="请输入药品名称" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">费用日期</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="date2" name="BillTime" placeholder="请输入费用日期" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <button class="layui-btn" lay-submit lay-filter="LAY-updated-data-list">查询</button>
-                        <button class="layui-btn" data-type="cleanSearch">清除</button>
+                <div class="layui-inline">
+                    <label class="layui-form-label">费用日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="date1" name="BillTime" placeholder="请输入费用日期" autocomplete="off" class="layui-input">
                     </div>
                 </div>
+                <div class="layui-inline">
+                    <button class="layui-btn" lay-submit lay-filter="LAY-bill-data-list">查询</button>
+                    <button class="layui-btn" data-type="cleanSearch">清除</button>
+                    <button class="layui-btn" id="renewalCost" lay-submit lay-filter="renewalCost">更新费用</button>
+                    <button class="layui-btn" id="allUpload" lay-submit lay-filter="allUpload">全部上传</button>
+                </div>
             </div>
-            <table id="dataTableUpdatedId" lay-filter="dataTableUpdatedId"></table>
         </div>
+        <!--院内费用明细列表-->
+        <table id="dataTableBillId" lay-filter="dataTableBillId"></table>
     </div>
+    <div class="layui-tab-item">
+        <div class="layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">药品名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="DirectoryName" placeholder="请输入药品名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">费用日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="date2" name="BillTime" placeholder="请输入费用日期" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn" lay-submit lay-filter="LAY-updated-data-list">查询</button>
+                    <button class="layui-btn" data-type="cleanSearch">清除</button>
+                </div>
+            </div>
+        </div>
+        <table id="dataTableUpdatedId" lay-filter="dataTableUpdatedId"></table>
+    </div>
+</div>
 </div>
 
 <script>
@@ -83,7 +80,7 @@
     });
     var iniJs;
     var iniMsg;
-    
+
     layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'], function () {
         var $ = layui.$
             //Tab的切换功能，切换事件监听等，需要依赖element模块
@@ -114,7 +111,8 @@
             cols: [[
                 { type: 'checkbox', fixed: 'left' },
                 { title: '序号', type: 'numbers', align: 'center' }
-                , { field: 'UploadMark', title: '上传状态', width: 100, toolbar: '#tableBtn', align: 'center' }
+                , { field: 'UploadMark', title: '上传状态', width:80, toolbar: '#tableBtn', align: 'center' }
+                , { field: 'ApprovalMark', title: '审核', width: 60, toolbar: '#tableApprovalMarkBtn', align: 'center' }
                 , { field: 'DirectoryCode', title: '药品编码', width: 320, hide: true }
                 , { field: 'DirectoryName', title: '药品名称', width: 280 }
                 , { field: 'DirectoryCategoryCode', title: '药品类别', width: 100 }
@@ -125,16 +123,17 @@
                 , { field: 'RecipeCode', title: '处方号', width: 310, hide: true }
                 , { field: 'BillDepartment', title: '科室', width: 100 }
                 , { field: 'OperateDoctorName', title: '执行医生', width: 100 }
+                , { field: 'ApprovalUserName', title: '审核医生', width: 100, hide: true }
                 , { field: 'ProjectCode', title: '医保编码', width: 100 }
                 , { field: 'ProjectCodeType', title: '医保类别', width: 100 }
                 , { field: 'UploadAmount', title: '医保上传金额', width: 100 }
                 , { field: 'ProjectLevel', title: '项目等级', width: 100 }
                 , { field: 'SelfPayProportion', title: '自付比例', width: 100 }
                 , { field: 'BlockPrice', title: '限制价格', width: 100 }
-                , { field: 'BlockRemark', title: '限制使用说明', width: 100}
-                , { field: 'Specification', title: '规格', width: 100}
+                , { field: 'BlockRemark', title: '限制使用说明', width: 100 }
+                , { field: 'Specification', title: '规格', width: 100 }
                 , { field: 'AdjustmentDifferenceValue', title: '调整差值', width: 100 }
-               
+
             ]]
         });
         //已传费用明细
@@ -153,7 +152,7 @@
                 };
             }
             , limits: [10, 20, 50]
-            , toolbar: '#toolbarTwo'
+
             , page: true
             , cols: [[
 
@@ -182,7 +181,7 @@
         });
 
         var tableDataLoad = function (tableId) {
-         
+
             //默认tab1选中执行
             var params = {
                 "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
@@ -193,12 +192,11 @@
             };
             //是否限制项目查询
             var examine = $('input[name="Examine"]:checked').val();
-            if (examine === 1) {
+            if (examine === "1") {
                 params["IsExamine"] = 1;
                 $("#batchExamineData").show();
-            } else
-            {
-              
+            } else {
+
                 $("#batchExamineData").hide();
             }
             //执行重载
@@ -208,7 +206,7 @@
                     where: params
                     , parseData: function (res) { //res 即为原始返回的数据
                         isLoad = false;
-                        if (res.Success === false) layer.alert(res.Message, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' }); 
+                        if (res.Success === false) layer.alert(res.Message, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                         return {
                             "code": res.Code,
                             "count": res.Data.count, //解析数据长度
@@ -217,6 +215,7 @@
                     }
                 },
                 'data');
+            form.render();
         }
         //表格查询
         var tableDataQuery = function (method, url, params, reloadTable, tableId) {
@@ -232,9 +231,9 @@
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                     } else {
                         if (url === "/PrescriptionUpload") {
-                            
-                            layer.alert(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv',title: '温馨提示' });
-                          
+
+                            layer.alert(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv', title: '温馨提示' });
+
                         }
                         if (reloadTable) {
                             //重新加载表格
@@ -290,7 +289,7 @@
         //处方上传（费用清单上传）
         var prescriptionUpload = function (tableData) {
             getPrescriptionUploadParam(tableData);
-            
+
         }
         function batchExamineData(tableData) {
             var uploadParam = {
@@ -313,26 +312,26 @@
                         //样式类名:墨绿深蓝风
                     } else {
 
-                      
+
                         tableDataLoad(layTableId);
                         msgSuccess("审核成功!!!");
                     }
                 }
             });
             return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-            }
-   
+        }
+
         //头工具栏事件
         table.on('toolbar(dataTableBillId)', function (obj) {
             var checkStatus = table.checkStatus(obj.config.id);
             var data;
-            var dataIds=[];
+            var dataIds = [];
             switch (obj.event) {
                 case 'batchUpdateData':
 
                     data = checkStatus.data; //选中行的数据
                     //排除已经上传了的数据
-                
+
                     for (var i in data) {
                         if (data[i].UploadMark === 0) {
                             dataIds.push(data[i].Id);
@@ -362,7 +361,7 @@
 
         //数据回写
         function prescriptionUploadDatas(uploadParam) {
-           
+
             $.ajax({
                 type: 'POST',
                 url: hostNew + '/PrescriptionUpload',
@@ -375,7 +374,7 @@
                         var errData = data.Message;
                         msgError(errData);
                         //样式类名:墨绿深蓝风
-                    } 
+                    }
 
 
                 }
@@ -401,7 +400,7 @@
                         msgError(errData);
                         //样式类名:墨绿深蓝风
                     } else {
-                      
+
                         var uploadData = data.Data.UploadList;
                         if (uploadData !== undefined && uploadData !== null && uploadData.length > 0) {
                             var activeX = document.getElementById("CSharpActiveX");
@@ -409,33 +408,35 @@
 
                                 var uploadDataParam = uploadData[i];
                                 var activeData = activeX.HospitalizationMethods(JSON.stringify(uploadDataParam), JSON.stringify(baseInfo.HospitalInfo), "PrescriptionUploadData");
-                                var  activeJsonData = JSON.parse(activeData);
+                                var activeJsonData = JSON.parse(activeData);
                                 if (activeJsonData.Success === false) {
                                     msgError(activeJsonData.Message);
+                                    return false;
                                 }
-                                else
-                                {
-                                    uploadParam["ProjectBatch"] = "136413487";
+                                else {
+                                    uploadParam["ProjectBatch"] = activeJsonData.Data.PO_PCH;
                                     uploadParam["UploadData"] = uploadDataParam;
                                     prescriptionUploadDatas(uploadParam);
                                 }
                                 
+                                
+
                             }
-                            
-                            
+
+
 
                         } else {
                             msgError("获取上传数据失败!!!");
                             return false;
                         }
                         tableDataLoad(layTableId);
-                        msgSuccess("已更新上传数据!!!");
+                     
                     }
                 }
             });
             return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         }
-       
+
         //更新费用
         form.on('submit(renewalCost)', function (data) {
             $.ajax({
@@ -447,23 +448,23 @@
                         var errData = data.Message;
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                     } else {
-                        layer.alert(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv',title: '温馨提示' });
+                        layer.alert(res.Data, { icon: 6, shade: 0.1, skin: 'layui-layer-molv', title: '温馨提示' });
                         //刷新查询
                         tableDataLoad(layTableId);
                     }
                 }
-                
+
             });
         });
         //医保费用上传
         form.on('submit(allUpload)', function (data) {
             getPrescriptionUploadParam(null);
-           
+
         });
 
 
     });
-    
+
 
 </script>
 
@@ -471,8 +472,9 @@
 
     <div class="layui-btn-container">
         <button class="layui-btn layui-btn-sm" id="batchUpdateData" lay-event="batchUpdateData">批量上传</button>
-        <button class="layui-btn layui-btn-sm" id="batchExamineData"  lay-event="batchExamineData">批量审核</button>
+        <button class="layui-btn layui-btn-sm" id="batchExamineData" lay-event="batchExamineData">批量审核</button>
     </div>
+
 </script>
 
 <script type="text/html" id="tableBtn">
@@ -482,18 +484,27 @@
     <a class="layui-btn layui-btn-xs" lay-event="updatePairCode">已上传</a>
     {{#  }}}
 </script>
-<script type="text/html" id="tableBtn">
-    {{#  if(d.UploadMark == 0){ }}
-    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="pairCode">未上传</a>
+
+<script type="text/html" id="tableApprovalMarkBtn">
+    {{#  if(d.ApprovalMark == 0){ }}
+    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="pairCode">否</a>
     {{#  } else { }}
-    <a class="layui-btn layui-btn-xs" lay-event="updatePairCode">已上传</a>
+    <a class="layui-btn layui-btn-xs" lay-event="updatePairCode">是</a>
     {{#  }}}
 </script>
+
+@*<script type="text/html" id="tableBtn">
+        {{#  if(d.UploadMark == 0){ }}
+        <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="pairCode">未上传</a>
+        {{#  } else { }}
+        <a class="layui-btn layui-btn-xs" lay-event="updatePairCode">已上传</a>
+        {{#  }}}
+    </script>*@
 
 @*<script type="text/html" id="tableBtnTwo">
-    {{#  if(d.UploadMark == 0){ }}
-    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="pairCode">未上传</a>
-    {{#  } else { }}
-    <a class="layui-btn layui-btn-xs" lay-event="updatePairCode">已上传</a>
-    {{#  }}}
-</script>*@
+        {{#  if(d.UploadMark == 0){ }}
+        <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="pairCode">未上传</a>
+        {{#  } else { }}
+        <a class="layui-btn layui-btn-xs" lay-event="updatePairCode">已上传</a>
+        {{#  }}}
+    </script>*@

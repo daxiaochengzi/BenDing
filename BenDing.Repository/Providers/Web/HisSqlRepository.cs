@@ -942,7 +942,7 @@ namespace BenDing.Repository.Providers.Web
                     if (param.DataIdList != null && param.DataIdList.Any())
                     {
                         var idlist = CommonHelp.ListToStr(param.DataIdList);
-                        strSql += $" IsDelete=0 and Id in({idlist}) ";
+                        strSql += $" where IsDelete=0 and Id in({idlist}) ";
                     }
                     var data = sqlConnection.Execute(strSql);
                     sqlConnection.Close();
@@ -980,9 +980,7 @@ namespace BenDing.Repository.Providers.Web
                 //是否上传标志
                 if (param.UploadMark == 1)
                     whereSql += "  and UploadMark=1";
-                //是否审核
-                if (param.IsExamine == 1)
-                    whereSql += "  and IsExamine=1";
+             
                 //药品名称模糊查询
                 if (!string.IsNullOrWhiteSpace(param.DirectoryName))
                     whereSql += " and DirectoryName like '" + param.DirectoryName + "%'";
@@ -1020,7 +1018,9 @@ namespace BenDing.Repository.Providers.Web
                                     UploadTime = t.UploadTime,
                                     OrganizationCode = t.OrganizationCode,
                                     BatchNumber = t.BatchNumber,
-                                    DetailId = t.DetailId
+                                    DetailId = t.DetailId,
+                                    ApprovalMark=t.ApprovalMark,
+                                    ApprovalUserName=t.ApprovalUserName,
                                 }
                     ).ToList();
                 if (dataList.Any())
@@ -1073,9 +1073,26 @@ namespace BenDing.Repository.Providers.Web
                                 OrganizationCode = c.OrganizationCode,
                                 UploadTime = c.UploadTime,
                                 BatchNumber = c.BatchNumber,
-                                DetailId = c.DetailId
+                                DetailId = c.DetailId,
+                                RestrictionSign = itemPairCode?.RestrictionSign,
+                                ApprovalMark = c.ApprovalMark,
+                                ApprovalUserName = c.ApprovalUserName
+
                             };
-                            dataListNew.Add(item);
+                            //是否审核
+                            if (param.IsExamine == 1)
+                            {
+                                if (item.RestrictionSign == "1")
+                                {
+                                    dataListNew.Add(item);
+                                }
+                            }
+                            else {
+
+                                if (item.RestrictionSign == "1") item.DirectoryName = "【限】" + item.DirectoryName;
+                                    dataListNew.Add(item);
+                            }
+                          
                         }
                     }
                     else
