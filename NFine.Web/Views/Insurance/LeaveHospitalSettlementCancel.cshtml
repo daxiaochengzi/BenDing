@@ -456,7 +456,7 @@
                             if (activeJsonData.Success === false) {
                                 msgError(activeJsonData.Message);
                             } else {
-                                leaveHospitalSettlementCancel(activeJsonData.Data);
+                                leaveHospitalSettlementCancel();
                             }
                         }
                         if (insuranceType === "310") {
@@ -473,11 +473,11 @@
                             if (activeJsonData.Success === false) {
                                 msgError(activeJsonData.Message);
                             } else {
-                                leaveHospitalSettlementCancel(activeJsonData.Data);
+                                leaveHospitalSettlementCancel();
                             }
                         }
 
-
+                        
 
                     }
                 }

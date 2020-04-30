@@ -195,6 +195,44 @@ namespace NFine.Web.Controllers
             });
 
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData MedicalInsuranceXmlCancelSettlement([FromUri] MedicalInsuranceXmlUiParam param)
+        {
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            {
+                var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //更新医保信息
+                var strXmlIntoParam = XmlSerializeHelper.XmlParticipationParam();
+                //回参构建
+                var xmlData = new HospitalSettlementCancelXml()
+                {
+
+
+                    SettlementNo = param.SettlementNo
+                };
+
+                var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                var saveXmlData = new SaveXmlData();
+                saveXmlData.OrganizationCode = userBase.OrganizationCode;
+                saveXmlData.AuthCode = userBase.AuthCode;
+                saveXmlData.BusinessId = param.BusinessId;
+                saveXmlData.TransactionId =param.TransKey;
+                saveXmlData.MedicalInsuranceBackNum = "CXJB003";
+                saveXmlData.BackParam = CommonHelp.EncodeBase64("utf-8", strXmlBackParam);
+                saveXmlData.IntoParam = CommonHelp.EncodeBase64("utf-8", strXmlIntoParam);
+                saveXmlData.MedicalInsuranceCode = "42";
+                saveXmlData.UserId = userBase.UserId;
+                //存基层
+                webServiceBasic.HIS_InterfaceList("38", JsonConvert.SerializeObject(saveXmlData));
+            });
+
+        }
         /// <summary>
         /// 
         /// </summary>

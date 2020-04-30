@@ -21,9 +21,11 @@ namespace BenDing.Domain.Models.Params.UI
       
         public string UserId { get; set; }
         /// <summary>
-        /// 
+        /// 结算号
         /// </summary>
         
-        public string HealthInsuranceNo { get; set; }
+        public string SettlementNo { get; set; }
+        public string TransKey { get; set; }
+        
     }
 }

@@ -733,9 +733,9 @@ namespace BenDing.Service.Providers
                     RelationId = infoParam.Id,
                 };
                 //回参构建
-                var xmlData = new HospitalizationRegisterXml()
+                var xmlData = new HospitalSettlementCancelXml()
                 {
-                    MedicalInsuranceHospitalizationNo = param.MedicalInsuranceHospitalizationNo,
+                    SettlementNo= param.SettlementNo,
                 };
                 var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
                 var saveXml = new SaveXmlDataParam()

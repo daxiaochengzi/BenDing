@@ -887,7 +887,7 @@ namespace NFine.Web.Controllers
                     {
                         MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
                         SettlementNo = residentData.SettlementNo,
-                        Operators = CommonHelp.GuidToStr(userBase.UserId),
+                        Operators = userBase.UserName,
                         CancelLimit = param.CancelLimit,
 
                     };
@@ -929,7 +929,7 @@ namespace NFine.Web.Controllers
                         {
                             MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
                             SettlementNo = residentData.SettlementNo,
-                            Operators = CommonHelp.GuidToStr(userBase.UserId),
+                            Operators = userBase.UserName,
                             CancelLimit = param.CancelLimit,
 
                         };
