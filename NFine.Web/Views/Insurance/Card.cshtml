@@ -1,161 +1,199 @@
 ﻿@{
     ViewBag.Title = "读卡";
-    Layout = "~/Views/Shared/_Card.cshtml";
+    Layout = "~/Views/Shared/_Base.cshtml";
 }
-
+<link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
 <div id="card-container" style="overflow: hidden !important;">
-    <object id="sicard" classid="clsid:598DB085-7B0D-4D52-A713-72BB894A1DE2" width="0" height="0"></object>
-    <form id="form1">
-        <div style="margin-bottom: 0px; border-radius: 0px;color:#FF00FF;" class="alert alert-warning alert-dismissable">
-            <strong>注意：</strong>&nbsp;刷卡控件未安装！点击这里<a href="#">执行安装</a>,安装后请刷新页面或重新进入。
-        </div>
-        <div style="padding-top: 20px; margin-right: 20px;">
-            <table class="form">
-                <tr>
-                    <th class="formTitle" style="height: 35px;">选项</th>
-                    <td class="formValue" style="padding-top: 1px;">
-                        <div class="rdio">
-                            <input id="F_EnabledMark" name="F_EnabledMark" type="radio" checked value="1"><label for="F_EnabledMark">社保卡</label>
-                        </div>
-                        <div class="rdio">
-                            <input id="F_EnabledMark2" name="F_EnabledMark" type="radio" value="2"><label for="F_EnabledMark2">居民身份证</label>
-                        </div>
-                        <div class="rdio">
-                            <input id="F_EnabledMark3" name="F_EnabledMark" type="radio" value="3"><label for="F_EnabledMark3">其他</label>
-                        </div>
-                    </td>
-                </tr>
-                <tr class="socialSecurity socialSecurity1">
-                    <th class="formTitle">社会保障卡卡号</th>
-                    <td class="formValue">
-                        <input id="F_StartCard" name="F_StartCard" type="text" class="form-control required " placeholder="社会保障卡卡号" />
-                    </td>
-                </tr>
-                <tr class="socialSecurity socialSecurity1">
-                    <th class="formTitle">密码</th>
-                    <td class="formValue">
-                        <input id="F_CardPwd" name="F_CardPwd" type="password" class="form-control required " placeholder="" />
-                    </td>
-                </tr>
-                <tr class="socialSecurity socialSecurity2" style="display:none">
-                    <th class="formTitle">身份证号</th>
-                    <td class="formValue">
-                        <input id="F_IdCard" name="F_IdCard" type="text" class="form-control required " placeholder="身份证号" />
-                    </td>
-                </tr>
-                <tr class="socialSecurity socialSecurity3" style="display:none">
-                    <th class="formTitle">社会保障卡编号</th>
-                    <td class="formValue">
-                        <input id="F_NumCard" name="F_IdCard" type="text" class="form-control required " placeholder="社会保障卡编号" />
-                    </td>
-                </tr>
-                <tr>
-                    <th>&nbsp;</th>
-                    <td>
-                        <button id="readCard" type="button"><span>读卡</span></button>
-                        <button id="checkIdCard" type="button"><span>验证身份</span></button>
-                    </td>
-                </tr>
-            </table>
+    <form class="layui-form" id="LAY-form" lay-filter="LAY-form-render">
+        <div class="layui-inline">
+            <label class="layui-form-label" id="markTextLableSsc">身份证号</label>
+            <div class="layui-input-inline">
+                <input type="text" id="IdentityMarkdasdasd" name="IdentityMarkSSS" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
+
+              
+            </div>
         </div>
     </form>
 </div>
 <script>
-    ////////////////////////////////////////////
-    (function ($) {
-        function tabSwitch(index) {
-            $(".socialSecurity").hide()
-            $(".socialSecurity" + index).show()
-        }
-        $("input[name=F_EnabledMark]").click(function () {
-            console.log($(this).val())
-            var index = $(this).val()
-            tabSwitch(index)
-        })
-        // 读卡
-        $("#readCard").click(function () {
-            // 获取社保卡卡号 val,
-            var val = '140892342345435345345'
-            $("#F_StartCard").val(val)
-        })
-        // 填充父页面
-        // 社保卡验证
-        function checkStartCard() {
-            var F_StartCard = $("#F_StartCard").val()
-            var F_CardPwd = $("#F_CardPwd").val()
-            // F_StartCard 账号 F_CardPwd 密码
-            // ajax调用 返回社保卡号如
-            var cardNum = 14232323423423454354
-            var type = 1
-        }
-        const map = ['CHK_新型农村合作医疗', 'CHK_城镇居民医保', 'CHK_城镇职工医保', 'CHK_城乡居民医保', '其他医保'
-        ]
-        // 身份证验证
-        function checkIdCard() {
-            var F_IdCard = $("#F_IdCard").val()
-            // F_StartCard 账号 F_CardPwd 密码
-            $.ajax({
-                url: "/ybsp/his/bending/GetUserInfo",
-                data: {
-                    "PI_SFBZ": F_IdCard,
-                    "PI_CRBZ":"1"
-                },
-                dataType: "json",
-                async: false,
-                success: function (data) {
-                    console.log(data);
-                    //$("#form1").formSerialize(data);
+    layui.config({
+        base: '/Content/js/layui/plugin/'
+    }).extend({
+        autocomplete: 'layAutoComplete'
+    });
+
+    layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'],
+        function() {
+            var $ = layui.$,
+                element = layui.element,
+                form = layui.form,
+                layer = layui.layer,
+                table = layui.table;
+
+            window.getmydata   = function () {
+                var data = {
+                    IdentityMark: $('#IdentityMarkdasdasd').val()
+
+                };
+                return data;
+            };
+        });
+
+      
+     </script>
+@*<div id="card-container" style="overflow: hidden !important;">
+            <object id="sicard" classid="clsid:598DB085-7B0D-4D52-A713-72BB894A1DE2" width="0" height="0"></object>
+            <form id="form1">
+                <div style="margin-bottom: 0px; border-radius: 0px;color:#FF00FF;" class="alert alert-warning alert-dismissable">
+                    <strong>注意：</strong>&nbsp;刷卡控件未安装！点击这里<a href="#">执行安装</a>,安装后请刷新页面或重新进入。
+                </div>
+                <div style="padding-top: 20px; margin-right: 20px;">
+                    <table class="form">
+                        <tr>
+                            <th class="formTitle" style="height: 35px;">选项</th>
+                            <td class="formValue" style="padding-top: 1px;">
+                                <div class="rdio">
+                                    <input id="F_EnabledMark" name="F_EnabledMark" type="radio" checked value="1"><label for="F_EnabledMark">社保卡</label>
+                                </div>
+                                <div class="rdio">
+                                    <input id="F_EnabledMark2" name="F_EnabledMark" type="radio" value="2"><label for="F_EnabledMark2">居民身份证</label>
+                                </div>
+                                <div class="rdio">
+                                    <input id="F_EnabledMark3" name="F_EnabledMark" type="radio" value="3"><label for="F_EnabledMark3">其他</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="socialSecurity socialSecurity1">
+                            <th class="formTitle">社会保障卡卡号</th>
+                            <td class="formValue">
+                                <input id="F_StartCard" name="F_StartCard" type="text" class="form-control required " placeholder="社会保障卡卡号" />
+                            </td>
+                        </tr>
+                        <tr class="socialSecurity socialSecurity1">
+                            <th class="formTitle">密码</th>
+                            <td class="formValue">
+                                <input id="F_CardPwd" name="F_CardPwd" type="password" class="form-control required " placeholder="" />
+                            </td>
+                        </tr>
+                        <tr class="socialSecurity socialSecurity2" style="display:none">
+                            <th class="formTitle">身份证号</th>
+                            <td class="formValue">
+                                <input id="F_IdCard" name="F_IdCard" type="text" class="form-control required " placeholder="身份证号" />
+                            </td>
+                        </tr>
+                        <tr class="socialSecurity socialSecurity3" style="display:none">
+                            <th class="formTitle">社会保障卡编号</th>
+                            <td class="formValue">
+                                <input id="F_NumCard" name="F_IdCard" type="text" class="form-control required " placeholder="社会保障卡编号" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <td>
+                                <button id="readCard" type="button"><span>读卡</span></button>
+                                <button id="checkIdCard" type="button"><span>验证身份</span></button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+        </div>
+<script>
+            ////////////////////////////////////////////
+            (function ($) {
+                function tabSwitch(index) {
+                    $(".socialSecurity").hide()
+                    $(".socialSecurity" + index).show()
                 }
-            });
-            // ajax调用 返回社保卡号如
-            //var cardNum = 14232323423423454354
-            //var typeId = 2 // 枚举值，与父亲页面对应的医保类型id进行匹配，然后获取队友元素，其他类似
-            //
+                $("input[name=F_EnabledMark]").click(function () {
+                    console.log($(this).val())
+                    var index = $(this).val()
+                    tabSwitch(index)
+                })
+                // 读卡
+                $("#readCard").click(function () {
+                    // 获取社保卡卡号 val,
+                    var val = '140892342345435345345'
+                    $("#F_StartCard").val(val)
+                })
+                // 填充父页面
+                // 社保卡验证
+                function checkStartCard() {
+                    var F_StartCard = $("#F_StartCard").val()
+                    var F_CardPwd = $("#F_CardPwd").val()
+                    // F_StartCard 账号 F_CardPwd 密码
+                    // ajax调用 返回社保卡号如
+                    var cardNum = 14232323423423454354
+                    var type = 1
+                }
+                const map = ['CHK_新型农村合作医疗', 'CHK_城镇居民医保', 'CHK_城镇职工医保', 'CHK_城乡居民医保', '其他医保'
+                ]
+                // 身份证验证
+                function checkIdCard() {
+                    var F_IdCard = $("#F_IdCard").val()
+                    // F_StartCard 账号 F_CardPwd 密码
+                    $.ajax({
+                        url: "/ybsp/his/bending/GetUserInfo",
+                        data: {
+                            "PI_SFBZ": F_IdCard,
+                            "PI_CRBZ":"1"
+                        },
+                        dataType: "json",
+                        async: false,
+                        success: function (data) {
+                            console.log(data);
+                            //$("#form1").formSerialize(data);
+                        }
+                    });
+                    // ajax调用 返回社保卡号如
+                    //var cardNum = 14232323423423454354
+                    //var typeId = 2 // 枚举值，与父亲页面对应的医保类型id进行匹配，然后获取队友元素，其他类似
+                    //
 
-            //var otbMyinsure = $("#tbMyinsure", window.parent.document)
-            //// otbMyinsure.find("")
-            //var $obj = $(map[typeId])
-            //$obj.attr("checked", true)
-            //var $typeId = $obj.parents("tr").find("input[type=hidden]")
-            //var $num = $obj.parents("tr").find("input[type=text]")
-            //$typeId.val(cardNum) // 将医保类型赋值
-            //$num.val(typeId) // 将医保卡号赋值
+                    //var otbMyinsure = $("#tbMyinsure", window.parent.document)
+                    //// otbMyinsure.find("")
+                    //var $obj = $(map[typeId])
+                    //$obj.attr("checked", true)
+                    //var $typeId = $obj.parents("tr").find("input[type=hidden]")
+                    //var $num = $obj.parents("tr").find("input[type=text]")
+                    //$typeId.val(cardNum) // 将医保类型赋值
+                    //$num.val(typeId) // 将医保卡号赋值
 
-        }
-        // 其他验证
-        function checkNumCard() {
-            var F_NumCard = $("#F_NumCard").val()
-            var cardNum = 14232323423423454354
-            var type = 3
-            //
-        }
-        // 验证身份
-        function checkCard(val) {
-            // 社保卡验证
-            // 调用api校验是否符合身份并返回社保卡号
-            if (+val === 1) {
-                checkStartCard()
-            }
-            // 身份证验证
-            if (+val === 2) {
-                checkIdCard()
-            }
-            // 其他验证
-            if (+val === 3) {
-                checkNumCard()
-            }
-        }
-        $("#checkIdCard").click(function () {
-            // 不同的选项验证
-            // 获取选中选项
-            var val = $("input[name=F_EnabledMark]:checked").val()
-            console.log(window.parent)
-            // console.log(val)
-            checkCard(val)
-            // if ($("input[name=F_EnabledMark]").val)
-            // 身份证验证
-            // 其他验证
-            return false
-        })
-    })($)
-</script>
+                }
+                // 其他验证
+                function checkNumCard() {
+                    var F_NumCard = $("#F_NumCard").val()
+                    var cardNum = 14232323423423454354
+                    var type = 3
+                    //
+                }
+                // 验证身份
+                function checkCard(val) {
+                    // 社保卡验证
+                    // 调用api校验是否符合身份并返回社保卡号
+                    if (+val === 1) {
+                        checkStartCard()
+                    }
+                    // 身份证验证
+                    if (+val === 2) {
+                        checkIdCard()
+                    }
+                    // 其他验证
+                    if (+val === 3) {
+                        checkNumCard()
+                    }
+                }
+                $("#checkIdCard").click(function () {
+                    // 不同的选项验证
+                    // 获取选中选项
+                    var val = $("input[name=F_EnabledMark]:checked").val()
+                    console.log(window.parent)
+                    // console.log(val)
+                    checkCard(val)
+                    // if ($("input[name=F_EnabledMark]").val)
+                    // 身份证验证
+                    // 其他验证
+                    return false
+                })
+            })($)
+        </script>*@

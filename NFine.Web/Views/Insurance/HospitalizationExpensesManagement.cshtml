@@ -2,7 +2,6 @@
     ViewBag.Title = "住院费用清单上传";
     Layout = "~/Views/Shared/_Base.cshtml";
 }
-
 <div class="layui-tab layui-tab-card layui-tab-brief" lay-filter="demo">
     @{Html.RenderPartial("_CSharpActiveX");}
     <ul class="layui-tab-title">
@@ -103,7 +102,7 @@
         laydate.render({ elem: '#date2', range: true });
         //是否初始化加载数据
         var isLoad = true;
-
+        $("#batchExamineData").hide();
         //数据表格实例化
         var layTableId = "dataTableBillId"; //默认
         table.render({
@@ -196,6 +195,11 @@
             var examine = $('input[name="Examine"]:checked').val();
             if (examine === 1) {
                 params["IsExamine"] = 1;
+                $("#batchExamineData").show();
+            } else
+            {
+              
+                $("#batchExamineData").hide();
             }
             //执行重载
             table.reload(tableId,
@@ -466,13 +470,18 @@
 <script type="text/html" id="toolbarOne">
 
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="batchUpdateData">批量上传</button>
-    </div>
-    <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="batchExamineData">批量审核</button>
+        <button class="layui-btn layui-btn-sm" id="batchUpdateData" lay-event="batchUpdateData">批量上传</button>
+        <button class="layui-btn layui-btn-sm" id="batchExamineData"  lay-event="batchExamineData">批量审核</button>
     </div>
 </script>
 
+<script type="text/html" id="tableBtn">
+    {{#  if(d.UploadMark == 0){ }}
+    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="pairCode">未上传</a>
+    {{#  } else { }}
+    <a class="layui-btn layui-btn-xs" lay-event="updatePairCode">已上传</a>
+    {{#  }}}
+</script>
 <script type="text/html" id="tableBtn">
     {{#  if(d.UploadMark == 0){ }}
     <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="pairCode">未上传</a>

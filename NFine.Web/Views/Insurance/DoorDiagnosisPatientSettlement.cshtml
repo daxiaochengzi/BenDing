@@ -26,7 +26,7 @@
             <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
             <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
             <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
-
+            <button type="button" Id="DoorDiagnosisSettlementTest" class="layui-btn">门诊结算测试</button>
             @{Html.RenderPartial("_CSharpActiveX");}
             <div class="layui-card-header layuibd-card-header-auto">
                
@@ -176,6 +176,7 @@
                     </div>
                     <div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="DoorDiagnosisSettlementDiv">
                         <button type="button" Id="DoorDiagnosisSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">门诊结算</button>
+                       
                     </div>
                 </div>
                 <div class="layui-card-body" lay-size="sm">
@@ -210,11 +211,11 @@
         $("#AccountPaymentDiv").hide();
         $("#DoorDiagnosisPreSettlementDiv").hide();
         $("#DoorDiagnosisSettlementDiv").hide();
-       // 插件检查
-        var verification = DetectActiveX();
-        if (verification === false) {
-            return false;
-        }
+       //// 插件检查
+       // var verification = DetectActiveX();
+       // if (verification === false) {
+       //     return false;
+       // }
        
         //form数据回显:数据回显到Form表单主体部分
         var jsonToForm = function (jsonData, formFilter) {
@@ -538,42 +539,74 @@
             getInpatientInfo(getInpatientInfoBack);
             buttonStatus("queryData", false);
         });
-        //初始化参数
-        $.ajax({
-            type: 'get',
-            url: host + '/GetOutpatient',
-            data: params,
-            dataType: "json",
-            async: false,
-            success: function (data) {
-               
-                console.log(data);
-                if (data.Success === false) {
-                    var errData = data.Message;
-                    //样式类名:墨绿深蓝风
-                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
 
-                } else {
-                    jsonToForm(data.Data, "LAY-form-render");
-                    var idCardNo = data.Data.IdCardNo;
-                    buttonStatus("queryData", true);
+        $('#DoorDiagnosisSettlementTest').on('click',
+            function() {
 
-                    if (idCardNo !== undefined && idCardNo !== null) {
-                        $("#IdentityMark").val(idCardNo);
-                    } else {
-                        $("#AfferentSignIcCard").attr("selected", false);
-                        $("#AfferentSignNum").attr("selected", true);
-                        $("#markTextLable").text("个人编码");
-                        $("#IdentityMark").val("");
-                        $("#IdentityMark").attr("placeholder", "请输入个人编码");
+                window.IspPoint = false;
+                parent.layer.open({
+                    type: 2, //弹窗类型 ['dialog', 'page', 'iframe', 'loading', 'tips']
+                    area: ['610px', '320px'],
+                    shift: 2, //可选动画类型0-6
+                    scrollbar: false,
+                    title: false,
+                    moveType: 1 //拖拽模式，0或者1
+                    ,
+                    content: "Card",
+                    btn: ['确定', '取消']
+                    , yes: function (index, layero) {
+                        debugger;
+                        var res = window["layui-layer-iframe" + index];
+                   
+                     
+                        // var row = $(layero).find("layui-layer-iframe")[0].contentWindow.callbackdata();
+                        //可以使用ajax请求对数据进行进一步处理
+                    
+                    },btn2: function(index, layero){
+                        layer.close(index);
                     }
+                  
+                });
 
-                }
-            },
-            complete: function () {
-                form.render();
-            }
-        });
+
+            });
+
+        ////初始化参数
+        //$.ajax({
+        //    type: 'get',
+        //    url: host + '/GetOutpatient',
+        //    data: params,
+        //    dataType: "json",
+        //    async: false,
+        //    success: function (data) {
+               
+        //        console.log(data);
+        //        if (data.Success === false) {
+        //            var errData = data.Message;
+        //            //样式类名:墨绿深蓝风
+        //            layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+
+        //        } else {
+        //            jsonToForm(data.Data, "LAY-form-render");
+        //            var idCardNo = data.Data.IdCardNo;
+        //            buttonStatus("queryData", true);
+
+        //            if (idCardNo !== undefined && idCardNo !== null) {
+        //                $("#IdentityMark").val(idCardNo);
+        //            } else {
+        //                $("#AfferentSignIcCard").attr("selected", false);
+        //                $("#AfferentSignNum").attr("selected", true);
+        //                $("#markTextLable").text("个人编码");
+        //                $("#IdentityMark").val("");
+        //                $("#IdentityMark").attr("placeholder", "请输入个人编码");
+        //            }
+
+        //        }
+        //    },
+        //    complete: function () {
+        //        form.render();
+        //    }
+        //});
         form.on('select(AfferentSign)',
             function (data) {
                 var val = data.value;

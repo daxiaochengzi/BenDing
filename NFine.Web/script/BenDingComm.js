@@ -19,7 +19,6 @@ var baseInfo = {
         "WorkersInsuranceBalance": null,//职工医保账户余额
         "MentorBalance": null, //门特余额
         "OverallPaymentBalance": null //统筹支付余额
-
     }
 };
 //判断插件是否存在
@@ -106,7 +105,7 @@ function getHospitalInfo(getHospitalInfoParam) {
     });
 
 }
-
+//获取患者基本信息
 function getInpatientInfo(getInpatientInfoBack)
 {
   
@@ -133,7 +132,37 @@ function getInpatientInfo(getInpatientInfoBack)
             getInpatientInfoBack();
         }
 }
+//读卡获取患者基本信息
+function getReadCardInpatientInfo(getInpatientInfoBack) {
 
+    var cardPwd= iniJs("#CardPwd").val();
+    if (cardPwd === undefined) {
+        msgError("密码控件不存在!!!");
+    }
+    if (cardPwd === "" || cardPwd === null) {
+        msgError("密码不能为空!!!");
+    }
+    var activeX = document.getElementById("CSharpActiveX");
+    var activeData = activeX.OutpatientMethods(cardPwd, JSON.stringify(baseInfo.HospitalInfo), "ReadCardUserInfo");
+    var activeJsonData = JSON.parse(activeData);
+    if (activeJsonData.Success === false) {
+        msgError(activeJsonData.Message);
+    } else {
+        //病人信息赋值
+        var activeJsonInfo = JSON.parse(activeJsonData.Data);
+        baseInfo.Inpatient["PersonalCoding"] = activeJsonInfo.PersonalCoding;
+        baseInfo.Inpatient["PatientName"] = activeJsonInfo.PatientName;
+        baseInfo.Inpatient["PatientSex"] = activeJsonInfo.PatientSex;
+        baseInfo.Inpatient["Birthday"] = activeJsonInfo.Birthday;
+        baseInfo.Inpatient["InsuranceType"] = activeJsonInfo.InsuranceType;
+        baseInfo.Inpatient["IdCardNo"] = activeJsonInfo.IdCardNo;
+        baseInfo.Inpatient["ResidentInsuranceBalance"] = activeJsonInfo.ResidentInsuranceBalance;
+        baseInfo.Inpatient["WorkersInsuranceBalance"] = activeJsonInfo.WorkersInsuranceBalance;
+        baseInfo.Inpatient["MentorBalance"] = activeJsonInfo.MentorBalance;
+        baseInfo.Inpatient["OverallPaymentBalance"] = activeJsonInfo.OverallPaymentBalance;
+        getInpatientInfoBack();
+    }
+}
 function msgSuccess(successData) {
     iniMsg.alert(successData, { icon: 6, shade: 0.1, skin: 'layui-layer-molv', title: '温馨提示' });
 }
