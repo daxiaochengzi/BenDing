@@ -39,6 +39,7 @@ namespace BenDing.Domain.Models.Params.UI
         /// 结算json
         /// </summary>
         public string SettlementJson { get; set; }
+        public decimal InsuranceBalance { get; set; }
 
         /// <summary>
         /// 诊断

@@ -28,6 +28,14 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 是否生育入院登记
         /// </summary>
         public int IsBirthHospital { get; set; }
+       /// <summary>
+       /// 身份标识
+       /// </summary>
+        public string IdentityMark { get; set; }
+        /// <summary>
+        /// 传输标志
+        /// </summary>
+        public  string AfferentSign { get; set; }
         /// <summary>
         /// 诊断
         /// </summary>

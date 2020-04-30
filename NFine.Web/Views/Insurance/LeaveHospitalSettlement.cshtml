@@ -425,6 +425,8 @@
                     layer.alert(errData, { icon: 5,title: '错误提示',skin: 'layui-layer-molv'  });
                 } else {
                     insuranceType = data.Data.InsuranceType;
+                    baseInfo.HospitalInfo.IdentityMark = data.Data.IdentityMark;
+                    baseInfo.HospitalInfo.AfferentSign = data.Data.AfferentSign;
                     jsonToForm(data.Data, "LAY-form-render");
                    
                     if (data.Data.IsBirthHospital === 1) {
@@ -556,6 +558,7 @@
                         msgError(errData);
                         //样式类名:墨绿深蓝风
                     } else {
+                        
                         var activeX = document.getElementById("CSharpActiveX");
                         //获取医保类型
                       
@@ -570,6 +573,7 @@
                                 msgError(activeJsonData.Message);
                             } else {
                                 settlementParam["SettlementJson"] = activeJsonData.Data;
+                                settlementParam["InsuranceBalance"] = activeJsonData.OtherInfo;
                                 hospitalizationSettlement(settlementParam);
                             }
                         }
@@ -588,6 +592,7 @@
                                 msgError(activeJsonData.Message);
                             } else {
                                 settlementParam["SettlementJson"] = activeJsonData.Data;
+                                settlementParam["InsuranceBalance"] = activeJsonData.OtherInfo;
                                 hospitalizationSettlement(settlementParam);
 
                             }

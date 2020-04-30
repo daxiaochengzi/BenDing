@@ -473,7 +473,8 @@ namespace BenDing.Service.Providers
             };
 
 
-        
+            decimal insuranceBalance = !string.IsNullOrWhiteSpace(param.InsuranceBalance) == true
+                ? Convert.ToDecimal(param.InsuranceBalance) : 0;
 
             // 回参构建
             var xmlData = new HospitalSettlementXml()
@@ -485,7 +486,7 @@ namespace BenDing.Service.Providers
                 PaidAmount = data.PaidAmount,
                 AllAmount = data.TotalAmount,
                 PatientName = inpatientInfoData.PatientName,
-                //AccountBalance = param.WorkersInsuranceBalance,
+                AccountBalance = insuranceBalance,
                 AccountAmountPay = 0,
             };
 

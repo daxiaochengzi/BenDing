@@ -484,13 +484,7 @@ namespace BenDing.Service.Providers
                 Remark = "职工住院结算",
                 RelationId = residentData.Id,
             };
-            //存入基层
-            var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
-            {
-                IdentityMark = residentData.IdentityMark,
-                AfferentSign = residentData.AfferentSign,
-
-            });
+      
 
             // 回参构建
             var xmlData = new HospitalSettlementXml()
@@ -501,8 +495,8 @@ namespace BenDing.Service.Providers
                 SettlementNo = resultData.DocumentNo,
                 PaidAmount = resultData.PaidAmount,
                 AllAmount = resultData.TotalAmount,
-                PatientName = userInfoData.PatientName,
-                AccountBalance = userInfoData.WorkersInsuranceBalance,
+                PatientName = inpatientInfoData.PatientName,
+                AccountBalance = param.InsuranceBalance,
                 AccountAmountPay = resultData.AccountPayment,
             };
 
@@ -1038,13 +1032,7 @@ namespace BenDing.Service.Providers
                 Remark = "职工住院结算",
                 RelationId = residentData.Id,
             };
-            //存入基层
-            var userInfoData = _residentMedicalInsuranceRepository.GetUserInfo(new ResidentUserInfoParam()
-            {
-                IdentityMark = residentData.IdentityMark,
-                AfferentSign = residentData.AfferentSign,
-
-            });
+     
 
             // 回参构建
             var xmlData = new HospitalSettlementXml()
@@ -1055,8 +1043,8 @@ namespace BenDing.Service.Providers
                 SettlementNo = resultData.DocumentNo,
                 PaidAmount = resultData.PaidAmount,
                 AllAmount = resultData.TotalAmount,
-                PatientName = userInfoData.PatientName,
-                AccountBalance = userInfoData.WorkersInsuranceBalance,
+                PatientName = inpatientInfoData.PatientName,
+                AccountBalance = param.InsuranceBalance,
                 AccountAmountPay = resultData.AccountPayment,
             };
             var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);

@@ -580,7 +580,8 @@ namespace NFine.Web.Controllers
                  data.IsBirthHospital = queryData.IsBirthHospital;
                  data.MedicalInsuranceState = queryData.MedicalInsuranceState;
                  data.SettlementNo = queryData.SettlementNo;
-               
+                 data.IdentityMark = queryData.IdentityMark;
+                 data.AfferentSign = queryData.AfferentSign;
                  y.Data = data;
 
              });
@@ -597,7 +598,6 @@ namespace NFine.Web.Controllers
             { ////获取操作人员信息
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 userBase.TransKey = param.TransKey;
-
                 var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
                 {
                     BusinessId = param.BusinessId,
@@ -606,7 +606,6 @@ namespace NFine.Web.Controllers
                 //获取医保病人信息
                 var residentData =
                     _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
-
                 var inpatientInfoParam = new QueryInpatientInfoParam() { BusinessId = param.BusinessId };
                 //获取住院病人
                 var inpatientInfoData = _hisSqlRepository.QueryInpatientInfo(inpatientInfoParam);

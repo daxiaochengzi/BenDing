@@ -40,7 +40,7 @@ namespace BenDing.Domain.Models.Params.Resident
         /// <summary>
         /// 余额
         /// </summary>
-        public decimal InsuranceBalance { get; set; }
+        public string InsuranceBalance { get; set; }
         /// <summary>
         /// 诊断
         /// </summary>

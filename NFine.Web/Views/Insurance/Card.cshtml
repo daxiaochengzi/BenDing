@@ -5,12 +5,29 @@
 <link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
 <div id="card-container" style="overflow: hidden !important;">
     <form class="layui-form" id="LAY-form" lay-filter="LAY-form-render">
-        <div class="layui-inline">
-            <label class="layui-form-label" id="markTextLableSsc">身份证号</label>
-            <div class="layui-input-inline">
-                <input type="text" id="IdentityMarkdasdasd" name="IdentityMarkSSS" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
-
-              
+        <!--搜索部分-->
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">身份标识</label>
+                <div class="layui-input-inline">
+                    <select id="AfferentSign" name="AfferentSign" lay-filter="AfferentSign" lay-verify="required">
+                        <option value="">请选择条件</option>
+                        <option id="AfferentSignIcCard" value="1" selected>身份证号</option>
+                        <option id="AfferentSignNum" value="2">个人编号</option>
+                        <option id="CardReading" value="3">读卡</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label" id="markTextLable">身份证号</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="IdentityMark" name="IdentityMark" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button disabled class="layui-btn layui-btn-disabled layui-btn-radius" lay-submit="" id="queryData" lay-filter="LAY-form-search">
+                   查询
+                </button>
             </div>
         </div>
     </form>
@@ -32,11 +49,22 @@
 
             window.getmydata   = function () {
                 var data = {
-                    IdentityMark: $('#IdentityMarkdasdasd').val()
-
+                    IdentityMark: $('#IdentityMark').val()
                 };
                 return data;
             };
+            //查询方式切换
+            form.on('select(AfferentSign)',
+                function (data) {
+                    var val = data.value;
+                    if (val === "2") {
+                        $("#markTextLable").text("个人编码");
+                        $("#IdentityMark").val("");
+                        $("#IdentityMark").attr("placeholder", "请输入个人编码");
+                    } else {
+                        $("#markTextLable").text("身份证号");
+                    }
+                });
         });
 
       

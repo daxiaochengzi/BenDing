@@ -789,6 +789,8 @@ namespace NFine.Web.Controllers
         {
             return new ApiJsonResultData(ModelState, new HospitalizationPresettlementDto()).RunWithTry(y =>
             {
+                decimal insuranceBalance = !string.IsNullOrWhiteSpace(param.InsuranceBalance) == true
+                    ? Convert.ToDecimal(param.InsuranceBalance): 0;
                 var resultData = new SettlementDto();
                 if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
                
@@ -809,7 +811,8 @@ namespace NFine.Web.Controllers
                             BusinessId = param.BusinessId,
                             LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
                             UserId = param.UserId,
-                            SettlementJson = param.SettlementJson
+                            SettlementJson = param.SettlementJson,
+                            InsuranceBalance = insuranceBalance
                         });
                         resultData.CashPayment = workerSettlementData.CashPayment;
                         resultData.PayMsg = CommonHelp.GetPayMsg(JsonConvert.SerializeObject(workerSettlementData));
@@ -829,7 +832,8 @@ namespace NFine.Web.Controllers
                               MedicalCategory = param.MedicalCategory,
                               FetusNumber = param.FetusNumber,
                               LeaveHospitalInpatientState = param.LeaveHospitalInpatientState,
-                              SettlementJson = param.SettlementJson
+                              SettlementJson = param.SettlementJson,
+                              InsuranceBalance = insuranceBalance
 
                           });
                         resultData.CashPayment = workerSettlementData.CashPayment;
