@@ -622,6 +622,12 @@ namespace NFine.Web.Controllers
                     User = userBase
                 });
                 if (settlementCancelData == null) throw new Exception("获取住院结算取消基层信息失败!!!");
+
+                if (settlementCancelData.SettlementNo != residentData.SettlementNo)
+                {
+                    throw new Exception("中间库与基层的结算单据号不一致，取消结算请在(住院费用结算中选择对应记录的撤销)!!!");
+                }
+
                 data.CancelOperator = settlementCancelData.CancelOperator;
                 data.SettlementNo = settlementCancelData.SettlementNo;
                 data.DiagnosisNo = settlementCancelData.DiagnosisNo;

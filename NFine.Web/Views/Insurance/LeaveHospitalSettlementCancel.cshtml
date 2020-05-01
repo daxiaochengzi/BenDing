@@ -380,7 +380,7 @@
                     tableIns.reload({
                         data: data.Data.DiagnosisList
                     });
-                    queryLeaveHospitalSettlement();
+                    buttonStatus("SettlementCancel", true);
                   
                 }
             },
@@ -388,34 +388,34 @@
                 form.render();
             }
         });
-        //查询结算信息
-        function queryLeaveHospitalSettlement() {
-            $.ajax({
-                type: 'get',
-                url: host + '/QueryLeaveHospitalSettlement',
-                data: params,
-                dataType: "json",
-                async: false,
-                success: function (data) {
+        ////查询结算信息
+        //function queryLeaveHospitalSettlement() {
+        //    $.ajax({
+        //        type: 'get',
+        //        url: host + '/QueryLeaveHospitalSettlement',
+        //        data: params,
+        //        dataType: "json",
+        //        async: false,
+        //        success: function (data) {
                    
-                    if (data.Success === false) {
-                        var errData = data.Message;
-                        layer.alert(errData, { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
-                    } else {
-                        //$('#SettlementData').val(data.Data.PayMsg);
+        //            if (data.Success === false) {
+        //                var errData = data.Message;
+        //                layer.alert(errData, { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
+        //            } else {
+        //                //$('#SettlementData').val(data.Data.PayMsg);
                      
-                        if (data.Data.PayMsg !== null) {
-                            settlementData(data.Data.PayMsg);
-                        }
-                        //$('#ReimbursementExpenses').val(data.Data.ReimbursementExpenses);
-                        $('#CashPayment').val(data.Data.CashPayment);
-                        $('#MedicalInsuranceAllAmount').val(data.Data.TotalAmount);
-                        buttonStatus("SettlementCancel", true);
-                    }
-                }
+        //                if (data.Data.PayMsg !== null) {
+        //                    settlementData(data.Data.PayMsg);
+        //                }
+        //                //$('#ReimbursementExpenses').val(data.Data.ReimbursementExpenses);
+        //                $('#CashPayment').val(data.Data.CashPayment);
+        //                $('#MedicalInsuranceAllAmount').val(data.Data.TotalAmount);
+        //                buttonStatus("SettlementCancel", true);
+        //            }
+        //        }
 
-            });
-        }
+        //    });
+        //}
         function getLeaveHospitalSettlementCancelParamIni() {
             var cancelParams = {
                 "TransKey": $("#transkey").val() /*医保交易码*/,
@@ -427,64 +427,6 @@
             }
             return cancelParams;
 
-        }
-        //获取医保取消结算参数
-        function getLeaveHospitalSettlementCancelParam() {
-
-            var cancelParam = getLeaveHospitalSettlementCancelParamIni();
-            $.ajax({
-                type: 'POST',
-                url: hostNew + '/GetLeaveHospitalSettlementCancelParam',
-                async: false,
-                data: JSON.stringify(cancelParam),
-                dataType: "json",
-                contentType: 'application/json',
-                success: function (data) {
-                    if (data.Success === false) {
-                        var errData = data.Message;
-                        msgError(errData);
-                        //样式类名:墨绿深蓝风
-                    } else {
-                        var activeX = document.getElementById("CSharpActiveX");
-                        //获取医保类型
-                        var insuranceTypeValue = $("#InsuranceType").val();
-                        var activeData;
-                        var activeJsonData;
-                        var isBirthHospital = $("#IsBirthHospital").val();
-                        if (insuranceType === "342") {
-                            //居民取消结算
-                            activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "LeaveHospitalSettlementCancel");
-                            activeJsonData = JSON.parse(activeData);
-                            if (activeJsonData.Success === false) {
-                                msgError(activeJsonData.Message);
-                            } else {
-                                leaveHospitalSettlementCancel();
-                            }
-                        }
-                        if (insuranceType === "310") {
-                            //职工生育取消结算
-                            if (isBirthHospital === 1) {
-                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerSettlementCancel");
-                            }
-                            else//职工取消结算
-                            {
-                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "LeaveHospitalSettlementCancel");
-                            }
-
-                            activeJsonData = JSON.parse(activeData);
-                            if (activeJsonData.Success === false) {
-                                msgError(activeJsonData.Message);
-                            } else {
-                                leaveHospitalSettlementCancel();
-                            }
-                        }
-
-                        
-
-                    }
-                }
-            });
-            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         }
         //医保取消结算
         function leaveHospitalSettlementCancel() {
@@ -510,6 +452,67 @@
             });
             return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         }
+        //获取医保取消结算参数
+        function getLeaveHospitalSettlementCancelParam() {
+
+            var cancelParam = getLeaveHospitalSettlementCancelParamIni();
+            $.ajax({
+                type: 'POST',
+                url: hostNew + '/GetLeaveHospitalSettlementCancelParam',
+                async: false,
+                data: JSON.stringify(cancelParam),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        msgError(errData);
+                        //样式类名:墨绿深蓝风
+                    } else {
+                        var activeX = document.getElementById("CSharpActiveX");
+                     
+                        var activeData;
+                        var activeJsonData;
+                     
+                        if (insuranceType === "342") {
+                            //居民取消结算
+                            activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "LeaveHospitalSettlementCancel");
+                            activeJsonData = JSON.parse(activeData);
+                            if (activeJsonData.Success === false) {
+                                msgError(activeJsonData.Message);
+                            } else {
+                                leaveHospitalSettlementCancel();
+                            }
+                        }
+                        if (insuranceType === "310") {
+                          
+                            //职工生育取消结算
+                            if (isBirthHospital === 1) {
+
+                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "LeaveHospitalSettlementCancel");
+                               
+                            }
+                            else//职工取消结算
+                            {
+                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerSettlementCancel"); 
+                            }
+
+                            activeJsonData = JSON.parse(activeData);
+                            if (activeJsonData.Success === false) {
+                                msgError(activeJsonData.Message);
+                            } else {
+                                leaveHospitalSettlementCancel();
+                            }
+                        }
+
+                      
+
+                    }
+                }
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        }
+     
         //结算取消
         $('#SettlementCancel').on('click', function () {
             getLeaveHospitalSettlementCancelParam();

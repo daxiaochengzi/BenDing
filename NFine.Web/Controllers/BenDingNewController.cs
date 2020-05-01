@@ -943,8 +943,8 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [HttpGet]
-        public ApiJsonResultData LeaveHospitalSettlementCancel([FromUri]LeaveHospitalSettlementCancelUiParam param)
+        [HttpPost]
+        public ApiJsonResultData LeaveHospitalSettlementCancel([FromBody]LeaveHospitalSettlementCancelUiParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             {   //获取操作人员信息
@@ -960,7 +960,8 @@ namespace NFine.Web.Controllers
                 //获取医保病人信息
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
                 if (residentData == null) throw new Exception("当前病人未办理医保入院登记!!!");
-
+                
+               
                 //居民
                 if (residentData.InsuranceType == "342")
                 {
@@ -1009,7 +1010,7 @@ namespace NFine.Web.Controllers
                         var settlementCancelParam = new LeaveHospitalSettlementCancelParam()
                         {
                             MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
-                            SettlementNo = residentData.SettlementNo,
+                            SettlementNo =  residentData.SettlementNo,
                             Operators = CommonHelp.GuidToStr(userBase.UserId),
                             CancelLimit = param.CancelLimit,
 

@@ -568,7 +568,7 @@
                         var activeJsonData;
                         var isBirthHospital = $("#IsBirthHospital").val();
                         if (insuranceType === "342") {
-                            //居民预结算
+                            //居民结算
                             activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "LeaveHospitalSettlement");
                             activeJsonData = JSON.parse(activeData);
                             if (activeJsonData.Success === false) {
@@ -580,13 +580,14 @@
                             }
                         }
                         if (insuranceType === "310") {
-                            //职工生育预结算
-                            if (isBirthHospital === 1) {
-                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerHospitalizationSettlement");
-                            }
-                            else//职工预结算
-                            {
+                            //职工生育结算
+                            if (isBirthHospital === "1") {
                                 activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerBirthSettlement");
+                               
+                            }
+                            else//职工结算
+                            {
+                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerHospitalizationSettlement");
                             }
 
                             activeJsonData = JSON.parse(activeData);

@@ -496,11 +496,11 @@
                         if (insuranceType === "310") {
                             //职工生育预结算
                             if (isBirthHospital === 1) {
-                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerBirthPreSettlement");  
+                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerBirthPreSettlement");
                             }
                             else//职工预结算
                             {
-                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerHospitalizationPreSettlement");
+                                activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerHospitalizationPreSettlement");  
                             }
                           
                             activeJsonData = JSON.parse(activeData);
