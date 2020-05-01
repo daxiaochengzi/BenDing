@@ -313,14 +313,17 @@
         if (verification === false) {
             return false;
         }
+        //获取医院基本信息回调方法
+        window.getHospitalInfoBack = function () { };
 
-        //登记
-        form.on('submit(updateRegister)', function (data) {
+        getHospitalInfo(getHospitalInfoBack);
+
+        function getHospitalizationModifyParamIni(data) {
             var field = data.field;
            
             //诊断列表
             var dataTable1 = table.cache[layTableId];
-            var diagnosisList = []
+            var diagnosisList = [];
             //排除空值
             $.each(dataTable1, function (k, v) {
                 if (v.DiseaseCoding !== undefined) {
@@ -329,27 +332,90 @@
             });
             //诊断列表 add
             field.DiagnosisList = diagnosisList;
+
+            return field;
+        }
+
+        //获取医保入院登记参数
+        function getHospitalizationModifyParam(data) {
+            var fieldParam = getHospitalizationModifyParamIni(data);
             $.ajax({
                 type: 'POST',
-                url: host +'/HospitalizationModify',
+                url: hostNew + '/GetHospitalizationModifyParam',
                 async: false,
-                data: JSON.stringify(field),
+                data: JSON.stringify(fieldParam),
                 dataType: "json",
                 contentType: 'application/json',
                 success: function (data) {
                     if (data.Success === false) {
                         var errData = data.Message;
-                       
-                        layer.alert('修改失败' + errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                      
+                        msgError(errData);
+                        return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+                        //样式类名:墨绿深蓝风
                     } else {
-                      
-                        buttonStatus("updateRegister", false);
-                        layer.alert('修改成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv',title: '温馨提示' });
+                        var activeX = document.getElementById("CSharpActiveX");
+                        //获取医保类型
+                        var insuranceTypeValue = $("#InsuranceType").val();
+                        var activeData;
+                        var activeJsonData;
+                        if (insuranceTypeValue === "342") { //医保入院登记修改
+                            activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "HospitalizationModify");
+                            activeJsonData = JSON.parse(activeData);
+                            if (activeJsonData.Success === false) {
+                                msgError(activeJsonData.Message);
+                            } else {
+                                fieldParam["SettlementJson"] = activeJsonData.Data;
+                                hospitalizationModify(fieldParam);
+                            }
+                        }
+                        if (insuranceTypeValue === "310") {
+                            //医保入院登记修改
+                            activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "ModifyWorkerHospitalization");
+                            activeJsonData = JSON.parse(activeData);
+                            if (activeJsonData.Success === false) {
+                                msgError(activeJsonData.Message);
+                            } else {
+                                fieldParam["SettlementJson"] = activeJsonData.Data;
+                                hospitalizationModify(fieldParam);
+
+                            }
+                        }
+
                     }
                 }
             });
-            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+
+
+        }
+        //住院登记
+        function hospitalizationModify(fieldParam) {
+            $.ajax({
+                type: 'POST',
+                url: hostNew + '/HospitalizationModify',
+                async: false,
+                data: JSON.stringify(fieldParam),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.Success === false) {
+                        var errData = data.Message;
+                        msgError(errData);
+
+                    } else {
+                        buttonStatus("updateRegister", false);
+                        msgSuccess('修改成功');
+
+                    }
+
+                }
+            });
+        }
+
+        //修改登记
+        form.on('submit(updateRegister)', function (data) {
+
+            getHospitalizationModifyParam(data);
+            //return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         });
         //页面一加载就发送ajax
         $(function () {
