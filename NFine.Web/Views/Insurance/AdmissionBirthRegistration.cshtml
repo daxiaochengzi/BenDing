@@ -292,6 +292,8 @@
             }
             //form数据回显:数据回显到Form表单主体部分
             var jsonToForm = function (jsonData, formFilter) {
+                //初始化
+                setMedicalCategoryIni(jsonData.InsuranceType);
                 //给表单赋值
                 form.val(formFilter,
                     {
@@ -310,9 +312,8 @@
                         "InsuranceType": jsonData.InsuranceType,
                         "PersonnelClassification": jsonData.PersonnelClassification
                     });
-                //初始化
-                setMedicalCategoryIni(jsonData.InsuranceType);
               
+                form.render();
             }
             form.on('select(AfferentSign)',
                 function (data) {
@@ -504,7 +505,7 @@
             //初始化病人基本信息
             function iniInpatientInfo() {
 
-                jsonToForm(data.Data, "LAY-form-render");
+                jsonToForm(baseInfo.Inpatient, "LAY-form-render");
                 //加载诊断默认数据
                 tableIns.reload({
                     data: inpatientInfoData.Data.DiagnosisList
@@ -516,7 +517,7 @@
                 iniInpatientInfo();
             }
             //入参初始化
-            function getBirthHospitalizationRegisterParamIni()
+            function getBirthHospitalizationRegisterParamIni(data)
             {
                 var field = data.field;
                 //医疗类别
@@ -566,8 +567,8 @@
                 return field;
             }
             //获取医保入院登记参数
-            function getBirthHospitalizationRegisterParam() {
-                var fieldParam = getBirthHospitalizationRegisterParamIni();
+            function getBirthHospitalizationRegisterParam(data) {
+                var fieldParam = getBirthHospitalizationRegisterParamIni(data);
                 $.ajax({
                     type: 'POST',
                     url: hostNew + '/GetBirthHospitalizationRegisterParam',
@@ -592,7 +593,8 @@
                                 if (activeJsonData.Success === false) {
                                     msgError(activeJsonData.Message);
                                 } else {
-                                    birthHospitalizationRegister(activeJsonData.Data);
+                                    fieldParam["SettlementJson"] = activeJsonData.Data;
+                                    birthHospitalizationRegister(fieldParam);
                                 }
                             }
                             if (insuranceTypeValue === "310") {
@@ -602,7 +604,8 @@
                                 if (activeJsonData.Success === false) {
                                     msgError(activeJsonData.Message);
                                 } else {
-                                    birthHospitalizationRegister(activeJsonData.Data)
+                                    fieldParam["SettlementJson"] = activeJsonData.Data;
+                                    birthHospitalizationRegister(fieldParam)
                                 }
                             }
 
@@ -616,24 +619,25 @@
             }
             //住院登记
             function birthHospitalizationRegister(parameters) {
-                var fieldParam = getBirthHospitalizationRegisterParamIni();
-                fieldParam["SettlementJson"] = parameters;
+               
+               
                 $.ajax({
                     type: 'POST',
                     url: hostNew + '/BirthHospitalizationRegister',
                     async: false,
-                    data: JSON.stringify(fieldParam),
+                    data: JSON.stringify(parameters),
                     dataType: "json",
                     contentType: 'application/json',
                     success: function (data) {
                         if (data.Success === false) {
                             var errData = data.Message;
                             msgError(errData);
+                            return false;
                         } else {
                             msgSuccess('登记成功');
                             buttonStatus("BirthRegister", false);
                         }
-                        return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+                      
                     }
                 });
             }
@@ -647,7 +651,7 @@
             form.on('submit(BirthRegister)',
                 function (data) {
 
-                    getBirthHospitalizationRegisterParam();
+                    getBirthHospitalizationRegisterParam(data);
 
                 });
           

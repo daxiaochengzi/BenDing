@@ -631,7 +631,8 @@ namespace BenDing.Service.Providers
             var inpatientData = _serviceBasicService.GetInpatientInfo(infoData);
             if (inpatientData == null) throw new Exception("获取基层病人失败!!!");
             var paramIni = GetWorkerHospitalizationWorkerBirth(inpatientData, param);
-            var data = _workerMedicalInsuranceRepository.WorkerBirthHospitalizationRegister(paramIni);
+            var data = JsonConvert.DeserializeObject<WorkerBirthHospitalizationRegisterDto>(param.SettlementJson);
+            //var data = _workerMedicalInsuranceRepository.WorkerBirthHospitalizationRegister(paramIni);
             if (data == null) throw new Exception("职工生育入院登记未反馈数据!!!");
 
             var saveData = new MedicalInsuranceDto

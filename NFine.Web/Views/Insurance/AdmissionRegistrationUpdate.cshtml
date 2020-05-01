@@ -108,7 +108,8 @@
     }).extend({ //设定模块别名
         autocomplete: 'layAutoComplete'
     });
-
+    var iniJs;
+    var iniMsg;
     layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'], function () {
         var $ = layui.$
             //Tab的切换功能，切换事件监听等，需要依赖element模块
@@ -117,7 +118,9 @@
             , layer = layui.layer
             , table = layui.table
             , laydate = layui.laydate;
-
+        //初始化公共页面
+        iniJs = $;
+        iniMsg = layer;
         form.render(null, "LAY-form-render");
         //指定入院日期,外部事件调用
         lay('#AdmissionDate').on('click', function () {
@@ -305,7 +308,11 @@
                 }
             });
             //---------
-
+        //插件检查
+        var verification = DetectActiveX();
+        if (verification === false) {
+            return false;
+        }
 
         //登记
         form.on('submit(updateRegister)', function (data) {
@@ -463,9 +470,4 @@
 
         }
     });
-
-    
-
-
-    
 </script> 
