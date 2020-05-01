@@ -190,6 +190,7 @@
                 , "UploadMark": 0 /*上传状态*/
                 , "IsLoad": isLoad
             };
+            params["timestamp"] = (new Date()).valueOf();
             //是否限制项目查询
             var examine = $('input[name="Examine"]:checked').val();
             if (examine === "1") {

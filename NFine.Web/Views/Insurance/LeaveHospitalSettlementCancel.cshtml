@@ -348,6 +348,8 @@
             "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
             "UserId": $("#empid").val() /*授权操作人的ID*/
         }
+        params["timestamp"] = (new Date()).valueOf();
+
         //插件检查
         var verification = DetectActiveX();
         if (verification === false) {
@@ -482,7 +484,6 @@
                     }
                 }
             });
-
             return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         }
         //医保取消结算

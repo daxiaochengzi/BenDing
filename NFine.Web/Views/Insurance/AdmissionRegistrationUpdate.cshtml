@@ -21,6 +21,7 @@
             <input type="hidden" id="bid" name="BusinessId" value="@ViewBag.bid" placeholder="业务ID" />
             <input type="hidden" id="empid" name="UserId" value="@ViewBag.empid" placeholder="用户ID" />
             <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
+            @{Html.RenderPartial("_CSharpActiveX");}
             <div class="layui-card-header layuibd-card-header-auto">
                 <!--可修改的住院信息-->
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
@@ -94,8 +95,8 @@
                 <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
 
                 <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                    <button type="submit" id="updateRegister" disabled  class="layui-btn layui-btn-disabled layui-btn-radius" lay-submit lay-filter="updateRegister">修改登记</button>
-                  
+                    <button type="submit" id="updateRegister" disabled class="layui-btn layui-btn-disabled layui-btn-radius" lay-submit lay-filter="updateRegister">修改登记</button>
+
                 </div>
             </div>
         </form>
@@ -121,6 +122,7 @@
         //初始化公共页面
         iniJs = $;
         iniMsg = layer;
+        var insuranceTypeValue = null;
         form.render(null, "LAY-form-render");
         //指定入院日期,外部事件调用
         lay('#AdmissionDate').on('click', function () {
@@ -131,8 +133,6 @@
                 , closeStop: '#AdmissionDate'
             });
         });
-      
-
         //----
         //诊断数据表格实例化
         var layTableId = "dataTableId";
@@ -355,7 +355,7 @@
                     } else {
                         var activeX = document.getElementById("CSharpActiveX");
                         //获取医保类型
-                        var insuranceTypeValue = $("#InsuranceType").val();
+                       
                         var activeData;
                         var activeJsonData;
                         if (insuranceTypeValue === "342") { //医保入院登记修改
@@ -404,7 +404,7 @@
                     } else {
                         buttonStatus("updateRegister", false);
                         msgSuccess('修改成功');
-
+                       
                     }
 
                 }
@@ -415,14 +415,16 @@
         form.on('submit(updateRegister)', function (data) {
 
             getHospitalizationModifyParam(data);
-            //return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            return false; 
+          //阻止表单跳转。如果需要表单跳转，去掉这段即可。
         });
         //页面一加载就发送ajax
         $(function () {
             var params = {
                 "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
                 , "UserId": $("#empid").val() /*授权操作人的ID*/
-                , "Transkey": $("#transkey").val() /*医保交易ID*/
+                , "Transkey": $("#transkey").val(),/*医保交易ID*/
+                "timestamp": (new Date()).valueOf()
             }
             $.ajax({
                 url: host +'/QueryMedicalInsurance',
@@ -437,19 +439,21 @@
 
                       
                     } else {
-                       
+                      
                         var data = res.Data;
+                        insuranceTypeValue = data.InsuranceType;
                         //判断是否生育入院登记
                         if (data.HouseholdNature === null || data.FetusNumber == null && data.InsuranceType !== "342")
                         {
                             $("#FetusNumberDiv").hide();
                             $("#HouseholdNatureDiv").hide();
                         }
-                        //表单初始赋值
-                        form.val('LAY-form-render', data);
                         //默认选择的科室ID
                         var departmentCode = data.InpatientDepartmentCode;
                         selectDepartmentName(departmentCode);
+                        //表单初始赋值
+                        form.val('LAY-form-render', data);
+                       
                         //诊断表初始化
                         var oldData = data.DiagnosisList;
                         tableIns.reload({
@@ -512,7 +516,7 @@
                     var opts = $('.layer_update .layui-input-inline dl.layui-anim dd');
                     for (var i = 0; i < opts.length; i++) {
                       
-                        var cc = opts[i].getAttribute('lay-value');
+                    
                         if (opts[i].getAttribute('lay-value') === defaultCode) {
                             var select = 'dd[lay-value=' + opts[i].getAttribute('lay-value') + ']';
                             $('#InpatientDepartmentCode').siblings("div.layui-form-select").find('dl').find(select).click();
@@ -523,17 +527,5 @@
         }
 
 
-        function buttonStatus(buttonId, status) {
-            //取消禁用
-            if (status === true) {
-                $("#" + buttonId).attr("class", "layui-btn layui-btn-radius");
-                $("#" + buttonId).removeAttr("disabled");
-            }//禁用
-            else {
-                $("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
-                $("#" + buttonId).attr("disabled", 'disabled');
-            }
-
-        }
     });
 </script> 

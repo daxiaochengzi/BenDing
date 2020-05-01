@@ -289,6 +289,7 @@
                     "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
                     "UserId": $("#empid").val() /*授权操作人的ID*/
                 }
+                params["timestamp"] = (new Date()).valueOf();
                 //获取病人信息
                 $.ajax({
                     url: host + '/GetInpatientInfo',
@@ -635,7 +636,7 @@
             form.on('submit(register)',
                 function (data) {
                     getHospitalizationRegisterParam(data);
-                   
+                    return false; 
                 });
         });
 

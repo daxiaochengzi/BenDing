@@ -369,6 +369,8 @@
             "UserId": $("#empid").val() /*授权操作人的ID*/
             
         }
+        params["timestamp"] = (new Date()).valueOf();
+
         //插件检查
         var verification = DetectActiveX();
         if (verification === false) {

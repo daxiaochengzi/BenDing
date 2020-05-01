@@ -104,7 +104,7 @@
             ]
         });
         var tableDataLoad = function (tableId) {
-
+            queryParam["timestamp"] = (new Date()).valueOf();
             //执行重载
             table.reload(tableId,
                 {

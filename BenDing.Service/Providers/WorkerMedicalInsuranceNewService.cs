@@ -155,8 +155,7 @@ namespace BenDing.Service.Providers
             var userBase = _serviceBasicService.GetUserBaseInfo(uiParam.UserId);
             userBase.TransKey = uiParam.TransKey;
             var param = GetWorkerHospitalizationModify(uiParam, userBase);
-            //医保执行
-            _workerMedicalInsuranceRepository.ModifyWorkerHospitalization(param);
+          
             // 回参构建
             var xmlData = new HospitalizationModifyXml()
             {
