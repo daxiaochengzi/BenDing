@@ -308,9 +308,10 @@ namespace BenDing.Service.Providers
                 IsHospitalizationFrequency = "0",
                 OrganizationCode = gradeData.MedicalInsuranceAccount,
             };
-            ////医保结算
+            //医保结算
             //var resultData = _workerMedicalInsuranceRepository.WorkerHospitalizationPreSettlement(preSettlement);
 
+            var resultDataDocumentNo = JsonConvert.DeserializeObject<WorkerHospitalizationPreSettlementJsonDto>(param.SettlementJson);
             var resultData = JsonConvert.DeserializeObject<WorkerHospitalizationPreSettlementDto>(param.SettlementJson);
             //报销金额 =统筹支付+补充医疗保险支付金额+专项基金支付金额+
             //公务员补贴+公务员补助+其它支付金额
@@ -324,7 +325,7 @@ namespace BenDing.Service.Providers
                 OtherInfo = JsonConvert.SerializeObject(resultData),
                 Id = residentData.Id,
                 UserId = userBase.UserId,
-                SettlementNo = resultData.DocumentNo,
+                SettlementNo = resultDataDocumentNo.DocumentNo,
                 MedicalInsuranceAllAmount = resultData.TotalAmount,
                 PreSettlementTransactionId = userBase.TransKey,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsurancePreSettlement
@@ -456,6 +457,7 @@ namespace BenDing.Service.Providers
             //var resultData = _workerMedicalInsuranceRepository.WorkerHospitalizationSettlement(infoParam);
             //报销金额 =统筹支付+补充医疗保险支付金额+专项基金支付金额+
             //公务员补贴+公务员补助+其它支付金额
+            var resultDataDocumentNo = JsonConvert.DeserializeObject<WorkerHospitalizationPreSettlementJsonDto>(param.SettlementJson);
             var resultData = JsonConvert.DeserializeObject<WorkerHospitalizationPreSettlementDto>(param.SettlementJson);
             decimal reimbursementExpenses = resultData.BasicOverallPay + resultData.SupplementPayAmount + resultData.SpecialFundPayAmount
             + resultData.CivilServantsSubsidies + resultData.CivilServantsSubsidy + resultData.OtherPaymentAmount;
@@ -467,7 +469,7 @@ namespace BenDing.Service.Providers
                 SelfPayFeeAmount = resultData.CashPayment,
                 OtherInfo = JsonConvert.SerializeObject(resultData),
                 Id = residentData.Id,
-                SettlementNo = resultData.DocumentNo,
+                SettlementNo = resultDataDocumentNo.DocumentNo,
                 MedicalInsuranceAllAmount = resultData.TotalAmount,
                 SettlementTransactionId = userBase.UserId,
                 MedicalInsuranceState = MedicalInsuranceState.MedicalInsuranceSettlement
@@ -491,7 +493,7 @@ namespace BenDing.Service.Providers
 
                 MedicalInsuranceHospitalizationNo = residentData.MedicalInsuranceHospitalizationNo,
                 CashPayment = resultData.CashPayment,
-                SettlementNo = resultData.DocumentNo,
+                SettlementNo = resultDataDocumentNo.DocumentNo,
                 PaidAmount = resultData.PaidAmount,
                 AllAmount = resultData.TotalAmount,
                 PatientName = inpatientInfoData.PatientName,
@@ -504,7 +506,7 @@ namespace BenDing.Service.Providers
             var saveXml = new SaveXmlDataParam()
             {
                 User = userBase,
-                MedicalInsuranceBackNum = resultData.DocumentNo,
+                MedicalInsuranceBackNum = resultDataDocumentNo.DocumentNo,
                 MedicalInsuranceCode = "41",
                 BusinessId = param.BusinessId,
                 BackParam = strXmlBackParam

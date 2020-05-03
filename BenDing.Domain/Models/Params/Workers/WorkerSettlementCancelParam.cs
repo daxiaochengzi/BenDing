@@ -32,6 +32,10 @@ namespace BenDing.Domain.Models.Params.Workers
         /// </summary>
         public string SettlementJson { get; set; }
         /// <summary>
+        /// 跨年标志
+        /// </summary>
+        public string YearSign { get; set; }
+        /// <summary>
         /// 取消结算备注
         /// </summary>
         public string CancelSettlementRemarks { get; set; }

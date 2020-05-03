@@ -429,9 +429,10 @@
 
         }
         //医保取消结算
-        function leaveHospitalSettlementCancel() {
+        function leaveHospitalSettlementCancel(cancelParam) {
 
-            var cancelParam = getLeaveHospitalSettlementCancelParamIni();
+            
+          
             $.ajax({
                 type: 'POST',
                 url: hostNew + '/LeaveHospitalSettlementCancel',
@@ -498,10 +499,15 @@
                             }
 
                             activeJsonData = JSON.parse(activeData);
+                          
                             if (activeJsonData.Success === false) {
                                 msgError(activeJsonData.Message);
                             } else {
-                                leaveHospitalSettlementCancel();
+                                if (insuranceType === "310" && isBirthHospital !== 1) {
+                                    cancelParam["YearSign"] = activeJsonData.OtherInfo;
+                                }
+                               
+                                leaveHospitalSettlementCancel(cancelParam);
                             }
                         }
 

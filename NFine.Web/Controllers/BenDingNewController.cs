@@ -674,6 +674,7 @@ namespace NFine.Web.Controllers
                         resultData.CashPayment = workerSettlementData.CashPayment;
                         resultData.ReimbursementExpenses = workerSettlementData.ReimbursementExpenses;
                         resultData.TotalAmount = workerSettlementData.TotalAmount;
+
                     }//职工生育预结算
                     else if (residentData.IsBirthHospital == 1)
                     {

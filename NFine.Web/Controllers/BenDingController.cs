@@ -532,7 +532,9 @@ namespace NFine.Web.Controllers
                 data.DiagnosisList = settlementData.DiagnosisList;
                 data.InsuranceType = queryData.InsuranceType;
                 data.LeaveHospitalDate = settlementData.LeaveHospitalDate;
-               
+
+          
+
                 y.Data = data;
             });
         }
@@ -582,6 +584,11 @@ namespace NFine.Web.Controllers
                  data.SettlementNo = queryData.SettlementNo;
                  data.IdentityMark = queryData.IdentityMark;
                  data.AfferentSign = queryData.AfferentSign;
+                 if (queryData.InsuranceType == "310")
+                 {//调整标记
+                     data.AfferentSign = queryData.AfferentSign == "2" ? "1" : "2";
+                 }
+
                  y.Data = data;
 
              });

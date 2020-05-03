@@ -18,7 +18,11 @@ namespace BenDing.Domain.Models.Params.UI
         /// </summary>
         [Display(Name = "取消度取消程度")]
         [Required(ErrorMessage = "{0}不能为空!!!")]
-        public string CancelLimit { get; set; } 
+        public string CancelLimit { get; set; }
+        /// <summary>
+        /// 跨年标志
+        /// </summary>
+        public string YearSign { get; set; }
         /// <summary>
         /// 取消结算备注
         /// </summary>

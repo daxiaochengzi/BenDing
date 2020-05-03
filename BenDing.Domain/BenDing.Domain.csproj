@@ -80,6 +80,7 @@
     <Compile Include="Models\Dto\JsonEntity\ResidentUserInfoJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\UserInfoJsonDto.cs" />
     <Compile Include="Models\Dto\JsonEntity\WorkerBirthPreSettlementJsonDto.cs" />
+    <Compile Include="Models\Dto\JsonEntity\WorkerHospitalizationPreSettlementJsonDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\GetOutpatientSettlementCancelDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\WorkerBirthSettlementDto.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\MonthlyHospitalizationCancelParam.cs" />

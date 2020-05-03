@@ -492,9 +492,9 @@ namespace BenDing.Service.Providers
                         Remarks = param.CancelSettlementRemarks
                     });
                 }
-
-                // 结算取消
-                 resultData = _workerMedicalInsuranceRepository.WorkerSettlementCancel(param);
+                resultData = param.YearSign;
+                //// 结算取消
+                // resultData = _workerMedicalInsuranceRepository.WorkerSettlementCancel(param);
                 //取消交易id
                 var cancelTransactionId = param.User.TransKey;
                 //回参构建

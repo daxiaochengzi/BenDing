@@ -1,18 +1,17 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
-namespace BenDing.Domain.Models.Dto.Workers
-{/// <summary>
-/// 
-/// </summary>
-  public  class WorkerHospitalizationPreSettlementDto
-    {/// <summary>
-     /// 发生费用金额
-     /// </summary>
+namespace BenDing.Domain.Models.Dto.JsonEntity
+{
+   public class WorkerHospitalizationPreSettlementJsonDto
+    {
+        /// <summary>
+        /// 发生费用金额
+        /// </summary>
         [JsonProperty(PropertyName = "发生费用金额")]
         public decimal TotalAmount { get; set; }
         /// <summary>
@@ -64,12 +63,11 @@ namespace BenDing.Domain.Models.Dto.Workers
         /// 报销金额
         /// </summary>
         [JsonIgnore]
-        public  decimal ReimbursementExpenses { get; set; }
+        public decimal ReimbursementExpenses { get; set; }
         /// <summary>
         /// 单据号
         /// </summary>
-        [JsonIgnore]
-        [JsonProperty(PropertyName = "DocumentNo")]
+    
         public string DocumentNo { get; set; }
         /// <summary>
         ///  备注
