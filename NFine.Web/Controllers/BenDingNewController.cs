@@ -266,6 +266,47 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
+        /// 获取取消入院登记信息
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetAdmissionRegistrationCancelInfo([FromBody]UiBaseDataParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
+                var resultData = new AdmissionRegistrationCancelInfoDto();
+             
+                var infoData = new GetInpatientInfoParam()
+                {
+                    User = userBase,
+                    BusinessId = param.BusinessId,
+                };
+                //获取病人信息
+                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
+                var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
+                {
+                    BusinessId = param.BusinessId,
+                    OrganizationCode = userBase.OrganizationCode
+                };
+                //获取医保病人信息
+                var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
+                if (residentData == null) throw new Exception("当前病人未办理医保入院登记,不能取消入院登记!!!");
+                if (residentData.MedicalInsuranceState == MedicalInsuranceState.HisSettlement)
+                {
+                    throw new Exception("当前病人已办理医保结算,请先取消结算,再取消入院登记!!!");
+                }
+                resultData.InpatientInfo = inpatientData;
+                resultData.InsuranceType = residentData.InsuranceType;
+                resultData.IsBirthHospital = residentData.IsBirthHospital;
+                y.Data = resultData;
+            });
+
+        }
+        
+        /// <summary>
         /// 取消门诊费用结算
         /// </summary>
         /// <param name="param"></param>
@@ -881,6 +922,15 @@ namespace NFine.Web.Controllers
                 var residentData =
                     _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(queryResidentParam);
                 if (residentData == null) throw new Exception("当前病人未办理医保入院登记!!!");
+                if (param.CancelLimit == "1")
+                {
+                    if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement)
+                    {
+                        throw new Exception("当前病人未办理医保结算，不能取消结算!!!");
+                    }
+                }
+
+               
                 //居民
                 if (residentData.InsuranceType == "342")
                 {
@@ -900,8 +950,7 @@ namespace NFine.Web.Controllers
                 {
                     if (residentData.IsBirthHospital == 0)
                     {
-                        if (residentData.MedicalInsuranceState != MedicalInsuranceState.HisSettlement)
-                            throw new Exception("当前病人未医保结算");
+                        
                         //获取医院等级
                         var gradeData =
                             _systemManageRepository.QueryHospitalOrganizationGrade(userBase.OrganizationCode);
@@ -1035,8 +1084,8 @@ namespace NFine.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        [HttpGet]
-        public ApiJsonResultData MedicalInsuranceHospitalizationRegisterCancel([FromUri]UiBaseDataParam param)
+        [HttpPost]
+        public ApiJsonResultData MedicalInsuranceHospitalizationRegisterCancel([FromBody]UiBaseDataParam param)
         {
             return new ApiJsonResultData(ModelState).RunWithTry(y =>
             { //获取操作人员信息

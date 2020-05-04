@@ -444,9 +444,8 @@
                     tableIns.reload({
                         data: data.Data.DiagnosisList
                     });
-                 
                     buttonStatus("Settlement", true);
-                  
+                    form.render();
                 }
             }
            
@@ -612,113 +611,9 @@
      
         $('#Settlement').on('click', function () {
             getHospitalizationSettlementParam();
-            //$.ajax({
-            //    type: 'post',
-            //    url: host + '/LeaveHospitalSettlement',
-            //    data: JSON.stringify(settlementParam),
-            //    dataType: "json",
-            //    contentType: 'application/json',
-            //    async: false,
-            //    success: function (data) {
-            //        console.log(data);
-            //        if (data.Success === false) {
-            //            var errData = data.Message;
-            //            //样式类名:墨绿深蓝风
-            //            layer.alert(errData, { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
-            //        } else {
-            //            if (data.Data.PayMsg !== null) {
-            //                settlementData(data.Data.PayMsg);
-            //            }
-            //            //$('#ReimbursementExpenses').val(data.Data.ReimbursementExpenses);
-            //            $('#CashPayment').val(data.Data.CashPayment);
-            //            $('#HospitalizationTotalCost').val(data.Data.TotalAmount);
-            //            //debugger;
-            //            //if (insuranceType === "310") {
-            //            //    $("#CardPwd").attr("disabled", false);
-            //            //    //打开刷卡按钮
-            //            //    buttonStatus("PayCard", true);
-            //            //}
-            //            buttonStatus("Settlement", false);
-            //            layer.alert('住院结算成功', { icon: 6,title: '温馨提示', shade: 0.1, skin: 'layui-layer-molv' });
-                      
-            //        }
-            //    }
-
-            //});
+           
         });
-        //$('#PayCard').on('click', function () {
-
-        //   //初始化插件
-        //    var activeX = document.getElementById("CSharpActiveX");
-        //    //var param =
-        //    //{
-        //    //    "PI_SFBZ":"511521201704210171",
-        //    //    "PI_CRBZ":"1"
-        //    //}
-        //    var paramBase =
-        //    {
-        //        "Account": "cpq2677", 
-        //        "Pwd": "888888",
-        //        "OperatorId": $("#empid").val() /*授权操作人的ID*/,
-        //    }
-        //    var param =
-        //    {
-        //        "MedicalCategory":"2",
-        //        "AllAmount": "3.00",
-        //        "CardPwd": "123456",
-        //        "Operator":"李茜"
-        //    }
-
       
-        //   //var activeData = activeX.GetUserInfo(JSON.stringify(param), JSON.stringify(paramBase));
-        //    var activeData = activeX.WorkersSettlement(JSON.stringify(param), JSON.stringify(paramBase));
-        //    var activeJsonData = JSON.parse(activeData);
-        //    if (activeJsonData.Success === false)
-        //    {
-        //        layer.alert(activeJsonData.Message, { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
-               
-        //        return false;
-        //    }
-        //    var getData = JSON.parse(activeJsonData.Data);
-        //    var workerStrokeCard =
-        //    {
-        //        "TransKey": $("#transkey").val() /*医保交易码*/,
-        //        "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
-        //        "UserId": $("#empid").val() /*授权操作人的ID*/,
-        //        "AllAmount": "3.00", /*授权操作人的ID*/
-        //        "CardType": "2", //住院
-        //        "DocumentNo": settlementNo,// getData.SettlementNo
-        //        "SelfPayFeeAmount": getData.SelfPayment,
-        //        "AccountPayAmount":getData.AccountPayment
-        //    };
-
-        //    $.ajax({
-        //        type: 'post',
-        //        url: host + '/WorkerStrokeCard',
-        //        data: JSON.stringify(workerStrokeCard),
-        //        dataType: "json",
-        //        contentType: 'application/json',
-        //        async: false,
-        //        success: function (data) {
-        //            console.log(data);
-        //            if (data.Success === false) {
-        //                var errData = data.Message;
-        //                layer.alert(errData, { icon: 5,title: '错误提示',skin: 'layui-layer-molv' });
-        //            } else {
-        //                layer.alert('住院结算成功', { icon: 6,title: '温馨提示', shade: 0.1, skin: 'layui-layer-molv' });
-                     
-        //                if (insuranceType === "310") {
-        //                    $("#CardPwd").attr("class", "layui-input");
-        //                    //打开刷卡按钮
-        //                    buttonStatus("PayCard", false);
-        //                }
-
-        //                buttonStatus("Settlement", false);
-        //            }
-        //        }
-
-        //    });
-        //});
       
       
 

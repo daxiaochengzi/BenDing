@@ -103,7 +103,7 @@
             //是否生育
             var isBirthHospital = 0;
             //险种类型
-            var insuranceType;
+            var insuranceType = null;
             var jsonToForm = function (jsonData, formFilter) {
                 //给表单赋值
                 form.val(formFilter,
@@ -116,10 +116,10 @@
                         "InDepartmentName": jsonData.InDepartmentName,
                         "AdmissionDiagnosticDoctor": jsonData.AdmissionDiagnosticDoctor
                     });
+                
             }
          
-            //病人信息
-            var inpatientInfoData = null;
+       
             //获取病人信息
             function getInpatientInfo() {
                 var params = {
@@ -130,20 +130,22 @@
                 params["timestamp"] = (new Date()).valueOf();
                 //获取病人信息
                 $.ajax({
-                    url: host + '/GetInpatientInfo',
+                    type: 'POST',
+                    url: hostNew + '/GetAdmissionRegistrationCancelInfo',
                     data: params,
+                    async: false,
+                    data: JSON.stringify(params),
                     dataType: "json",
-                    type: 'post',
+                    contentType: 'application/json',
                     success: function (data) {
                         if (data.Success === false) {
                             var errData = data.Message;
-                            //样式类名:墨绿深蓝风
-                            layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                            msgError(errData);
 
                         } else {
                             isBirthHospital = data.Data.IsBirthHospital;
                             insuranceType = data.Data.InsuranceType;
-                            jsonToForm(data.Data, "LAY-form-render");
+                            jsonToForm(data.Data.InpatientInfo, "LAY-form-render");
                             buttonStatus('HospitalizationRegisterCancel', true)
                             //HospitalizationRegisterCancel
                             //layer.msg('费用上传成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
@@ -186,14 +188,14 @@
                         if (data.Success === false) {
                             var errData = data.Message;
                             msgError(errData);
+                            return false; 
                             //样式类名:墨绿深蓝风
                         } else {
                             var activeX = document.getElementById("CSharpActiveX");
-                            //获取医保类型
-                            var insuranceTypeValue = $("#InsuranceType").val();
+
                             var activeData;
                             var activeJsonData;
-                            var isBirthHospital = $("#IsBirthHospital").val();
+                        
                             if (insuranceType === "342") {
                                 //居民取消结算
                                 activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "LeaveHospitalSettlementCancel");
@@ -201,43 +203,42 @@
                                 if (activeJsonData.Success === false) {
                                     msgError(activeJsonData.Message);
                                 } else {
-                                    leaveHospitalSettlementCancel(activeJsonData.Data);
+                                    leaveHospitalSettlementCancel(cancelParams);
                                 }
                             }
                             if (insuranceType === "310") {
-                                //职工生育取消结算
+                                ////职工生育取消结算
                                 if (isBirthHospital === 1) {
-                                    activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerSettlementCancel");
+                                    activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "LeaveHospitalSettlementCancel");
                                 }
                                 else//职工取消结算
                                 {
-                                    activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "LeaveHospitalSettlementCancel");
+                                    activeData = activeX.HospitalizationMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "WorkerSettlementCancel");
                                 }
 
                                 activeJsonData = JSON.parse(activeData);
                                 if (activeJsonData.Success === false) {
                                     msgError(activeJsonData.Message);
                                 } else {
-                                    leaveHospitalSettlementCancel(activeJsonData.Data);
+                                    leaveHospitalSettlementCancel(cancelParams);
                                 }
+                              
                             }
-
-
-
                         }
                     }
                 });
 
-                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+             
             }
             function leaveHospitalSettlementCancel(cancelParams) {
                 //医保入院登记取消
                 $.ajax({
-                    type: 'get',
+                    type: 'POST',
                     url: hostNew + '/MedicalInsuranceHospitalizationRegisterCancel',
-                    data: cancelParams,
-                    dataType: "json",
                     async: false,
+                    data: JSON.stringify(cancelParams),
+                    dataType: "json",
+                    contentType: 'application/json',
                     success: function (data) {
                         if (data.Success === false) {
                             var errData = data.Message;
@@ -245,7 +246,7 @@
                         } else {
 
 
-                            layer.alert('操作成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv', title: '温馨提示' });
+                            layer.alert('取消医保入院登记成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv', title: '温馨提示' });
 
                             buttonStatus("DoorDiagnosisSettlementCancel", false);
                         }
@@ -256,31 +257,7 @@
             //form数据回显:数据回显到Form表单主体部分
             $('#HospitalizationRegisterCancel').on('click', function () {
                 getLeaveHospitalSettlementCancelParam();
-                //var params = {
-                //    "TransKey": $("#transkey").val() /*医保交易码*/,
-                //    "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
-                //    "UserId": $("#empid").val() /*授权操作人的ID*/
-                //}//医保入院登记取消
-                //$.ajax({
-                //    type: 'get',
-                //    url: host + '/MedicalInsuranceHospitalizationRegisterCancel',
-                //    data: params,
-                //    dataType: "json",
-                //    async: false,
-                //    success: function (data) {
-                //        if (data.Success === false) {
-                //            var errData = data.Message;
-                //            layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                //        } else {
-
-                           
-                //            layer.alert('操作成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv',title: '温馨提示' });
-                      
-                //            buttonStatus("DoorDiagnosisSettlementCancel", false);
-                //        }
-                //    }
-
-                //});
+                return false; 
             });
            
         });

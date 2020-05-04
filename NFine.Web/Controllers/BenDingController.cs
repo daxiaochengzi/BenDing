@@ -532,9 +532,6 @@ namespace NFine.Web.Controllers
                 data.DiagnosisList = settlementData.DiagnosisList;
                 data.InsuranceType = queryData.InsuranceType;
                 data.LeaveHospitalDate = settlementData.LeaveHospitalDate;
-
-          
-
                 y.Data = data;
             });
         }
