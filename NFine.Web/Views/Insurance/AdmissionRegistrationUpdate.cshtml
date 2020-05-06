@@ -78,7 +78,7 @@
                         </div>
                     </div>
                 </div>
-                <!--诊断部分-->
+                @*<!--诊断部分-->
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
                     <legend>诊断列表</legend>
                 </fieldset>
@@ -90,7 +90,7 @@
                             <input type="text" id="DiagnosisSearchData" name="DiagnosisSearchData" placeholder="请输入诊断" class="layui-input">
                         </div>
                     </div>
-                </div>
+                </div>*@
                 <!--诊断列表-->
                 <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
 
@@ -159,154 +159,11 @@
                             html.push('/>');
                             return html.join('');
                         }
-                    }, {
-                        title: '操作',
-                        fixed: 'right',
-                        templet: function (d) {
-                            return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="' +
-                                d.ProjectCode +
-                                '"><i class="layui-icon layui-icon-delete"></i>移除</a>';
-                        }
                     }
                 ]
             ]
         });
-        //诊断查询
-        var tableSelect = layui.tableSelect;
-        tableSelect.render({
-            elem: '#DiagnosisSearchData',
-            checkedKey: 'id',
-            searchKey: 'Search',//搜索输入框的name值 默认keyword
-            searchPlaceholder: '名称/编码/助记码',	//搜索输入框的提示文字 默认关键词搜索
-            table: {
-                url: host + '/QueryICD10',
-                parseData: function (result) {
-                    return {
-                        "code": result.Code,
-                        "msg": result.Message,
-                        "data": result.Data.data,
-                        "count": result.Data.count
-                    };
-                },
-                cols: [
-                    [
-                        { type: 'radio' },
-                        { field: 'DiseaseCoding', title: '基层疾病编码' },
-                        { field: 'DiseaseName', title: '基层疾病名称' },
-                        { field: 'ProjectCode', title: '医保疾病编码' }
-
-                    ]
-                ]
-            },
-            done: function (elem, data) {
-
-                //获取table缓存
-                var oldData = table.cache[layTableId];
-                var oldDataTable = new Array;
-                layui.each(oldData,
-                    function (index, item) {
-                        //排除空值
-                        if (item.DiseaseCoding !== undefined) {
-                            //新增诊断编码
-                            var DiseaseCoding = data.data[0].DiseaseCoding;
-                            //诊断去重
-                            if (item.DiseaseCoding !== DiseaseCoding) {
-                                var itemRow = {
-                                    DiseaseName: item.DiseaseName,
-                                    DiseaseCoding: item.DiseaseCoding,
-                                    IsMainDiagnosis: item.IsMainDiagnosis,
-                                    ProjectCode: item.ProjectCode
-
-                                };
-                                oldDataTable.push(itemRow);
-
-                            }
-                        }
-                    });
-
-                var newRow = {
-                    DiseaseName: data.data[0].DiseaseName,
-                    DiseaseCoding: data.data[0].DiseaseCoding,
-                    ProjectCode: data.data[0].ProjectCode,
-                    IsMainDiagnosis: false
-
-                };
-                //添加选中后的诊断
-                oldDataTable.push(newRow);
-
-                //更新table
-                tableIns.reload({
-                    data: oldDataTable
-                });
-
-
-
-            }
-        });
-        //定义事件集合
-        var active = {
-            updateRow: function (obj) {
-                var oldData = table.cache[layTableId];
-                console.log(oldData);
-                for (var i = 0, row; i < oldData.length; i++) {
-                    row = oldData[i];
-                    if (row.DiseaseCoding === obj.DiseaseCoding) {
-                        $.extend(oldData[i], obj);
-                        return;
-                    }
-                }
-                tableIns.reload({
-                    data: oldData
-                });
-            },
-            removeEmptyTableCache: function () {
-                var oldData = table.cache[layTableId];
-                for (var i = 0, row; i < oldData.length; i++) {
-                    row = oldData[i];
-                    if (!row || !row.Id) {
-                        oldData.splice(i, 1); //删除一项
-                    }
-                    continue;
-                }
-                tableIns.reload({
-                    data: oldData
-                });
-            }
-        };
-        //注册按钮事件
-        $('.layui-btn[data-type]').on('click',
-            function () {
-                var type = $(this).data('type');
-                activeByType(type);
-            });
-        //激活事件
-        var activeByType = function (type, arg) {
-            if (arguments.length === 2) {
-                active[type] ? active[type].call(this, arg) : '';
-            } else {
-                active[type] ? active[type].call(this) : '';
-            }
-        }
-        //监听工具条
-        table.on('tool(dataTable)',
-            function (obj) {
-                var data = obj.data, event = obj.event, tr = obj.tr; //获得当前行 tr 的DOM对象;
-                switch (event) {
-                    case "diagnosis":
-                        var stateVal = tr.find("input[name='IsMainDiagnosis']").prop('checked') ? true : false;
-                        $.extend(obj.data, { 'IsMainDiagnosis': stateVal });
-                        activeByType('updateRow', obj.data); //更新行记录对象
-                        break;
-                    case "del":
-                        layer.confirm('真的删除行么？',
-                            function (index) {
-                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                                layer.close(index);
-                                //activeByType('removeEmptyTableCache');
-                            });
-                        break;
-                }
-            });
+       
             //---------
         //插件检查
         var verification = DetectActiveX();
@@ -470,29 +327,7 @@
               
             });
             
-
-            ////取消登记
-            //$(document).on('click', '#cancelRegister', function () {
-            //    var params = {
-            //        "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/
-            //        , "UserId": $("#empid").val() /*授权操作人的ID*/
-            //    }
-            //    $.ajax({
-            //        url: host +'/HospitalizationRegisterCancel',
-            //        data: params,
-            //        dataType: "json",
-            //        async: false,
-            //        success: function (data) {
-            //            if (data.Success === false) {
-            //                var errData = data.Message;
-            //                //样式类名:墨绿深蓝风
-            //                layer.alert(errData, { skin: 'layui-layer-molv', icon: 3, title: '提示' });
-            //            } else {
-            //                layer.alert("取消成功", { skin: 'layui-layer-molv', icon: 6, title: '提示' });
-            //            }
-            //        }
-            //    });
-            //});
+    
         });
         //科室数据
         function selectDepartmentName(defaultCode) {

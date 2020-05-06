@@ -505,7 +505,6 @@ namespace NFine.Web.Controllers
             {
 
                 if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
-               
                 //获取医保病人信息
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
                 {
@@ -767,12 +766,27 @@ namespace NFine.Web.Controllers
             {
                 var resultData = new SettlementDto();
                 if (param.DiagnosisList == null) throw new Exception("诊断不能为空!!!");
-               
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
+                var infoData = new GetInpatientInfoParam()
+                {
+                    User = userBase,
+                    BusinessId = param.BusinessId,
+                };
+                //获取住院病人信息
+                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
                 //获取医保病人信息
                 var residentData = _medicalInsuranceSqlRepository.QueryMedicalInsuranceResidentInfo(new QueryMedicalInsuranceResidentInfoParam()
                 {
                     BusinessId = param.BusinessId
                 });
+
+                if (Convert.ToDecimal(inpatientData.HospitalizationTotalCost) !=
+                    Convert.ToDecimal(residentData.MedicalInsuranceAllAmount))
+                {
+                    throw new Exception("医保总费用与基层总费用不相等,不能进行结算!!!");
+                }
+
                 //职工
                 if (residentData.InsuranceType == "310")
                 {
@@ -815,9 +829,6 @@ namespace NFine.Web.Controllers
                     var residentSettlementDataParam = _residentMedicalInsuranceNewService.GetHospitalizationSettlement(param);
                     y.Data = XmlSerializeHelper.XmlSerialize(residentSettlementDataParam);
                 }
-
-              
-
             });
 
         }
@@ -841,6 +852,21 @@ namespace NFine.Web.Controllers
                 {
                     BusinessId = param.BusinessId
                 });
+
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
+                var infoData = new GetInpatientInfoParam()
+                {
+                    User = userBase,
+                    BusinessId = param.BusinessId,
+                };
+                //获取住院病人信息
+                var inpatientData = _webServiceBasicService.GetInpatientInfo(infoData);
+                if (Convert.ToDecimal(inpatientData.HospitalizationTotalCost) !=
+                    Convert.ToDecimal(residentData.MedicalInsuranceAllAmount))
+                {
+                    throw new Exception("医保总费用与基层总费用不相等,不能进行结算!!!");
+                }
                 //职工
                 if (residentData.InsuranceType == "310")
                 {

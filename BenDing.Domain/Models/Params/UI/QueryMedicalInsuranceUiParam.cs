@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BenDing.Domain.Models.Params.Base;
 
 namespace BenDing.Domain.Models.Params.UI
 {
-   public class QueryMedicalInsuranceUiParam:UiInIParam
-    {/// <summary>
-    /// 营业id
-    /// </summary>
-        public string BusinessId { get; set; }
+   public class QueryMedicalInsuranceUiParam: UiBaseDataParam
+    {
 
     }
 }

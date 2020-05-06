@@ -793,6 +793,17 @@ namespace BenDing.Service.Providers
             resultData.Id = queryData.Id;
             resultData.MedicalInsuranceHospitalizationNo = queryData.MedicalInsuranceHospitalizationNo;
             resultData.InsuranceType = queryData.InsuranceType;
+            userBase.TransKey = param.TransKey;
+
+            var infoData = new GetInpatientInfoParam()
+            {
+                User = userBase,
+                BusinessId = param.BusinessId,
+            };
+            //获取住院病人信息
+            var inpatientData = GetInpatientInfo(infoData);
+            resultData.DiagnosisList = inpatientData.DiagnosisList;
+
             return resultData;
         }
         /// <summary>
@@ -810,12 +821,12 @@ namespace BenDing.Service.Providers
             resultData.BedNumber = data.BedNumber;
             resultData.HospitalizationNo = data.HospitalizationNo;
             resultData.InpatientDepartmentCode = data.InpatientDepartmentCode;
-            var diagnosisList = GetDiagnosisList(
-                data.AdmissionMainDiagnosisIcd10,
-                data.DiagnosisIcd10Two,
-                data.DiagnosisIcd10Three
-                );
-            resultData.DiagnosisList = diagnosisList;
+            //var diagnosisList = GetDiagnosisList(
+            //    data.AdmissionMainDiagnosisIcd10,
+            //    data.DiagnosisIcd10Two,
+            //    data.DiagnosisIcd10Three
+            //    );
+            //resultData.DiagnosisList = diagnosisList;
             return resultData;
         }
         /// <summary>
@@ -835,12 +846,12 @@ namespace BenDing.Service.Providers
             resultData.HouseholdNature = data.HouseholdNature;
             resultData.HospitalizationNo = data.HospitalizationNo;
             resultData.InpatientDepartmentCode = data.InpatientDepartmentCode;
-            var diagnosisList = GetDiagnosisList(
-                data.AdmissionMainDiagnosisIcd10,
-                data.DiagnosisIcd10Two,
-                data.DiagnosisIcd10Three
-            );
-            resultData.DiagnosisList = diagnosisList;
+            //var diagnosisList = GetDiagnosisList(
+            //    data.AdmissionMainDiagnosisIcd10,
+            //    data.DiagnosisIcd10Two,
+            //    data.DiagnosisIcd10Three
+            //);
+            //resultData.DiagnosisList = diagnosisList;
             return resultData;
         }
         /// <summary>
