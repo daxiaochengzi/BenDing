@@ -26,26 +26,26 @@
             <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
             <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
             <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
-            <button type="button" Id="DoorDiagnosisSettlementTest" class="layui-btn">门诊结算测试</button>
+          
             @{Html.RenderPartial("_CSharpActiveX");}
             <div class="layui-card-header layuibd-card-header-auto">
-               
+
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
                     <legend>病人信息</legend>
                 </fieldset>
                 <div style="float: right; margin-right: 15%;margin-top: -35px">
-                    <a  id="BenDingDownloadFile" href="/api/BenDing/DownloadFile" >医保插件下载</a>
+                    <a id="BenDingDownloadFile" href="/api/BenDing/DownloadFile">医保插件下载</a>
                 </div>
 
                 <!--病人信息-->
-                <div class="layui-form-item">
+                @*<div class="layui-form-item">
                     <label class="layui-form-label">结算方式</label>
                     <div class="layui-input-block">
                         <input type="radio" name="Settlement" value="0" title="门诊结算" checked="">
                         <input type="radio" name="Settlement" value="1" title="计划生育结算">
 
                     </div>
-              
+
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">身份标识</label>
@@ -62,12 +62,13 @@
                             <input type="text" id="IdentityMark" name="IdentityMark" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
                         </div>
                     </div>
-                    <div class="layui-inline">
-                        <button type="button" Id="queryData" class="layui-btn layui-btn-disabled layui-btn-radius">查询</button>
-                    </div>
+
                     @*<div class="layui-inline">
-                    <button type="button" Id="ReadCard" class="layui-btn">读卡</button>
-                </div>*@
+                <button type="button" Id="ReadCard" class="layui-btn">读卡</button>
+            </div>*@
+                </div>
+                <div class="layui-inline">
+                    <button type="button" Id="queryData" class="layui-btn layui-btn-disabled layui-btn-radius">查询</button>
                 </div>
                 <div class="layui-inline">
 
@@ -176,7 +177,7 @@
                     </div>
                     <div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="DoorDiagnosisSettlementDiv">
                         <button type="button" Id="DoorDiagnosisSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">门诊结算</button>
-                       
+
                     </div>
                 </div>
                 <div class="layui-card-body" lay-size="sm">
@@ -259,6 +260,7 @@
             "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
             "UserId": $("#empid").val() /*授权操作人的ID*/
         }
+        params["timestamp"] = (new Date()).valueOf();
         //获取医院基本信息回调方法
         window.getHospitalInfoBack = function () { };
      
@@ -295,8 +297,8 @@
         //获取门诊结算参数
         function getOutpatientDepartmentCostInputParam() {
 
-            params["AfferentSign"] = $("#AfferentSign").val();
-            params["IdentityMark"] = $("#IdentityMark").val();
+            params["AfferentSign"] =  baseInfo.HospitalInfo.AfferentSign;
+            params["IdentityMark"] = baseInfo.HospitalInfo.IdentityMark;
             $.ajax({
                 type: 'post',
                 url: hostNew + '/GetOutpatientDepartmentCostInputParam',
@@ -360,8 +362,8 @@
         }
         //获取门诊计划生育预结算参数
         function getOutpatientPlanBirthPreSettlementParam() {
-            params["AfferentSign"] = $("#AfferentSign").val();
-            params["IdentityMark"] = $("#IdentityMark").val();
+            params["AfferentSign"] =  baseInfo.HospitalInfo.AfferentSign;
+            params["IdentityMark"] = baseInfo.HospitalInfo.IdentityMark;
             $.ajax({
                 type: 'POST',
                 url: hostNew + '/GetOutpatientPlanBirthPreSettlementParam',
@@ -428,8 +430,8 @@
         }
         //获取门诊计划生育结算参数
         function getOutpatientPlanBirthSettlementParam() {
-            params["AfferentSign"] = $("#AfferentSign").val();
-            params["IdentityMark"] = $("#IdentityMark").val();
+            params["AfferentSign"] =  baseInfo.HospitalInfo.AfferentSign;
+            params["IdentityMark"] = baseInfo.HospitalInfo.IdentityMark;
             $.ajax({
                 type: 'POST',
                 url: hostNew + '/GetOutpatientPlanBirthSettlementParam',
@@ -494,14 +496,14 @@
         }
         //门诊预结算
         $('#DoorDiagnosisPreSettlement').on('click', function () {
-            params["IdentityMark"] = $("#IdentityMark").val();
-            params["AfferentSign"] = $("#AfferentSign").val();
+            params["IdentityMark"] = baseInfo.HospitalInfo.IdentityMark;
+            params["AfferentSign"] =  baseInfo.HospitalInfo.AfferentSign;
             getOutpatientPlanBirthPreSettlementParam();
         });
         //门诊结算
         $('#DoorDiagnosisSettlement').on('click', function () {
-            params["IdentityMark"] = $("#IdentityMark").val();
-            params["AfferentSign"] = $("#AfferentSign").val();
+            params["IdentityMark"] = baseInfo.HospitalInfo.IdentityMark;
+            params["AfferentSign"] =  baseInfo.HospitalInfo.AfferentSign;
             var settlementVal = $('input[name="Settlement"]:checked').val();
             if (settlementVal === "1") {
                 params["IsBirthHospital"] = 1;
@@ -530,81 +532,88 @@
                 //普通
                 getOutpatientDepartmentCostInputParam();
             }
-       
-          
-
 
         });
         $('#queryData').on('click', function () {
-            getInpatientInfo(getInpatientInfoBack);
-            buttonStatus("queryData", false);
-        });
+            window.IspPoint = false;
+            parent.layer.open({
+                type: 2, //弹窗类型 ['dialog', 'page', 'iframe', 'loading', 'tips']
+                area: ['610px', '320px'],
+                shift: 2, //可选动画类型0-6
+                scrollbar: false,
+                title: false,
+                moveType: 1,//拖拽模式，0或者1
+                content: "Card.cshtml?IdCardNo=" + baseInfo.HospitalInfo.IdentityMark,
+                btn: ['确定', '取消']
+                , yes: function (index) {
 
-        $('#DoorDiagnosisSettlementTest').on('click',
-            function() {
+                    var res = window["layui-layer-iframe" + index];
+                    var cardData = res.getmydata();
+                    if (cardData.AfferentSign === "3") {
+                        if (cardData.CardPwd === "" || cardData.CardPwd === null) {
+                            msgError("请输入卡密码!!!")
+                        } else {
+                            baseInfo.HospitalInfo.AfferentSign = cardData.AfferentSign;
+                            baseInfo.HospitalInfo.CardPwd = cardData.CardPwd;
+                            getInpatientInfo(getInpatientInfoBack);
+                            layer.close(index);
+                        }
 
-                window.IspPoint = false;
-                parent.layer.open({
-                    type: 2, //弹窗类型 ['dialog', 'page', 'iframe', 'loading', 'tips']
-                    area: ['610px', '320px'],
-                    shift: 2, //可选动画类型0-6
-                    scrollbar: false,
-                    title: false,
-                    moveType: 1 //拖拽模式，0或者1
-                    ,
-                    content: "Card",
-                    btn: ['确定', '取消']
-                    , yes: function (index, layero) {
-                        debugger;
-                        var res = window["layui-layer-iframe" + index];
-                        // var row = $(layero).find("layui-layer-iframe")[0].contentWindow.callbackdata();
-                        //可以使用ajax请求对数据进行进一步处理
-                    
-                    },btn2: function(index, layero){
+                    } else {
+                        baseInfo.HospitalInfo.AfferentSign = cardData.AfferentSign;
+                        baseInfo.HospitalInfo.IdentityMark = cardData.IdentityMark;
+                        getInpatientInfo(getInpatientInfoBack);
                         layer.close(index);
                     }
-                  
-                });
+                 
 
+                }, btn2: function (index) {
+                    layer.close(index);
+                }
 
             });
 
-        ////初始化参数
-        //$.ajax({
-        //    type: 'get',
-        //    url: host + '/GetOutpatient',
-        //    data: params,
-        //    dataType: "json",
-        //    async: false,
-        //    success: function (data) {
+            //buttonStatus("queryData", false);
+        });
+
+    
+        //初始化参数
+        $.ajax({
+            type: 'get',
+            url: host + '/GetOutpatient',
+            data: params,
+            dataType: "json",
+            async: false,
+            success: function (data) {
                
-        //        console.log(data);
-        //        if (data.Success === false) {
-        //            var errData = data.Message;
-        //            //样式类名:墨绿深蓝风
-        //            layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                console.log(data);
+                if (data.Success === false) {
+                    var errData = data.Message;
+                    //样式类名:墨绿深蓝风
+                    layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
 
-        //        } else {
-        //            jsonToForm(data.Data, "LAY-form-render");
-        //            var idCardNo = data.Data.IdCardNo;
-        //            buttonStatus("queryData", true);
+                } else {
+                    jsonToForm(data.Data, "LAY-form-render");
+                    baseInfo.HospitalInfo.IdentityMark = data.Data.IdCardNo;
+                    var idCardNo = data.Data.IdCardNo;
+                    buttonStatus("queryData", true);
 
-        //            if (idCardNo !== undefined && idCardNo !== null) {
-        //                $("#IdentityMark").val(idCardNo);
-        //            } else {
-        //                $("#AfferentSignIcCard").attr("selected", false);
-        //                $("#AfferentSignNum").attr("selected", true);
-        //                $("#markTextLable").text("个人编码");
-        //                $("#IdentityMark").val("");
-        //                $("#IdentityMark").attr("placeholder", "请输入个人编码");
-        //            }
+                    if (idCardNo !== undefined && idCardNo !== null) {
+                        $("#IdentityMark").val(idCardNo);
+                    } else {
+                        $("#AfferentSignIcCard").attr("selected", false);
+                        $("#AfferentSignNum").attr("selected", true);
+                        $("#markTextLable").text("个人编码");
+                        $("#IdentityMark").val("");
+                        $("#IdentityMark").attr("placeholder", "请输入个人编码");
+                    }
 
-        //        }
-        //    },
-        //    complete: function () {
-        //        form.render();
-        //    }
-        //});
+                }
+            },
+            complete: function () {
+                form.render();
+            }
+        });
         form.on('select(AfferentSign)',
             function (data) {
                 var val = data.value;

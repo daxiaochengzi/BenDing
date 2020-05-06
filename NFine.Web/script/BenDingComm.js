@@ -6,7 +6,8 @@ var baseInfo = {
         "OperatorId": null,   //操作人员
         "InsuranceType": null, // 险种类型,
         "IdentityMark": null,    //身份标志   身份证号或个人编号
-        "AfferentSign": null// 传入标志 1为公民身份号码 2为个人编号,
+        "AfferentSign": null,// 传入标志 1为公民身份号码 2为个人编号,
+        "CardPwd": null //卡密码
     },
     Inpatient: {
         "PersonalCoding": null ,//个人编码
@@ -109,8 +110,6 @@ function getHospitalInfo(getHospitalInfoParam) {
 function getInpatientInfo(getInpatientInfoBack)
 {
   
-    baseInfo.HospitalInfo["AfferentSign"] = iniJs("#AfferentSign").val();
-    baseInfo.HospitalInfo["IdentityMark"] = iniJs("#IdentityMark").val();
     var activeX = document.getElementById("CSharpActiveX");
     var activeData = activeX.OutpatientMethods(JSON.stringify(baseInfo.HospitalInfo), JSON.stringify(baseInfo.HospitalInfo),"GetUserInfo");
         var activeJsonData = JSON.parse(activeData);
@@ -129,6 +128,8 @@ function getInpatientInfo(getInpatientInfoBack)
             baseInfo.Inpatient["WorkersInsuranceBalance"] = activeJsonInfo.WorkersInsuranceBalance;
             baseInfo.Inpatient["MentorBalance"] = activeJsonInfo.MentorBalance;
             baseInfo.Inpatient["OverallPaymentBalance"] = activeJsonInfo.OverallPaymentBalance;
+            baseInfo.HospitalInfo.AfferentSign = "1";
+            baseInfo.HospitalInfo.IdentityMark = activeJsonInfo.PersonalCoding;
             getInpatientInfoBack();
         }
 }
