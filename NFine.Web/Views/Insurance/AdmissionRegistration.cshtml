@@ -26,29 +26,7 @@
 
             <div class="layui-card-header layuibd-card-header-auto">
                 <!--搜索部分-->
-                @*<div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">身份标识</label>
-                        <div class="layui-input-inline">
-                            <select id="AfferentSign" name="AfferentSign" lay-filter="AfferentSign" lay-verify="required">
-                                <option value="">请选择条件</option>
-                                <option id="AfferentSignIcCard" value="1" selected>身份证号</option>
-                                <option id="AfferentSignNum" value="2">个人编号</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label" id="markTextLable">身份证号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="IdentityMark" name="IdentityMark" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <button type="button" disabled class="layui-btn layui-btn-disabled layui-btn-radius" id="queryData">
-                            查询
-                        </button>
-                    </div>
-                </div>*@
+               
             </div>
             <div class="layui-card-body">
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
@@ -300,7 +278,6 @@
                     dataType: "json",
                     type: 'post',
                     success: function (data) {
-
                         if (data.Success === false) {
 
                             var errData = data.Message;
@@ -395,7 +372,8 @@
 
                 //诊断列表 add
                 field.DiagnosisList = diagnosisList;
-
+                field["IdentityMark"] = baseInfo.HospitalInfo.IdentityMark;
+                field["AfferentSign"] = baseInfo.HospitalInfo.AfferentSign;
                 return field;
             }
 

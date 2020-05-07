@@ -402,8 +402,8 @@
                 });
                 //诊断列表 
                 field.DiagnosisList = diagnosisList;
-                params["IdentityMark"] = baseInfo.HospitalInfo.IdentityMark;
-                params["AfferentSign"] = baseInfo.HospitalInfo.AfferentSign;
+                field["IdentityMark"] = baseInfo.HospitalInfo.IdentityMark;
+                field["AfferentSign"] = baseInfo.HospitalInfo.AfferentSign;
 
                 return field;
             }
