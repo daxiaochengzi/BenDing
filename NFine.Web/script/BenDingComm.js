@@ -51,6 +51,45 @@ function buttonStatus(buttonId, status) {
         iniJs("#" + buttonId).attr("disabled", 'disabled');
     }
 }
+function queryData(getInpatientInfoBack) {
+    parent.layer.open({
+        type: 2, //弹窗类型 ['dialog', 'page', 'iframe', 'loading', 'tips']
+        area: ['500px', '220px'],
+        shift: 2, //可选动画类型0-6
+        scrollbar: false,
+        title: false,
+        moveType: 1,//拖拽模式，0或者1
+        content: "Card?IdCardNo=" + baseInfo.HospitalInfo.IdentityMark,
+        btn: ['确定', '取消']
+        , yes: function (index) {
+
+            var res = window["layui-layer-iframe" + index];
+            var cardData = res.getMyData();
+            if (cardData.AfferentSign === "3") {
+                if (cardData.CardPwd === "" || cardData.CardPwd === null) {
+                    msgError("请输入卡密码!!!")
+                } else {
+                    baseInfo.HospitalInfo.AfferentSign = cardData.AfferentSign;
+                    baseInfo.HospitalInfo.CardPwd = cardData.CardPwd;
+                    getReadCardInpatientInfo(getInpatientInfoBack);
+                
+                    layer.close(index);
+                }
+
+            } else {
+                baseInfo.HospitalInfo.AfferentSign = cardData.AfferentSign;
+                baseInfo.HospitalInfo.IdentityMark = cardData.IdentityMark;
+                getInpatientInfo(getInpatientInfoBack);
+                layer.close(index);
+            }
+
+
+        }, btn2: function (index) {
+            layer.close(index);
+        }
+
+    });
+}
 //获取结算返回值
 function settlementData(data) {
    
@@ -128,42 +167,42 @@ function getInpatientInfo(getInpatientInfoBack)
             baseInfo.Inpatient["WorkersInsuranceBalance"] = activeJsonInfo.WorkersInsuranceBalance;
             baseInfo.Inpatient["MentorBalance"] = activeJsonInfo.MentorBalance;
             baseInfo.Inpatient["OverallPaymentBalance"] = activeJsonInfo.OverallPaymentBalance;
-            baseInfo.HospitalInfo.AfferentSign = "1";
+            baseInfo.HospitalInfo.AfferentSign = "2";
             baseInfo.HospitalInfo.IdentityMark = activeJsonInfo.PersonalCoding;
             getInpatientInfoBack();
         }
 }
-////读卡获取患者基本信息
-//function getReadCardInpatientInfo(getInpatientInfoBack) {
+//读卡获取患者基本信息
+function getReadCardInpatientInfo(getInpatientInfoBack) {
 
-//    var cardPwd= iniJs("#CardPwd").val();
-//    if (cardPwd === undefined) {
-//        msgError("密码控件不存在!!!");
-//    }
-//    if (cardPwd === "" || cardPwd === null) {
-//        msgError("密码不能为空!!!");
-//    }
-//    var activeX = document.getElementById("CSharpActiveX");
-//    var activeData = activeX.OutpatientMethods(cardPwd, JSON.stringify(baseInfo.HospitalInfo), "ReadCardUserInfo");
-//    var activeJsonData = JSON.parse(activeData);
-//    if (activeJsonData.Success === false) {
-//        msgError(activeJsonData.Message);
-//    } else {
-//        //病人信息赋值
-//        var activeJsonInfo = JSON.parse(activeJsonData.Data);
-//        baseInfo.Inpatient["PersonalCoding"] = activeJsonInfo.PersonalCoding;
-//        baseInfo.Inpatient["PatientName"] = activeJsonInfo.PatientName;
-//        baseInfo.Inpatient["PatientSex"] = activeJsonInfo.PatientSex;
-//        baseInfo.Inpatient["Birthday"] = activeJsonInfo.Birthday;
-//        baseInfo.Inpatient["InsuranceType"] = activeJsonInfo.InsuranceType;
-//        baseInfo.Inpatient["IdCardNo"] = activeJsonInfo.IdCardNo;
-//        baseInfo.Inpatient["ResidentInsuranceBalance"] = activeJsonInfo.ResidentInsuranceBalance;
-//        baseInfo.Inpatient["WorkersInsuranceBalance"] = activeJsonInfo.WorkersInsuranceBalance;
-//        baseInfo.Inpatient["MentorBalance"] = activeJsonInfo.MentorBalance;
-//        baseInfo.Inpatient["OverallPaymentBalance"] = activeJsonInfo.OverallPaymentBalance;
-//        getInpatientInfoBack();
-//    }
-//}
+    var cardPwd = baseInfo.HospitalInfo.CardPwd;
+  
+    if (cardPwd === "" || cardPwd === null) {
+        msgError("密码不能为空!!!");
+    }
+    var activeX = document.getElementById("CSharpActiveX");
+    var activeData = activeX.OutpatientMethods(cardPwd, JSON.stringify(baseInfo.HospitalInfo), "ReadCardUserInfo");
+    var activeJsonData = JSON.parse(activeData);
+    if (activeJsonData.Success === false) {
+        msgError(activeJsonData.Message);
+    } else {
+        //病人信息赋值
+        var activeJsonInfo = JSON.parse(activeJsonData.Data);
+        baseInfo.Inpatient["PersonalCoding"] = activeJsonInfo.PersonalCoding;
+        baseInfo.Inpatient["PatientName"] = activeJsonInfo.PatientName;
+        baseInfo.Inpatient["PatientSex"] = activeJsonInfo.PatientSex;
+        baseInfo.Inpatient["Birthday"] = activeJsonInfo.Birthday;
+        baseInfo.Inpatient["InsuranceType"] = activeJsonInfo.InsuranceType;
+        baseInfo.Inpatient["IdCardNo"] = activeJsonInfo.IdCardNo;
+        baseInfo.Inpatient["ResidentInsuranceBalance"] = activeJsonInfo.ResidentInsuranceBalance;
+        baseInfo.Inpatient["WorkersInsuranceBalance"] = activeJsonInfo.WorkersInsuranceBalance;
+        baseInfo.Inpatient["MentorBalance"] = activeJsonInfo.MentorBalance;
+        baseInfo.Inpatient["OverallPaymentBalance"] = activeJsonInfo.OverallPaymentBalance;
+        baseInfo.HospitalInfo.AfferentSign = "2";
+        baseInfo.HospitalInfo.IdentityMark = activeJsonInfo.PersonalCoding;
+        getInpatientInfoBack();
+    }
+}
 function msgSuccess(successData) {
     iniMsg.alert(successData, { icon: 6, shade: 0.1, skin: 'layui-layer-molv', title: '温馨提示' });
 }

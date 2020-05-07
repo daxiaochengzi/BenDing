@@ -21,14 +21,12 @@
 <div class="layui-fluid">
     <div class="layui-card">
         <form class="layui-form" id="LAY-form" lay-filter="LAY-form-render">
-            <input type="hidden" id="bid" name="BusinessId" value="@ViewBag.bid" placeholder="业务ID" />
-            <input type="hidden" id="empid" name="UserId" value="@ViewBag.empid" placeholder="用户ID" />
-            <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
+           
             @{Html.RenderPartial("_CSharpActiveX");}
 
             <div class="layui-card-header layuibd-card-header-auto">
                 <!--搜索部分-->
-                <div class="layui-form-item">
+                @*<div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">身份标识</label>
                         <div class="layui-input-inline">
@@ -50,7 +48,7 @@
                             查询
                         </button>
                     </div>
-                </div>
+                </div>*@
             </div>
             <div class="layui-card-body">
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
@@ -152,6 +150,9 @@
                 <!--诊断列表-->
                 <table class="layui-table" id="dataTable" lay-size="sm" lay-filter="dataTable"></table>
                 <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
+                    <button type="button" disabled class="layui-btn layui-btn-disabled layui-btn-radius" id="queryData">
+                        查询
+                    </button>
                     <button type="submit" Id="register" lay-submit lay-filter="register" disabled class="layui-btn layui-btn-disabled layui-btn-radius">登记</button>
                 </div>
             </div>
@@ -309,16 +310,8 @@
                         } else {
                             inpatientInfoData = data;
                             buttonStatus("queryData", true);
-                            var idCardNo = data.Data.IdCardNo;
-                            if (idCardNo !== undefined && idCardNo !== null) {
-                                $("#IdentityMark").val(idCardNo);
-                            } else {
-                                $("#AfferentSignIcCard").attr("selected", false);
-                                $("#AfferentSignNum").attr("selected", true);
-                                $("#markTextLable").text("个人编码");
-                                $("#IdentityMark").val("");
-                                $("#IdentityMark").attr("placeholder", "请输入个人编码");
-                            }
+                            baseInfo.HospitalInfo.IdentityMark = data.Data.IdCardNo;
+                        
                         }
                     },
                     complete: function () {
@@ -363,22 +356,12 @@
                         $("#HouseholdNatureId").hide();
                     }
                 });
-            //查询方式切换
-            form.on('select(AfferentSign)',
-                function (data) {
-                    var val = data.value;
-                    if (val === "2") {
-                        $("#markTextLable").text("个人编码");
-                        $("#IdentityMark").val("");
-                        $("#IdentityMark").attr("placeholder", "请输入个人编码");
-                    } else {
-                        $("#markTextLable").text("身份证号");
-                    }
-                });
+          
 
             /**根据当前住院病人的业务ID查询,返回数据回显到下面表单里面*/
             $('#queryData').on('click', function () {
-                getInpatientInfo(getInpatientInfoBack);
+
+                queryData(getInpatientInfoBack);
                 buttonStatus("queryData", false);
 
             });
@@ -387,24 +370,14 @@
             function getHospitalizationRegisterParamIni(data) {
                 var field = data.field;
                 if ($("#InsuranceType").val() === "310") {
-                    if (field.AfferentSign === "1") {
-                        field.AfferentSign = "2";
-                    }
-                    else {
-                        if (field.AfferentSign === "2") {
-                            field.AfferentSign = "3";
-                        }
-                    }
-
+                    field.AfferentSign = "3";
                 }
                 //医疗类别
                 var medicalCategory = $("#MedicalCategory").val();
                 if (medicalCategory === "" || medicalCategory === undefined) {
                     msgError('医疗类别不能为空!!!!');
-
-
                 }
-
+                field.IdentityMark = baseInfo.HospitalInfo.IdentityMark;
                 field.BusinessId = field.BusinessId;
                 //医保交易码
                 field.TransKey = $("#transkey").val();

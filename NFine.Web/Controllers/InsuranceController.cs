@@ -55,6 +55,7 @@ namespace NFine.Web.Controllers
         /// <returns></returns>
         public ActionResult AdmissionRegistrationCancel(GetHisBaseParam param)
         {
+
             ViewBag.empid = param.EmpId;
             ViewBag.bid = param.BId;
             ViewBag.transkey = param.TransKey;

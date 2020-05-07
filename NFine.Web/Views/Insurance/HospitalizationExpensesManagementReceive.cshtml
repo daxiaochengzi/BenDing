@@ -5,9 +5,7 @@
 <div class="layui-fluid" style="padding-top:10px">
     <div class="layui-card">
         <div class="layui-form" id="LAY-form" lay-filter="LAY-bill-data-list">
-            <input type="hidden" id="bid" name="BusinessId" value="@ViewBag.bid" placeholder="业务ID" />
-            <input type="hidden" id="empid" name="UserId" value="@ViewBag.empid" placeholder="用户ID" />
-            <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
+           
             @{Html.RenderPartial("_CSharpActiveX");}
             <div class="layui-form-item">
                 <div class="layui-inline">

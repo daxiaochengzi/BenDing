@@ -23,9 +23,6 @@
 <div class="layui-fluid">
     <div class="layui-card">
         <form class="layui-form" id="LAY-form" lay-filter="LAY-form-render">
-            <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
-            <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
-            <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
           
             @{Html.RenderPartial("_CSharpActiveX");}
             <div class="layui-card-header layuibd-card-header-auto">
@@ -33,161 +30,127 @@
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
                     <legend>病人信息</legend>
                 </fieldset>
-                <div style="float: right; margin-right: 15%;margin-top: -35px">
+                <div class="layui-form-item" style="text-align: right;">
                     <a id="BenDingDownloadFile" href="/api/BenDing/DownloadFile">医保插件下载</a>
                 </div>
-
-                <!--病人信息-->
-                @*<div class="layui-form-item">
-                    <label class="layui-form-label">结算方式</label>
-                    <div class="layui-input-block">
-                        <input type="radio" name="Settlement" value="0" title="门诊结算" checked="">
-                        <input type="radio" name="Settlement" value="1" title="计划生育结算">
-
-                    </div>
-
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">身份标识</label>
+                <div class="layui-inline">
+                    <label class="layui-form-label">主诊断编码</label>
                     <div class="layui-input-inline">
-                        <select id="AfferentSign" name="AfferentSign" lay-filter="AfferentSign" lay-verify="required">
-                            <option value="">请选择条件</option>
-                            <option id="AfferentSignIcCard" value="1" selected>身份证号</option>
-                            <option id="AfferentSignNum" value="2">个人编号</option>
-                        </select>
+                        <input type="text" name="DiagnosisCode" autocomplete="off" disabled class="layui-input layui-disabled">
                     </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label" id="markTextLable">身份证号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="IdentityMark" name="IdentityMark" placeholder="请输入身份证号" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-
-                    @*<div class="layui-inline">
-                <button type="button" Id="ReadCard" class="layui-btn">读卡</button>
-            </div>*@
                 </div>
                 <div class="layui-inline">
-                    <button type="button" Id="queryData" class="layui-btn layui-btn-disabled layui-btn-radius">查询</button>
+                    <label class="layui-form-label">主诊断名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="DiagnosisName" autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
                 </div>
                 <div class="layui-inline">
-
-                    <div class="layui-inline">
-                        <label class="layui-form-label">主诊断编码</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="DiagnosisCode" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">主诊断名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="DiagnosisName" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">医保诊断编码</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="DiagnosisMedicalInsuranceCode" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">医保诊断名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="DiagnosisMedicalInsuranceName" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">门诊号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="OutpatientNumber" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">身份证号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="IdCardNo" @*lay-verify="required|number"*@ autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-
-                    <div class="layui-inline">
-                        <label class="layui-form-label">患者姓名</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="PatientName" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-
-                    <div class="layui-inline">
-                        <label class="layui-form-label">就诊日期</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="VisitDate" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-
-                    <div class="layui-inline">
-                        <label class="layui-form-label">住院科室</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="DepartmentName" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-
-                    <div class="layui-inline">
-                        <label class="layui-form-label">费用合计</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="MedicalTreatmentTotalCost" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">现金支付</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="CashPayment" name="CashPayment" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-                    <div class="layui-inline" id="InsuranceBalanceDiv">
-                        <label class="layui-form-label">账户余额</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="InsuranceBalance" name="InsuranceBalance" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-                    <div class="layui-inline" id="AccountPaymentDiv">
-                        <label class="layui-form-label">下账金额</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="AccountPayment" name="AccountPayment" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">诊断医生</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="DiagnosticDoctor" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">经办人</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="Operator" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">发票号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="InvoiceNo" autocomplete="off" disabled class="layui-input layui-disabled">
-                        </div>
-                    </div>
-                    <div class="layui-form-item" id="DoorDiagnosisPreSettlementDiv" style="text-align: center; margin-top: 20px;">
-                        <button type="button" Id="DoorDiagnosisPreSettlement" class="layui-btn layui-btn-radius">门诊预结算</button>
-                    </div>
-                    <div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="DoorDiagnosisSettlementDiv">
-                        <button type="button" Id="DoorDiagnosisSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">门诊结算</button>
-
+                    <label class="layui-form-label">医保诊断编码</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="DiagnosisMedicalInsuranceCode" autocomplete="off" disabled class="layui-input layui-disabled">
                     </div>
                 </div>
-                <div class="layui-card-body" lay-size="sm">
-                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
-                        <legend>医保结算信息</legend>
-                    </fieldset>
-                    <div class="layui-inline" id="SettleData">
+                <div class="layui-inline">
+                    <label class="layui-form-label">医保诊断名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="DiagnosisMedicalInsuranceName" autocomplete="off" disabled class="layui-input layui-disabled">
                     </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">门诊号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="OutpatientNumber" autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">身份证号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="IdCardNo" @*lay-verify="required|number"*@ autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">患者姓名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="PatientName" autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">就诊日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="VisitDate" autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">住院科室</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="DepartmentName" autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">费用合计</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="MedicalTreatmentTotalCost" autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">现金支付</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="CashPayment" name="CashPayment" autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
+                </div>
+                <div class="layui-inline" id="InsuranceBalanceDiv">
+                    <label class="layui-form-label">账户余额</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="InsuranceBalance" name="InsuranceBalance" autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
+                </div>
+                <div class="layui-inline" id="AccountPaymentDiv">
+                    <label class="layui-form-label">下账金额</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="AccountPayment" name="AccountPayment" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">诊断医生</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="DiagnosticDoctor" autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">经办人</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="Operator" autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">发票号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="InvoiceNo" autocomplete="off" disabled class="layui-input layui-disabled">
+                    </div>
+                </div>
+
+            </div>
+            <div class="layui-form-item" id="queryDataDiv" style="text-align: center; margin-top: 20px;">
+                <button type="button" Id="queryData" class="layui-btn layui-btn-radius">查询</button>
+
+            </div>
+            <div class="layui-form-item" id="DoorDiagnosisPreSettlementDiv" style="text-align: center; margin-top: 20px;">
+               
+                <button type="button" Id="DoorDiagnosisPreSettlement" class="layui-btn layui-btn-radius">门诊预结算</button>
+            </div>
+            <div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="DoorDiagnosisSettlementDiv">
+                <button type="button" Id="DoorDiagnosisSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">门诊结算</button>
+
+            </div>
+            <div class="layui-card-body" lay-size="sm">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 10px;">
+                    <legend>医保结算信息</legend>
+                </fieldset>
+                <div class="layui-inline" id="SettleData">
                 </div>
             </div>
+
         </form>
     </div>
 </div>
@@ -212,12 +175,13 @@
         $("#AccountPaymentDiv").hide();
         $("#DoorDiagnosisPreSettlementDiv").hide();
         $("#DoorDiagnosisSettlementDiv").hide();
+        $("#queryDataDiv").hide();
+
        // 插件检查
         var verification = DetectActiveX();
         if (verification === false) {
             return false;
         }
-       
         //form数据回显:数据回显到Form表单主体部分
         var jsonToForm = function (jsonData, formFilter) {
             var diagnosisList = jsonData.DiagnosisList;
@@ -535,49 +499,10 @@
 
         });
         $('#queryData').on('click', function () {
-            window.IspPoint = false;
-            parent.layer.open({
-                type: 2, //弹窗类型 ['dialog', 'page', 'iframe', 'loading', 'tips']
-                area: ['610px', '320px'],
-                shift: 2, //可选动画类型0-6
-                scrollbar: false,
-                title: false,
-                moveType: 1,//拖拽模式，0或者1
-                content: "Card.cshtml?IdCardNo=" + baseInfo.HospitalInfo.IdentityMark,
-                btn: ['确定', '取消']
-                , yes: function (index) {
-
-                    var res = window["layui-layer-iframe" + index];
-                    var cardData = res.getmydata();
-                    if (cardData.AfferentSign === "3") {
-                        if (cardData.CardPwd === "" || cardData.CardPwd === null) {
-                            msgError("请输入卡密码!!!")
-                        } else {
-                            baseInfo.HospitalInfo.AfferentSign = cardData.AfferentSign;
-                            baseInfo.HospitalInfo.CardPwd = cardData.CardPwd;
-                            getInpatientInfo(getInpatientInfoBack);
-                            layer.close(index);
-                        }
-
-                    } else {
-                        baseInfo.HospitalInfo.AfferentSign = cardData.AfferentSign;
-                        baseInfo.HospitalInfo.IdentityMark = cardData.IdentityMark;
-                        getInpatientInfo(getInpatientInfoBack);
-                        layer.close(index);
-                    }
-                 
-
-                }, btn2: function (index) {
-                    layer.close(index);
-                }
-
-            });
-
-            //buttonStatus("queryData", false);
+            queryData(getInpatientInfoBack);
+            $("#queryDataDiv").hide();
         });
 
-    
-        //初始化参数
         $.ajax({
             type: 'get',
             url: host + '/GetOutpatient',
@@ -585,8 +510,8 @@
             dataType: "json",
             async: false,
             success: function (data) {
+
                
-                console.log(data);
                 if (data.Success === false) {
                     var errData = data.Message;
                     //样式类名:墨绿深蓝风
@@ -595,37 +520,16 @@
                 } else {
                     jsonToForm(data.Data, "LAY-form-render");
                     baseInfo.HospitalInfo.IdentityMark = data.Data.IdCardNo;
-                    var idCardNo = data.Data.IdCardNo;
-                    buttonStatus("queryData", true);
-
-                    if (idCardNo !== undefined && idCardNo !== null) {
-                        $("#IdentityMark").val(idCardNo);
-                    } else {
-                        $("#AfferentSignIcCard").attr("selected", false);
-                        $("#AfferentSignNum").attr("selected", true);
-                        $("#markTextLable").text("个人编码");
-                        $("#IdentityMark").val("");
-                        $("#IdentityMark").attr("placeholder", "请输入个人编码");
-                    }
-
+                    $("#queryDataDiv").show(); 
+                 
                 }
             },
             complete: function () {
                 form.render();
             }
         });
-        form.on('select(AfferentSign)',
-            function (data) {
-                var val = data.value;
-                if (val === "2") {
-                    $("#markTextLable").text("个人编码");
-                    $("#IdentityMark").val("");
-                    $("#IdentityMark").attr("placeholder", "请输入个人编码");
-                } else {
-                    $("#markTextLable").text("身份证号");
-
-                }
-            });
+      
+      
     });
 
 

@@ -21,9 +21,7 @@
 <div class="layui-fluid" >
     <div class="layui-card">
         <form class="layui-form" id="LAY-form" lay-filter="LAY-form-render">
-            <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
-            <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
-            <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
+           
             <input type="hidden" id="IsBirthHospital" placeholder="医保交易id" />
             @{Html.RenderPartial("_CSharpActiveX");}
             <div class="layui-card-header layuibd-card-header-auto">

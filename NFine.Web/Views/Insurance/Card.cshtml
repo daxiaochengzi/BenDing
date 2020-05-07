@@ -46,7 +46,7 @@
         function() {
             var $ = layui.$,
                 form = layui.form;
-            window.getmydata   = function () {
+            window.getMyData   = function () {
                 var data = {
                     "IdentityMark": $('#IdentityMark').val(),
                     "CardPwd": $('#CardPwd').val(),
@@ -59,8 +59,9 @@
                 var r = window.location.search.substr(1).match(reg);
                 if (r != null) return unescape(r[2]); return null;
             }
-            var IdCardNo = getUrlParam('IdCardNo');
-            $("#IdentityMark").val(IdCardNo);  
+         
+            var idCardNo = getUrlParam('IdCardNo');
+            $("#IdentityMark").val(idCardNo);  
             form.render();
             //查询方式切换
             form.on('select(AfferentSign)',

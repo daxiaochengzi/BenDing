@@ -581,9 +581,9 @@ namespace NFine.Web.Controllers
                  data.SettlementNo = queryData.SettlementNo;
                  data.IdentityMark = queryData.IdentityMark;
                  data.AfferentSign = queryData.AfferentSign;
-                 if (queryData.InsuranceType == "310")
+                 if (queryData.InsuranceType == "310" && queryData.IsBirthHospital==0)
                  {//调整标记
-                     data.AfferentSign = queryData.AfferentSign == "2" ? "1" : "2";
+                     data.AfferentSign = "3";
                  }
 
                  y.Data = data;
