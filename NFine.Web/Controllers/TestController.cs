@@ -132,7 +132,7 @@ namespace NFine.Web.Controllers
             {
                 var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
                
-                y.Data = userService.GetUserInfo();
+                y.Data = userBase;
 
             });
 
