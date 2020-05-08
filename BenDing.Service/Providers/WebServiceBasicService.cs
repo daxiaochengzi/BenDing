@@ -117,21 +117,16 @@ namespace BenDing.Service.Providers
         /// icd10对码
         /// </summary>
         /// <param name="param"></param>
-        public void Icd10PairCode(Icd10PairCodeParam param)
+        public void Icd10PairCode(Icd10PairCodeParam  param)
         {  //回参构建
             var icd10List = new List<Icd10PairCodeDateXml>();
-            icd10List.Add(new Icd10PairCodeDateXml()
+            icd10List.AddRange(param.DataList.Select(c=> new Icd10PairCodeDateXml()
             {
-                DiseaseId = param.DiseaseId,
-                DiseaseName = param.ProjectName,
-                DiseaseCoding = param.ProjectCode
-            });
-            var dd = new Icd10PairCodeDateXml()
-            {
-                DiseaseId = param.DiseaseId,
-                DiseaseName = param.ProjectName,
-                DiseaseCoding = param.ProjectCode
-            };        
+                DiseaseId = c.DiseaseId,
+                DiseaseName = c.ProjectName,
+                DiseaseCoding = c.ProjectCode
+            }));
+               
             var xmlData = new Icd10PairCodeXml()
             {
                 row   = icd10List
@@ -147,6 +142,7 @@ namespace BenDing.Service.Providers
             };
             //存基层
             _webServiceBasic.SaveXmlData(saveXml);
+           
             _hisSqlRepository.Icd10PairCode(param);
         }
 
@@ -718,36 +714,56 @@ namespace BenDing.Service.Providers
         {
             int resultData = 0;
             var data = _medicalInsuranceSqlRepository.ThreeCataloguePairCodeUpload(param);
-            if (data.Any())
+            int a = 0;
+            int limit = 40; //限制条数
+            int num = data.Count;
+            var count = Convert.ToInt32(num / limit) + ((num % limit) > 0 ? 1 : 0);
+            var idList = new List<string>();
+            while (a < count)
             {
-                var uploadDataRow = data.Select(c => new ThreeCataloguePairCodeUploadRowDto()
+                //排除已上传数据
+
+                var rowDataListAll = data.Where(d => !idList.Contains(d.DirectoryCode))
+                    .ToList();
+                var sendList = rowDataListAll.Take(limit).ToList();
+
+                if (data.Any())
                 {
-                    //ProjectId = c.Id.ToString("N"),
-                    HisDirectoryCode = c.DirectoryCode,
-                    Manufacturer = "",
-                    ProjectName = c.ProjectName,
-                    ProjectCode = c.ProjectCode,
-                    ProjectCodeType = c.DirectoryCategoryCode,
-                    ProjectCodeTypeDetail = c.ProjectCodeType,
-                    Remark = c.Remark,
-                    ProjectLevel = ((ProjectLevel)Convert.ToInt32(c.ProjectLevel)).ToString(),
-                    RestrictionSign = GetStrData(c.ProjectCodeType, c.RestrictionSign)
+                    var uploadDataRow = sendList.Select(c => new ThreeCataloguePairCodeUploadRowDto()
+                    {
+                        //ProjectId = c.Id.ToString("N"),
+                        HisDirectoryCode = c.DirectoryCode,
+                        Manufacturer = "",
+                        ProjectName = c.ProjectName,
+                        ProjectCode = c.ProjectCode,
+                        ProjectCodeType = c.DirectoryCategoryCode,
+                        ProjectCodeTypeDetail = c.ProjectCodeType,
+                        Remark = c.Remark,
+                        ProjectLevel = ((ProjectLevel)Convert.ToInt32(c.ProjectLevel)).ToString(),
+                        RestrictionSign = GetStrData(c.ProjectCodeType, c.RestrictionSign)
 
-                }).ToList();
-                var uploadData = new ThreeCataloguePairCodeUploadDto()
-                {
-                    AuthCode = param.User.AuthCode,
-                    CanCelState = "0",
-                    UserName = param.User.UserName,
-                    OrganizationCode = param.User.OrganizationCode,
-                    PairCodeRow = uploadDataRow,
-                    VersionNumber = ""
-                };
-                _webServiceBasic.HIS_Interface("35", JsonConvert.SerializeObject(uploadData));
+                    }).ToList();
+                    var uploadData = new ThreeCataloguePairCodeUploadDto()
+                    {
+                        AuthCode = param.User.AuthCode,
+                        CanCelState = "0",
+                        UserName = param.User.UserName,
+                        OrganizationCode = param.User.OrganizationCode,
+                        PairCodeRow = uploadDataRow,
+                        VersionNumber = ""
+                    };
+                    _webServiceBasic.HIS_Interface("35", JsonConvert.SerializeObject(uploadData));
 
 
-                resultData = _medicalInsuranceSqlRepository.UpdateThreeCataloguePairCodeUpload(param);
+                    //resultData = _medicalInsuranceSqlRepository.UpdateThreeCataloguePairCodeUpload(param);
+                }
+                //更新数据上传状态
+                idList.AddRange(sendList.Select(d => d.DirectoryCode).ToList());
+                a++;
+
             }
+
+          
 
             //限制用药
             string GetStrData(string projectCodeType, string restrictionSign)

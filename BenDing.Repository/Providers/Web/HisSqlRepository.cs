@@ -534,7 +534,7 @@ namespace BenDing.Repository.Providers.Web
         /// ICD10 对码
         /// </summary>
         /// <param name="param"></param>
-        public void Icd10PairCode(Icd10PairCodeParam param)
+        public void Icd10PairCode(Icd10PairCodeParam  param )
         {
 
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -543,15 +543,31 @@ namespace BenDing.Repository.Providers.Web
                 try
                 {
                     sqlConnection.Open();
-                    sqlStr = $@"update [dbo].[ICD10PairCode] set [IsDelete]=1,[DeleteTime]=GETDATE(),[DeleteUserId]='{param.User.UserId}'
-                              where [DiseaseId]='{param.DiseaseId}' 
-                             insert into  [dbo].[ICD10PairCode] 
+                    string idlist="";
+                    if (param.DataList.Any())
+                    {
+                         idlist = CommonHelp.ListToStr(param.DataList.Select(c=>c.DiseaseId).ToList());
+                        sqlStr =
+                            $@"update [dbo].[ICD10PairCode] set [IsDelete]=1,[DeleteTime]=GETDATE(),[DeleteUserId]='{param.User.UserId}'
+                              where [DiseaseId] in({idlist}) 
+                             ";
+                        sqlConnection.Execute(sqlStr);
+                        string sqlStrNew = null;
+                        foreach (var item in param.DataList)
+                        {
+                            sqlStrNew += $@" insert into  [dbo].[ICD10PairCode] 
                             ([Id],[DiseaseId],[ProjectName],[ProjectCode],
                              [State],[CreateTime],[CreateUserId],[IsDelete],[PairCodeUserName])
                             values
-                            ('{Guid.NewGuid()}','{param.DiseaseId}','{param.ProjectName}','{param.ProjectCode}',
-                             1,GETDATE(),'{param.User.UserId}',0,'{param.User.UserName}')";
-                    sqlConnection.Execute(sqlStr);
+                            ('{Guid.NewGuid()}','{item.DiseaseId}','{item.ProjectName}','{item.ProjectCode}',
+                             1,GETDATE(),'{param.User.UserId}',0,'{param.User.UserName}');";
+
+                        }
+                        sqlConnection.Execute(sqlStrNew);
+                    }
+
+                   
+
                     sqlConnection.Close();
 
 

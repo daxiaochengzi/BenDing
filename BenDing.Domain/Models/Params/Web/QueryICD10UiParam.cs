@@ -32,7 +32,7 @@ namespace BenDing.Domain.Models.Params.Web
 
         public string ProjectName { get; set; }
         /// <summary>
-        /// 是否医保对码
+        /// 是否医保icd10
         /// </summary>
         public int IsMedicalInsurance { get; set; }
 

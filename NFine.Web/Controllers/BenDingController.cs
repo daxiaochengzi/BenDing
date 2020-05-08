@@ -221,11 +221,17 @@ namespace NFine.Web.Controllers
             {
                 var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
                 userBase.TransKey = param.TransKey;
+                var dataList = new List<Icd10PairCodeDataParam>();
+                    dataList.Add(new Icd10PairCodeDataParam()
+                    {
+                        DiseaseId = param.DiseaseId,
+                        ProjectCode = param.ProjectCode,
+                        ProjectName = param.ProjectName,
+                    });
+             
                 _webServiceBasicService.Icd10PairCode(new Icd10PairCodeParam()
                 {
-                    DiseaseId = param.DiseaseId,
-                    ProjectCode = param.ProjectCode,
-                    ProjectName = param.ProjectName,
+                    DataList = dataList,
                     User = userBase,
                     BusinessId = param.BusinessId
                 });

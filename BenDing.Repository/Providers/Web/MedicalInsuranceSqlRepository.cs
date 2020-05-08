@@ -579,6 +579,55 @@ namespace BenDing.Repository.Providers.Web
             }
         }
         /// <summary>
+        /// 批量更新
+        /// </summary>
+        /// <param name="user"></param>
+        public void HospitalThreeCatalogBatchUpload(UserInfoDto user)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string querySql = null;
+                try
+                {
+                    sqlConnection.Open();
+                    querySql = $@"select  id,DirectoryCode from [dbo].[HospitalThreeCatalogue] 
+                               where IsDelete=0 ";
+                   
+                    var data = sqlConnection.Query<HospitalThreeCatalogBatchUploadDto>(querySql).ToList();
+
+                    if (data.Any())
+                    {
+                        var dataNew = data.Select(c => new HospitalThreeCatalogBatchUploadDto
+                        {
+                            Id = c.Id,
+                            DirectoryCode = c.DirectoryCode,
+                            FixedEncoding = BitConverter.ToInt64(Guid.Parse(c.DirectoryCode).ToByteArray(), 0).ToString()
+                        }).ToList();
+
+                        var sql = $@"update [dbo].[HospitalThreeCatalogue] set FixedEncoding=@FixedEncoding 
+                         where  id=@Id;";
+                        var res = sqlConnection.Execute(sql, dataNew);
+                        sql =
+                            $@"update [dbo].[ThreeCataloguePairCode] SET  UploadState=1, UpdateUserId='{user.UserId}', UpdateTime=GETDATE(),
+                           FixedEncoding = b.FixedEncoding FROM [dbo].[ThreeCataloguePairCode] as a , [dbo].[HospitalThreeCatalogue]  as b
+                          WHERE a.DirectoryCode = B.DirectoryCode and OrganizationCode='{user.OrganizationCode}'";
+                        sqlConnection.Execute(sql);
+
+                    }
+                  
+
+                    sqlConnection.Close();
+                  
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(querySql);
+                    throw new Exception(e.Message);
+                }
+            }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="param"></param>
@@ -620,6 +669,8 @@ namespace BenDing.Repository.Providers.Web
                 }
             }
         }
+
+
         /// <summary>
         /// his上传更新数据
         /// </summary>

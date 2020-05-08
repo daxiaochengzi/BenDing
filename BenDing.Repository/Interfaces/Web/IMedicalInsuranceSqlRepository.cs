@@ -101,6 +101,8 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         /// <returns></returns>
         int UpdateThreeCataloguePairCodeUpload(UpdateThreeCataloguePairCodeUploadParam param);
+
+         void HospitalThreeCatalogBatchUpload(UserInfoDto user);
         /// <summary>
         /// 更新批次号
         /// </summary>

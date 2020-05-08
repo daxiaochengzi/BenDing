@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Dto\Base\DiagnosisData.cs" />
+    <Compile Include="Models\Dto\Base\GetPostUrlDto.cs" />
     <Compile Include="Models\Dto\Base\PaginationDto.cs" />
     <Compile Include="Models\Dto\Base\PaginationUserDto.cs" />
     <Compile Include="Models\Dto\Base\QueryDateBaseDto.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Models\Dto\OutpatientDepartment\GetOutpatientSettlementCancelDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\WorkerBirthSettlementDto.cs" />
     <Compile Include="Models\Dto\Resident\AdmissionRegistrationCancelInfoDto.cs" />
+    <Compile Include="Models\Dto\Web\HospitalThreeCatalogBatchUploadDto.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\MonthlyHospitalizationCancelParam.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\MonthlyHospitalizationDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\OutpatientCostReturnDataDto.cs" />

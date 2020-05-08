@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using BenDing.Domain.Models.Dto;
+using BenDing.Domain.Models.Dto.Base;
 using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Resident;
@@ -13,6 +18,7 @@ using BenDing.Domain.Models.HisXml;
 using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.DifferentPlaces;
 using BenDing.Domain.Models.Params.Resident;
+using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
 using BenDing.Domain.Models.Params.Web;
 using BenDing.Domain.Xml;
@@ -33,19 +39,26 @@ namespace NFine.Web.Controllers
         private readonly IWebServiceBasicService webServiceBasicService;
         private readonly IWebBasicRepository webServiceBasic;
         private readonly IHisSqlRepository hisSqlRepository;
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="_userService"></param>
+        private readonly IMedicalInsuranceSqlRepository ImedicalInsuranceSqlRepository;
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="_userService"></param>
+      /// <param name="_webServiceBasicService"></param>
+      /// <param name="_WebBasicRepository"></param>
+      /// <param name="_hisSqlRepository"></param>
+      /// <param name="_imedicalInsuranceSqlRepository"></param>
         public TestController(IUserService _userService,
             IWebServiceBasicService _webServiceBasicService,
             IWebBasicRepository _WebBasicRepository,
-            IHisSqlRepository _hisSqlRepository)
+            IHisSqlRepository _hisSqlRepository,
+            IMedicalInsuranceSqlRepository _imedicalInsuranceSqlRepository)
         {
             userService = _userService;
             webServiceBasicService = _webServiceBasicService;
             webServiceBasic = _WebBasicRepository;
             hisSqlRepository = _hisSqlRepository;
+            ImedicalInsuranceSqlRepository = _imedicalInsuranceSqlRepository;
         }
         /// <summary>
         /// 测试专用
@@ -137,6 +150,39 @@ namespace NFine.Web.Controllers
             });
 
         }
+        #region  	3.5.2 	获取检查报告列表
+        /// <summary>
+        ///	
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ApiJsonResultData> GetPostUrl([FromBody] UiInIParam param)
+        {
+            return await new ApiJsonResultData(ModelState).RunWithTryAsync(async y =>
+            {
+
+                //var requestJson = JsonConvert.SerializeObject("{'orderAmt':0.01,'token':'134757426273844039'}");
+
+                //var paramData = new GetPostUrlDto();
+                //paramData.orderAmt = Convert.ToDecimal(0.01);
+                //paramData.token = "134757426273844039";
+                //string content = JsonConvert.SerializeObject(paramData);
+                //var buffer = Encoding.UTF8.GetBytes(content);
+                //var byteContent = new ByteArrayContent(buffer);
+                //byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                //var httpClient = new HttpClient();
+                //var response = await httpClient.PostAsync("http://triage.natapp1.cc/scrcu/pay/order", byteContent).ConfigureAwait(false);
+                //string result = await response.Content.ReadAsStringAsync();
+
+                //var client = _httpClientFactory.CreateClient();
+                //var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5100/api/values/requesttest");
+                //var respond = await client.SendAsync(request).Result.Content.ReadAsStringAsync();//
+
+            });
+        }
+        #endregion
+
+       
 
         /// <summary>
         /// 
@@ -420,6 +466,112 @@ namespace NFine.Web.Controllers
 
             });
         }
-        
+        /// <summary>
+        /// 医院三大目录批量上传
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData HospitalThreeCatalogBatchUpload([FromBody] UiInIParam param)
+        {
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            { var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
+              
+                var paramIni = new MedicalInsurancePairCodesUiParam();
+             
+                if (userBase != null && string.IsNullOrWhiteSpace(userBase.OrganizationCode) == false)
+                {
+                    paramIni.OrganizationCode = userBase.OrganizationCode;
+                    paramIni.OrganizationName = userBase.OrganizationName;
+                
+                    webServiceBasicService.ThreeCataloguePairCodeUpload(
+                        new UpdateThreeCataloguePairCodeUploadParam()
+                        {
+                            User = userBase,
+                            ProjectCodeList = paramIni.PairCodeList.Select(c => c.ProjectCode).ToList()
+                        }
+                    );
+
+                }
+                ImedicalInsuranceSqlRepository.HospitalThreeCatalogBatchUpload(userBase);
+
+            });
+
+        }
+        /// <summary>
+        /// icd10批量上传
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData Icd10BatchUpload([FromBody] UiBaseDataParam param)
+        {
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            {
+                var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
+                userBase.TransKey = param.TransKey;
+                var dataList = new List<Icd10PairCodeDataParam>();
+                var queryParam = new QueryICD10UiParam();
+                queryParam.Page = 1;
+                queryParam.Limit = 50000;
+                queryParam.IsMedicalInsurance = 0;
+                //基层
+                var queryData = hisSqlRepository.QueryICD10(queryParam);
+                //基层
+                var baseData = queryData.Values.FirstOrDefault();
+
+                queryParam.IsMedicalInsurance = 1;
+                var medicalInsuranceData = hisSqlRepository.QueryICD10(queryParam);
+                var medicalInsuranceList = medicalInsuranceData.Values.FirstOrDefault();
+
+                if (medicalInsuranceList.Any()){
+
+                    foreach (var item in baseData)
+                    {
+                        var itemNew = medicalInsuranceList
+                            .FirstOrDefault(c => c.DiseaseCoding == item.DiseaseCoding);
+                        if (itemNew != null)
+                        {
+                            dataList.Add(new Icd10PairCodeDataParam()
+                            {
+                                DiseaseId = item.DiseaseId,
+                                ProjectCode = itemNew.ProjectCode,
+                                ProjectName = itemNew.ProjectName
+
+                            });
+                        }
+
+
+                    }
+                }
+
+                int a = 0;
+                int limit = 40; //限制条数
+                int num = dataList.Count;
+                var count = Convert.ToInt32(num / limit) + ((num % limit) > 0 ? 1 : 0);
+                var idList = new List<string>();
+                while (a < count)
+                {
+                    //排除已上传数据
+
+                    var rowDataListAll = dataList.Where(d => !idList.Contains(d.DiseaseId))
+                        .ToList();
+                    var sendList = rowDataListAll.Take(limit).ToList();
+
+                    webServiceBasicService.Icd10PairCode(new Icd10PairCodeParam()
+                    {
+                        DataList = sendList,
+                        User = userBase,
+                        BusinessId = "00000000000000000000000000000000"
+                    });
+                    //更新数据上传状态
+                    idList.AddRange(sendList.Select(d=>d.DiseaseId).ToList());
+                    a++;
+
+                }
+
+            });
+
+        }
     }
 }
