@@ -33,7 +33,6 @@ namespace NFine.Web.Controllers
         private readonly IWebServiceBasicService webServiceBasicService;
         private readonly IWebBasicRepository webServiceBasic;
         private readonly IHisSqlRepository hisSqlRepository;
-
         /// <summary>
         /// 
         /// </summary>
@@ -117,6 +116,23 @@ namespace NFine.Web.Controllers
                
                 //y.DataDescribe = CommonHelp.GetPropertyAliasDict(new UserInfoDto());
                 //y.Data = userService.GetUserInfo();
+
+            });
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData GetUserInfo([FromBody] UiInIParam param)
+        {
+            return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
+            {
+                var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
+               
+                y.Data = userService.GetUserInfo();
 
             });
 
