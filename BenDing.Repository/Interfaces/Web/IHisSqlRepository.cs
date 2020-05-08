@@ -52,6 +52,8 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         void Icd10PairCode(Icd10PairCodeParam param);
 
+        List<QueryICD10InfoDto> QueryAllICD10();
+
         /// <summary>
         /// 获取HIS系统中科室、医师、病区、床位的基本信息
         /// </summary>

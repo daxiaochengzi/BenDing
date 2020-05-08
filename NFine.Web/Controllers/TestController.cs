@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -152,7 +153,7 @@ namespace NFine.Web.Controllers
         }
         #region  	3.5.2 	获取检查报告列表
         /// <summary>
-        ///	
+        ///	javaPost测试
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -163,27 +164,45 @@ namespace NFine.Web.Controllers
 
                 //var requestJson = JsonConvert.SerializeObject("{'orderAmt':0.01,'token':'134757426273844039'}");
 
-                //var paramData = new GetPostUrlDto();
-                //paramData.orderAmt = Convert.ToDecimal(0.01);
-                //paramData.token = "134757426273844039";
-                //string content = JsonConvert.SerializeObject(paramData);
-                //var buffer = Encoding.UTF8.GetBytes(content);
-                //var byteContent = new ByteArrayContent(buffer);
-                //byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                //var httpClient = new HttpClient();
-                //var response = await httpClient.PostAsync("http://triage.natapp1.cc/scrcu/pay/order", byteContent).ConfigureAwait(false);
-                //string result = await response.Content.ReadAsStringAsync();
+                var paramData = new GetPostUrlDto();
+                paramData.orderAmt = Convert.ToDecimal(0.01);
+                paramData.token = "134757426273844039";
+                string content = JsonConvert.SerializeObject(paramData);
+               //第一种方法
+                var buffer = Encoding.UTF8.GetBytes(content);
+                var byteContent = new ByteArrayContent(buffer);
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.ExpectContinue = false;
+                var response = await httpClient.PostAsync("http://triage.natapp1.cc/scrcu/pay/order", byteContent).ConfigureAwait(false);
+                string result = await response.Content.ReadAsStringAsync();
 
-                //var client = _httpClientFactory.CreateClient();
-                //var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5100/api/values/requesttest");
-                //var respond = await client.SendAsync(request).Result.Content.ReadAsStringAsync();//
+
+
+                //第二种方法
+                byte[] byteArray = Encoding.Default.GetBytes(content); //转化
+                HttpWebRequest webReq = (HttpWebRequest)WebRequest.Create(new Uri("http://triage.natapp1.cc/scrcu/pay/order"));
+                webReq.Method = "POST";
+             
+               webReq.ServicePoint.Expect100Continue = false;
+                webReq.ContentType = "application/json";
+                webReq.ContentLength = byteArray.Length;
+                Stream newStream = webReq.GetRequestStream();
+                newStream.Write(byteArray, 0, byteArray.Length);//写入参数
+                newStream.Close();
+                HttpWebResponse responsebbb = (HttpWebResponse)webReq.GetResponse();
+                StreamReader sr = new StreamReader(responsebbb.GetResponseStream(), Encoding.UTF8);
+                var ret = sr.ReadToEnd();
+                sr.Close();
+                responsebbb.Close();
+                newStream.Close();
+
+
+
 
             });
         }
         #endregion
-
-       
-
         /// <summary>
         /// 
         /// </summary>
@@ -509,21 +528,16 @@ namespace NFine.Web.Controllers
             return new ApiJsonResultData(ModelState, new UiInIParam()).RunWithTry(y =>
             {
                 var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
-                userBase.TransKey = param.TransKey;
+               userBase.TransKey = param.TransKey;
                 var dataList = new List<Icd10PairCodeDataParam>();
-                var queryParam = new QueryICD10UiParam();
-                queryParam.Page = 1;
-                queryParam.Limit = 50000;
-                queryParam.IsMedicalInsurance = 0;
+               
                 //基层
-                var queryData = hisSqlRepository.QueryICD10(queryParam);
+                var queryData = hisSqlRepository.QueryAllICD10();
                 //基层
-                var baseData = queryData.Values.FirstOrDefault();
+                var baseData = queryData.Where(c=>c.IsMedicalInsurance==0).ToList();
 
-                queryParam.IsMedicalInsurance = 1;
-                var medicalInsuranceData = hisSqlRepository.QueryICD10(queryParam);
-                var medicalInsuranceList = medicalInsuranceData.Values.FirstOrDefault();
-
+                var medicalInsuranceList = queryData.Where(c => c.IsMedicalInsurance == 1).ToList();
+              
                 if (medicalInsuranceList.Any()){
 
                     foreach (var item in baseData)
@@ -545,30 +559,35 @@ namespace NFine.Web.Controllers
                     }
                 }
 
-                int a = 0;
-                int limit = 40; //限制条数
-                int num = dataList.Count;
-                var count = Convert.ToInt32(num / limit) + ((num % limit) > 0 ? 1 : 0);
-                var idList = new List<string>();
-                while (a < count)
+                if (dataList.Any())
                 {
-                    //排除已上传数据
-
-                    var rowDataListAll = dataList.Where(d => !idList.Contains(d.DiseaseId))
-                        .ToList();
-                    var sendList = rowDataListAll.Take(limit).ToList();
-
-                    webServiceBasicService.Icd10PairCode(new Icd10PairCodeParam()
+                    int a = 0;
+                    int limit = 500; //限制条数
+                    int num = dataList.Count;
+                    var count = Convert.ToInt32(num / limit) + ((num % limit) > 0 ? 1 : 0);
+                    var idList = new List<string>();
+                    while (a < count)
                     {
-                        DataList = sendList,
-                        User = userBase,
-                        BusinessId = "00000000000000000000000000000000"
-                    });
-                    //更新数据上传状态
-                    idList.AddRange(sendList.Select(d=>d.DiseaseId).ToList());
-                    a++;
+                        //排除已上传数据
 
+                        var rowDataListAll = dataList.Where(d => !idList.Contains(d.DiseaseId))
+                            .ToList();
+                        var sendList = rowDataListAll.Take(limit).ToList();
+
+                        webServiceBasicService.Icd10PairCode(new Icd10PairCodeParam()
+                        {
+                            DataList = sendList,
+                            User = userBase,
+                            BusinessId = "00000000000000000000000000000000"
+                        });
+                        //更新数据上传状态
+                        idList.AddRange(sendList.Select(d => d.DiseaseId).ToList());
+                        a++;
+
+                    }
                 }
+
+              
 
             });
 

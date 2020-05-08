@@ -50,5 +50,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// 
         /// </summary>
         public string PairCodeTime { get; set; }
+        //是医保
+        public  int IsMedicalInsurance { get; set; }
     }
 }

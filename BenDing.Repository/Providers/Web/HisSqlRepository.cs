@@ -395,6 +395,34 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
+
+        /// <summary>
+        /// ICD10查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public  List<QueryICD10InfoDto> QueryAllICD10()
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string strSql = null;
+                try
+                {
+                    sqlConnection.Open();
+                    strSql = @"select Id,DiseaseCoding, DiseaseName,DiseaseId,IsMedicalInsurance from [dbo].[ICD10]  where  IsDelete=0 ";
+                   
+                    var data = sqlConnection.Query<QueryICD10InfoDto>(strSql);
+                    sqlConnection.Close();
+                    return data.ToList();
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(strSql);
+                    throw new Exception(e.Message);
+                }
+            }
+        }
+
         /// <summary>
         /// ICD10查询
         /// </summary>
