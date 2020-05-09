@@ -409,7 +409,9 @@ namespace BenDing.Repository.Providers.Web
                 try
                 {
                     sqlConnection.Open();
-                    strSql = @"select Id,DiseaseCoding, DiseaseName,DiseaseId,IsMedicalInsurance from [dbo].[ICD10]  where  IsDelete=0 ";
+                    strSql = @"select a.DiseaseId,b.DiseaseCoding,b.DiseaseName  from [dbo].[ICD10] as a,[dbo].[ICD10] as b where 
+                         a.IsDelete=0 and a.IsMedicalInsurance=0 and a.DiseaseCoding=b.DiseaseCoding and a.DiseaseName=b.DiseaseName
+                          and b.IsMedicalInsurance=1 and b.IsDelete=0";
                    
                     var data = sqlConnection.Query<QueryICD10InfoDto>(strSql);
                     sqlConnection.Close();

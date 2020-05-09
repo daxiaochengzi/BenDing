@@ -533,36 +533,21 @@ namespace NFine.Web.Controllers
                
                 //基层
                 var queryData = hisSqlRepository.QueryAllICD10();
-                //基层
-                var baseData = queryData.Where(c=>c.IsMedicalInsurance==0).ToList();
 
-                var medicalInsuranceList = queryData.Where(c => c.IsMedicalInsurance == 1).ToList();
-              
-                if (medicalInsuranceList.Any()){
-
-                    foreach (var item in baseData)
+                if (queryData.Any())
+                {
+                    dataList = queryData.Select(d => new Icd10PairCodeDataParam
                     {
-                        var itemNew = medicalInsuranceList
-                            .FirstOrDefault(c => c.DiseaseCoding == item.DiseaseCoding);
-                        if (itemNew != null)
-                        {
-                            dataList.Add(new Icd10PairCodeDataParam()
-                            {
-                                DiseaseId = item.DiseaseId,
-                                ProjectCode = itemNew.ProjectCode,
-                                ProjectName = itemNew.ProjectName
-
-                            });
-                        }
-
-
-                    }
+                        DiseaseId = d.DiseaseId,
+                        ProjectCode =d.DiseaseCoding,
+                        ProjectName = d.DiseaseName
+                    }).ToList();
                 }
 
                 if (dataList.Any())
                 {
                     int a = 0;
-                    int limit = 500; //限制条数
+                    int limit = 400; //限制条数
                     int num = dataList.Count;
                     var count = Convert.ToInt32(num / limit) + ((num % limit) > 0 ? 1 : 0);
                     var idList = new List<string>();
