@@ -22,8 +22,8 @@
 
 <div class="layui-tab layui-tab-card layui-tab-brief" lay-filter="demo">
     <ul class="layui-tab-title">
-        <li  class="layui-this">医保Icd10</li>
-        <li>基层Icd10对码管理</li>
+        <li class="layui-this">基层Icd10对码管理</li>
+        <li>医保Icd10</li>
     </ul>
     <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
     <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
@@ -31,7 +31,7 @@
    
     <div class="layui-tab-content">
         <div class="layui-tab-item layui-show">
-            <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="LAY-yibao-content-list">
+            <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="LAY-pair-content-list">
                 <div class="layui-form-item">
 
                     <div class="layui-inline">
@@ -47,15 +47,16 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button class="layui-btn" lay-submit="" lay-filter="LAY-yibao-content-list">查询</button>
+                        <button class="layui-btn" lay-submit="" lay-filter="LAY-pair-content-list">查询</button>
                         <button class="layui-btn" data-type="cleanSearch">清除</button>
                     </div>
-                </div> 
+                </div>
             </div>
-            <table id="LAY-yibao-content-list" lay-filter="LAY-yibao-content-list"></table>
+            <table  id="LAY-pair-content-list" lay-filter="LAY-pair-content-list"></table>
+          
         </div>
         <div class="layui-tab-item">
-            <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="LAY-pair-content-list">
+            <div class="layui-form layui-card-header layui-card-header-auto" lay-filter="LAY-yibao-content-list">
                 <div class="layui-form-item">
 
                     <div class="layui-inline">
@@ -67,17 +68,18 @@
                     <div class="layui-inline">
                         <label class="layui-form-label-nw">目录名称</label>
                         <div class="layui-input-inline">
-                            <input type="text"  name="DiseaseName" placeholder="请输入名称" autocomplete="off" class="layui-input">
+                            <input type="text" name="DiseaseName" placeholder="请输入名称" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button class="layui-btn" lay-submit="" lay-filter="LAY-pair-content-list">查询</button>
+                        <button class="layui-btn" lay-submit="" lay-filter="LAY-yibao-content-list">查询</button>
                         <button class="layui-btn" data-type="cleanSearch">清除</button>
                     </div>
 
                 </div>
             </div>
-            <table class="layui-hide" id="LAY-pair-content-list" lay-filter="LAY-pair-content-list"></table>
+           
+            <table  class="layui-hide"  id="LAY-yibao-content-list" lay-filter="LAY-yibao-content-list"></table>
         </div>
     </div>
 </div>
@@ -100,36 +102,27 @@
                 form.on('submit(LAY-yibao-content-list)',
                     function (data) {
                         var field = data.field;
+                        field["timestamp"] = (new Date()).valueOf();
                         //执行重载
                         table.reload('LAY-yibao-content-list',
                             {
                                 where: field
                             });
                     });
-                //表刷新方法
-                var reloadTable = function (data) {
-                    var field = data.field;
-                    //执行重载
-                    table.reload('LAY-pair-content-list',
-                        {
-                            where: field
-                        });
-
-                   
-                };
+              
 
                 //监听搜索
                 form.on('submit(LAY-pair-content-list)',
                     function(data) {
                         var field = data.field;
                        
-
+                        field["timestamp"] = (new Date()).valueOf();
                         //执行重载
                         table.reload('LAY-pair-content-list',
                             {
                                 where: field
                             });
-                       
+                        
                     });
                 //医保目录
                 table.render({
@@ -218,9 +211,8 @@
                                 fixed: false, //不固定
                                 maxmin: true,
                                 content: hostPage + '/PairCodeIcd10' + params,
-                                cancel: function(){
-                                    // 右上角关闭事件的逻辑
-                                    reloadTable();
+                                end: function () {//无论是确认还是取消，只要层被销毁了，end都会执行，不携带任何参数。layer.open关闭事件
+                                    location.reload();　//layer.open关闭刷新
                                 }
                             });
                             
@@ -241,10 +233,11 @@
                                     fixed: false, //不固定
                                     maxmin: true,
                                     content: hostPage + '/PairCodeIcd10' + params,
-                                    cancel: function(){
-                                        // 右上角关闭事件的逻辑
-                                        reloadTable();
+                                    end: function () {//无论是确认还是取消，只要层被销毁了，end都会执行，不携带任何参数。layer.open关闭事件
+                                        　//layer.open关闭刷新
+                                        location.reload();
                                     }
+                                   
                                 });
                                 layer.close(ind);
                             }, function(inds){
