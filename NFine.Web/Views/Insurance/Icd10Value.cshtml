@@ -97,7 +97,7 @@
                     table = layui.table;
                 form.render(null, 'LAY-yibao-content-list');
                 form.render(null, 'LAY-pair-content-list');
-
+                var queryData;
                 //监听搜索
                 form.on('submit(LAY-yibao-content-list)',
                     function (data) {
@@ -113,7 +113,8 @@
 
                 //监听搜索
                 form.on('submit(LAY-pair-content-list)',
-                    function(data) {
+                    function (data) {
+                        queryData = data;
                         var field = data.field;
                        
                         field["timestamp"] = (new Date()).valueOf();
@@ -212,7 +213,15 @@
                                 maxmin: true,
                                 content: hostPage + '/PairCodeIcd10' + params,
                                 end: function () {//无论是确认还是取消，只要层被销毁了，end都会执行，不携带任何参数。layer.open关闭事件
-                                    location.reload();　//layer.open关闭刷新
+                                    var field = queryData.field;
+
+                                    field["timestamp"] = (new Date()).valueOf();
+                                    //执行重载
+                                    table.reload('LAY-pair-content-list',
+                                        {
+                                            where: field
+                                        });
+
                                 }
                             });
                             
@@ -235,7 +244,14 @@
                                     content: hostPage + '/PairCodeIcd10' + params,
                                     end: function () {//无论是确认还是取消，只要层被销毁了，end都会执行，不携带任何参数。layer.open关闭事件
                                         　//layer.open关闭刷新
-                                        location.reload();
+                                        var field = queryData.field;
+
+                                        field["timestamp"] = (new Date()).valueOf();
+                                        //执行重载
+                                        table.reload('LAY-pair-content-list',
+                                            {
+                                                where: field
+                                            });
                                     }
                                    
                                 });
