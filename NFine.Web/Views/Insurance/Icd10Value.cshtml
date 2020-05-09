@@ -217,9 +217,13 @@
                                 area: ['700px', '400px'],
                                 fixed: false, //不固定
                                 maxmin: true,
-                                content: hostPage + '/PairCodeIcd10' + params
+                                content: hostPage + '/PairCodeIcd10' + params,
+                                cancel: function(){
+                                    // 右上角关闭事件的逻辑
+                                    reloadTable();
+                                }
                             });
-                            reloadTable();
+                            
                         } else if (obj.event === 'updatePairCode') {
                             //layer.msg('ID：' + data.id + ' 的查看操作');
 
@@ -236,11 +240,13 @@
                                     area: ['700px', '400px'],
                                     fixed: false, //不固定
                                     maxmin: true,
-                                    content: hostPage + '/PairCodeIcd10' + params
+                                    content: hostPage + '/PairCodeIcd10' + params,
+                                    cancel: function(){
+                                        // 右上角关闭事件的逻辑
+                                        reloadTable();
+                                    }
                                 });
                                 layer.close(ind);
-                                reloadTable();
-                                
                             }, function(inds){
                                 layer.close(inds);
 
