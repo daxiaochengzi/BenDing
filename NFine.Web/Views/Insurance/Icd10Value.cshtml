@@ -106,6 +106,18 @@
                                 where: field
                             });
                     });
+                //表刷新方法
+                var reloadTable = function (data) {
+                    var field = data.field;
+                    //执行重载
+                    table.reload('LAY-pair-content-list',
+                        {
+                            where: field
+                        });
+
+                   
+                };
+
                 //监听搜索
                 form.on('submit(LAY-pair-content-list)',
                     function(data) {
@@ -207,7 +219,7 @@
                                 maxmin: true,
                                 content: hostPage + '/PairCodeIcd10' + params
                             });
-                            form.render(null, 'LAY-pair-content-list');
+                            reloadTable();
                         } else if (obj.event === 'updatePairCode') {
                             //layer.msg('ID：' + data.id + ' 的查看操作');
 
@@ -227,7 +239,7 @@
                                     content: hostPage + '/PairCodeIcd10' + params
                                 });
                                 layer.close(ind);
-                                form.render(null, 'LAY-pair-content-list');
+                                reloadTable();
                                 
                             }, function(inds){
                                 layer.close(inds);
