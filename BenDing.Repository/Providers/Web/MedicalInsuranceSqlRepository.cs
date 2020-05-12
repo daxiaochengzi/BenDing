@@ -266,7 +266,28 @@ namespace BenDing.Repository.Providers.Web
 
                     int totalPageCount = result.Read<int>().FirstOrDefault();
                     dataList = (from t in result.Read<ResidentProjectDownloadRow>()
-                                select t).ToList();
+                                select    new ResidentProjectDownloadRow
+                                {
+                                    ProjectName = t.ProjectName,
+                                    ProjectCode = t.ProjectCode,
+                                     Id = t.Id,
+                                    MnemonicCode = t.MnemonicCode,
+                                    Formulation = t.Formulation,
+                                    Remark = t.Remark,
+                                    Specification = t.Specification,
+                                    Manufacturer = t.Manufacturer,
+                                    ProjectCodeType = ((ProjectCodeType)Convert.ToInt32(t.ProjectCodeType)).ToString(),
+                                    ProjectLevel = ((ProjectLevel)Convert.ToInt32(t.ProjectLevel)).ToString(),
+                                    NewCodeMark = t.NewCodeMark=="1"?"是":"否",
+                                    NewUpdateTime =t.NewUpdateTime,
+                                    QuasiFontSize = t.QuasiFontSize,
+                                    RestrictionSign = t.RestrictionSign,
+                                    LimitPaymentScope = t.LimitPaymentScope,
+                                    Unit = t.Unit
+                                        
+
+                                }
+                            ).ToList();
                     resultData.Add(totalPageCount, dataList);
                     sqlConnection.Close();
                     return resultData;
@@ -375,14 +396,14 @@ namespace BenDing.Repository.Providers.Web
                     if (param.PairCodeList.Any())
                     {
                         string updateSql = "";
-                        var pairCodeIdList = param.PairCodeList.Where(c => c.PairCodeId != null)
-                            .Select(d => d.PairCodeId.ToString()).ToList();
-                        var updateId = CommonHelp.ListToStr(pairCodeIdList);
+                        var directoryCodeList = param.PairCodeList.Select(d => d.DirectoryCode.ToString()).ToList();
+                        var updateDirectoryCode = CommonHelp.ListToStr(directoryCodeList);
                         //更新对码
-                        if (pairCodeIdList.Any())
+                        if (directoryCodeList.Any())
                         {
                             updateSql += $@"update [dbo].[ThreeCataloguePairCode] set [IsDelete]=1,
-                             [DeleteUserId]='{param.UserId}',DeleteTime=GETDATE() where [Id] in ({updateId});";
+                             [DeleteUserId]='{param.UserId}',DeleteTime=GETDATE() where [DirectoryCode] in ({updateDirectoryCode})
+                              and OrganizationCode='{param.OrganizationCode}' and [IsDelete]=0";
                             sqlConnection.Execute(updateSql);
 
                         }
@@ -644,7 +665,7 @@ namespace BenDing.Repository.Providers.Web
                     {
                         var projectCodeList = CommonHelp.ListToStr(param.ProjectCodeList);
 
-                        querySql = $@"select a.[Id],a.[ProjectCode],a.[ProjectName],[ProjectCodeType],ProjectLevel,
+                        querySql = $@"select  a.[Id],a.[ProjectCode],a.[ProjectName],[ProjectCodeType],ProjectLevel,
                                     [RestrictionSign],[Remark],b.DirectoryCode,[DirectoryCategoryCode]
                                     from [dbo].[MedicalInsuranceProject] as a inner join [dbo].[ThreeCataloguePairCode] as b
                                     on a.ProjectCode=b.ProjectCode where b.UploadState=0 and a.ProjectCode in({projectCodeList})

@@ -715,14 +715,13 @@ namespace BenDing.Service.Providers
             int resultData = 0;
             var data = _medicalInsuranceSqlRepository.ThreeCataloguePairCodeUpload(param);
             int a = 0;
-            int limit = 40; //限制条数
+            int limit = 100; //限制条数
             int num = data.Count;
             var count = Convert.ToInt32(num / limit) + ((num % limit) > 0 ? 1 : 0);
             var idList = new List<string>();
             while (a < count)
             {
                 //排除已上传数据
-
                 var rowDataListAll = data.Where(d => !idList.Contains(d.DirectoryCode))
                     .ToList();
                 var sendList = rowDataListAll.Take(limit).ToList();
@@ -737,7 +736,7 @@ namespace BenDing.Service.Providers
                         ProjectName = c.ProjectName,
                         ProjectCode = c.ProjectCode,
                         ProjectCodeType = c.DirectoryCategoryCode,
-                        ProjectCodeTypeDetail = c.ProjectCodeType,
+                        ProjectCodeTypeDetail = ((ProjectCodeType)Convert.ToInt32(c.ProjectCodeType)).ToString(),
                         Remark = c.Remark,
                         ProjectLevel = ((ProjectLevel)Convert.ToInt32(c.ProjectLevel)).ToString(),
                         RestrictionSign = GetStrData(c.ProjectCodeType, c.RestrictionSign)

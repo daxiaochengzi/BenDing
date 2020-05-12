@@ -17,7 +17,21 @@ namespace BenDing.Domain.Xml
 /// 
 /// </summary>
     public static class CommonHelp
-    {///编码
+    {/// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+        public static string GetWebServiceUrl()
+        {
+            string resultData = null;
+            //测试
+           // resultData = "http://47.111.29.88:11013/WebService.asmx";
+            //正式
+            resultData = "http://11.21.1.11:8002/WebService.asmx";
+            return resultData;
+        }
+
+        //编码
         public static string EncodeBase64(string code_type, string code)
         {
             string encode = "";

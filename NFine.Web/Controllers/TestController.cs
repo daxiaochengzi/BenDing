@@ -507,7 +507,7 @@ namespace NFine.Web.Controllers
                         new UpdateThreeCataloguePairCodeUploadParam()
                         {
                             User = userBase,
-                            ProjectCodeList = paramIni.PairCodeList.Select(c => c.ProjectCode).ToList()
+                            ProjectCodeList = new List<string>()
                         }
                     );
 

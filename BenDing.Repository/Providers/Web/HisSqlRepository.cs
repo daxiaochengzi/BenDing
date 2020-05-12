@@ -362,7 +362,7 @@ namespace BenDing.Repository.Providers.Web
                         //获取唯一编码
                         var catalogDtoIdList = param.Select(c => c.DiseaseId).ToList();
                         var ids = CommonHelp.ListToStr(catalogDtoIdList);
-                        string sqlStr = $"select DiseaseCoding  from [dbo].[ICD10]  where DiseaseCoding  in({ids}) and IsDelete=0";
+                        string sqlStr = $"select DiseaseCoding  from [dbo].[ICD10]  where DiseaseCoding  in({ids}) and IsDelete=0 and IsMedicalInsurance=0";
                         var idListNew = sqlConnection.Query<string>(sqlStr);
                         //排除已有项目 
                         var listNew = idListNew as string[] ?? idListNew.ToArray();
