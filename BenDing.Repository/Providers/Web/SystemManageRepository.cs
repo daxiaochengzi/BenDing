@@ -170,7 +170,8 @@ namespace BenDing.Repository.Providers.Web
             {
                 
                 sqlConnection.Open();
-                string querySql = @"select HisUserId,[HisUserName] from [dbo].[HospitalOperator]";
+                // string querySql = @"select HisUserId,[HisUserName] from [dbo].[HospitalOperator]";
+                string querySql = @"select F_RealName as HisUserName,F_HisUserId as HisUserId from [dbo].[Sys_User] where F_IsHisAccount=1";
                 var data = sqlConnection.Query<QueryHospitalOperatorAll>(querySql).ToList();
                 sqlConnection.Close();
                 return data;
