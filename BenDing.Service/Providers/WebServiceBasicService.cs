@@ -754,7 +754,7 @@ namespace BenDing.Service.Providers
                     _webServiceBasic.HIS_Interface("35", JsonConvert.SerializeObject(uploadData));
 
 
-                    //resultData = _medicalInsuranceSqlRepository.UpdateThreeCataloguePairCodeUpload(param);
+                    resultData += _medicalInsuranceSqlRepository.UpdateThreeCataloguePairCodeUpload(param);
                 }
                 //更新数据上传状态
                 idList.AddRange(sendList.Select(d => d.DirectoryCode).ToList());
