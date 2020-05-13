@@ -39,20 +39,8 @@ function DetectActiveX() {
     }
     return true;
 }
-//按钮状态
-function buttonStatus(buttonId, status) {
-    //取消禁用
-    if (status === true) {
-        iniJs("#" + buttonId).attr("class", "layui-btn layui-btn-radius");
-        iniJs("#" + buttonId).removeAttr("disabled");
-    }//禁用
-    else {
-        iniJs("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
-        iniJs("#" + buttonId).attr("disabled", 'disabled');
-    }
-}
 function queryData(getInpatientInfoBack) {
-    parent.layer.open({
+   layer.open({
         type: 2, //弹窗类型 ['dialog', 'page', 'iframe', 'loading', 'tips']
         area: ['500px', '220px'],
         shift: 2, //可选动画类型0-6
@@ -67,12 +55,12 @@ function queryData(getInpatientInfoBack) {
             var cardData = res.getMyData();
             if (cardData.AfferentSign === "3") {
                 if (cardData.CardPwd === "" || cardData.CardPwd === null) {
-                    msgError("请输入卡密码!!!")
+                    msgError("请输入卡密码!!!");
                 } else {
                     baseInfo.HospitalInfo.AfferentSign = cardData.AfferentSign;
                     baseInfo.HospitalInfo.CardPwd = cardData.CardPwd;
                     getReadCardInpatientInfo(getInpatientInfoBack);
-                
+
                     layer.close(index);
                 }
 
@@ -90,6 +78,19 @@ function queryData(getInpatientInfoBack) {
 
     });
 }
+//按钮状态
+function buttonStatus(buttonId, status) {
+    //取消禁用
+    if (status === true) {
+        iniJs("#" + buttonId).attr("class", "layui-btn layui-btn-radius");
+        iniJs("#" + buttonId).removeAttr("disabled");
+    }//禁用
+    else {
+        iniJs("#" + buttonId).attr("class", "layui-btn layui-btn-disabled layui-btn-radius");
+        iniJs("#" + buttonId).attr("disabled", 'disabled');
+    }
+}
+
 //获取结算返回值
 function settlementData(data) {
    
