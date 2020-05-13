@@ -198,7 +198,6 @@ namespace NFine.Web.Controllers
                 {
                     param.DiseaseName = param.Search;
                 }
-
                 var queryData = _hisSqlRepository.QueryICD10(param);
 
                 var data = new
@@ -647,7 +646,6 @@ namespace NFine.Web.Controllers
 
             });
         }
-
         /// <summary>
         /// 基层入院登记取消
         /// </summary>
@@ -788,7 +786,6 @@ namespace NFine.Web.Controllers
                 }
             });
         }
-        
         #endregion
         #region 医保对码
         /// <summary>

@@ -19,9 +19,6 @@
     }
 
 </style>
-
-
-
 <div class="layui-tab layui-tab-card layui-tab-brief" lay-filter="demo">
     <ul class="layui-tab-title">
         <li class="layui-this">医院目录</li>
@@ -165,7 +162,7 @@
             form.render(null, 'app-content-list');
             form.render(null, 'yibao-content-list');
             form.render(null, 'LAY-pair-content-list');
-            var queryData;
+            var queryData=null;
             //监听搜索
             form.on('submit(LAY-app-contlist-search)', function (data) {
                 var field = data.field;
@@ -185,19 +182,22 @@
             //监听搜索
             form.on('submit(LAY-pair-content-list)', function (data) {
                 queryData = data;
+               
                 var field = data.field;
+                //if (queryData == null) {
+                //    field.Page = 1;
+                //}
                 //执行重载
                 table.reload('LAY-pair-content-list', {
                     where: field
                 });
             });
-            //
+
             $('#updateSearch').on('click', function () {
                 var directoryCategoryCode = $("#DirectoryCategoryCode").val();
                 if (directoryCategoryCode === "" || directoryCategoryCode=== undefined)
                 {
                     layer.alert("目录类别不能为空!!!", { icon: 5, title: '错误提示', skin: 'layui-layer-molv' });
-
                     return false;
                 }
                

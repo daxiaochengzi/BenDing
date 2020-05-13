@@ -555,7 +555,6 @@ namespace BenDing.Repository.Providers.Web
                     }
                     executeSql = countSql + whereSql + ";" + querySql;
                     var result = sqlConnection.QueryMultiple(executeSql);
-
                     int totalPageCount = result.Read<int>().FirstOrDefault();
                     var hospitalOperatorAll = _iSystemManageRepository.QueryHospitalOperatorAll();
                     var dataList = (from t in result.Read<DirectoryComparisonManagementDto>()
