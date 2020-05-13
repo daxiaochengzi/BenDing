@@ -2,6 +2,7 @@
     ViewBag.Title = "住院费用清单上传";
     Layout = "~/Views/Shared/_Base.cshtml";
 }
+<script src="~/script/BenDingComm.js"></script>
 <div class="layui-tab layui-tab-card layui-tab-brief" lay-filter="demo">
     @{Html.RenderPartial("_CSharpActiveX");}
     <ul class="layui-tab-title">
@@ -68,7 +69,7 @@
         <table id="dataTableUpdatedId" lay-filter="dataTableUpdatedId"></table>
     </div>
 </div>
-</div>
+
 
 <script>
     layui.config({
