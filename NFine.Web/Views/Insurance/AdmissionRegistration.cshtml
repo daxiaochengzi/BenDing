@@ -104,7 +104,9 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">医疗类别</label>
                         <div class="layui-input-inline">
-                            <select id="MedicalCategory" name="MedicalCategory" lay-filter="MedicalCategoryType"></select>
+                            <select id="MedicalCategory" name="MedicalCategory" lay-filter="MedicalCategoryType">
+                                <option value="">请选择医疗类别</option>
+                            </select>
                         </div>
                     </div>
 
@@ -220,7 +222,7 @@
             //获取医疗类别
             function getMedicalCategory(num) {
 
-                var optionHtml = " <option value=''>请选择医疗类别</option>";
+                var optionHtml =null;
                 //居民
                 if (num === "342") {
                     optionHtml += "<option value='11'>11-普通入院</option>";

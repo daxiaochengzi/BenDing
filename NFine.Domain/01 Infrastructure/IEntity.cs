@@ -22,7 +22,7 @@ namespace NFine.Domain
             {
                 entity.F_CreatorUserId = LoginInfo.UserId;
             }
-          
+            
             entity.F_CreatorTime = DateTime.Now;
         }
         //public void BenDingCreate(UserInfoDto user)

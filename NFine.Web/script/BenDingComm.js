@@ -150,8 +150,8 @@ function getHospitalInfo(getHospitalInfoParam) {
 function getInpatientInfo(getInpatientInfoBack)
 {
   
-    var activeX = document.getElementById("CSharpActiveX");
-    var activeData = activeX.OutpatientMethods(JSON.stringify(baseInfo.HospitalInfo), JSON.stringify(baseInfo.HospitalInfo),"GetUserInfo");
+      var activeX = document.getElementById("CSharpActiveX");
+      var activeData = activeX.OutpatientMethods(JSON.stringify(baseInfo.HospitalInfo), JSON.stringify(baseInfo.HospitalInfo),"GetUserInfo");
         var activeJsonData = JSON.parse(activeData);
         if (activeJsonData.Success === false) {
             msgError(activeJsonData.Message);

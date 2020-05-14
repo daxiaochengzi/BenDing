@@ -95,6 +95,8 @@ namespace NFine.Web.Areas.SystemManage.Controllers
         public ActionResult SubmitForm(OrganizeEntity organizeEntity, string keyValue)
         {
             organizeEntity.F_CategoryId = "Department";
+            //为空时为false
+            organizeEntity.F_DeleteMark = organizeEntity.F_DeleteMark == true ? true : false;
             //取消认证
             //try
             //{ //医保账户认证
@@ -110,7 +112,7 @@ namespace NFine.Web.Areas.SystemManage.Controllers
             //{
             //    return Error(e.Message);
             //}
-          
+
             organizeApp.SubmitForm(organizeEntity, keyValue);
             return Success("操作成功。");
         }
