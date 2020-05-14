@@ -197,6 +197,7 @@
                         diagnosisMedicalInsuranceName = diagnosisList[i].诊断医保名称;
                     }
                 }
+
             }
             //给表单赋值
             form.val(formFilter,
@@ -213,10 +214,11 @@
                     "DiagnosisName": diagnosisName,
                     "DiagnosisCode": diagnosisCode,
                     "DiagnosisMedicalInsuranceCode": diagnosisMedicalInsuranceCode,
-                    "DiagnosisMedicalInsuranceName": diagnosisMedicalInsuranceName,
+                    "DiagnosisMedicalInsuranceName": diagnosisMedicalInsuranceName
                 });
 
         }
+       
         var params = {
             "TransKey": $("#transkey").val() /*医保交易码*/,
             "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
@@ -269,7 +271,7 @@
                 dataType: "json",
                 async: false,
                 success: function (data) {
-                    console.log(data);
+                 
                     if (data.Success === false) {
                         var errData = data.Message;
                         layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
@@ -304,7 +306,7 @@
                 dataType: "json",
                 async: false,
                 success: function (data) {
-                    console.log(data);
+                 
                     if (data.Success === false) {
                         var errData = data.Message;
                         msgError(errData);
@@ -365,7 +367,7 @@
                 async: false,
                 success: function (data) {
                     
-                    console.log(data);
+                
                     if (data.Success === false) {
                         var errData = data.Message;
                         msgError(errData);
@@ -435,7 +437,7 @@
                 dataType: "json",
                 async: false,
                 success: function (data) {
-                    console.log(data);
+                    
                     if (data.Success === false) {  
                         var errData = data.Message;
                         msgError(errData);
@@ -522,8 +524,8 @@
                     $("#queryDataDiv").show(); 
                  
                 }
-            },
-            complete: function () {
+            }
+            ,complete: function () {
                 form.render();
             }
         });

@@ -128,7 +128,7 @@ function getHospitalInfo(getHospitalInfoParam) {
         async: false,
         success: function (data) {
             
-            console.log(data);
+         
             if (data.Success === false) {
                 var errData = data.Message;
                 msgError(errData);
