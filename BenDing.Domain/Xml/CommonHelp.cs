@@ -19,7 +19,7 @@ namespace BenDing.Domain.Xml
     public static class CommonHelp
     {/// <summary>
     /// 
-    /// </summary>
+    /// </summary>   
     /// <returns></returns>
         public static string GetWebServiceUrl()
         {
